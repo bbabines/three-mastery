@@ -5,13 +5,16 @@ tier: core
 concepts: [math.point-vs-direction]
 mode: read-the-code
 context: math.point-vs-direction/position-velocity
-minutes: 12
 lenses: []
 misconceptions:
   - math.point-vs-direction/always-position
 ---
 
 # Point vs direction
+
+> **In short:** A Vector3 is three numbers that mean either a place (a point) or a move (a direction), and three.js can't tell which.
+>
+> **Used for:** Placing objects, aiming one thing at another, velocities, and the way a camera faces.
 
 ## A · The basics
 

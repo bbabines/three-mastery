@@ -5,13 +5,16 @@ tier: core
 concepts: [math.float-tolerance]
 mode: read-the-code
 context: math.float-tolerance/vector-equality
-minutes: 12
 lenses: []
 misconceptions:
   - math.float-tolerance/equal-math-equal-floats
 ---
 
 # Floating-point tolerance
+
+> **In short:** Computers round numbers slightly, so compare "close enough" instead of exactly equal.
+>
+> **Used for:** Comparing positions and vectors, catching flat or broken triangles, "is this zero?" checks, and very large scenes.
 
 ## A · The basics
 

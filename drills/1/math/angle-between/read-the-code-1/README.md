@@ -5,13 +5,16 @@ tier: core
 concepts: [math.angle-between]
 mode: read-the-code
 context: math.angle-between/turn-direction
-minutes: 15
 lenses: []
 misconceptions:
   - math.angle-between/angleto-direction
 ---
 
 # Angle between and signed angle
+
+> **In short:** `angleTo` says how far apart two directions are; a signed angle also says which way to turn.
+>
+> **Used for:** Turning toward a target, dials and knobs, compass headings, and showing angles to people.
 
 ## A · The basics
 

@@ -5,7 +5,6 @@ tier: light
 concepts: [math.lerp]
 mode: read-the-code
 context: math.lerp/positions
-minutes: 8
 lenses: []
 misconceptions:
   - math.lerp/stays-unit
@@ -13,6 +12,10 @@ misconceptions:
 ---
 
 # Lerp
+
+> **In short:** Blends between two values by a fraction: 0 gives the start, 1 gives the end.
+>
+> **Used for:** Moving between positions, fading colors, smoothing animation, and mixing values in shaders.
 
 ## A · The basics
 

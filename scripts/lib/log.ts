@@ -15,8 +15,9 @@ export interface DoneEntry {
   type: 'done';
   id: string;
   at: string;
-  minutes: number;
   passed: boolean;
+  // Read-the-code pages: how many questions were right. For reference only; nothing is gated on it.
+  score?: { right: number; total: number };
   // Placement checks and checkpoints: the parts (concepts or domains) that failed.
   failedParts?: string[];
 }

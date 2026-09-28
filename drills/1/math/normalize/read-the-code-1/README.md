@@ -5,7 +5,6 @@ tier: light
 concepts: [math.normalize]
 mode: read-the-code
 context: math.normalize/target-direction
-minutes: 8
 lenses: []
 misconceptions:
   - math.normalize/always-normalize
@@ -13,6 +12,10 @@ misconceptions:
 ---
 
 # Normalize
+
+> **In short:** Keeps a vector's direction and sets its length to 1, so it says only "which way".
+>
+> **Used for:** Aiming and moving at a set speed, the direction a surface faces, ray directions, and anything the dot product compares.
 
 ## A · The basics
 

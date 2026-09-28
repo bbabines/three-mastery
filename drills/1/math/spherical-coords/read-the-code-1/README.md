@@ -5,7 +5,6 @@ tier: light
 concepts: [math.spherical-coords]
 mode: read-the-code
 context: math.spherical-coords/orbit-camera
-minutes: 10
 lenses: []
 misconceptions:
   - math.spherical-coords/phi-from-equator
@@ -13,6 +12,10 @@ misconceptions:
 ---
 
 # Spherical coordinates
+
+> **In short:** Describes a point by its distance from a center and two angles, instead of x, y, and z.
+>
+> **Used for:** Orbit cameras, placing things around a sphere, and latitude and longitude.
 
 ## A · The basics
 

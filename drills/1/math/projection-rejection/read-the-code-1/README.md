@@ -5,13 +5,16 @@ tier: core
 concepts: [math.projection-rejection]
 mode: read-the-code
 context: math.projection-rejection/wall-slide
-minutes: 15
 lenses: []
 misconceptions:
   - math.projection-rejection/zero-an-axis
 ---
 
 # Projection and rejection
+
+> **In short:** Splits a move into the part that runs along a direction and the leftover part at right angles to it.
+>
+> **Used for:** Sliding along walls, keeping a drag on a rail or axis, and finding the closest point on a line.
 
 ## A · The basics
 

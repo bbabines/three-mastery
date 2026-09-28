@@ -18,7 +18,7 @@ This doc is the source of truth for a repo that teaches foundational three.js an
 
 **Constraints**
 
-- Each drill takes 5–20 minutes. No projects, full scenes, or features.
+- Each drill stays small and covers one idea. No projects, full scenes, or features. Nothing is timed: drills get done around work, with constant context switching, so time spent says nothing.
 - Drills run inside a shared minimal harness (renderer, camera, scene, test runner). The drill file holds only the work.
 - Allowed during a drill: three.js docs and three.js source. Not allowed: AI tools and the solutions folder.
 - Stack: Vite, TypeScript, three.js at one pinned version, Vitest for code checks.
@@ -38,11 +38,18 @@ This doc is the source of truth for a repo that teaches foundational three.js an
 1. Read the code: short three.js or shader snippets with multiple-choice questions, graded on the page. No arithmetic.
 2. Implement: write the working code yourself where building it is the practical skill, like a ray from the mouse or a drag on a plane. Never re-implement math three.js already provides.
 3. Apply: use it in an assigned context, rotated across drills.
-4. Break-and-fix: a subtly wrong implementation with a visible symptom to diagnose.
+4. Break-and-fix: a subtly wrong implementation with a visible symptom to diagnose. You fix it and name the cause in one sentence.
 
-**Loop 1 pages.** Every concept gets one page with three parts. A · The basics is for a first-time learner: the idea in plain words, an analogy, and a scene to play with. B · Working knowledge is what a working developer knows: the code you'd write, the mistakes people make, and which methods want which kind of value. The Drill is read-the-code questions covering both halves. Light concepts get a shorter page. Formulas appear at most once, in a collapsed note.
+**Loop 1 pages.** Every concept gets one page. It opens with the concept in one sentence and a list of several unrelated places it's used, so no single example becomes the meaning of the concept. Then come three parts. A · The basics is for a first-time learner: the idea in plain words, an analogy, and a scene to play with. B · Working knowledge is what a working developer knows: the code you'd write, the mistakes people make, and which methods want which kind of value. The Drill is read-the-code questions covering both halves. Light concepts get a shorter page. Formulas appear at most once, in a collapsed note that names the technical term so you'll recognize it elsewhere.
 
-**Drill file format.** Frontmatter with `id` (loop.domain.concept.mode.n), `loop`, `tier`, `concepts`, `mode`, `context`, `minutes`, `lenses`, and `misconceptions`. A Loop 1 page's body is its A, B, and Drill sections. A code drill's body is the task, starter code, acceptance check (automated test or stated visual check), hidden hint, and one reflection question: where else does this concept apply?
+**Code drill format (Loops 2–4).** You write the code in your own editor, in the drill's `drill.ts`. The drill's page runs your code in a live scene as you save, so you watch it work or break, and a test checks it wherever a test is possible.
+
+- **Light concepts share a drill in pairs** in Loops 2 and 3. Pair concepts that are used together in real code, like length and normalize in "move toward a target at a speed", rather than neighbors in the list.
+- **Break-and-fix, with the check (Loop 3).** After fixing the bug and naming its cause, write the automated check that would have caught it, wherever the bug can be checked automatically. If it can't, say in a sentence or two what a person has to look at and why a test can't see it. The rules and examples are in `docs/addendum-write-the-check.md`.
+- **Misconception traps (Loop 3)** are break-and-fix drills where the bug is a wrong belief. They aren't a separate format.
+- **Proof experiments (Loop 3, GPU domain).** A deliberately slow scene with switches for resolution, material cost, and draw calls. The page shows frame time and draw counts as you change one thing at a time; you also measure with Chrome's performance tools, then write down what was slowing it.
+
+**Drill file format.** Frontmatter with `id` (loop.domain.concept.mode.n), `loop`, `tier`, `concepts`, `mode`, `context`, `lenses`, and `misconceptions`. A Loop 1 page's body is its A, B, and Drill sections. A code drill's body is the task, starter code, acceptance check (automated test or stated visual check), hidden hint, and one reflection question: where else does this concept apply?
 
 **Repo layout**
 
@@ -51,7 +58,7 @@ This doc is the source of truth for a repo that teaches foundational three.js an
 /concepts     one card per concept
 /drills       <loop>/<domain>/<concept>/<drill>
 /placement    one check per domain for Loops 2–4
-/checkpoints  one timed set per loop
+/checkpoints  one set per loop
 /cross        cross-domain drills
 /solutions    mirrored tree, never opened during a drill
 /scripts      pick.ts (loop-aware drill picker), coverage.ts
@@ -59,7 +66,7 @@ This doc is the source of truth for a repo that teaches foundational three.js an
 COVERAGE.md   generated from drill frontmatter
 ```
 
-**Spaced practice.** `pick.ts` suggests the next drill, weighting the domains and modes practiced least recently, and logs completion time.
+**Spaced practice.** `pick.ts` suggests the next drill, weighting the domains and modes practiced least recently, and logs the date each drill was finished, never how long it took.
 
 **Build order.** Build the harness, `pick.ts`, and Loop 1 for Domain 1, then stop for review. After approval, build Loop 1 for all domains so practice can start, then build each later loop while the previous one is in progress. Build Domain 15 after core Loop 2.
 
@@ -78,17 +85,17 @@ The total is about 490 pages and drills, or roughly 16 months at one a day. Plac
 
 **Loop rules**
 
-- Placement check: each domain opens Loops 2–4 with a timed, no-docs check of 2–3 minutes. Passing every part skips that domain's drills for that loop; any miss means doing them. Loop 1 has none: to test out of a page, collapse A and B and go straight to the drill.
-- Checkpoint: each loop closes with a timed, no-docs set sampling every domain. Pass it before starting the next loop.
+- Placement check: each domain opens Loops 2–4 with a short, no-docs check. Passing every part suggests skipping that domain's drills for that loop; any miss suggests doing them. Loop 1 has none: to test out of a page, collapse A and B and go straight to the drill.
+- Checkpoint: each loop closes with a no-docs set sampling every domain. It's a self-check before the next loop, not a gate: move on when you understand the material, whatever the score.
 - Interleaving: `pick.ts` mixes domains within a loop while respecting prerequisites.
 - Maintenance: after Loop 4, `pick.ts` rotates drills from all loops, weighted toward the least recently practiced concepts and the weakest checkpoint results.
 - Elective: Domain 15 runs its own four-loop pass after core Loop 2, since it needs shader fluency.
 
 **Judgment-loop drill types**
 
-- AI review: plausible generated code with one subtle flaw or a worse trade-off. Find it, prove it, and fix it within the time limit. Regenerate these periodically from current AI output, because the mistakes AI makes change as models improve.
-- Teach-back: explain a concept in five plain sentences, then check against its concept card.
-- Cross-domain: the drills listed in the Cross-domain section.
+- AI review: plausible generated code with one subtle flaw or a worse trade-off. Find it, prove it, and fix it. Like everything else, it has no time limit. The snippets are stored in the repo, so a retry is the same drill, and regenerated periodically from current AI output, because the mistakes AI makes change as models improve. An AI review can end with writing the check, like break-and-fix.
+- Teach-back: explain a concept in five plain sentences in a box on the page, then reveal the page's key points and compare. Nothing is graded.
+- Cross-domain: the drills listed in the Cross-domain section, in the same code drill format as Loops 2–3.
 
 ## Tiers
 
@@ -398,7 +405,7 @@ Appearance comes from material, light, and the color pipeline. Most "it looks wr
 
 ## 12. Shaders
 
-Shader drills stay small: one visible effect, one concept, readable in a minute.
+Shader drills stay small: one visible effect, one concept, readable at a glance.
 
 | Concept | Core idea | Misconceptions to expose | Use contexts to rotate |
 | --- | --- | --- | --- |
@@ -491,7 +498,7 @@ This optional domain covers real-time VFX and procedural masks. It builds on Dom
 
 ## Cross-domain drills
 
-These combine concepts from several domains in one 10–20 minute drill. Tag each with every domain it touches, and count it toward coverage in each.
+These combine concepts from several domains in one drill. Tag each with every domain it touches, and count it toward coverage in each.
 
 | Drill | Domains | What it proves |
 | --- | --- | --- |
@@ -521,7 +528,7 @@ The generated repo is complete when every check below passes. COVERAGE.md is gen
 - [ ] Every core concept's drills span at least three distinct use contexts; every light concept's span at least two.
 - [ ] No two consecutive drills in a domain share a use context.
 - [ ] Drills with a space lens state input and output spaces; drills with a cost lens include a measurement step.
-- [ ] Every drill fits in 5–20 minutes; longer ones are split.
+- [ ] Every drill stays small and covers one idea; bigger ones are split.
 - [ ] Every domain has a placement check in Loops 2–4, and every loop has a checkpoint.
 - [ ] A code drill's starter fails its acceptance check until the drill is solved.
 - [ ] Solutions live only in /solutions.

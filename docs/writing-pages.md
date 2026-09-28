@@ -1,15 +1,17 @@
 # Writing a Loop 1 page
 
-Every concept gets one page with three parts: **A · The basics**, **B · Working knowledge**, and **Drill · Read the code**. The Domain 1 pages are the reference, so copy their layout rather than inventing a new one. Point vs direction is the page Brad reviewed and approved. The other Domain 1 pages follow the same recipe but haven't had a page-by-page review, so treat their tone and length as a guide, not a rule.
+Every concept gets one page: a short opening block, then three parts, **A · The basics**, **B · Working knowledge**, and **Drill · Read the code**. The Domain 1 pages are the reference, so copy their layout rather than inventing a new one. Point vs direction is the page Brad reviewed and approved. The other Domain 1 pages follow the same recipe but haven't had a page-by-page review, so treat their tone and length as a guide, not a rule.
 
 ## Who it's for
+
+The reader needs three things from every concept: what it is, what it's used for, and enough to talk about it at a high level. Not the math.
 
 - **A** is for someone meeting the idea for the first time.
 - **B** is what a working senior developer knows and uses day to day.
 - Nothing theoretical or abstract anywhere: no homogeneous coordinates, no proofs, no formula walkthroughs.
 - Plain words. Define each term the first time it appears (origin, normal, unit vector). If a word is jargon, say what it means in the same sentence.
 - No hand calculation. The code does the arithmetic. The reader needs to know what an operation gives back, what it's for, and what it looks like when it goes wrong.
-- At most one formula, inside a collapsed note: `<details><summary>The math, if you're curious</summary>…</details>`. The note is optional; add it only when seeing the formula once helps. It may show one small worked example, but a page never asks the reader to calculate.
+- At most one formula, inside a collapsed note: `<details><summary>The math, if you're curious</summary>…</details>`. The note is optional. Its main job is to name the technical term the reader will meet in docs and forums (the w component, the inverse transpose), so they recognize it later. It may show the formula and one small worked example, but a page never asks the reader to calculate.
 
 ## When the inventory's idea is theory
 
@@ -81,7 +83,6 @@ tier: core            # or light
 concepts: [<domain>.<concept>]
 mode: read-the-code
 context: <domain>.<concept>/<context key>   # the use context the page's main example uses
-minutes: 15           # core about 12–15, light about 8
 lenses: []
 misconceptions:
   - <domain>.<concept>/<misconception key>  # every one on the card
@@ -90,13 +91,17 @@ misconceptions:
 
 `lenses` stays empty on Loop 1 pages. The lens requirements (a `## Spaces` section, a measurement step) apply to code drills from Loop 2 on. Loop 1 pages still use the lenses in plain words:
 
-- **Space**, the whole point of the transforms domain: say which space every value is in, like "measured from its parent" or "in the world". Add a "Which space is it in?" table to B when a page has several.
+- **Space**, the whole point of the transforms domain: say which space every value is in, like "measured from its parent" or "in the world". Every Domain 2 page has a "Which space is it in?" table in B, listing the values the page uses and the space each is in. Pages in other domains add one when they deal with several spaces.
 - **Cost**, in the GPU and optimization domains: say what something costs in plain words, like "CPU time every frame" or "GPU work for every pixel". Measuring it comes in Loop 2.
 
 ## Page structure
 
 ```md
 # <Concept name>
+
+> **In short:** <The concept in one plain sentence, the way you'd say it out loud.>
+>
+> **Used for:** <Three or four unrelated places it shows up.>
 
 ## A · The basics
 
@@ -119,6 +124,7 @@ Pick an answer for each snippet. You'll see right away whether it's right and wh
 <div data-quiz></div>
 ```
 
+- **The opening block** stays visible above the collapsible sections, so it doubles as a quick refresher. "Used for" lists uses from different areas, like lighting, gameplay, and cameras for the dot product, so no single example becomes the meaning of the concept. Brad once thought the dot product was only for cameras because every example used one; this block exists to prevent that.
 - **A** builds on earlier pages and names them: "the dot product page", never "the last page", because the order can change. Every A has an everyday analogy and at least one scene.
 - **B** is organized by task: "Aim, then move at a speed", "Sliding along a wall". Point ahead to a later page in one line when it's relevant ("add vs attach comes later in this domain"). Don't teach the later page early.
 - **Size:** a core page has about two scenes and four or five questions. A light page has one scene and two or three questions.

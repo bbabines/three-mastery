@@ -16,6 +16,7 @@ export interface NavDrill {
   loop: number;
   concept: string; // the drill's first concept id, like "math.dot-product"
   title: string;
+  done: boolean; // finished at least once, according to the practice log
 }
 
 const STORAGE_KEY = 'drill-viewer:open-groups';
@@ -58,7 +59,7 @@ function note(text: string) {
 
 function pageLink(drill: NavDrill, number: number, selected: string | null) {
   const link = document.createElement('a');
-  link.className = 'drill';
+  link.className = drill.done ? 'drill done' : 'drill';
   link.href = `?drill=${drill.folder}`;
   link.textContent = `${number}. ${drill.title}`;
   if (drill.folder === selected) link.setAttribute('aria-current', 'page');
@@ -93,11 +94,12 @@ export function renderNav(container: HTMLElement, drills: NavDrill[], selected: 
   const domainGroup = (id: string, domain: Domain, loop: number, byDefault: boolean) => {
     const loopDrills = drills.filter((drill) => drill.loop === loop && drill.concept.startsWith(`${domain.slug}.`));
     const total = LOOP_PLAN[loop] ? plannedDrillCount(domain, loop) : domain.concepts.length;
+    const doneCount = loopDrills.filter((drill) => drill.done).length;
     const label = domain.elective ? `Elective · ${domain.name}` : `${domain.n}. ${domain.name}`;
     const details = group(
       id,
       'domain',
-      `<span>${label}</span><span class="count">${loopDrills.length}/${total}</span>`,
+      `<span>${label}</span><span class="count">${doneCount ? `<span class="done">✓ ${doneCount}</span> · ` : ''}${loopDrills.length}/${total}</span>`,
       isOpen(id, byDefault),
     );
     domain.concepts.forEach((concept, index) => {

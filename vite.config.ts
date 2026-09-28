@@ -1,5 +1,7 @@
+import type { IncomingMessage, ServerResponse } from 'node:http';
 import path from 'node:path';
 import { defineConfig, type Plugin } from 'vitest/config';
+import { appendLog, readLog } from './scripts/lib/log';
 
 const ROOT = import.meta.dirname;
 const SOLUTIONS = path.join(ROOT, 'solutions');
@@ -20,11 +22,52 @@ function solutionsSwap(): Plugin {
   };
 }
 
+function sendJson(response: ServerResponse, status: number, body: unknown) {
+  response.statusCode = status;
+  response.setHeader('Content-Type', 'application/json');
+  response.end(JSON.stringify(body));
+}
+
+async function readBody(request: IncomingMessage) {
+  let body = '';
+  for await (const chunk of request) body += chunk;
+  return body;
+}
+
+// The drill viewer can't write files, so the dev server does it: GET returns the practice log,
+// and POST logs a finished page into the same progress/log.jsonl that pick.ts reads.
+function progressApi(): Plugin {
+  return {
+    name: 'progress-api',
+    configureServer(server) {
+      server.middlewares.use('/api/progress', async (request, response) => {
+        if (request.method === 'GET') return sendJson(response, 200, readLog());
+        if (request.method !== 'POST') return sendJson(response, 405, { error: 'Use GET or POST' });
+
+        let parsed: { id?: unknown; score?: { right?: unknown; total?: unknown } };
+        try {
+          parsed = JSON.parse(await readBody(request));
+        } catch {
+          return sendJson(response, 400, { error: 'Body must be JSON' });
+        }
+        const { id, score } = parsed;
+        const validScore = typeof score?.right === 'number' && typeof score?.total === 'number';
+        if (typeof id !== 'string' || !/^[a-z0-9.-]+$/.test(id) || (score !== undefined && !validScore)) {
+          return sendJson(response, 400, { error: 'Expected { id, score?: { right, total } }' });
+        }
+        const at = new Date().toISOString();
+        appendLog({ type: 'done', id, at, passed: true, score: validScore ? { right: score.right as number, total: score.total as number } : undefined });
+        sendJson(response, 200, { at });
+      });
+    },
+  };
+}
+
 export default defineConfig({
   resolve: {
     alias: { '@harness': path.join(ROOT, 'harness') },
   },
-  plugins: [solutionsSwap()],
+  plugins: [solutionsSwap(), progressApi()],
   test: {
     include: ['{drills,placement,checkpoints,cross}/**/*.test.ts'],
     environment: 'node',

@@ -5,13 +5,16 @@ tier: light
 concepts: [math.triple-product]
 mode: read-the-code
 context: math.triple-product/above-below-triangle
-minutes: 8
 lenses: []
 misconceptions:
   - math.triple-product/handedness
 ---
 
 # Scalar triple product
+
+> **In short:** A cross product followed by a dot product, whose sign says which side of a surface a point is on.
+>
+> **Used for:** Above-or-below-a-surface checks, spotting mirrored objects, and the volume of simple shapes.
 
 ## A · The basics
 

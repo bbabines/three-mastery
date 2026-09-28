@@ -12,7 +12,6 @@ export interface Drill {
   concepts: string[];
   mode: string;
   context: string;
-  minutes: number;
   lenses: string[];
   misconceptions: string[];
   domain: string;
@@ -24,7 +23,6 @@ export interface Placement {
   id: string;
   loop: number;
   domain: string;
-  minutes: number;
   parts: string[];
   dir: string;
 }
@@ -32,7 +30,6 @@ export interface Placement {
 export interface Checkpoint {
   id: string;
   loop: number;
-  minutes: number;
   dir: string;
 }
 

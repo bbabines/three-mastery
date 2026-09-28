@@ -7,9 +7,9 @@ import { renderQuiz, type Question } from './quiz';
 import { createHarness, type SceneSetup } from './scene';
 
 interface DrillMeta {
+  id: string;
   loop: number;
   mode: string;
-  minutes: number;
   concepts: string[];
   context: string;
 }
@@ -38,13 +38,56 @@ const drills: Drill[] = Object.entries(readmeFiles).flatMap(([path, text]) => {
   return [{ folder: path.slice(1, -'/README.md'.length), meta: parse(match[1]) as DrillMeta, title, body }];
 });
 
+interface LogEntry {
+  type: string;
+  id: string;
+  at: string;
+  passed?: boolean;
+}
+
+// When each drill was last finished, from progress/log.jsonl through the dev server's
+// /api/progress (see vite.config.ts). Empty when there's no dev server to ask.
+async function loadFinished() {
+  try {
+    const response = await fetch('/api/progress');
+    if (!response.ok) return new Map<string, string>();
+    const entries = (await response.json()) as LogEntry[];
+    return new Map(entries.filter((entry) => entry.type === 'done' && entry.passed).map((entry) => [entry.id, entry.at]));
+  } catch {
+    return new Map<string, string>();
+  }
+}
+
+// Returns when the drill was logged, or undefined if it couldn't be saved.
+async function logFinished(drill: Drill, right: number, total: number) {
+  try {
+    const response = await fetch('/api/progress', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: drill.meta.id, score: { right, total } }),
+    });
+    return response.ok ? ((await response.json()) as { at: string }).at : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+const formatDate = (iso: string) => new Date(iso).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+
+const finished = await loadFinished();
 const selected = new URLSearchParams(location.search).get('drill');
 const nav = document.querySelector<HTMLDivElement>('#drills')!;
 const article = document.querySelector<HTMLElement>('#drill')!;
 
 renderNav(
   nav,
-  drills.map((drill) => ({ folder: drill.folder, loop: drill.meta.loop, concept: drill.meta.concepts[0], title: drill.title })),
+  drills.map((drill) => ({
+    folder: drill.folder,
+    loop: drill.meta.loop,
+    concept: drill.meta.concepts[0],
+    title: drill.title,
+    done: finished.has(drill.meta.id),
+  })),
   selected,
 );
 
@@ -53,7 +96,14 @@ async function renderDrill(drill: Drill) {
   title.textContent = drill.title;
   const meta = document.createElement('p');
   meta.className = 'meta';
-  meta.textContent = `Loop ${drill.meta.loop} · ${drill.meta.mode.replaceAll('-', ' ')} · about ${drill.meta.minutes} min`;
+  const metaText = `Loop ${drill.meta.loop} · ${drill.meta.mode.replaceAll('-', ' ')}`;
+  meta.textContent = metaText;
+  const showDone = (at: string) => {
+    meta.innerHTML = `${metaText} · <span class="done">✓ Done ${formatDate(at)}</span>`;
+    nav.querySelector('a.drill[aria-current]')?.classList.add('done');
+  };
+  const doneAt = finished.get(drill.meta.id);
+  if (doneAt) showDone(doneAt);
   const content = document.createElement('div');
   content.innerHTML = marked.parse(drill.body, { async: false });
   article.append(title, meta, content);
@@ -88,7 +138,14 @@ async function renderDrill(drill: Drill) {
 
   const quizPlaceholder = content.querySelector<HTMLElement>('[data-quiz]');
   const quiz = quizPlaceholder ? await questionModules[`/${drill.folder}/questions.ts`]?.() : undefined;
-  if (quizPlaceholder && quiz) renderQuiz(quizPlaceholder, quiz.questions);
+  if (quizPlaceholder && quiz) {
+    renderQuiz(quizPlaceholder, quiz.questions, async (right, total) => {
+      const at = await logFinished(drill, right, total);
+      if (!at) return "Couldn't save your progress. Is npm run dev running?";
+      showDone(at);
+      return 'Logged as done.';
+    });
+  }
 }
 
 const drill = drills.find((item) => item.folder === selected);

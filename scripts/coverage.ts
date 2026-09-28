@@ -120,7 +120,6 @@ function checks(): Check[] {
     ...(drill.lenses.includes('space') && !drill.body.includes('## Spaces') ? [`${drill.id} (no Spaces section)`] : []),
     ...(drill.lenses.includes('cost') && !drill.body.includes('## Measure') ? [`${drill.id} (no Measure section)`] : []),
   ]);
-  const badMinutes = drills.filter((drill) => drill.minutes < 5 || drill.minutes > 20).map((drill) => drill.id);
   const placementLoops = LOOPS.filter((loop) => loop.n >= FIRST_PLACEMENT_LOOP).map((loop) => loop.n);
   const placementCount = placements.filter((placement) => placementLoops.includes(placement.loop)).length;
   const placementTarget = placementLoops.length * CORE_DOMAINS.length;
@@ -140,7 +139,6 @@ function checks(): Check[] {
     { name: 'Core drills span ≥3 contexts; light drills span ≥2', ok: contextsDone === TOTAL_CONCEPTS, detail: `${contextsDone}/${TOTAL_CONCEPTS}` },
     { name: 'No two consecutive drills of a concept share a context', ok: repeats.length === 0, detail: list(repeats) },
     { name: 'Space-lens drills state spaces; cost-lens drills measure', ok: lensGaps.length === 0, detail: list(lensGaps) },
-    { name: 'Every drill fits in 5–20 minutes', ok: badMinutes.length === 0, detail: list(badMinutes) },
     { name: 'Every domain has a placement check in Loops 2–4', ok: placementCount === placementTarget, detail: `${placementCount}/${placementTarget}` },
     { name: 'Every loop has a checkpoint', ok: checkpoints.length === LOOPS.length, detail: `${checkpoints.length}/${LOOPS.length}` },
     { name: 'Starter code fails its acceptance check until solved', ok: null, detail: 'proved by `npm run verify`' },

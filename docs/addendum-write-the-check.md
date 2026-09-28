@@ -2,7 +2,7 @@
 
 Sep 28, 2026 · Brad
 
-**Status: proposal.** Nothing here is in `concept-inventory.md` yet, and the inventory stays the source of truth until it is. Fold this in when Loop 3 is designed, or drop it.
+**Status: adopted Sep 28, 2026,** in `concept-inventory.md` under "Code drill format", with one change: the check step goes on every break-and-fix drill where the bug can be checked automatically, not only about one per core concept. Nothing is timed, so rule 5 is about size rather than minutes. This file keeps the reasoning, rules, and examples.
 
 ## What
 
@@ -31,7 +31,7 @@ More and more 3D code will be written or edited by AI. What a person adds is jud
 2. **Test behavior, not the implementation.** Assert what must be true, like "hit point is on the surface" or "memory returns to baseline," not which lines the fix changed. A good check also catches a *different* wrong fix.
 3. **Compute expected values with three.js,** as code drills already do. No hardcoded magic numbers, no re-implemented math.
 4. **Test the general case, not the one input from the drill.** If the bug appears under non-uniform scale, the check uses non-uniform scale on purpose.
-5. **Stay inside the 5–20 minute limit.** Budget about 5 minutes for the check. If the drill runs over, split it into a fix drill and a check drill.
+5. **Keep it small.** The check is a short second step, not a project. If a drill gets big, split it into a fix drill and a check drill.
 6. **If it can't be automated, write down why.** Give one or two sentences on what a person must look at and why a test can't see it. That's a valid answer.
 
 ## Kinds of checks

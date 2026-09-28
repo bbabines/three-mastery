@@ -5,7 +5,6 @@ tier: core
 concepts: [math.dot-product]
 mode: read-the-code
 context: math.dot-product/lambert
-minutes: 15
 lenses: []
 misconceptions:
   - math.dot-product/only-three-values
@@ -14,6 +13,10 @@ misconceptions:
 ---
 
 # Dot product
+
+> **In short:** One number that says how much two directions point the same way: 1 for the same way, 0 at right angles, −1 for opposite.
+>
+> **Used for:** Lighting a surface, front-or-behind checks, vision cones for game characters, and measuring the angle between any two directions.
 
 ## A · The basics
 

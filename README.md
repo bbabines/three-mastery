@@ -6,7 +6,7 @@ The source of truth is [docs/concept-inventory.md](docs/concept-inventory.md). D
 
 ## How Loop 1 works
 
-Each concept gets one page with three parts:
+Each concept gets one page. It opens with the concept in one sentence and a list of unrelated places it's used, then has three parts:
 
 - **A · The basics** for a first-time learner: the idea in plain words, an analogy, and a scene you can play with.
 - **B · Working knowledge** for a working developer: the code you'd write, the mistakes people make, and which methods want which kind of value. No theory.
@@ -18,10 +18,10 @@ The concept list and its teaching order live in `scripts/lib/domains.ts`, copied
 
 ## Rules
 
-- A drill takes 5–20 minutes.
+- Nothing is timed. Take breaks and switch tasks whenever you need to.
 - Allowed during a drill: the three.js docs and the three.js source.
 - Not allowed: AI tools, `/solutions`, or reading a drill's `drill.test.ts` before you finish.
-- Placement checks and checkpoints are timed, with no docs.
+- Placement checks and checkpoints are done without docs.
 
 ## Setup
 
@@ -37,20 +37,20 @@ npm run pick
 
 Suggests what to do next. Then:
 
-1. `npm run pick -- start` starts the timer on the suggestion, or pass an id to pick something else. It prints the page to open.
+1. `npm run pick -- start` marks the suggestion as what you're working on, or pass an id to pick something else. It prints the page to open.
 2. Work through the page. For drills you solve in code, `npm run drill -- <drill folder>` runs the check in watch mode.
-3. `npm run pick -- done` logs the drill with your time. It runs the check first; if that fails, the timer keeps running. Read-the-code drills are graded on the page, so finish them with `npm run pick -- done --pass`.
+3. Loop 1 pages log themselves: answering a page's last question marks it done, with your score kept for reference. For code drills, `npm run pick -- done` runs the check first and logs the date if it passes.
 
 `npm run pick -- status` shows where you are in the current loop.
 
 How `pick` chooses:
 
-- In Loops 2–4, each domain opens with its placement check. Passing every part inside the time limit skips that domain's drills for the loop. The first attempt counts. Loop 1 has no placement checks; to skip a page you already know, collapse A and B and do the drill.
+- In Loops 2–4, each domain opens with its placement check. Passing every part suggests skipping that domain's drills for the loop. The first attempt counts. Loop 1 has no placement checks; to skip a page you already know, collapse A and B and do the drill.
 - After that, drills are ranked by how long ago you practiced their domain, then their mode, so domains interleave.
 - A drill waits until its concepts' prerequisites are covered in the current loop.
 - A loop ends when its checkpoint passes. After Loop 4, `pick` rotates drills from every loop, weighted toward stale concepts and domains that missed checkpoint parts.
 
-The log lives in `progress/log.jsonl`. Commit it if you want your history on other machines.
+**Progress** lives in `progress/log.jsonl`, one line per finished drill with its date. The drill viewer writes to it through the dev server, so it needs `npm run dev` running, and the sidebar shows a ✓ next to finished pages. Commit the log to carry your progress between machines. `.gitattributes` tells git to keep both machines' lines when you merge, so it never conflicts.
 
 ## A drill folder
 
@@ -79,8 +79,8 @@ docs/          concept inventory (source of truth)
 harness/       shared scene setup, test helpers, harness page
 concepts/      one card per concept
 drills/        <loop>/<domain>/<concept>/<mode>-<n>/
-placement/     <loop>/<domain>/: one timed check per domain, Loops 2–4
-checkpoints/   <loop>/: one timed set per loop
+placement/     <loop>/<domain>/: one check per domain, Loops 2–4
+checkpoints/   <loop>/: one set per loop
 cross/         cross-domain drills
 solutions/     mirrored tree, never opened during a drill
 scripts/       pick.ts, coverage.ts, verify.ts
@@ -99,7 +99,7 @@ Loop 1 pages follow [docs/writing-pages.md](docs/writing-pages.md). [CLAUDE.md](
 Code drills, from Loop 2 on:
 
 - Folder: `drills/<loop>/<domain>/<concept>/<mode>-<n>/`. Id: `<loop>.<domain>.<concept>.<mode>.<n>`.
-- Frontmatter: `id`, `loop`, `tier`, `concepts`, `mode`, `context`, `minutes`, `lenses`, `misconceptions`. `concepts` holds card ids like `math.dot-product`. `context` and each `misconceptions` entry reference a key on that card: `math.dot-product/cone-check`.
+- Frontmatter: `id`, `loop`, `tier`, `concepts`, `mode`, `context`, `lenses`, `misconceptions`. `concepts` holds card ids like `math.dot-product`. `context` and each `misconceptions` entry reference a key on that card: `math.dot-product/cone-check`.
 - Starters use `Answer<T>` (`T | null`) from `@harness/drill`, so they fail until solved. Tests use `@harness/check` and compute expected values with three.js instead of hardcoding them.
 - A drill with a `space` lens needs a `## Spaces` section. A `cost` lens needs a `## Measure` section.
 - The reference solution goes at the mirrored path under `solutions/`.

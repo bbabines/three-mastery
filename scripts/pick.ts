@@ -1,15 +1,17 @@
 // Loop-aware drill picker and practice log.
 //
 //   npm run pick                 suggest what to do next
-//   npm run pick -- start [id]   start the timer (defaults to the suggestion)
-//   npm run pick -- done         run the item's check and log the result
-//                                (add --pass for a drill whose check is visual)
+//   npm run pick -- start [id]   mark what you're working on (defaults to the suggestion)
+//   npm run pick -- done         run its check and log the date you finished
+//                                (add --pass for a drill checked on the page or by eye)
 //   npm run pick -- status       progress in the current loop
 //
-// In Loops 2–4, each domain opens with its placement check. Passing it skips that domain's
-// drills for the loop. Drills are ranked by how long ago their domain, then their mode, was
-// practiced; ties go to the concept's teaching order in lib/domains.ts. A drill waits until
-// its concepts' prerequisites are covered in the loop. A loop ends when its checkpoint passes.
+// Nothing is timed. The log records when each drill was finished, never how long it took.
+//
+// In Loops 2–4, each domain opens with its placement check. Passing it suggests skipping that
+// domain's drills for the loop. Drills are ranked by how long ago their domain, then their mode,
+// was practiced; ties go to the concept's teaching order in lib/domains.ts. A drill waits until
+// its concepts' prerequisites are covered in the loop. A loop ends once its checkpoint is taken.
 // After Loop 4, maintenance rotates drills from every loop, weighted toward stale concepts and
 // domains that failed checkpoint parts.
 import { existsSync } from 'node:fs';
@@ -24,7 +26,6 @@ interface Item {
   id: string;
   dir: string;
   loop: number;
-  minutes: number;
   domain?: string;
   drill?: Drill;
 }
@@ -49,8 +50,10 @@ const passedIds = new Set(doneEntries.filter((entry) => entry.passed).map((entry
 
 // ---- Loop state ----
 
+// A checkpoint is a self-check, not a gate: taking it moves you to the next loop, whatever the score.
 function currentLoop(): number | 'maintenance' {
-  const open = LOOPS.find((loop) => !passedIds.has(`${loop.n}.checkpoint`));
+  const taken = new Set(doneEntries.map((entry) => entry.id));
+  const open = LOOPS.find((loop) => !taken.has(`${loop.n}.checkpoint`));
   return open ? open.n : 'maintenance';
 }
 
@@ -154,19 +157,15 @@ function inProgress(): StartEntry | undefined {
   return current;
 }
 
-function minutesSince(iso: string) {
-  return Math.round((Date.now() - Date.parse(iso)) / 6_000) / 10;
-}
-
 function describe(item: Item) {
   const label = item.drill ? `${item.drill.mode}, ${item.drill.context.split('/')[1]}` : item.kind;
-  return `${item.id}  (${label}, ${item.minutes} min)\n    ${item.dir}/README.md`;
+  return `${item.id}  (${label})\n    ${item.dir}/README.md`;
 }
 
 function suggest() {
   const current = inProgress();
   if (current) {
-    console.log(`In progress: ${current.id}, started ${minutesSince(current.at)} min ago.`);
+    console.log(`In progress: ${current.id}`);
     console.log('Finish with: npm run pick -- done');
     return;
   }
@@ -195,13 +194,13 @@ function start(id: string | undefined) {
   }
 
   appendLog({ type: 'start', id: item.id, at: new Date().toISOString() });
-  console.log(`Started ${item.id}. Timer running.\n`);
+  console.log(`Working on ${item.id}.\n`);
   console.log(`  Open:  http://localhost:5173/harness/?drill=${item.dir}  (needs npm run dev)`);
   if (item.kind !== 'drill') {
-    console.log(`\nTimed: ${item.minutes} min, no docs.`);
+    console.log('\nNo docs for this one.');
     console.log('When finished: npm run pick -- done');
   } else if (item.drill?.mode === 'read-the-code') {
-    console.log('\nWhen finished: npm run pick -- done --pass');
+    console.log('\nThe page logs it as done when you answer its last question.');
   } else {
     console.log(`  Watch: npm run drill -- ${item.dir}`);
     console.log('\nDocs and three.js source are fine; AI tools and /solutions are not.');
@@ -216,33 +215,33 @@ function acceptanceCheckPasses(item: Item, flag: string | undefined) {
   return results.length > 0 && results.every((result) => result.passed);
 }
 
-function finishDrill(item: Item, started: StartEntry, flag: string | undefined) {
+function finishDrill(item: Item, flag: string | undefined) {
   if (!acceptanceCheckPasses(item, flag)) {
     const hint = item.drill?.mode === 'read-the-code' ? ' Finish the page, then run: npm run pick -- done --pass' : '';
-    console.log(`\nThe acceptance check still fails. Keep going; the timer is still running.${hint}`);
+    console.log(`\nThe acceptance check still fails. It's still marked as in progress.${hint}`);
     process.exitCode = 1;
     return;
   }
 
-  const minutes = minutesSince(started.at);
-  appendLog({ type: 'done', id: item.id, at: new Date().toISOString(), minutes, passed: true });
-  console.log(`\nLogged ${item.id}: ${minutes} min.`);
+  appendLog({ type: 'done', id: item.id, at: new Date().toISOString(), passed: true });
+  console.log(`\nLogged ${item.id} as done.`);
 }
 
-function finishTimedCheck(item: Item, started: StartEntry) {
-  const minutes = minutesSince(started.at);
+// Placement checks and checkpoints: the result is logged either way, with the parts that missed.
+function finishCheck(item: Item) {
   const results = runVitest([item.dir]);
   const failedParts = [...new Set(results.flatMap((result) => result.failedSuites))];
-  const allPassed = results.length > 0 && results.every((result) => result.passed);
-  const inTime = minutes <= item.minutes;
-  const passed = allPassed && inTime;
-  appendLog({ type: 'done', id: item.id, at: new Date().toISOString(), minutes, passed, failedParts });
+  const passed = results.length > 0 && results.every((result) => result.passed);
+  appendLog({ type: 'done', id: item.id, at: new Date().toISOString(), passed, failedParts });
 
-  console.log(`\n${item.id}: ${passed ? 'passed' : 'not passed'} in ${minutes} min (limit ${item.minutes}).`);
+  console.log(`\n${item.id}: ${passed ? 'passed' : 'not passed'}.`);
   if (failedParts.length > 0) console.log(`Missed: ${failedParts.join(', ')}`);
-  if (!inTime) console.log('Over the time limit.');
   if (item.kind === 'placement') {
-    console.log(passed ? `Skipping ${item.domain} drills for Loop ${item.loop}.` : `Do the ${item.domain} drills for Loop ${item.loop}.`);
+    console.log(
+      passed
+        ? `You can skip the ${item.domain} drills for Loop ${item.loop}.`
+        : `The ${item.domain} drills for Loop ${item.loop} are worth doing.`,
+    );
   }
 }
 
@@ -254,8 +253,8 @@ function done(flag: string | undefined) {
     process.exitCode = 1;
     return;
   }
-  if (item.kind === 'drill') finishDrill(item, started, flag);
-  else finishTimedCheck(item, started);
+  if (item.kind === 'drill') finishDrill(item, flag);
+  else finishCheck(item);
 }
 
 function status() {

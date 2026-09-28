@@ -20,7 +20,13 @@ function shuffled<T>(items: T[]) {
   return copy;
 }
 
-export function renderQuiz(container: HTMLElement, questions: Question[]) {
+// `onComplete` runs once every question is answered, with the score, and returns the text to
+// show under it (such as whether the page was logged as done).
+export function renderQuiz(
+  container: HTMLElement,
+  questions: Question[],
+  onComplete: (right: number, total: number) => Promise<string>,
+) {
   let answered = 0;
   let right = 0;
   const score = document.createElement('p');
@@ -53,7 +59,12 @@ export function renderQuiz(container: HTMLElement, questions: Question[]) {
         if (correct) right += 1;
         why.innerHTML = `<strong>${correct ? 'Right.' : 'Not quite.'}</strong> ${inline(question.why)}`;
         why.hidden = false;
-        if (answered === questions.length) score.textContent = `${right} of ${questions.length} right.`;
+        if (answered === questions.length) {
+          score.textContent = `${right} of ${questions.length} right.`;
+          onComplete(right, questions.length).then((status) => {
+            score.textContent = `${right} of ${questions.length} right. ${status}`;
+          });
+        }
       });
       choices.append(button);
     }

@@ -5,13 +5,16 @@ tier: light
 concepts: [math.length]
 mode: read-the-code
 context: math.length/nearest-object
-minutes: 8
 lenses: []
 misconceptions:
   - math.length/needs-real-length
 ---
 
 # Length and lengthSq
+
+> **In short:** How far a vector reaches in a straight line; lengthSq is a quicker version that works just as well for comparing.
+>
+> **Used for:** Distances between objects, finding the nearest one, "is it within range?" checks, and capping a speed.
 
 ## A · The basics
 

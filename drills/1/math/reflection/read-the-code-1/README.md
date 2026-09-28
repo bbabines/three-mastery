@@ -5,13 +5,16 @@ tier: light
 concepts: [math.reflection]
 mode: read-the-code
 context: math.reflection/bounce
-minutes: 8
 lenses: []
 misconceptions:
   - math.reflection/n-unnormalized
 ---
 
 # Reflection
+
+> **In short:** Turns an incoming direction into the direction it bounces off a surface.
+>
+> **Used for:** Bouncing balls and projectiles, mirrors, and shiny materials that reflect their surroundings.
 
 ## A · The basics
 

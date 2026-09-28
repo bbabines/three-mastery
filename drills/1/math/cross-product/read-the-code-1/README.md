@@ -5,7 +5,6 @@ tier: core
 concepts: [math.cross-product]
 mode: read-the-code
 context: math.cross-product/triangle-normal
-minutes: 15
 lenses: []
 misconceptions:
   - math.cross-product/unit-result
@@ -14,6 +13,10 @@ misconceptions:
 ---
 
 # Cross product
+
+> **In short:** Gives a new direction at right angles to two others; swapping their order flips which way it points.
+>
+> **Used for:** The direction a triangle faces, left-or-right checks, building a set of axes, and triangle areas.
 
 ## A · The basics
 
