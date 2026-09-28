@@ -99,12 +99,14 @@ function answerTells() {
     const right = lengths[question.answer];
     return right === Math.max(...lengths) && lengths.filter((length) => length === right).length === 1;
   }).length;
-  const onlyExplained = all
-    .filter(({ question }) =>
-      question.choices.every((choice, index) => (index === question.answer) === choice.includes(':')),
-    )
+  // Choices share one style: either every choice gives a short reason after a colon, or none does.
+  const mixedStyle = all
+    .filter(({ question }) => {
+      const withReason = question.choices.filter((choice) => choice.includes(': ')).length;
+      return withReason > 0 && withReason < question.choices.length;
+    })
     .map(({ id }) => id);
-  return { total: all.length, longest, onlyExplained };
+  return { total: all.length, longest, mixedStyle };
 }
 
 function checks(): Check[] {
@@ -151,10 +153,10 @@ function checks(): Check[] {
     { name: 'Drill frontmatter matches the concept cards', ok: problems.length === 0, detail: list(problems) },
     {
       name: "Read-the-code answers don't give themselves away",
-      ok: tells.longest <= tells.total * 0.4 && tells.onlyExplained.length === 0,
+      ok: tells.longest <= tells.total * 0.4 && tells.mixedStyle.length === 0,
       detail:
         `${tells.longest}/${tells.total} right answers are the longest choice (chance is about 1 in 3)` +
-        (tells.onlyExplained.length ? `; only the right one explained: ${list(tells.onlyExplained)}` : ''),
+        (tells.mixedStyle.length ? `; choices in mixed styles: ${list(tells.mixedStyle)}` : ''),
     },
   ];
 }

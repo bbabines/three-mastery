@@ -66,7 +66,9 @@ export const lighting: SceneSetup = ({ scene, camera, controls, container }) => 
     vertexShader: /* glsl */ `
       varying vec3 vNormal;
       void main() {
-        vNormal = normalize(mat3(modelMatrix) * normal);
+        // The sphere is never rotated or scaled, so its normals already face their world
+        // directions. The normal matrix page covers turning normals for moved objects.
+        vNormal = normal;
         gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
       }`,
     fragmentShader: /* glsl */ `

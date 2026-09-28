@@ -1,9 +1,7 @@
 // Scenes for the length page. The README places each one with <div data-scene="name">.
-import { ball, COLORS, formatNumber, formatVector, label, line, overlay, setLine, slider } from '@harness/lesson';
+import { ball, COLORS, formatNumber, formatVector, label, LABEL_LIFT, line, overlay, setLine, slider } from '@harness/lesson';
 import type { SceneSetup } from '@harness/scene';
 import * as THREE from 'three';
-
-const LIFT = new THREE.Vector3(0, 0.45, 0);
 
 export const distance: SceneSetup = ({ scene, camera, container }) => {
   camera.position.set(1, 7, 6);
@@ -15,7 +13,7 @@ export const distance: SceneSetup = ({ scene, camera, container }) => {
   const aBall = ball(COLORS.yellow);
   aBall.position.copy(a);
   const aTag = label('A', COLORS.yellow);
-  aTag.position.copy(a).add(LIFT);
+  aTag.position.copy(a).add(LABEL_LIFT);
   const bBall = ball(COLORS.orange);
   const bTag = label('B', COLORS.orange);
   const straight = line(COLORS.green);
@@ -28,7 +26,7 @@ export const distance: SceneSetup = ({ scene, camera, container }) => {
 
   const update = () => {
     bBall.position.copy(b);
-    bTag.position.copy(b).add(LIFT);
+    bTag.position.copy(b).add(LABEL_LIFT);
     const corner = new THREE.Vector3(b.x, a.y, a.z);
     setLine(eastWest, a, corner);
     setLine(northSouth, corner, b);

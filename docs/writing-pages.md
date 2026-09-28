@@ -1,6 +1,6 @@
 # Writing a Loop 1 page
 
-Every concept gets one page with three parts: **A · The basics**, **B · Working knowledge**, and **Drill · Read the code**. The Domain 1 pages are the reference; Point vs direction and Dot product show the full shape. Copy them rather than inventing a new layout.
+Every concept gets one page with three parts: **A · The basics**, **B · Working knowledge**, and **Drill · Read the code**. The Domain 1 pages are the reference, so copy their layout rather than inventing a new one. Point vs direction is the page Brad reviewed and approved. The other Domain 1 pages follow the same recipe but haven't had a page-by-page review, so treat their tone and length as a guide, not a rule.
 
 ## Who it's for
 
@@ -9,7 +9,7 @@ Every concept gets one page with three parts: **A · The basics**, **B · Workin
 - Nothing theoretical or abstract anywhere: no homogeneous coordinates, no proofs, no formula walkthroughs.
 - Plain words. Define each term the first time it appears (origin, normal, unit vector). If a word is jargon, say what it means in the same sentence.
 - No hand calculation. The code does the arithmetic. The reader needs to know what an operation gives back, what it's for, and what it looks like when it goes wrong.
-- At most one formula, inside a collapsed note: `<details><summary>The math, if you're curious</summary>…</details>`.
+- At most one formula, inside a collapsed note: `<details><summary>The math, if you're curious</summary>…</details>`. The note is optional; add it only when seeing the formula once helps. It may show one small worked example, but a page never asks the reader to calculate.
 
 ## When the inventory's idea is theory
 
@@ -22,6 +22,14 @@ Some core ideas in the inventory are stated as theory, like "points use w=1 and 
 The theory can appear once, in the collapsed "The math" note, or not at all. Describe matrices by what they hold and when three.js updates them, never as 16 numbers; reading the numbers is its own concept in the debugging domain.
 
 When two domains cover related ideas, say how they differ. `math.point-vs-direction` is "a place versus a move". `transforms.points-vs-directions` is "what happens to each when an object moves, turns, or scales". Link back to the earlier page instead of re-teaching it.
+
+The same goes for the inventory's use contexts. Some are written as theory, like "Transforming with w=1 vs w=0" on the Point vs direction card. Keep the card's wording, but pages and drills that use the context teach its behavior: what `applyMatrix4` and `transformDirection` do to a Vector3.
+
+## Wording by domain
+
+- **Coordinate spaces and transforms (2):** "local" means two things in three.js. An object's `position` is measured from its parent, but the point you pass to `object.localToWorld(v)` is measured from the object itself. Say "measured from its parent" or "measured from the object itself", and don't use "local" on its own.
+
+Add a line here whenever a domain needs a wording decision, so later pages stay consistent.
 
 ## Files
 
@@ -60,7 +68,7 @@ contexts:
 - Add `## Space lens` or `## Cost lens` only where they matter, in plain words.
 - **Prerequisites** are the concepts the page actually relies on. They can be in another domain; `pick.ts` enforces them across domains.
 - **Contexts** are the inventory's use contexts, each with a short kebab-case key.
-- **Misconceptions** use the inventory's wording word for word, each with a short kebab-case key. Wrap each in single quotes, keep any double quotes inside, and double any apostrophe (`'"Order doesn''t matter."'`).
+- **Misconceptions** use the inventory's wording word for word, each with a short kebab-case key. When the wording contains double quotes or a colon, wrap it in single quotes and double any apostrophe inside (`'"Order doesn''t matter."'`). Plain wording needs no quotes (`Parallel inputs give zero.`).
 - An inventory cell can mix wrong ideas with the facts that correct them. Each wrong idea, like "Every matrix decomposes cleanly.", is an entry. A surprising fact that stands alone, like "Parallel inputs give zero.", is an entry too. A sentence that only qualifies the one before it, like "Shear is lost.", stays in that same entry: `'"Every matrix decomposes cleanly." Shear is lost.'`
 
 ### Frontmatter for the page
@@ -134,8 +142,8 @@ marker.position.copy(b);`,
 
 - The code is 2–6 lines of real three.js or GLSL.
 - The question is a real question a reader can answer from the snippet. Asking about a variable in the snippet ("What is `dir`?") is fine. What's banned is an unexplained name standing in for the question, like asking for `velocityChangesInDock` without saying what it means.
-- There are always three choices, and the wrong ones are the card's misconceptions written as believable answers.
-- **Don't let the right answer give itself away.** Keep all three choices about the same length and in the same style: if one has a short reason after a colon, they all do. Put the full explanation in `why`. `npm run coverage` fails if the right answer is the longest choice in more than 40% of questions, or is the only one that explains itself.
+- There are always three choices. The wrong ones start with the card's misconceptions, written as believable answers. Most cards have only one to three misconceptions, so fill the rest with other mistakes people really make: expecting an error, a default value, the opposite sign, or the answer to a different question.
+- **Don't let the right answer give itself away.** Keep all three choices about the same length and in the same style: if one has a short reason after a colon, they all do. Put the full explanation in `why`. `npm run coverage` fails if the right answer is the longest choice in more than 40% of questions, or if a question mixes choices with and without a colon reason.
 - `why` teaches: what actually happens, and the fix.
 - Cover both halves: roughly half the questions from A, half from B.
 - Every misconception on the card needs a question, or a clear B section, that really exposes it. `npm run coverage` only checks that it's listed in the frontmatter.
@@ -153,7 +161,9 @@ export const agree: SceneSetup = ({ scene, camera, controls, container, onFrame 
 ```
 
 - Export each scene under the same name its `data-scene` uses.
-- Build from `harness/lesson.ts`: `label`, `ball`, `arrow` and `setArrow`, `line` and `setLine`, `overlay('readout' | 'controls')`, `slider`, `choiceButtons`, `formatNumber`, `formatVector`, and `COLORS`. Plain three.js objects (cones, planes, a `ShaderMaterial`) are fine too. When two or more scenes need the same new helper, add it to `lesson.ts` and to this list.
+- Build from `harness/lesson.ts`: `label` and `LABEL_LIFT`, `ball`, `pointer` (a cone that aims with `lookAt`), `arrow` and `setArrow`, `line` and `setLine`, `overlay('readout' | 'controls')`, `slider`, `choiceButtons`, `formatNumber`, `formatVector`, and `COLORS`.
+- The harness hands each scene its `controls` (the OrbitControls). A scene that drags objects with the pointer sets `controls.enabled = false` while dragging.
+- The harness adds a hemisphere light at intensity 2. Turn it down in a scene that needs its own lights to show. Plain three.js objects (cones, planes, a `ShaderMaterial`) are fine too. When two or more scenes need the same new helper, add it to `lesson.ts` and to this list.
 - Each scene shows one idea and is interactive: sliders change the input, or buttons compare right code with wrong code, like `lookAt(target.position)` against `lookAt(dir)`.
 - The readout shows the line of code and the live values it produces.
 - Use the scene's own numbers, not the questions' numbers.
@@ -162,8 +172,10 @@ export const agree: SceneSetup = ({ scene, camera, controls, container, onFrame 
 
 ## Before you call it done
 
-1. Check every claim against three.js r186 by running it in Node. That covers the prose, the snippets, and the `why` text; question code lives in strings, so typecheck never sees it.
-   `node --input-type=module -e 'import { Vector3 } from "three"; …'`
-   This is how Domain 1 confirmed that normalizing (0, 0, 0) returns (0, 0, 0), that `Math.acos(u.dot(u))` can be NaN, and the exact float32 gaps.
+1. Check every claim against three.js r186. Don't state three.js behavior from memory.
+   - Run numbers and results in Node. That covers the prose, the snippets, and the `why` text; question code lives in strings, so typecheck never sees it.
+     `node --input-type=module -e 'import { Vector3 } from "three"; …'`
+     This is how Domain 1 confirmed that normalizing (0, 0, 0) returns (0, 0, 0), that `Math.acos(u.dot(u))` can be NaN, and the exact float32 gaps.
+   - For behavior, like "does this method update the matrices first?", read the source in `node_modules/three/src`.
 2. Run `npm run typecheck` and `npm run coverage`. In `COVERAGE.md`, check that every misconception is exposed, the frontmatter matches the cards, and the answers don't give themselves away.
 3. Open the page in the viewer. Every scene mounts, the quiz renders, there are no console errors, and each scene's controls do what the text says.

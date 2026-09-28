@@ -14,7 +14,7 @@ Brad's repo for learning three.js and 3D graphics in plain language, then keepin
 Update this section whenever it changes.
 
 - **Built:** the drill viewer (`/harness/`), `pick.ts`, `coverage.ts`, `verify.ts`, and Loop 1 for Domain 1 (12 pages). The sidebar shows the whole plan, with unbuilt pages greyed out. There are also sandboxes for TSL and Gaussian splats in `/experiments`.
-- **Reviewed:** Brad approved the page format on Point vs direction. The other 11 Domain 1 pages haven't had a page-by-page review.
+- **Reviewed:** Brad approved the page format on Point vs direction. The other 11 Domain 1 pages haven't had a page-by-page review. Don't wait on it, but remind Brad it's open when starting Domain 2.
 - **Next:** Loop 1 for Domains 2–14, in the order in `scripts/lib/domains.ts`. This is the inventory's build order: Loop 1 for every domain comes before any later loop. For each new domain, build its first page and show Brad before building the rest, because a new domain raises new questions. Show Brad each finished domain before starting the next.
 - **Not built:** the Loop 1 checkpoint, Loops 2–4, Domain 15, the cross-domain drills, and placement checks for Loops 2–4.
 
@@ -47,10 +47,16 @@ Settle these before, or while, building the domains that need them.
 
 - **The Loop 1 checkpoint** has no design yet (question count, time limit, pass bar), and the tooling expects a code test. See `checkpoints/README.md`.
 - **Scores aren't logged.** A Loop 1 page is finished with `npm run pick -- done --pass`, which is self-reported. The quiz score never reaches `pick.ts`.
-- **Assets and scene graph domains (6–7)** want real loaded models. The repo has none and no loader helpers; check model licenses before adding any.
-- **Interaction domain (9):** drag scenes need pointer helpers, and a way to pause the `OrbitControls` the harness always turns on (`harness/scene.ts`).
+- **Assets and scene graph domains (6–7)** want real loaded models. The repo has none and no loader helpers; check model licenses before adding any. Don't use the `.glb` files on Brad's Desktop: they look like work assets.
+- **Interaction domain (9):** drag scenes need pointer helpers. Scenes already get `controls` and can set `controls.enabled = false` while dragging.
 - **GPU and optimization domains (10, 14):** Loop 1 describes costs in plain words. Measuring them in Loop 2 needs harness support, such as frame time and `renderer.info` readouts.
-- **No version history.** The folder isn't a git repository yet.
+- **Loops 2–4 and Domain 15 formats** aren't designed yet: which light concepts share a drill, what misconception traps and proof experiments look like, the AI review and teach-back formats, and the elective's page format.
+
+## Git
+
+- `origin` is `https://github.com/bbabines/three-mastery.git`, on branch `main`. The GitHub repo is named three-mastery; the folder is three-js-foundation.
+- Commits in this repo use Brad's personal email, set in the repo's own git config. Don't change it.
+- Commit and push only when Brad asks. Pushing needs Brad's GitHub login; if `git push` asks for credentials, Brad runs it.
 
 ## How Brad likes to work
 
@@ -72,3 +78,4 @@ Settle these before, or while, building the domains that need them.
 - In a `ShaderMaterial`, add `#include <colorspace_fragment>` at the end of the fragment shader for correct output color.
 - `sub`, `add`, `cross`, `normalize`, and `multiplyScalar` change the vector they're called on. Clone first in scene code.
 - `COVERAGE.md` counts a misconception as exposed when a page lists it in its frontmatter. Whether a question really exposes it is for you to check.
+- `pick.ts` only suggests a page once its concept's prerequisites are logged as done, even across domains. A new Domain 2 page won't show up in `pick` until Point vs direction is done.

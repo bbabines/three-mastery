@@ -32,7 +32,7 @@ Move the target with the sliders. The yellow arrow reaches the target. The green
 
 ### Why length 1 matters
 
-Lots of code expects its directions to have length 1: lighting, raycasting, and the dot product on the next page all give wrong answers otherwise. A unit direction also makes speed simple: multiply it by how far you want to go.
+Lots of code expects its directions to have length 1: lighting, raycasting, and the dot product all give wrong answers otherwise. A unit direction also makes speed simple: multiply it by how far you want to go.
 
 ## B · Working knowledge
 

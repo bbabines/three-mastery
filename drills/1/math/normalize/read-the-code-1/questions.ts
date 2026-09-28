@@ -22,7 +22,7 @@ ship.position.addScaledVector(velocity, delta);`,
     choices: [
       'The ship slows to 1 unit per second',
       'The ship now moves backwards, toward you',
-      'Nothing: normalizing is always safe to do',
+      'Nothing, since normalizing is always safe',
     ],
     answer: 0,
     why: "A velocity's length is its speed. `normalize()` threw the speed away and kept only the direction, so 6 units per second became 1.",

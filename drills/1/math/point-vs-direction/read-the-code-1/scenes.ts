@@ -1,9 +1,7 @@
 // Scenes for the point vs direction page. The README places each one with <div data-scene="name">.
-import { arrow, ball, choiceButtons, COLORS, formatVector, label, line, overlay, setArrow, setLine, slider } from '@harness/lesson';
+import { arrow, ball, choiceButtons, COLORS, formatVector, label, LABEL_LIFT, line, overlay, pointer, setArrow, setLine, slider } from '@harness/lesson';
 import type { SceneSetup } from '@harness/scene';
 import * as THREE from 'three';
-
-const LIFT = new THREE.Vector3(0, 0.45, 0);
 
 export const axes: SceneSetup = ({ scene, camera, controls, container }) => {
   camera.position.set(4.5, 4.5, 8.5);
@@ -76,7 +74,7 @@ export const move: SceneSetup = ({ scene, camera, controls, container, onFrame }
 
     setArrow(moveArrow, start.position, MOVE);
     end.position.copy(start.position).add(MOVE);
-    moveTag.position.copy(start.position).addScaledVector(MOVE, 0.5).add(LIFT);
+    moveTag.position.copy(start.position).addScaledVector(MOVE, 0.5).add(LABEL_LIFT);
 
     readout.innerHTML = [
       `<span style="color:${COLORS.yellow}">●</span> start      ${formatVector(start.position)}   changes`,
@@ -98,21 +96,17 @@ export const lookAt: SceneSetup = ({ scene, camera, controls, container }) => {
   const target = ball(COLORS.red);
   target.position.copy(targetPosition);
   const targetTag = label('target', COLORS.red);
-  targetTag.position.copy(targetPosition).add(LIFT);
+  targetTag.position.copy(targetPosition).add(LABEL_LIFT);
 
-  // The cone's tip points along +Z, the side lookAt turns toward the point.
-  const turret = new THREE.Mesh(
-    new THREE.ConeGeometry(0.22, 0.8, 24).rotateX(Math.PI / 2),
-    new THREE.MeshStandardMaterial({ color: COLORS.yellow }),
-  );
+  const turret = pointer(COLORS.yellow);
   turret.position.copy(turretPosition);
   const turretTag = label('turret', COLORS.yellow);
-  turretTag.position.copy(turretPosition).add(LIFT);
+  turretTag.position.copy(turretPosition).add(LABEL_LIFT);
 
   const wrongSpot = ball(COLORS.gray, 0.6);
   wrongSpot.position.copy(dir);
   const wrongTag = label('spot (0, 0, −3)', COLORS.gray);
-  wrongTag.position.copy(dir).add(LIFT);
+  wrongTag.position.copy(dir).add(LABEL_LIFT);
 
   const aimLine = line(COLORS.yellow);
   scene.add(target, targetTag, turret, turretTag, wrongSpot, wrongTag, aimLine);

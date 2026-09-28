@@ -1,17 +1,9 @@
 // Scenes for the angle page. The README places each one with <div data-scene="name">.
-import { ball, choiceButtons, COLORS, formatNumber, label, line, overlay, setLine, slider } from '@harness/lesson';
+import { ball, choiceButtons, COLORS, formatNumber, label, line, overlay, pointer, setLine, slider } from '@harness/lesson';
 import type { SceneSetup } from '@harness/scene';
 import * as THREE from 'three';
 
 const UP = new THREE.Vector3(0, 1, 0);
-
-// A cone whose tip points along +Z, the side lookAt and rotation turn toward.
-function pointer(color: string) {
-  return new THREE.Mesh(
-    new THREE.ConeGeometry(0.22, 0.8, 24).rotateX(Math.PI / 2),
-    new THREE.MeshStandardMaterial({ color }),
-  );
-}
 
 function signedAngle(forward: THREE.Vector3, toTarget: THREE.Vector3) {
   const cross = new THREE.Vector3().crossVectors(forward, toTarget);

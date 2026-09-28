@@ -133,6 +133,8 @@ export function renderNav(container: HTMLElement, drills: NavDrill[], selected: 
         loopGroup.append(domainGroup(`${loopId}/${domain.slug}`, domain, loop.n, loop.n === 1 && domain.n === 1));
       }
     } else {
+      // Loop 4 is still only a plan: nothing here links to built drills yet. When the first
+      // cross-domain drill is built, match it by title and link it like the loops above.
       const cross = group(
         `${loopId}/cross`,
         'domain',

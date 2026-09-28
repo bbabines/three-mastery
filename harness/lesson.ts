@@ -33,6 +33,18 @@ export function label(text: string, color: string) {
   return sprite;
 }
 
+// Add to a position to float a label just above the thing it names.
+export const LABEL_LIFT = new THREE.Vector3(0, 0.45, 0);
+
+// A cone whose tip points along +Z, the side `lookAt` turns toward its target. Use it for
+// anything that aims: turrets, cameras, spotlights.
+export function pointer(color: string, size = 1) {
+  return new THREE.Mesh(
+    new THREE.ConeGeometry(0.22 * size, 0.8 * size, 24).rotateX(Math.PI / 2),
+    new THREE.MeshStandardMaterial({ color }),
+  );
+}
+
 export function ball(color: string, opacity = 1, radius = 0.16) {
   return new THREE.Mesh(
     new THREE.SphereGeometry(radius),

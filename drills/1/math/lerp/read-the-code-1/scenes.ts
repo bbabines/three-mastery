@@ -1,9 +1,7 @@
 // Scenes for the lerp page. The README places each one with <div data-scene="name">.
-import { ball, COLORS, formatNumber, formatVector, label, line, overlay, setLine, slider } from '@harness/lesson';
+import { ball, COLORS, formatNumber, formatVector, label, LABEL_LIFT, line, overlay, setLine, slider } from '@harness/lesson';
 import type { SceneSetup } from '@harness/scene';
 import * as THREE from 'three';
-
-const LIFT = new THREE.Vector3(0, 0.45, 0);
 
 export const blend: SceneSetup = ({ scene, camera, controls, container }) => {
   camera.position.set(0, 3.5, 5.5);
@@ -17,11 +15,11 @@ export const blend: SceneSetup = ({ scene, camera, controls, container }) => {
   const aBall = ball(COLORS.blue, 0.5);
   aBall.position.copy(a);
   const aTag = label('A  t = 0', COLORS.blue);
-  aTag.position.copy(a).add(LIFT);
+  aTag.position.copy(a).add(LABEL_LIFT);
   const bBall = ball(COLORS.orange, 0.5);
   bBall.position.copy(b);
   const bTag = label('B  t = 1', COLORS.orange);
-  bTag.position.copy(b).add(LIFT);
+  bTag.position.copy(b).add(LABEL_LIFT);
 
   // The line runs past both ends, where t goes below 0 or above 1.
   const track = line(COLORS.gray, 0.5);

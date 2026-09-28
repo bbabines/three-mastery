@@ -13,7 +13,7 @@ for (const enemy of enemies) {
     choices: [
       'No: the closest is still the smallest when squared',
       'Yes: squaring reorders enemies more than a unit away',
-      'Only when all enemies are within 1 unit',
+      'Sometimes: only for enemies within 1 unit',
     ],
     answer: 0,
     why: 'Squaring keeps the order: whichever enemy is closest also has the smallest squared distance. You only need the real distance when you show it or compare it with an actual measurement.',

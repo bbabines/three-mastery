@@ -1,5 +1,5 @@
 // Scenes for the spherical coordinates page. The README places each one with <div data-scene="name">.
-import { ball, COLORS, formatNumber, formatVector, label, line, overlay, setLine, slider } from '@harness/lesson';
+import { ball, COLORS, formatNumber, formatVector, label, line, overlay, pointer, setLine, slider } from '@harness/lesson';
 import type { SceneSetup } from '@harness/scene';
 import * as THREE from 'three';
 
@@ -23,11 +23,7 @@ export const orbit: SceneSetup = ({ scene, camera, controls, container }) => {
   const top = line(COLORS.green, 0.8);
   const topTag = label('phi 0: straight up', COLORS.green);
 
-  // The orbiting camera: a cone whose tip, along +Z, lookAt turns toward the center.
-  const orbiter = new THREE.Mesh(
-    new THREE.ConeGeometry(0.18, 0.5, 20).rotateX(Math.PI / 2),
-    new THREE.MeshStandardMaterial({ color: COLORS.yellow }),
-  );
+  const orbiter = pointer(COLORS.yellow, 0.7); // the orbiting camera
   const arm = line(COLORS.yellow, 0.7);
   scene.add(centerBall, centerTag, shell, top, topTag, orbiter, arm);
 
