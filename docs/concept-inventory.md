@@ -1,0 +1,529 @@
+# Three.js Foundations — Concept Inventory
+
+Sep 25, 2026 · Brad
+
+Revised Sep 25, 2026 after reviewing the first build: Loop 1 now teaches every concept in plain language (an A/B page plus a read-the-code drill) instead of testing it. Predictions and hand calculation are gone, read-the-code replaces hand-compute, and the Loop 1 placement check is dropped.
+
+## Builder brief
+
+This doc is the source of truth for a repo that teaches foundational three.js and 3D graphics skills in plain language, then keeps them fresh with short manual drills. Build from it, and flag any concept you want to add rather than adding it silently.
+
+**Goals**
+
+- Teach in plain terms first: start from the most basic idea and build up, with no theory, abstraction, or hand math.
+- Lock in foundational knowledge by doing, so it survives long stretches on a stable engine.
+- Prove manual capability without AI assistance.
+- Keep concepts separate from use cases, so no concept gets confused with the first place it was learned.
+- Cover only knowledge that stays valuable as AI improves: what you need to read, debug, or evaluate 3D code.
+
+**Constraints**
+
+- Each drill takes 5–20 minutes. No projects, full scenes, or features.
+- Drills run inside a shared minimal harness (renderer, camera, scene, test runner). The drill file holds only the work.
+- Allowed during a drill: three.js docs and three.js source. Not allowed: AI tools and the solutions folder.
+- Stack: Vite, TypeScript, three.js at one pinned version, Vitest for code checks.
+- Out of scope: React Three Fiber, WebGPU/TSL, Gaussian splats, WebXR, character animation, physics, ECS. TSL and Gaussian splats have sandboxes in `/experiments`, outside the curriculum.
+
+**Concept cards.** One markdown card per concept in `/concepts`, with these fields:
+
+- Definition: one context-free sentence.
+- Prerequisites: concept IDs. Tier: core or light, per the Tiers section.
+- Misconceptions: the wrong models listed in this doc, each exposed by at least one drill.
+- Use contexts: at least three unrelated ones, rotated across drills.
+- Space lens: which coordinate space each value is in, only where it matters.
+- Cost lens: CPU, GPU, or memory cost, only where it matters.
+
+**Drill modes.** Core concepts get at least one drill per mode across the loops; light concepts get read the code, apply, and break-and-fix.
+
+1. Read the code: short three.js or shader snippets with multiple-choice questions, graded on the page. No arithmetic.
+2. Implement: write the working code yourself where building it is the practical skill, like a ray from the mouse or a drag on a plane. Never re-implement math three.js already provides.
+3. Apply: use it in an assigned context, rotated across drills.
+4. Break-and-fix: a subtly wrong implementation with a visible symptom to diagnose.
+
+**Loop 1 pages.** Every concept gets one page with three parts. A · The basics is for a first-time learner: the idea in plain words, an analogy, and a scene to play with. B · Working knowledge is what a working developer knows: the code you'd write, the mistakes people make, and which methods want which kind of value. The Drill is read-the-code questions covering both halves. Light concepts get a shorter page. Formulas appear at most once, in a collapsed note.
+
+**Drill file format.** Frontmatter with `id` (loop.domain.concept.mode.n), `loop`, `tier`, `concepts`, `mode`, `context`, `minutes`, `lenses`, and `misconceptions`. A Loop 1 page's body is its A, B, and Drill sections. A code drill's body is the task, starter code, acceptance check (automated test or stated visual check), hidden hint, and one reflection question: where else does this concept apply?
+
+**Repo layout**
+
+```
+/harness      shared scene setup, drill viewer, and test helpers
+/concepts     one card per concept
+/drills       <loop>/<domain>/<concept>/<drill>
+/placement    one check per domain for Loops 2–4
+/checkpoints  one timed set per loop
+/cross        cross-domain drills
+/solutions    mirrored tree, never opened during a drill
+/scripts      pick.ts (loop-aware drill picker), coverage.ts
+/experiments  sandboxes outside the curriculum
+COVERAGE.md   generated from drill frontmatter
+```
+
+**Spaced practice.** `pick.ts` suggests the next drill, weighting the domains and modes practiced least recently, and logs completion time.
+
+**Build order.** Build the harness, `pick.ts`, and Loop 1 for Domain 1, then stop for review. After approval, build Loop 1 for all domains so practice can start, then build each later loop while the previous one is in progress. Build Domain 15 after core Loop 2.
+
+## Learning loops
+
+The repo runs as four loops. Each loop covers every domain at a higher bar, so every core concept is revisited at spaced intervals rather than drilled once in a row.
+
+| Loop | Proves | Drill modes | Scope | Est. drills |
+| --- | --- | --- | --- | --- |
+| 1. Literacy | I understand it and can read it in code | A/B page, read the code | Every concept, one page each; light pages are shorter | ~152 |
+| 2. Fluency | I can write it | Implement, apply | Core: two each. Light: apply, two concepts per drill | ~184 |
+| 3. Diagnosis | I can find what's wrong and prove it | Break-and-fix, misconception traps, proof experiments | Core: one each. Light: two concepts per drill | ~112 |
+| 4. Judgment | I can evaluate and direct | Cross-domain, AI review, teach-back | Integration across domains | ~45 |
+
+The total is about 490 pages and drills, or roughly 16 months at one a day. Placement checks in Loops 2–4 should cut that by an estimated 25–40% for a working practitioner.
+
+**Loop rules**
+
+- Placement check: each domain opens Loops 2–4 with a timed, no-docs check of 2–3 minutes. Passing every part skips that domain's drills for that loop; any miss means doing them. Loop 1 has none: to test out of a page, collapse A and B and go straight to the drill.
+- Checkpoint: each loop closes with a timed, no-docs set sampling every domain. Pass it before starting the next loop.
+- Interleaving: `pick.ts` mixes domains within a loop while respecting prerequisites.
+- Maintenance: after Loop 4, `pick.ts` rotates drills from all loops, weighted toward the least recently practiced concepts and the weakest checkpoint results.
+- Elective: Domain 15 runs its own four-loop pass after core Loop 2, since it needs shader fluency.
+
+**Judgment-loop drill types**
+
+- AI review: plausible generated code with one subtle flaw or a worse trade-off. Find it, prove it, and fix it within the time limit. Regenerate these periodically from current AI output, because the mistakes AI makes change as models improve.
+- Teach-back: explain a concept in five plain sentences, then check against its concept card.
+- Cross-domain: the drills listed in the Cross-domain section.
+
+## Tiers
+
+72 of the 152 core-path concepts are core and get every drill mode. The other 80 are light and get a shorter Loop 1 page, then apply and break-and-fix, often two concepts per drill. Promote a light concept to core if it starts mattering in real work.
+
+| Domain | Core concepts (everything else in the domain is light) |
+| --- | --- |
+| 1. 3D Math Primitives | Point vs direction; dot product; cross product; projection and rejection; angle between and signed angle; floating-point tolerance |
+| 2. Coordinate Spaces & Transforms | Local vs world space; matrix vs matrixWorld; update timing; TRS order; points vs directions; inverse matrices; normal matrix |
+| 3. Rotation | Euler angles and order; quaternions; rotation matrix as a basis; lookAt and the up vector |
+| 4. Camera & Projection | View matrix; projection matrix; clip space, NDC, screen; project and unproject; depth precision |
+| 5. Geometry & Buffer Data | BufferAttribute and itemSize; indexed vs non-indexed; winding order; face normals by hand; vertex normals; tangent space and normal maps |
+| 6. Assets & Runtime Delivery | glTF structure; decode, upload, compile; runtime memory math; disposal ownership |
+| 7. Scene Graph Traversal & Inspection | Traverse variants; world-space bounds; clone semantics |
+| 8. Spatial Queries | Ray from pointer; intersection anatomy; ray–plane; ray–triangle; BVH |
+| 9. Interaction & Manipulation | Drag on a plane; axis-constrained drag; local vs world manipulation; 3D-to-2D anchoring; frame-rate-independent motion |
+| 10. GPU Pipeline & Bottleneck Diagnosis | Pipeline stages; draw call anatomy; depth buffer and early-z; blending and transparency; render targets; multi-pass and post-processing; frame budget; measurement tools |
+| 11. Materials, Lighting & Color | Color spaces; tone mapping and exposure; diffuse (Lambert); PBR metal and roughness; environment maps and IBL |
+| 12. Shaders | Vertex vs fragment; attributes, uniforms, varyings; built-in matrices and spaces; built-in functions; debug output |
+| 13. Debugging & Visualization | Triage; reading matrices; isolation; frame capture |
+| 14. Optimization & Memory | Draw call reduction; resolution and DPR; allocation hygiene; texture budget; leak detection |
+
+## Primer: where work runs
+
+Every cost-lens note asks one question: does this spend CPU time, GPU time, or memory? Read this before Domain 1 so the lens works from the start.
+
+| Where | What runs there | Cost scales with |
+| --- | --- | --- |
+| CPU (JS main thread) | App logic, matrix updates, traversal, frustum culling, raycasting, sorting, issuing draw calls, garbage collection | Object count, draw calls, allocations |
+| GPU vertex stage | Vertex shader, once per vertex per pass | Vertex count × instances × passes |
+| GPU fragment stage | Fragment shader, once per covered pixel, including overdraw | Pixel count, overdraw, shader complexity |
+| GPU memory | Vertex buffers, textures, render targets | Vertex data size, texture dimensions |
+| CPU→GPU upload | First use of a buffer or texture, or after `needsUpdate` | Size of changed data |
+
+- Frame budget is 16.67 ms at 60 Hz and 8.33 ms at 120 Hz. CPU and GPU work overlap, so the slower side sets frame time.
+- `renderer.render()` returning quickly proves nothing about the GPU. WebGL calls queue work that runs later.
+- Pixel count scales with DPR squared. DPR 2 means four times the fragments of DPR 1.
+- An uncompressed texture costs width × height × 4 bytes, plus about a third more for mipmaps.
+
+## 1. 3D Math Primitives
+
+Vectors are the vocabulary for every later domain. Loop 1 pages here start from zero: the origin, the axes, and what a Vector3 is.
+
+| Concept | Core idea | Misconceptions to expose | Use contexts to rotate |
+| --- | --- | --- | --- |
+| Point vs direction | A point is a location; a direction is a displacement. Point − point = direction. | "A Vector3 is always a position." | Position vs velocity; midpoint of two parts; transforming with w=1 vs w=0 |
+| Length and lengthSq | Magnitude; lengthSq skips the square root. | "Comparing distances needs the real length." | Nearest-object search; radius check; speed clamp |
+| Normalize | Scale to length 1, keeping direction. | "Always normalize." A zero vector can't be normalized. | Direction to a target; surface normal; ray direction |
+| Dot product | ‖a‖‖b‖cosθ: a continuous scalar measuring alignment. | "Only −1, 0, or 1." "Always within [−1, 1]." acos of an unclamped dot returns NaN. | Front/behind test; Lambert N·L; projection length on an axis; signed distance to a plane; cone check |
+| Cross product | A vector perpendicular to both inputs. Length ‖a‖‖b‖sinθ is the parallelogram area; direction follows the right-hand rule. | "Returns a unit vector." "Order doesn't matter." Parallel inputs give zero. | Triangle normal; left/right turn test; building an orthonormal basis; triangle area |
+| Projection and rejection | Projection is the part of a along b; rejection is what's left. | "Zero one axis to project onto a plane" only works for axis-aligned planes. | Sliding along a wall; constraining motion to an axis; closest point on a line |
+| Reflection | r = d − 2(d·n)n, with n unit length. | "n doesn't need normalizing." | Bounce direction; mirror camera; specular reflection vector |
+| Lerp | a + (b − a)t. | "Lerped unit vectors stay unit length." "t stays within 0–1"; outside, it extrapolates. | Positions; colors; blend weights |
+| Angle between and signed angle | angleTo is unsigned (0 to π). A signed angle needs atan2(cross·axis, dot). | "angleTo tells you which way to turn." | Dial or knob rotation; turn direction; compass heading |
+| Spherical coordinates | Radius, polar angle phi from +Y, azimuth theta around Y. | "Phi is measured from the equator." The poles are degenerate. | Orbit camera; points on a sphere; latitude/longitude |
+| Scalar triple product | a·(b×c) is a signed volume; its sign gives orientation. | "Handedness can't be computed." | Point above or below a triangle; mirrored basis check; tetrahedron volume |
+| Floating-point tolerance | Compare with an epsilon, not ==. | "Equal math means equal floats." | Vector equality tests; degenerate triangles; coplanar checks |
+
+**Lens notes**
+
+- Space: dot and cross only mean something when both inputs share a space.
+- Cost: the math is cheap; allocation isn't. `new Vector3()` in a per-frame loop feeds the garbage collector, so drills use scratch vectors.
+- Cost: lengthSq over length matters only in hot loops, such as per-vertex or per-object checks.
+
+## 2. Coordinate Spaces & Transforms
+
+Most 3D bugs are a correct value in the wrong space. Every drill in this domain names its input and output space.
+
+| Concept | Core idea | Misconceptions to expose | Use contexts to rotate |
+| --- | --- | --- | --- |
+| Local vs world space | Each object has its own frame; world is the scene root's frame. | "object.position is the world position." | A part's world position; attaching a light to a part; comparing nested objects |
+| matrix vs matrixWorld | matrix is local TRS relative to the parent. matrixWorld = parent.matrixWorld × matrix. | "matrixWorld is always current." | Reparenting; world-space bounds; exporting transforms |
+| Update timing | updateMatrix and updateMatrixWorld refresh matrices; render does it automatically. | Reading matrixWorld right after setting position returns the old value. | Raycasting right after a move; bounds after a transform; syncing to external data |
+| TRS order | A point is scaled, then rotated, then translated. multiply vs premultiply decides which frame a change applies in. | "Order doesn't matter." Non-uniform scale on a parent shears rotated children. | Rotating around a pivot; orbiting a point; scaling a rotated part |
+| compose and decompose | Build a matrix from position, quaternion, and scale, or split one apart. | "Every matrix decomposes cleanly." Shear is lost. | Baking transforms; extracting world rotation; copying a world transform |
+| Points vs directions | Points use w=1 and pick up translation; directions use w=0. | "applyMatrix4 works for directions." | Transforming a hit point; transforming a ray direction; transforming a velocity |
+| Inverse matrices | The inverse maps back: world to local, or world to view. | "Inverse equals transpose." True only for pure rotation. | worldToLocal; a hit point in object space; building a view matrix |
+| add vs attach | add keeps local values, so the object may jump. attach keeps the world transform. | "Reparenting never moves anything." | Picking up an object; grouping a selection; moving a part onto a rack |
+| Pivots and offset groups | Rotate or scale around a point other than the origin through a parent offset. | "Rotation always happens around the geometry's center." | Door hinge; rotating around a bounding box center; scaling from a corner |
+| Normal matrix | Normals transform by the inverse transpose of the upper 3×3. | "Normals transform like directions." This breaks under non-uniform scale. | Lighting a squashed object; face normal to world; rim effects |
+| Negative scale and determinant | A negative determinant mirrors. three.js flips culling for mirrored objects, but not for mirrored vertex data. | "Mirroring by object scale and by baked geometry behave the same." | Left/right product variants; mirrored imports; baking transforms into geometry |
+
+**Lens notes**
+
+- Space: this domain is the space lens. Every answer states which space it is in.
+- Cost: updateMatrixWorld walks the whole subtree every frame. Static objects can set matrixAutoUpdate to false.
+
+## 3. Rotation
+
+Rotation has several representations. The skill is knowing what each is good for and converting between them without surprises.
+
+| Concept | Core idea | Misconceptions to expose | Use contexts to rotate |
+| --- | --- | --- | --- |
+| Euler angles and order | Three angles applied in a set order; three.js defaults to XYZ. | "Order doesn't matter." "rotation.y is always yaw." | UI rotation sliders; reading imported rotations; yaw/pitch camera |
+| Gimbal lock | When the middle axis reaches ±90°, two axes align and one degree of freedom is lost. | "It's a bug in the math library." | Camera pitched straight down; turntable at extremes; interpolating Euler angles |
+| Axis-angle | Rotate by an angle around a unit axis. | "rotateOnAxis uses world axes." | Hinges; spinning around a tilted axis; rotateOnAxis vs rotateOnWorldAxis |
+| Quaternions | A unit 4D value; q and −q are the same rotation. q.multiply(d) applies d in local space; q.premultiply(d) applies it in world space. | "The components are angles." "Multiplication order doesn't matter." | Accumulating rotations; local vs world deltas; orientation from two vectors |
+| Slerp | Constant angular speed along the shortest arc. | "Lerping Euler angles is equivalent." | Camera orientation transitions; turning to face a target; blending orientations |
+| Rotation matrix as a basis | The columns are the object's rotated right, up, and forward axes. | "A matrix is an opaque box of numbers." | Reading forward from a matrix; makeBasis from three axes; extracting local axes |
+| lookAt and the up vector | Builds a basis from forward and up; degenerates when forward is parallel to up. | "Everything faces the target the same way." Cameras and lights look down −Z; other objects point +Z at the target. | Billboards; aiming a spotlight; top-down camera |
+| Rotating around a point | Translate to the point, rotate, translate back. | "Rotation always happens around the origin." | Orbit; hinge; spinning a product around its center |
+| Converting representations | Euler, quaternion, matrix, and axis-angle all convert; Euler round-trips can return different but equivalent angles. | "A round-trip returns the same numbers." | Serializing state; displaying rotation in UI; comparing orientations |
+
+**Lens notes**
+
+- Space: rotateX and multiply act in local space; rotateOnWorldAxis and premultiply act in world space.
+
+## 4. Camera & Projection
+
+A camera is two matrices. Knowing them lets you move any point between world, screen, and back.
+
+| Concept | Core idea | Misconceptions to expose | Use contexts to rotate |
+| --- | --- | --- | --- |
+| View matrix | camera.matrixWorldInverse maps world into camera space. | "The view matrix is the camera's transform." It's the inverse. | View-space depth; camera-relative UI; billboards |
+| Projection matrix | Perspective uses vertical FOV, aspect, near, and far. Orthographic uses a box. | "FOV is horizontal." "Narrowing FOV equals moving closer." | Zoom vs dolly; orthographic thumbnails; isometric views |
+| Clip space, NDC, screen | Divide clip coordinates by w to get NDC (−1 to 1), then map to pixels with y flipped. | "NDC y points down like CSS." | Pointer to NDC; world point to label position; off-screen test |
+| project and unproject | project maps world to NDC; unproject maps NDC to world at a chosen depth. | "A point behind the camera always lands off-screen." It can land on-screen; check z. | 3D labels; placing an object under the cursor; building a ray |
+| Depth precision | Perspective depth is non-linear, so precision concentrates near the near plane. | "The far plane causes z-fighting." Near is the main lever. | Coplanar decals; large scenes; logarithmic depth trade-off |
+| Frustum | Six planes derived from projection × view. | "Frustum culling tests triangles." | Visibility test; culling; fitting a shadow camera |
+| Aspect and resize | Update aspect and call updateProjectionMatrix after resizing. | "setSize fixes the aspect." | Window resize; split views; rendering a thumbnail at a new size |
+| Fit to bounds | Distance from bounding sphere radius and FOV, using the narrower FOV axis. | "Vertical FOV is enough on portrait screens." | Focus on a part; auto-frame on load; thumbnail generation |
+| World size per pixel | At distance d: 2·d·tan(fov/2) ÷ viewport height. | "On-screen size is constant across depth." | Constant-size hotspots; LOD selection; gizmo scaling |
+| Camera-relative directions | Forward from getWorldDirection; right from forward × up. | "Camera forward is +Z." | Screen-aligned panning; WASD movement; dragging parallel to the view |
+
+**Lens notes**
+
+- Space: this domain completes the chain local → world → view → clip → NDC → screen. Each drill names its two ends.
+- Cost: projecting hundreds of labels per frame is fine CPU work; thousands belong in a shader or points.
+
+## 5. Geometry & Buffer Data
+
+A mesh is typed arrays plus rules for reading them. Drills build and inspect that data directly.
+
+| Concept | Core idea | Misconceptions to expose | Use contexts to rotate |
+| --- | --- | --- | --- |
+| BufferAttribute and itemSize | A flat typed array; count = length ÷ itemSize. | "Array index equals vertex index." | Reading vertex 7's position; writing a color attribute; custom per-vertex data |
+| Interleaved attributes | Several attributes share one buffer with a stride and offset. | "Every attribute has its own array." | Reading loaded glTF data; manual vertex edits; cache-friendly layouts |
+| Indexed vs non-indexed | An index lets triangles share vertices. | "Shared vertices can have different normals." | Memory savings; flat shading; per-face colors |
+| Winding order | Counter-clockwise vertex order marks the front face. | "Flipping normals flips culling." Culling uses winding, not normals. | Inside-out imports; mirrored geometry; DoubleSide trade-offs |
+| Face normals by hand | normalize(cross(b − a, c − a)). | "The face normal is the average of its vertex normals." | Flat shading; back-face test against a direction; raycast face normal |
+| Vertex normals | Averaged face normals; hard edges need duplicated vertices. | "Imported normals are always right." | Smoothing artifacts; low-poly look; fixing bad normals |
+| UVs | 2D texture coordinates, usually 0 to 1. A second UV set feeds light and AO maps. | "UVs must stay within 0–1." | Texture mapping; generating box UVs; lightmap setup |
+| Bounding box and sphere | Computed in local space and stored on the geometry; stale after edits. | "geometry.boundingBox is in world space." | Culling; raycast early-out; camera fitting |
+| Updating buffers | Set needsUpdate after edits; setDrawRange limits what draws. | "Editing the array updates the GPU." | Deforming vertices; progressive reveal; per-vertex highlight |
+| Groups and multi-material | Groups map index ranges to material slots; each group is a draw call. | "One mesh is always one draw call." | Per-part materials; draw call audit; raycast materialIndex |
+| InstancedMesh | One geometry and material drawn many times with per-instance matrices. | "Instances can use different materials." | Repeated hardware; selection by instanceId; per-instance color |
+| Tangent space and normal maps | Tangent, bitangent, and normal form a per-vertex basis (TBN). Tangent-space normal maps store surface detail relative to it. | "Normal map colors are world directions." "The green channel convention doesn't matter." glTF and three.js use +Y (OpenGL); Unreal uses −Y (DirectX). | Surface detail on low-poly meshes; mirrored UVs breaking lighting; importing maps from Substance or Unreal |
+
+**Lens notes**
+
+- Space: attribute positions are in local space.
+- Space: tangent space is a fourth space alongside local, world, and view. Normal-map drills state which space each normal is in.
+- Cost: vertex count drives vertex-stage cost; each group or material adds a draw call.
+- Memory: position, normal, and UV as float32 cost 32 bytes per vertex; indices cost 2 or 4 bytes each.
+
+## 6. Assets & Runtime Delivery
+
+A loaded model has four separate costs: download, decode, GPU upload, and shader compile. File size predicts only the first.
+
+| Concept | Core idea | Misconceptions to expose | Use contexts to rotate |
+| --- | --- | --- | --- |
+| glTF structure | Scenes → nodes → meshes → primitives → accessors → buffer views → buffers, plus materials and textures. | "One glTF mesh becomes one three.js Mesh." Multi-primitive meshes become a Group. | Finding a part by node name; auditing material assignments; explaining unexpected child meshes |
+| Load lifecycle | Loading is async, with progress, completion, and failure states. | "onLoad means it will render without a hitch." | Loading indicators; dependent loads; error states |
+| Decode, upload, compile | GPU upload happens on first render; shader programs compile on first use. | "Once loaded, it renders instantly." | First-interaction hitch; variant switch; pre-warming with compileAsync |
+| Draco vs Meshopt | Draco gives the smallest download with a heavier decode. Meshopt decodes fast and pairs with gzip or brotli. | "Compressed geometry uses less GPU memory." Both decode to full buffers. | Payload budget; mobile decode time; choosing per asset |
+| KTX2 and Basis textures | Transcode to GPU-native formats that stay compressed in VRAM. | "A 200 KB JPG costs 200 KB of memory." It decodes to raw RGBA. | Mobile VRAM budget; large swatch libraries; texture-heavy products |
+| Runtime memory math | Texture bytes ≈ w × h × 4 × 1.33 with mipmaps; geometry bytes come from attribute sizes. | "File size equals memory size." | A model's footprint; mobile tab crashes; comparing variants |
+| Reuse and caching | Load once per URL; share geometry, materials, and textures across uses. | "Loading the same URL twice is free." | Repeated parts; variant swaps; duplicate-load leaks |
+| Disposal ownership | Removing from the scene frees nothing on the GPU. Dispose the geometry, materials, and textures you own. | "remove() frees memory." Disposing a shared resource breaks its other users. | Variant switching; SPA route changes; long sessions |
+| Preload vs lazy load | Trade startup time against memory and first-use latency. | "Preload everything." | Likely-next variant; off-screen models; priority ordering |
+
+**Lens notes**
+
+- Cost: download is network time; decode is CPU or worker time; upload and compile stall the main thread.
+- Memory: JS heap and GPU memory are separate budgets. An uncompressed 2048 × 2048 texture is about 22 MB with mipmaps.
+- Texture color space for loaded assets is covered in Domain 11.
+
+## 7. Scene Graph Traversal & Inspection
+
+Traversal is how you question a scene you didn't build. Drills use unfamiliar loaded models, not hand-made scenes.
+
+| Concept | Core idea | Misconceptions to expose | Use contexts to rotate |
+| --- | --- | --- | --- |
+| Traverse variants | traverse visits everything; traverseVisible skips hidden subtrees; traverseAncestors walks up. | "traverseVisible still visits children of hidden objects." | Collecting meshes; finding the product root from a clicked mesh; applying an override |
+| Finding objects | getObjectByName returns the first match; type flags like isMesh filter. | "Names are unique." glTF doesn't guarantee it. | Finding a node; grouping by material; locating lights |
+| Safe mutation | Collect during traversal, then add, remove, or replace afterward. | "Removing inside traverse is fine." | Removing helpers; replacing meshes; splitting groups |
+| World-space bounds | Box3.setFromObject returns a world AABB, which grows under rotation. | "Object bounds equal geometry.boundingBox." | Camera fit; floor placement; footprint measurement |
+| Scene statistics | Count meshes, triangles, and unique geometries, materials, and textures by uuid. | "100 meshes sharing a material is one draw call." | Asset audit; before/after optimization; variant comparison |
+| Visibility, removal, layers | visible = false skips rendering; layers filter per camera and per raycaster. | "Invisible objects can't be raycast." They can. | Hiding a part; excluding helpers from picks; per-view visibility |
+| userData and metadata | glTF extras arrive as userData. | "Metadata must live outside the scene." | Tagging parts with IDs; marking parts selectable; storing an original material |
+| Material override and restore | Store originals, swap, then restore. | "Restoring happens automatically." | Highlight; x-ray mode; debug views |
+| Clone semantics | clone shares geometry and materials by default. | "Changing a clone's material color affects only the clone." | Per-instance color bug; variant duplication; memory audit |
+
+**Lens notes**
+
+- Cost: traversal is O(n) CPU work. Fine on events, wasteful every frame, so cache results.
+- Space: positions and bounds gathered during traversal are local unless converted.
+
+## 8. Spatial Queries: Raycasting, Bounds & BVH
+
+Raycasting and bounds tests are CPU math over the scene. Drills build them by hand, then measure them.
+
+| Concept | Core idea | Misconceptions to expose | Use contexts to rotate |
+| --- | --- | --- | --- |
+| Ray | origin + t·direction for t ≥ 0. | "A ray extends both ways." | Pointer picking; line of sight; placing on the ground |
+| Ray from pointer | Pointer → canvas-relative pixels → NDC → setFromCamera. | "Use the window size for NDC." Use the canvas rect. | Click; hover; drag start |
+| Intersection anatomy | distance, point (world), face (local-space normal), faceIndex, uv, instanceId, object; sorted by distance. | "face.normal is in world space." "The first hit is the visible one." | Orienting a marker; painting at a UV; picking an instance |
+| Filtering | The recursive flag, layers, and target lists limit what gets tested. | "Helpers are ignored automatically." | Ignoring helpers; selectable parts only; ground-only placement |
+| Ray–plane | Solve for t using the plane normal; parallel rays never hit. | "Every ray hits an infinite plane." | Dragging on a floor; placement grid; measuring |
+| Ray–sphere | A quadratic in t; a negative discriminant means a miss. | "A hit has one solution." | Coarse hit test; bounding sphere early-out; hotspot hit |
+| Ray–triangle | Möller–Trumbore returns t and barycentric coordinates. | "Barycentrics only matter for the hit test." | Exact picking; UV interpolation at a hit; back-face handling |
+| Ray–AABB | The slab method intersects three pairs of planes. | "A box test needs all six faces separately." | Early-out; BVH node test; grid lookup |
+| Bounds primitives | Box3, Sphere, Plane, and Frustum containment and overlap tests. | "Plane distance is always positive." It's signed. | Placement overlap; visibility; trigger volumes |
+| AABB vs OBB | An AABB of a rotated object is loose; an OBB rotates with it. | "Box3 fits rotated objects tightly." | Tight overlap checks; rotated parts; bounds display |
+| Closest-point queries | Closest point on a line, box, or triangle. | "The closest point is the nearest vertex." | Snapping to an edge; distance measurement; proximity hover |
+| BVH | A bounds hierarchy that cuts triangle tests from O(n) to about O(log n). | "A BVH speeds up everything." It helps large meshes, costs build time, and needs a refit after edits. | High-poly picking; shape casts; collision queries |
+
+**Lens notes**
+
+- Space: the ray is moved into each object's local space through the inverse matrixWorld. That's why face.normal comes back local.
+- Cost: each object costs a bounding sphere test and a matrix inverse, then per-triangle tests. Deep hierarchies multiply the first; high-poly meshes multiply the second.
+- Cost: raycasting is synchronous CPU work, so performance.now timing is accurate here, unlike render timing.
+- GPU picking is the GPU-side alternative; see the cross-domain drills.
+
+## 9. Interaction & Manipulation
+
+Interaction is the integration domain. Each concept composes math, spaces, projection, and queries into input handling, and drills cite the domains they draw on.
+
+| Concept | Core idea | Misconceptions to expose | Use contexts to rotate |
+| --- | --- | --- | --- |
+| Pointer events | Pointer events unify mouse, touch, and pen, in CSS pixels relative to the canvas. | "Multiply by DPR before computing NDC." | Click; touch tap; pen input |
+| Click vs drag | A movement threshold separates them; pointer capture keeps the drag. | "pointerup on the same object means a click." | Select vs orbit; tap vs pan; long press |
+| Hover and selection state | A small state machine (none, hover, selected) with restore on exit. | "Hover and selection can share one flag." | Part highlight; multi-select; deselect on empty click |
+| Orbit, pan, dolly | Orbit is spherical motion around a target; pan moves target and camera in the view plane; dolly moves along the view direction. | "Dolly and zoom are the same." | Product viewer; top-down planner; inspecting detail |
+| Drag on a plane | Ray–plane on each move, keeping the grab offset. | Forgetting the offset makes the object snap to the cursor. | Floor drag; wall drag; 3D slider |
+| Axis-constrained drag | Project motion onto an axis, using a plane that contains the axis and faces the camera. | "Use the screen delta directly." | Gizmo axis; height adjustment; sliding along a rail |
+| Local vs world manipulation | The same drag uses different axes in local and world space. | "Axes are always world axes." | Moving along a rotated rail; rotating relative to a parent; gizmo space toggle |
+| Controls coexistence | Disable orbit while a gizmo or custom drag is active. | "Controls ignore each other." | TransformControls; custom drags; HTML overlays |
+| Focus on object | Fit to bounds, then animate camera position and target together. | "Move the camera but leave the target." | Double-click focus; reset view; guided views |
+| 3D-to-2D anchoring | Project to screen for HTML labels; hide them behind the camera or when occluded. | "Projected labels hide themselves." | Hotspots; price tags; measurement labels |
+| Frame-rate-independent motion | Use delta time; damp with 1 − e^(−λ·dt). | "lerp(x, target, 0.1) each frame is fine." It runs twice as fast at 120 Hz. | Camera smoothing; hover scale; drag smoothing |
+| Interpolation toolbox | clamp, smoothstep, remap, and easing; slerp for orientation. | "Linear easing looks natural." | UI transitions; focus animation; mapping drag distance to a value |
+
+**Lens notes**
+
+- Space: every drag goes screen → NDC → world ray → object local space.
+- Cost: throttle pointermove raycasts to once per frame, raycast simplified proxies, and render only when something changed.
+
+## 10. GPU Pipeline, Render Targets & Bottleneck Diagnosis
+
+This domain owns the model of a frame and the proof of whether a scene is CPU- or GPU-bound. Every diagnosis drill ends with numbers, not a guess.
+
+| Concept | Core idea | Misconceptions to expose | Use contexts to rotate |
+| --- | --- | --- | --- |
+| Pipeline stages | Buffers → vertex shader → clipping → rasterization → fragment shader → depth/stencil → blending → framebuffer. | "A fragment is a pixel." It's a candidate that may be discarded or overwritten. | Transparency order; vertex vs pixel cost; where discard happens |
+| Draw call anatomy | Bind a program, set uniforms, bind buffers and textures, draw. | "Draw calls are expensive on the GPU." The overhead is mostly CPU and driver. | Many small parts; shadow passes doubling calls; multi-material meshes |
+| State changes and sorting | three.js sorts opaque objects front to back and by program, and transparent objects back to front. | "Render order is scene order." | Material count; renderOrder fixes; early-z benefit |
+| Depth buffer and early-z | Depth testing rejects hidden fragments; discard and alphaTest can disable early rejection. | "Hidden objects cost nothing." | Overdraw; alpha-tested mesh panels; depth prepass |
+| Stencil buffer | A per-pixel mask that later draws test against. | "Outlines require post-processing." | Outlines; masks and portals; clipping caps |
+| Blending and transparency | Order-dependent; transparent objects usually skip depth writes and sort per object. | "Transparent objects sort per triangle." | Glass; fades; overlays |
+| Render targets | Offscreen framebuffers with color and depth attachments. | "Rendering always goes to the screen." | Thumbnails; GPU picking; mirrors |
+| Multi-pass and post-processing | Each full-screen pass costs full-resolution fragment work. Effects that need the whole frame need extra passes. | "Post effects are cheap filters." | Selection outline; bloom; FXAA |
+| Multisampling | Several samples per pixel. Render targets need MSAA set explicitly. | "Adding a composer keeps canvas antialiasing." | Jaggies after adding post-processing; thin lines; MSAA memory cost |
+| Readback | readPixels waits for the GPU to finish. | "Reading one pixel is free." | GPU picking; screenshots; color sampling |
+| Frame budget | 16.67 ms at 60 Hz. CPU and GPU overlap, so the slower side sets frame time. | "FPS shows headroom." Vsync caps it; measure frame time. | Setting targets; comparing devices; judging a fix |
+| Measurement tools | performance.now around render measures CPU submission. GPU time needs timer queries where supported, or Chrome's GPU track. | "render() time equals GPU time." | Timing a frame; Spector.js capture; renderer.info counts |
+
+**Proof experiments.** Change one thing, hold everything else fixed, and compare frame time.
+
+| Experiment | Change | If frame time drops, you were |
+| --- | --- | --- |
+| Resolution | Lower DPR or canvas size | Fragment or fill-rate bound (GPU) |
+| Shader swap | Replace materials with MeshBasicMaterial | Fragment-shading bound (GPU) |
+| Draw calls | Merge or instance with the same pixel coverage | CPU submission bound |
+| Vertex load | Swap in a low-poly proxy with the same coverage | Vertex bound (GPU, uncommon) |
+| Skip render | Run updates but skip renderer.render | Bound by app logic outside rendering |
+
+**Lens notes**
+
+- Cost: this domain is the cost lens.
+- Space: its clip-space and NDC concepts link back to Domain 4.
+
+## 11. Materials, Lighting & Color
+
+Appearance comes from material, light, and the color pipeline. Most "it looks wrong" bugs live in the color pipeline.
+
+| Concept | Core idea | Misconceptions to expose | Use contexts to rotate |
+| --- | --- | --- | --- |
+| Color spaces | Lighting math runs in linear space. Color textures are sRGB; data textures (normal, roughness, metalness, AO) are linear. | "Every texture is sRGB." | Washed-out textures; wrong-looking normal maps; colors that don't match a picker |
+| Tone mapping and exposure | Maps HDR results into display range; exposure scales before mapping. | "Tone mapping leaves brand colors unchanged." | Blown highlights; matching product colors; bright environments |
+| Diffuse (Lambert) | Brightness = max(N·L, 0). | "Diffuse depends on the viewer." | Side lighting; the terminator line; toon shading |
+| Specular and half vector | H = normalize(L + V); the highlight comes from N·H. | "Highlights stay put when the camera moves." | Glossy vs matte; moving highlights; understanding roughness |
+| PBR metal and roughness | Metals have no diffuse and tint their reflections; roughness spreads reflections out. | "Metalness 0.5 is a realistic semi-metal." | Bare steel vs powder coat vs rubber; chrome; brushed finishes |
+| Light types and falloff | Directional, point, spot, hemisphere, ambient. Point and spot light falls off with distance squared. | "Scene units don't affect lighting." | Studio product lighting; models in millimeters vs meters; ambient flattening |
+| Environment maps and IBL | An HDR environment, prefiltered by PMREM, lights and reflects according to roughness. | "An environment map is just a background." Metals look black without one. | Chrome reflections; a consistent product look; environment vs background |
+| Shadows | A depth render from the light. Frustum size sets effective resolution; bias trades acne for detachment. | "A bigger shadow map fixes everything." | Contact shadow under a product; fitting a directional shadow; acne vs peter-panning |
+| Baked lighting | Light and AO maps use a second UV set; baked is cheap but static. | "Baked lighting reacts to moving objects." | Static rooms; AO in crevices; shadow-catcher planes |
+| Texture sampling | Filtering, mipmaps, anisotropy, wrapping, repeat, and flipY. | "Mipmaps are only a performance feature." They also prevent shimmer. | Shimmer at grazing angles; tiled textures; crisp UI textures |
+| Channel packing | glTF stores roughness in G and metalness in B; AO often shares the texture in R. | "Each map is its own texture." | Reading packed maps; building packed maps; wrong-roughness bugs |
+| Pipeline-facing material flags | side, transparent, alphaTest, depthWrite, polygonOffset. | "DoubleSide is free." | Decals; perforated panels; thin surfaces |
+
+**Lens notes**
+
+- Cost: each light adds per-fragment work, and adding or removing lights recompiles shaders.
+- Cost: each shadow-casting light adds a render pass; a point light adds six.
+- Space: three.js built-in lighting runs in view space.
+
+## 12. Shaders
+
+Shader drills stay small: one visible effect, one concept, readable in a minute.
+
+| Concept | Core idea | Misconceptions to expose | Use contexts to rotate |
+| --- | --- | --- | --- |
+| Vertex vs fragment | The vertex shader runs per vertex and outputs clip position; the fragment shader runs per fragment and outputs color. | "Fragment shaders run once per pixel." Overdraw runs them more. | Displacement; per-pixel color; comparing run counts |
+| Attributes, uniforms, varyings | Per-vertex input, per-draw constant, and a value interpolated from vertex to fragment. | "Varyings are copied unchanged." They're interpolated. | Passing time; per-vertex color gradients; barycentric wireframe |
+| Built-in matrices and spaces | position is local; modelMatrix goes to world; three.js normalMatrix produces view-space normals. | "normalMatrix gives world normals." | Height gradient in world space; view-space rim light; screen-space effects |
+| Swizzling | Read, reorder, or repeat components with .xyzw, .rgba, or .stpq. | "A swizzle alone converts axis conventions." Z-up to Y-up also needs a sign flip. | Ground-plane distance with .xz; packed textures; axis conversion |
+| Built-in functions | mix, step, smoothstep, clamp, fract, mod, dot, reflect. | "step and smoothstep are interchangeable." | Stripes; rings; falloff masks |
+| Types and precision | No implicit int-to-float conversion; mediump on mobile loses range. | "1 and 1.0 are the same in GLSL." | Compile errors; banding on mobile; jitter far from the origin |
+| Extending materials | ShaderMaterial gives full control; onBeforeCompile patches built-in materials. | "A custom shader must rebuild lighting from scratch." | Highlight on a standard material; injecting uniforms; dissolve effect |
+| Derivatives | dFdx, dFdy, and fwidth measure change between neighboring pixels. | "Anti-aliased lines need extra geometry." | Anti-aliased grid; wireframe; flat normals without split vertices |
+| Fragment coordinates | gl_FragCoord is in device pixels from the bottom-left. | "gl_FragCoord matches CSS pixels." It includes DPR. | Screen-space patterns; vignette; post-processing |
+| Branching and discard | Uniform branches are cheap; discard disables early depth rejection. | "An if statement is free." | Alpha cutout; masks; conditional effects |
+| Debug output | Output normals, UVs, depth, or position as color. | "Only the final color can be inspected." | Verifying spaces; finding UV seams; checking depth range |
+
+**Lens notes**
+
+- Cost: fragment cost × resolution × DPR² is often the whole GPU budget. Vertex shaders also run again in shadow passes.
+- Space: every shader drill states the space of each variable it touches.
+
+## 13. Debugging & Visualization
+
+Debugging drills train one habit: make the invisible visible, then isolate before fixing.
+
+| Concept | Core idea | Misconceptions to expose | Use contexts to rotate |
+| --- | --- | --- | --- |
+| Triage | Classify the symptom as transform, geometry, material, camera, or pipeline before changing code. | "A black screen means a broken shader." | Black screen; missing object; wrong color |
+| Nothing-renders checklist | Added to the scene? In the frustum? Near/far? Units? Side? Lights? NaN? | "If it loaded, it's visible." | Invisible loaded model; invisible custom geometry; black post-processing output |
+| Helpers | Axes, Arrow, Box3, Camera, Grid, Plane, and VertexNormals helpers. | "CameraHelper is only for cameras." It also shows shadow frustums. | Checking orientation; shadow frustum; bounds |
+| Visualizing vectors | Draw directions with ArrowHelper at the right origin and under the right parent. | "A helper shows the value no matter where it's parented." | Normal direction; ray direction; velocity |
+| Reading matrices | elements is column-major; indices 12–14 hold translation; the determinant's sign shows mirroring. | "Matrix4.set and elements share an order." set takes row-major. | Console transform checks; spotting scale; detecting mirroring |
+| NaN and degenerate cases | Zero-length normalize, parallel lookAt, zero scale, and parallel ray–plane. | "NaN would throw an error." It spreads silently. | Vanishing objects; exploded geometry; failed raycasts |
+| Isolation | Toggle visibility or layers, override materials, bisect the scene, build a minimal repro. | "Read the code until you see it." | Z-fighting source; performance hotspot; bad material |
+| Frame capture | Spector.js shows draw calls, state, bound textures, and shader source. | "The scene graph shows what the GPU drew." | Double rendering; wrong texture bound; render target contents |
+| Shader errors | Read compile logs against three.js's injected code and line numbers. | "The line number points at my code." | onBeforeCompile mistakes; typos; precision errors |
+| Debug views | Wireframe, MeshNormalMaterial, depth material, and a UV checker texture. | "Bad normals only look like bad lighting." | Normal problems; UV stretching; depth issues |
+
+**Lens notes**
+
+- Space: helper placement is a space decision. A helper under the wrong parent shows a right value in the wrong place.
+- Cost: remove helpers and debug materials before taking performance measurements.
+
+## 14. Optimization & Memory
+
+This domain owns the fixes. Every drill starts from a bottleneck proved with a Domain 10 experiment and ends with a before/after number.
+
+| Concept | Core idea | Misconceptions to expose | Use contexts to rotate |
+| --- | --- | --- | --- |
+| Draw call reduction | Merge static geometry, instance repeats, batch, atlas textures, and share materials. | "Instancing fixes a fill-rate-bound scene." | Repeated hardware; static environment; many same-material parts |
+| Resolution and DPR | Cap DPR, and lower it adaptively or during interaction. | "DPR is a display setting, not a cost." | Phones; 4K monitors; reduced DPR while orbiting |
+| Render on demand | Render only when something changes. | "Continuous rendering is required." | Static viewer; battery life; background tabs |
+| Allocation hygiene | Reuse scratch objects in per-frame code. | "GC pauses are too small to notice." | Raycast loops; per-frame updates; bounds checks |
+| Culling and LOD | Frustum culling per object with correct bounds; lower detail at distance. | "Culling happens per triangle." | Large scenes; many parts; instanced bounds |
+| Overdraw reduction | Fewer large transparent layers; alphaTest instead of blending where possible. | "Hidden pixels cost nothing." | Glass layers; full-screen overlays; cutout panels |
+| Shader and material cost | Cheaper materials, fewer lights, smaller shadow maps, selective shadows. | "MeshPhysicalMaterial costs the same as MeshStandardMaterial." | Mobile fallback; many lights; shadow cost |
+| Texture budget | Size to on-screen need; compress, share, and mipmap. | "4K textures are always sharper." | Swatch libraries; mobile limits; thumbnail textures |
+| Hitch avoidance | Pre-compile, pre-upload, spread work across frames, and decode in workers. | "Load time is the only delay." | First-click hitch; variant-switch hitch; route transitions |
+| Leak detection | Watch renderer.info.memory and heap snapshots across repeated load/unload cycles. | "Counts that grow slowly are fine." | SPA route changes; variant cycling; long sessions |
+| Adaptive quality | Adjust DPR, shadows, or post effects from measured frame time, with hysteresis. | "Detect the device tier once and set quality." | Low-end devices; heavy scenes; thermal throttling |
+
+**Lens notes**
+
+- Cost: this whole domain is the cost lens. Each fix drill records the proof experiment, the change, and the before/after frame time or memory.
+
+## 15. Procedural & VFX (elective)
+
+This optional domain covers real-time VFX and procedural masks. It builds on Domains 1, 10, 11, and 12, and transfers directly to Unreal's material editor and Niagara. Tiers don't apply here; the elective runs its own loop pass after core Loop 2.
+
+| Concept | Core idea | Misconceptions to expose | Use contexts to rotate |
+| --- | --- | --- | --- |
+| Signed distance fields | Distance to a shape, negative inside. Combine shapes with min and max; smoothstep turns distance into a soft mask. | "Masks must be painted textures." | Circle and ring masks; rounded-rectangle glow; dissolve edges |
+| Value and gradient noise | Perlin or simplex noise gives a smooth pseudo-random field from coordinates. | "Noise changes every frame." It's deterministic for the same input. | Cloud masks; heat shimmer; organic breakup |
+| Cellular noise | Worley noise is the distance to the nearest random feature point. | "Cellular patterns need a texture." | Cracks; caustics; scales |
+| fBm | Sum octaves at rising frequency and falling amplitude. | "More octaves always look better." Octaves finer than a pixel alias. | Smoke; terrain masks; eroded edges |
+| Domain warping and curl noise | Offset input coordinates by noise; curl noise gives swirling flow without sinks. | "Curl noise is just more noise." It's the curl of a noise field. | Swirling smoke; flowing energy; particle advection |
+| Mask remapping and compositing | Remap, contrast, multiply, screen, max, and threshold erosion. | "Multiplying masks is always the right combine." | Dissolve; layered magic effects; stylized fire |
+| UV animation | Panning, rotation, polar coordinates, and flow maps. | "Scrolling by raw time runs forever." Large time values lose precision; wrap time. | Scrolling energy; vortex; flowing water |
+| Flipbooks | Map a frame index to a UV offset in a grid, optionally blending frames. | "Frame 0 is always the top-left cell." It depends on the UV origin. | Explosion sprites; smoke puffs; animated icons |
+| Particle fundamentals | Spawn rate, lifetime, normalized age, and attributes over life. | "Spawn rate is per frame." It's per second. | Sparks; dust; UI bursts |
+| Integration and forces | Euler step: v += a·dt, then p += v·dt, with drag. | "Update order doesn't matter." | Gravity sparks; wind; orbiting motes |
+| Sprite facing | Camera-facing, velocity-aligned, or axis-locked billboards. | "Facing the camera plane equals facing the camera position." They differ at screen edges. | Smoke; motion streaks; ground-aligned rings |
+| Depth-based effects | Soft particles fade by comparing against scene depth; distortion samples scene color. | "Soft particles are a texture setting." | Smoke meeting the ground; heat haze; water edges |
+| Additive vs alpha blending | Additive is order-independent and never darkens; alpha needs sorting. | "Additive is free." It still overdraws. | Fire vs smoke; glows; stacked sparks |
+
+**Lens notes**
+
+- Cost: translucent overdraw is the main VFX budget. Measure it with the Domain 10 resolution test, or Unreal's quad overdraw view.
+- Cost: procedural noise spends shader math per pixel. Baking it to a texture trades that math for memory.
+- Transfer: Unreal material nodes map directly (Lerp, Frac, ComponentMask, DDX/DDY, Noise, SphereMask). HLSL renames mix and fract to lerp and frac, and adds saturate.
+
+## Cross-domain drills
+
+These combine concepts from several domains in one 10–20 minute drill. Tag each with every domain it touches, and count it toward coverage in each.
+
+| Drill | Domains | What it proves |
+| --- | --- | --- |
+| Drag a part across the floor with a grab offset | 1, 8, 9 | Ray–plane plus offset math |
+| Slide a part along a rotated rail | 1, 2, 9 | Projection onto a local axis converted to world |
+| Place a marker flush on a clicked surface | 2, 5, 8 | face.normal from local to world through the normal matrix |
+| GPU picking vs raycasting on a million-triangle model | 8, 10, 14 | CPU vs GPU cost and the readback stall |
+| Raycast cost: deep hierarchy vs high triangle count | 7, 8, 10 | Which dimension dominates, measured |
+| Constant-size labels that hide when occluded | 4, 8, 9 | Projection, world size per pixel, and occlusion rays |
+| Focus on a clicked part with damped motion | 4, 7, 9 | Bounds fit plus frame-rate-independent damping |
+| Mirrored variant renders inside-out after baking | 2, 5, 11 | Determinant sign and winding |
+| Chrome finish looks black on mobile | 6, 11, 13 | Environment maps, texture formats, and triage |
+| Roughness looks wrong on a packed map | 6, 11, 12 | Channel packing, color space, and a swizzle debug view |
+| Frame drops only on phones | 10, 14 | DPR² proof and adaptive DPR |
+| Hitch on the first variant switch | 6, 10, 14 | Upload and compile cost, and warm-up |
+| Selection outline: stencil vs post pass | 10, 11, 12 | Multi-pass cost trade-off |
+| Verify a transform bug with normals as color | 2, 12, 13 | Space checks through shader output |
+| Memory climbs after 20 variant swaps | 6, 7, 14 | Disposal ownership and leak detection |
+
+## Coverage checks
+
+The generated repo is complete when every check below passes. COVERAGE.md is generated from drill frontmatter, never written by hand.
+
+- [ ] Every core concept has at least one drill in each of the four modes.
+- [ ] Every light concept has read-the-code, apply, and break-and-fix coverage.
+- [ ] Every listed misconception has at least one drill that exposes it, through a read-the-code question, a failing check, or a visible symptom.
+- [ ] Every core concept's drills span at least three distinct use contexts; every light concept's span at least two.
+- [ ] No two consecutive drills in a domain share a use context.
+- [ ] Drills with a space lens state input and output spaces; drills with a cost lens include a measurement step.
+- [ ] Every drill fits in 5–20 minutes; longer ones are split.
+- [ ] Every domain has a placement check in Loops 2–4, and every loop has a checkpoint.
+- [ ] A code drill's starter fails its acceptance check until the drill is solved.
+- [ ] Solutions live only in /solutions.
+- [ ] Every drill uses APIs valid for the pinned three.js version.
+- [ ] COVERAGE.md shows concept × mode, concept × context, misconception → drill, and progress per loop.

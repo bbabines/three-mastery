@@ -1,0 +1,28 @@
+{
+  "name": "three-js-foundation",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "test": "vitest",
+    "drill": "vitest",
+    "pick": "tsx scripts/pick.ts",
+    "coverage": "tsx scripts/coverage.ts",
+    "verify": "tsx scripts/verify.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@sparkjsdev/spark": "2.2.0",
+    "marked": "18.0.14",
+    "three": "0.186.0"
+  },
+  "devDependencies": {
+    "@types/node": "24.13.6",
+    "@types/three": "0.186.0",
+    "tsx": "4.23.15",
+    "typescript": "7.0.2",
+    "vite": "8.3.1",
+    "vitest": "5.0.2",
+    "yaml": "2.9.1"
+  }
+}
