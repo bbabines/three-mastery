@@ -18,7 +18,7 @@ Update this section whenever it changes.
 - **Reviewed:** Brad approved the page format on Point vs direction, the wording on Local vs world space, and Domain 2 as a whole. The other Domain 1 pages haven't had a page-by-page review; Brad was reminded when Domain 2 started.
 - **r186 check:** done, and its fixes applied Sep 29, 2026 (`docs/r186-check/`). The Pivots page now teaches `Object3D.pivot` and what it changes; that addition hasn't been reviewed.
 - **Next:** Brad reviews the Object3D API tour, the first tour page. The other six tours (object types, loaders and textures, controls, renderer settings, materials, lights) are built with their domains, as each domain's first page, once Brad approves the format. Domain 3 is on hold until Brad says to start it; then Loop 1 for Domains 3–14 in the order in `scripts/lib/domains.ts`. This is the inventory's build order: Loop 1 for every domain comes before any later loop. For each new domain, build its first page and show Brad before building the rest, because a new domain raises new questions. Show Brad each finished domain before starting the next.
-- **Not built:** the Loop 1 checkpoint, Loops 2–4, Domain 15, the cross-domain drills, and placement checks for Loops 2–4.
+- **Not built:** the Loop 1 checkpoint, Loops 2–4, the two electives (Domain 15 VFX and Blank-file scenes), the cross-domain drills, and placement checks for Loops 2–4.
 
 ## Decisions already made
 
@@ -60,7 +60,9 @@ Don't reopen these without Brad.
 | Progress is one log, `progress/log.jsonl`. Loop 1 pages log themselves as done when the last quiz question is answered, through the dev server's `/api/progress` (`vite.config.ts`); the sidebar shows a ✓ | Brad expected the viewer to show what's finished. One log keeps the viewer and `pick.ts` in agreement. |
 | The log is committed to carry progress between work and home; `.gitattributes` merges it with `merge=union` | Both machines only add lines, so keeping both sides never loses anything. |
 | The concept list and teaching order live in `scripts/lib/domains.ts` | One source for the sidebar and for `pick.ts`. |
-| TSL and Gaussian splats are sandboxes in `/experiments` only | The inventory keeps them out of the curriculum. |
+| TSL and Gaussian splats are sandboxes in `/experiments`, outside the core domains. The one exception: the Domain 15 VFX elective is written in TSL | Brad chose TSL for VFX on Sep 29, 2026. The core domains stay on WebGLRenderer and GLSL. |
+| Two electives: Domain 15, Procedural & VFX (after core Loop 2), and Blank-file scenes (after Loop 4) | Brad wanted the from-an-empty-file drills visible in the plan like everything else. |
+| The VFX elective has no four-loop pass: coding exercises that end with building each effect from memory into an existing scene | Brad's call. Its page and exercise design is still being settled. |
 
 ## Open needs
 
@@ -78,7 +80,7 @@ Settle these before, or while, building the parts that need them.
 - **Assets and scene graph domains (6–7)** want real loaded models, and there are no loader helpers yet. Brad's `.glb` files on the Desktop (racks, shelves, hardware; 6 KB to 624 KB each) are fine to use and to commit; they aren't confidential. Copy the ones a page needs into the repo.
 - **Interaction domain (9):** drag scenes need pointer helpers. Scenes already get `controls` and can set `controls.enabled = false` while dragging.
 - **GPU and optimization domains (10, 14):** Loop 1 describes costs in plain words. Measuring them in Loop 2 needs frame-time and `renderer.info` readouts in the harness.
-- **Domain 15 (VFX elective):** Brad hasn't decided the format or the shader language (GLSL or TSL).
+- **Domain 15 (VFX elective):** TSL is decided. The page and exercise format was proposed on Sep 29, 2026 and awaits Brad's pick. TSL pages need a `three/webgpu` version of the harness, since the drill harness uses `WebGLRenderer`.
 
 ## Git
 

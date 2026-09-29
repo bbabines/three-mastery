@@ -24,7 +24,7 @@ This doc is the source of truth for a repo that teaches foundational three.js an
 - Drills run inside a shared minimal harness (renderer, camera, scene, test runner). The drill file holds only the work.
 - Allowed during a drill: three.js docs and three.js source. Not allowed: AI tools and the solutions folder.
 - Stack: Vite, TypeScript, three.js at one pinned version, Vitest for code checks.
-- Out of scope: React Three Fiber, WebGPU/TSL, Gaussian splats, WebXR, character animation, physics, ECS. TSL and Gaussian splats have sandboxes in `/experiments`, outside the curriculum.
+- Out of scope: React Three Fiber, WebGPU/TSL, Gaussian splats, WebXR, character animation, physics, ECS. One exception: the Domain 15 VFX elective is written in TSL. TSL and Gaussian splats also have sandboxes in `/experiments`, outside the curriculum.
 
 **Concept cards.** One markdown card per concept in `/concepts`, with these fields:
 
@@ -74,9 +74,9 @@ COVERAGE.md   generated from drill frontmatter
 
 **Spaced practice.** `pick.ts` suggests the next drill, weighting the domains and modes practiced least recently, and logs the date each drill was finished, never how long it took.
 
-**Build order.** Build the harness, `pick.ts`, and Loop 1 for Domain 1, then stop for review. After approval, build Loop 1 for all domains so practice can start, then build each later loop while the previous one is in progress. Build Loop 3 before polishing Loop 4: break-and-fix is the closest match to real debugging and interviews, and the misconceptions listed below become its bugs, so each one must be a mistake people really make. Build Domain 15 after core Loop 2.
+**Build order.** Build the harness, `pick.ts`, and Loop 1 for Domain 1, then stop for review. After approval, build Loop 1 for all domains so practice can start, then build each later loop while the previous one is in progress. Build Loop 3 before polishing Loop 4: break-and-fix is the closest match to real debugging and interviews, and the misconceptions listed below become its bugs, so each one must be a mistake people really make. Build Domain 15 after core Loop 2, and the blank-file elective after Loop 4.
 
-**Blank-file drills go last.** A drill set that starts from an empty file (renderer, scene, camera, resize, frame loop) comes after Loop 4. Setting up a project from scratch is rare, and people use the docs when they do. The concepts are already in the loops; the pages show their exact syntax in B:
+**Blank-file drills go last.** A drill set that starts from an empty file (renderer, scene, camera, resize, frame loop) comes after Loop 4, as its own elective: Blank-file scenes, the last domain section below. Setting up a project from scratch is rare, and people use the docs when they do. The concepts are already in the loops; the pages show their exact syntax in B:
 
 | Piece | Where it's taught | Syntax B shows |
 | --- | --- | --- |
@@ -104,7 +104,7 @@ The total is about 515 pages and drills, or roughly 17 months at one a day. Plac
 - Checkpoint: each loop closes with a no-docs set sampling every domain. It's a self-check before the next loop, not a gate: move on when you understand the material, whatever the score.
 - Interleaving: `pick.ts` mixes domains within a loop while respecting prerequisites.
 - Maintenance: after Loop 4, `pick.ts` rotates drills from all loops, weighted toward the least recently practiced concepts and the weakest checkpoint results.
-- Elective: Domain 15 runs its own four-loop pass after core Loop 2, since it needs shader fluency.
+- Electives: Domain 15 (Procedural & VFX) comes after core Loop 2, since it needs shader fluency. It has no four-loop pass: it's coding exercises that end with building each effect from memory into an existing scene. The blank-file elective comes after Loop 4.
 
 **Judgment-loop drill types**
 
@@ -502,7 +502,10 @@ This domain owns the fixes. Every drill starts from a bottleneck proved with a D
 
 ## 15. Procedural & VFX (elective)
 
-This optional domain covers real-time VFX and procedural masks. It builds on Domains 1, 10, 11, and 12, and transfers directly to Unreal's material editor and Niagara. Tiers don't apply here; the elective runs its own loop pass after core Loop 2.
+This optional domain covers real-time VFX and procedural masks. It builds on Domains 1, 10, 11, and 12, and transfers directly to Unreal's material editor and Niagara.
+
+- **Language:** TSL (`three/tsl` with `WebGPURenderer` from `three/webgpu`, which falls back to WebGL 2 where WebGPU is missing). Its node graphs map closely to Unreal's material nodes. Domain 12 teaches shaders in GLSL, and TSL keeps GLSL's function names (mix, fract, smoothstep, dFdx), so the ideas carry over.
+- **Format:** no four-loop pass. It comes after core Loop 2, as coding exercises that end with building each effect from memory into an existing scene. Tiers don't apply here. The page and exercise design is still being settled.
 
 | Concept | Core idea | Misconceptions to expose | Use contexts to rotate |
 | --- | --- | --- | --- |
@@ -525,6 +528,19 @@ This optional domain covers real-time VFX and procedural masks. It builds on Dom
 - Cost: translucent overdraw is the main VFX budget. Measure it with the Domain 10 resolution test, or Unreal's quad overdraw view.
 - Cost: procedural noise spends shader math per pixel. Baking it to a texture trades that math for memory.
 - Transfer: Unreal material nodes map directly (Lerp, Frac, ComponentMask, DDX/DDY, Noise, SphereMask). HLSL renames mix, fract, and dFdx/dFdy to lerp, frac, and ddx/ddy, and adds saturate. GLSL mod and HLSL fmod differ for negative numbers.
+
+## 16. Blank-file scenes (elective)
+
+A working scene from an empty file, after Loop 4. Setting up a project from scratch is rare and people use the docs when they do, so this elective comes last, as a from-memory refresher. Each piece's exact syntax is taught earlier, on the pages in the "Blank-file drills go last" table. Tiers don't apply here, and its drill format is decided when it's built.
+
+| Concept | What you write | Taught earlier on |
+| --- | --- | --- |
+| Renderer and canvas | `new WebGLRenderer({ antialias: true })`, `renderer.setPixelRatio(Math.min(devicePixelRatio, 2))`, adding the canvas to the page | Domain 10 Tour: renderer settings; Domain 14 Resolution and DPR |
+| Scene, camera, and a first mesh | A Scene, `new PerspectiveCamera(fov, aspect, near, far)`, a mesh, and a light for lit materials | Domain 4 Projection matrix; Domain 11 Tour: lights |
+| Frame loop | `renderer.setAnimationLoop(...)` with `THREE.Timer` for the time since the last frame | Domain 9 Frame-rate-independent motion |
+| Resize | `renderer.setSize(w, h, false)`, `camera.aspect = w / h`, `camera.updateProjectionMatrix()` | Domain 4 Aspect and resize |
+| Load and frame a model | GLTFLoader, then `Box3.setFromObject` and `getBoundingSphere` to place the camera | Domain 6 Tour: loaders and textures; Domain 4 Fit to bounds |
+| Disposal and teardown | `geometry.dispose()`, `material.dispose()`, `texture.dispose()`, `renderer.setAnimationLoop(null)`, `renderer.dispose()` | Domain 6 Disposal ownership |
 
 ## Cross-domain drills
 

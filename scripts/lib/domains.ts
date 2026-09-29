@@ -4,7 +4,7 @@
 export interface Concept {
   slug: string;
   name: string;
-  tier?: 'core' | 'light'; // tiers don't apply to the elective domain
+  tier?: 'core' | 'light'; // tiers don't apply to the elective domains
 }
 
 export interface Domain {
@@ -12,6 +12,7 @@ export interface Domain {
   slug: string;
   name: string;
   elective?: boolean;
+  note?: string; // for an elective: when it runs and how, shown under its heading in the sidebar
   concepts: Concept[];
 }
 
@@ -278,6 +279,7 @@ export const DOMAINS: Domain[] = [
     slug: 'vfx',
     name: 'Procedural & VFX',
     elective: true,
+    note: 'In TSL, after Loop 2: coding exercises that end with building each effect from memory into an existing scene.',
     concepts: [
       { slug: 'sdf', name: 'Signed distance fields' },
       { slug: 'value-noise', name: 'Value and gradient noise' },
@@ -292,6 +294,21 @@ export const DOMAINS: Domain[] = [
       { slug: 'sprite-facing', name: 'Sprite facing' },
       { slug: 'depth-effects', name: 'Depth-based effects' },
       { slug: 'blending-modes', name: 'Additive vs alpha blending' },
+    ],
+  },
+  {
+    n: 16,
+    slug: 'blank-file',
+    name: 'Blank-file scenes',
+    elective: true,
+    note: 'After Loop 4: a working scene from an empty file. The loops teach each piece\'s syntax first.',
+    concepts: [
+      { slug: 'renderer-setup', name: 'Renderer and canvas' },
+      { slug: 'scene-camera', name: 'Scene, camera, and a first mesh' },
+      { slug: 'frame-loop', name: 'Frame loop' },
+      { slug: 'resize', name: 'Resize' },
+      { slug: 'load-and-frame', name: 'Load and frame a model' },
+      { slug: 'teardown', name: 'Disposal and teardown' },
     ],
   },
 ];

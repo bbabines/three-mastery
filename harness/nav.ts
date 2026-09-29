@@ -156,11 +156,10 @@ export function renderNav(container: HTMLElement, drills: NavDrill[], selected: 
     container.append(loopGroup);
   }
 
-  const elective = DOMAINS.find((domain) => domain.elective);
-  if (elective) {
+  for (const elective of DOMAINS.filter((domain) => domain.elective)) {
     const electiveGroup = domainGroup(`elective/${elective.slug}`, elective, 1, false);
     electiveGroup.classList.add('elective');
-    electiveGroup.querySelector('summary')!.after(note('Its own four-loop pass, after Loop 2, since it needs shader skills.'));
+    if (elective.note) electiveGroup.querySelector('summary')!.after(note(elective.note));
     container.append(electiveGroup);
   }
 
