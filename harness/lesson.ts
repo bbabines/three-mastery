@@ -347,3 +347,35 @@ export function afterNextRender(onFrame: (callback: () => void) => void) {
   });
   return (done: () => void) => waiting.push({ frames: 2, done });
 }
+
+// Boxes around objects, for scenes that point at what some code found. mark() adds a BoxHelper
+// around each object, measured where it is now, hidden objects included; clear() removes them all.
+// The boxes don't follow objects that move afterwards: clear and mark again.
+export function boxMarkers(scene: THREE.Scene) {
+  const boxes: THREE.BoxHelper[] = [];
+  const clear = () => {
+    for (const box of boxes) {
+      scene.remove(box);
+      box.dispose();
+    }
+    boxes.length = 0;
+  };
+  const mark = (objects: THREE.Object3D[], color: string = COLORS.yellow) => {
+    for (const object of objects) {
+      const box = new THREE.BoxHelper(object, color);
+      boxes.push(box);
+      scene.add(box);
+    }
+  };
+  return { mark, clear };
+}
+
+// A labeled group inside a controls bar, so one bar can hold two separate rows of choiceButtons.
+// Pass the group to choiceButtons in place of the bar.
+export function buttonGroup(bar: HTMLElement, text = '') {
+  const group = document.createElement('span');
+  group.style.cssText = 'display: flex; flex-wrap: wrap; align-items: center; gap: 8px;';
+  if (text) group.append(text);
+  bar.append(group);
+  return group;
+}
