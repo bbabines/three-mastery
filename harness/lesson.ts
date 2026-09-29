@@ -82,6 +82,23 @@ export function setLine(target: THREE.Line, start: THREE.Vector3, end: THREE.Vec
   target.geometry.setFromPoints([start, end]);
 }
 
+// A shape's edges drawn as lines. Added as a child of a mesh, it takes on every move, turn,
+// stretch, and skew; on its own, it marks where a saved transform puts something.
+export function outline(geometry: THREE.BufferGeometry, color: string) {
+  return new THREE.LineSegments(new THREE.EdgesGeometry(geometry), new THREE.LineBasicMaterial({ color }));
+}
+
+const edgeX = new THREE.Vector3();
+const edgeY = new THREE.Vector3();
+
+// The angle between an object's own X and Y edges once it's in the world: 90° unless a stretched
+// parent has skewed it.
+export function cornerAngle(matrixWorld: THREE.Matrix4) {
+  edgeX.set(1, 0, 0).transformDirection(matrixWorld);
+  edgeY.set(0, 1, 0).transformDirection(matrixWorld);
+  return THREE.MathUtils.radToDeg(edgeX.angleTo(edgeY));
+}
+
 export function overlay(container: HTMLElement, className: 'readout' | 'controls') {
   const element = document.createElement('div');
   element.className = className;

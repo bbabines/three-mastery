@@ -30,6 +30,8 @@ The same goes for the inventory's use contexts. Some are written as theory, like
 ## Wording by domain
 
 - **Coordinate spaces and transforms (2):** "local" means two things in three.js. An object's `position` is measured from its parent, but the point you pass to `object.localToWorld(v)` is measured from the object itself. Say "measured from its parent" or "measured from the object itself", and don't use "local" on its own.
+- **Matrices (2 onward):** a matrix is "a saved transform: a move, a turn, and a resize packed into one value that three.js can apply to any point in one step." The matrix vs matrixWorld page introduces it; later pages reuse that wording. Say what a matrix holds and when three.js refreshes it, never its 16 numbers.
+- **Quaternions before the rotation domain:** call a quaternion "three.js's way of storing a turn" and point ahead to the quaternions page.
 
 Add a line here whenever a domain needs a wording decision, so later pages stay consistent.
 
@@ -167,7 +169,9 @@ export const agree: SceneSetup = ({ scene, camera, controls, container, onFrame 
 ```
 
 - Export each scene under the same name its `data-scene` uses.
-- Build from `harness/lesson.ts`: `label` and `LABEL_LIFT`, `ball`, `pointer` (a cone that aims with `lookAt`), `arrow` and `setArrow`, `line` and `setLine`, `overlay('readout' | 'controls')`, `slider`, `choiceButtons`, `formatNumber`, `formatVector`, and `COLORS`.
+- Build from `harness/lesson.ts`: `label` and `LABEL_LIFT`, `ball`, `pointer` (a cone that aims with `lookAt`), `arrow` and `setArrow`, `line` and `setLine`, `outline` (a shape's edges as lines), `cornerAngle` (90° unless a stretched parent skews the object), `overlay('readout' | 'controls')`, `slider`, `choiceButtons`, `formatNumber`, `formatVector`, and `COLORS`.
+- Keep the readout short, about four lines, with no blank lines. It sits over the top of the scene and hides labels behind it.
+- A scene that moves something and then reads `matrixWorld`, raycasts, or uses `applyMatrix4(object.matrixWorld)` in the same step calls `updateMatrixWorld()` first, as the update timing page teaches.
 - The harness hands each scene its `controls` (the OrbitControls). A scene that drags objects with the pointer sets `controls.enabled = false` while dragging.
 - The harness adds a hemisphere light at intensity 2. Turn it down in a scene that needs its own lights to show. Plain three.js objects (cones, planes, a `ShaderMaterial`) are fine too. When two or more scenes need the same new helper, add it to `lesson.ts` and to this list.
 - Each scene shows one idea and is interactive: sliders change the input, or buttons compare right code with wrong code, like `lookAt(target.position)` against `lookAt(dir)`.

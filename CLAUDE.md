@@ -8,14 +8,15 @@ Brad's repo for learning three.js and 3D graphics in plain language, then keepin
 - `docs/writing-pages.md` is the recipe for a Loop 1 page. Follow it for every new page.
 - `docs/addendum-write-the-check.md` has the rules and examples for writing the automated check at the end of a break-and-fix drill. It's adopted; its status line records one change to it.
 - `README.md` has the commands and repo layout.
+- `docs/brief-interview-review.md` lists agreed changes that haven't been applied yet: tour pages, the r186 check, and using three.js for normals and raycasting instead of hand math. Read it before editing the inventory.
 
 ## Status
 
 Update this section whenever it changes.
 
-- **Built:** the drill viewer (`/harness/`), `pick.ts`, `coverage.ts`, `verify.ts`, and Loop 1 for Domain 1 (12 pages). The sidebar shows the whole plan, with unbuilt pages greyed out and finished pages ticked. Brad has finished Point vs direction. There are also sandboxes for TSL and Gaussian splats in `/experiments`.
-- **Reviewed:** Brad approved the page format on Point vs direction. The other 11 Domain 1 pages haven't had a page-by-page review. Don't wait on it, but remind Brad it's open when starting Domain 2.
-- **Next:** Loop 1 for Domains 2–14, in the order in `scripts/lib/domains.ts`. This is the inventory's build order: Loop 1 for every domain comes before any later loop. For each new domain, build its first page and show Brad before building the rest, because a new domain raises new questions. Show Brad each finished domain before starting the next.
+- **Built:** the drill viewer (`/harness/`), `pick.ts`, `coverage.ts`, `verify.ts`, and Loop 1 for Domains 1 and 2 (12 and 11 pages). The sidebar shows the whole plan, with unbuilt pages greyed out and finished pages ticked; `progress/log.jsonl` has what Brad has finished. There are also sandboxes for TSL and Gaussian splats in `/experiments`.
+- **Reviewed:** Brad approved the page format on Point vs direction, the wording on Local vs world space, and Domain 2 as a whole. The other Domain 1 pages haven't had a page-by-page review; Brad was reminded when Domain 2 started.
+- **Next:** another session is running the r186 check from `docs/brief-interview-review.md`; leave the existing pages and the inventory to it. Domain 3 is on hold until Brad says to start it; then Loop 1 for Domains 3–14 in the order in `scripts/lib/domains.ts`. This is the inventory's build order: Loop 1 for every domain comes before any later loop. For each new domain, build its first page and show Brad before building the rest, because a new domain raises new questions. Show Brad each finished domain before starting the next.
 - **Not built:** the Loop 1 checkpoint, Loops 2–4, Domain 15, the cross-domain drills, and placement checks for Loops 2–4.
 
 ## Decisions already made
@@ -59,6 +60,15 @@ Don't reopen these without Brad.
 
 Settle these before, or while, building the parts that need them.
 
+- **Inventory wording that r186 contradicts, found building Domain 2.** Fold these into the r186 check's report (`docs/brief-interview-review.md`, item 5); the pages already teach the r186 behavior.
+  - Domain 2 cost note: "Static objects can set matrixAutoUpdate to false" saves little in r186, because every render still rebuilds every `matrixWorld`. The update timing page says so.
+  - Update timing: the core idea leaves out that `updateMatrixWorld()` doesn't refresh parents, and that `updateWorldMatrix(true, false)` does.
+  - Pivots and offset groups: r186 has a built-in `Object3D.pivot`, which the row doesn't mention. TRS order's "scaled, then rotated, then translated" also assumes no `pivot` is set.
+  - add vs attach: "attach keeps the world transform" isn't true under an unevenly stretched parent (three.js's own docs say so). It could be a second misconception.
+  - Normal matrix: the row doesn't say that `object.normalMatrix` is for camera space, a common mix-up.
+  - Negative scale: the renderer checks `matrixWorld.determinantAffine()`, and copies inside an `InstancedMesh` aren't checked at all.
+- **Answer lengths.** The right answer is the longest choice in only 6 of 89 questions, which is a small tell in the other direction. `coverage.ts` only checks the upper bound.
+
 - **The Loop 1 checkpoint** has no design yet (question count, pass bar), and the tooling expects a code test. See `checkpoints/README.md`.
 - **Browser checks.** Vitest runs in Node, without WebGL. Checks on rendering, shaders, draw counts, or GPU memory need Vitest's browser mode with Playwright (a one-time setup that downloads Chrome, about 150 MB). Add it when the first drill needs one. How far automated checks reach, by domain:
   - **In Node today:** 1–5, 7, 8 (math, transforms, rotation, camera, geometry, scene graph, raycasting).
@@ -101,3 +111,6 @@ Settle these before, or while, building the parts that need them.
 - `sub`, `add`, `cross`, `normalize`, and `multiplyScalar` change the vector they're called on. Clone first in scene code.
 - `COVERAGE.md` counts a misconception as exposed when a page lists it in its frontmatter. Whether a question really exposes it is for you to check.
 - `pick.ts` only suggests a page once its concept's prerequisites are logged as done, even across domains. A new Domain 2 page won't show up in `pick` until Point vs direction is done.
+- Scene code that moves an object and then reads `matrixWorld`, raycasts, or calls `applyMatrix4(object.matrixWorld)` in the same step gets the old transform. Call `updateMatrixWorld()` first. `getWorldPosition`, `localToWorld`, and `lookAt` refresh on their own.
+- r186 has `Object3D.pivot`, a point that `rotation` and `scale` work around. `attach` and `applyMatrix4` don't allow for it, so an object with a `pivot` jumps when you use them.
+- The harness's hemisphere light isn't handed to scenes. Find it with `scene.children.find((c) => c instanceof THREE.HemisphereLight)` to turn it down.

@@ -90,7 +90,7 @@ COVERAGE.md    generated
 
 ## Build status
 
-The harness, `pick.ts`, and Loop 1 for Domain 1 are built: all 12 Domain 1 concepts have a card and a Loop 1 page, covering every Domain 1 misconception. Loop 1 for Domains 2–14 is next. There are no code drills yet; those start in Loop 2. [CLAUDE.md](CLAUDE.md) has the current status, and [COVERAGE.md](COVERAGE.md) tracks the rest.
+The harness, `pick.ts`, and Loop 1 for Domains 1 and 2 are built: all 23 of their concepts have a card and a Loop 1 page, covering every misconception listed for them. Loop 1 for Domains 3–14 is next. There are no code drills yet; those start in Loop 2. [CLAUDE.md](CLAUDE.md) has the current status, and [COVERAGE.md](COVERAGE.md) tracks the rest.
 
 ## Authoring
 
