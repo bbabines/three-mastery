@@ -5,7 +5,7 @@ domain: transforms
 tier: core
 prerequisites: [transforms.matrix-vs-matrixworld]
 misconceptions:
-  inverse-transpose: '"Inverse equals transpose." True only for pure rotation.'
+  inverse-transpose: '"Inverse equals transpose." True only for a pure rotation (or rotation plus mirror) with no translation or scale.'
 contexts:
   world-to-local: worldToLocal
   hit-object-space: A hit point in object space

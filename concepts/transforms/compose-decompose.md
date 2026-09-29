@@ -5,7 +5,7 @@ domain: transforms
 tier: light
 prerequisites: [transforms.trs-order]
 misconceptions:
-  clean-decompose: '"Every matrix decomposes cleanly." Shear is lost.'
+  clean-decompose: '"Every matrix decomposes cleanly." A sheared one doesn''t: decompose drops the shear.'
 contexts:
   baking: Baking transforms
   world-rotation: Extracting world rotation

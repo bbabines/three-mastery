@@ -106,7 +106,7 @@ Models from other tools sometimes arrive with a negative scale on a node, and th
 | --- | --- |
 | `mesh.scale` | Measured from its parent |
 | `mesh.matrix.determinant()` | Only the mesh's own mirror, measured from its parent |
-| `mesh.matrixWorld.determinant()`, what three.js checks | The world: mirrors on the mesh and all its parents |
+| `mesh.matrixWorld.determinant()`, the sign three.js checks | The world: mirrors on the mesh and all its parents |
 | The points `geometry.scale(-1, 1, 1)` changes | Measured from the object itself |
 | `hit.face.normal` | Measured from the object itself, worked out from the corner order |
 

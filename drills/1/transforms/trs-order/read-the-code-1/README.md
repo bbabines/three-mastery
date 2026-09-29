@@ -83,7 +83,7 @@ moon.applyMatrix4(step); // swings a little further around its parent's origin e
 
 You also combine matrices yourself for an `InstancedMesh`, which draws one shape many times and takes a matrix you build for each copy. Start from the copy's spot and `multiply` its turn, so each copy turns where it stands. `result.multiplyMatrices(a, b)` gives the same as `a.clone().multiply(b)`.
 
-Turning has the same pair: `object.rotateY(angle)` turns measured from the object itself and `object.rotateOnWorldAxis(axis, angle)` turns around a world axis. The rotation domain covers them.
+Turning has the same pair: `object.rotateY(angle)` turns measured from the object itself and `object.rotateOnWorldAxis(axis, angle)` turns around an axis measured from its parent, which is a world axis only when the parent isn't turned. The rotation domain covers them.
 
 ### Stretching a tilted part
 

@@ -63,11 +63,11 @@ Slide the sphere away from the origin. Its points are stored as float32, so far 
 const samePlace = p.distanceTo(q) < 1e-6;
 ```
 
-In Vitest, `expect(x).toBeCloseTo(y)` does the same for numbers.
+In Vitest, `expect(x).toBeCloseTo(y, 6)` does about the same for numbers. The second argument is how many decimal places must match; leave it out and it's 2, which lets anything within 0.005 pass.
 
 ### Pick a tolerance that fits the numbers
 
-1e-6 works for values around 1. For float32 positions around 5,000, the gap between storable values is about 0.0005, so a 1e-6 check can never pass. The bigger the numbers, the bigger the tolerance you need.
+1e-6 works for values around 1. For float32 positions around 5,000, the gap between storable values is about 0.0005, so a 1e-6 check only passes when the values are exactly equal: it's no better than `===`. The bigger the numbers, the bigger the tolerance you need.
 
 ### "Is it zero?" checks
 
@@ -79,7 +79,7 @@ if (new Triangle(a, b, c).getArea() < 1e-10) skipDegenerate();
 
 ### Huge worlds
 
-Content far from the origin jitters and crumples, like the sphere above. When a scene spans kilometers, keep what's near the camera near the origin: move the world around the camera instead of moving the camera far away.
+Geometry whose own vertex numbers are huge crumples, like the sphere above. An ordinary mesh moved far away with `position` holds up better: three.js combines the object's placement with the camera's in JavaScript's precise numbers, so the GPU only gets the small difference. Shader math done in world space and many physics engines still lose precision far out. When a scene spans kilometers, keep what's near the camera near the origin: move the world around the camera instead of moving the camera far away.
 
 ## Drill · Read the code
 

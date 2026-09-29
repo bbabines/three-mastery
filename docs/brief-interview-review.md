@@ -2,7 +2,7 @@
 
 Sep 29, 2026 · Brad
 
-**Status: applied Sep 29, 2026, except item 5's fixes.** Brad approved items 1–4 and 6 as written, plus a seventh tour, renderer settings. They're in `concept-inventory.md`, `writing-pages.md`, `domains.ts`, and `CLAUDE.md`, and the first tour page (Tour: the Object3D API) is built for Brad's review. Item 5's report is done, in `docs/r186-check/`; a separate session is applying its fixes. Item 6 needed no change: the Domain 2 commit had already updated the status. The "Needs Brad" notes below are kept as the record of what was asked.
+**Status: applied Sep 29, 2026, except item 5's fixes.** Brad approved items 1–4 and 6 as written, plus a seventh tour, renderer settings. They're in `concept-inventory.md`, `writing-pages.md`, `domains.ts`, and `CLAUDE.md`, and the first tour page (Tour: the Object3D API) is built for Brad's review. Item 5's report is done, in `docs/r186-check/`, and its fixes were applied Sep 29, 2026. Item 6 needed no change: the Domain 2 commit had already updated the status. The "Needs Brad" notes below are kept as the record of what was asked.
 
 ## Why
 
@@ -93,7 +93,7 @@ Because Loops 3 and 4 are the goal, each concept's list of misconceptions matter
 
 ### 5. Verify every r186 claim
 
-**Done Sep 29, 2026:** the report is in `docs/r186-check/README.md`. Fixes are waiting on Brad.
+**Done Sep 29, 2026:** the report is in `docs/r186-check/README.md`. Brad approved fixing everything it found, and the fixes were applied the same day.
 
 Every three.js claim in the repo gets checked against the installed `three@0.186.0`, with evidence, before any more content is built on it.
 

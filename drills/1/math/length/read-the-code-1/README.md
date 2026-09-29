@@ -12,7 +12,7 @@ misconceptions:
 
 # Length and lengthSq
 
-> **In short:** How far a vector reaches in a straight line; lengthSq is a quicker version that works just as well for comparing.
+> **In short:** How far a vector reaches in a straight line; lengthSq is a quicker version that works just as well for comparing lengths with each other.
 >
 > **Used for:** Distances between objects, finding the nearest one, "is it within range?" checks, and capping a speed.
 
@@ -57,7 +57,7 @@ To compare against a radius, square the radius too:
 if (player.position.distanceToSquared(coin.position) < radius * radius) collect(coin);
 ```
 
-Comparing a squared distance to a plain radius is a common bug. The check silently uses a much smaller circle than you meant.
+Comparing a squared distance to a plain radius is a common bug. The check silently uses the wrong circle: smaller than you meant for a radius over 1, bigger for a radius under 1.
 
 ### Changing a length
 

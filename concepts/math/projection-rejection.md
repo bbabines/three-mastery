@@ -5,7 +5,7 @@ domain: math
 tier: core
 prerequisites: [math.dot-product, math.normalize]
 misconceptions:
-  zero-an-axis: '"Zero one axis to project onto a plane" only works for axis-aligned planes.'
+  zero-an-axis: '"Zeroing one axis projects onto any plane." It only works for axis-aligned planes.'
 contexts:
   wall-slide: Sliding along a wall
   axis-constraint: Constraining motion to an axis

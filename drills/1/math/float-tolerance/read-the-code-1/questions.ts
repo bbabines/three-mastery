@@ -10,7 +10,9 @@ export const questions: Question[] = [
     why: 'Both numbers are rounded when stored, and the sum comes out as 0.30000000000000004. Compare with a tolerance instead of `===`.',
   },
   {
-    code: `const moved = point.clone().applyAxisAngle(up, Math.PI * 2); // one full turn
+    code: `const point = new Vector3(1, 0, 0);
+const up = new Vector3(0, 1, 0);
+const moved = point.clone().applyAxisAngle(up, Math.PI * 2); // one full turn
 moved.equals(point);`,
     ask: 'A full turn brings the point back to where it started. What does `equals` return?',
     choices: ['false, off by a tiny rounding error', 'true, a full turn lands exactly back', 'It depends on the frame rate'],

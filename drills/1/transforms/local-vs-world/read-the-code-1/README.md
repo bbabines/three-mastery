@@ -45,7 +45,7 @@ Move, turn, and resize the cart. The ball's `position` never changes. Its world 
 <details>
 <summary>The math, if you're curious</summary>
 
-The names you'll see in docs and forums: values measured from the parent are in **parent space**, values measured from the object itself are in **object space** (also called model space or local space), and the scene's frame is **world space**. When a parent only moves, a child's world position is the parent's world position plus the child's `position`. Once the parent turns or resizes, three.js combines them with matrices, which the matrix vs matrixWorld page covers.
+The names you'll see in docs and forums: values measured from the parent are in **parent space**, values measured from the object itself are in **object space** (also called model space or local space), and the scene's frame is **world space**. When nothing above the child is turned or resized, a child's world position is the parent's world position plus the child's `position`. Once the parent, or anything above it, turns or resizes, three.js combines them with matrices, which the matrix vs matrixWorld page covers.
 
 </details>
 

@@ -22,7 +22,7 @@ misconceptions:
 
 `a.angleTo(b)` gives the angle between two directions. It runs from 0, pointing the same way, to half a turn, pointing opposite ways.
 
-three.js measures angles in **radians**, not degrees. Half a turn is π radians, about 3.14, so a right angle is about 1.57. Convert when you need degrees:
+three.js measures angles in **radians**, not degrees, with one well-known exception: a camera's `fov` is in degrees. Half a turn is π radians, about 3.14, so a right angle is about 1.57. Convert when you need degrees:
 
 ```js
 MathUtils.radToDeg(angle); // radians to degrees
@@ -45,7 +45,7 @@ Move the target around the turret:
 
 ### The signed angle recipe
 
-This combines the dot product and cross product pages. The cross product's up part says which side the target is on, the dot product says whether it's ahead or behind, and `Math.atan2` turns the pair into an angle from −180° to 180°:
+This combines the dot product and cross product pages. The cross product's up part says which side the target is on, the dot product says whether it's ahead or behind, and `Math.atan2` turns the pair into an angle from −π to π radians (−180° to 180°):
 
 ```js
 const toTarget = target.position.clone().sub(turret.position);

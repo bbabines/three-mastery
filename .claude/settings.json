@@ -1,0 +1,36 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run coverage)",
+      "Bash(npm run coverage *)",
+      "Bash(npx tsc)",
+      "Bash(npx tsc *)",
+      "Bash(python3)",
+      "Bash(python3 *)",
+      "Bash(curl *)",
+      "Bash(node *)",
+      "Bash(sed *)",
+      "Bash(npm run pick)",
+      "Bash(npm run pick --silent)",
+      "Bash(npm run typecheck)",
+      "Bash(npm run verify)",
+      "Bash(npm run verify *)",
+      "Bash(npm view *)",
+      "Bash(npx vitest run)",
+      "Bash(npx vitest run *)",
+      "WebFetch(domain:developer.mozilla.org)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:registry.khronos.org)",
+      "mcp__Claude_Browser__read_console_messages",
+      "mcp__Claude_Browser__find",
+      "mcp__Claude_Browser__read_page",
+      "mcp__Claude_Browser__get_page_text",
+      "mcp__Claude_Browser__read_network_requests",
+      "mcp__Claude_Browser__preview_list",
+      "mcp__Claude_Browser__preview_logs",
+      "mcp__Claude_Browser__tabs_context",
+      "mcp__terminal__read_terminal"
+    ]
+  }
+}

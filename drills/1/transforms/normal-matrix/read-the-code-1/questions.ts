@@ -4,6 +4,7 @@ import type { Question } from '@harness/quiz';
 export const questions: Question[] = [
   {
     code: `// the ramp is stretched to three times its length: scale (3, 1, 1)
+ramp.updateMatrixWorld();
 const n = new Vector3(-0.6, 0.8, 0); // the slope's normal, measured from the ramp
 n.transformDirection(ramp.matrixWorld);`,
     ask: 'Which way does `n` point now?',
@@ -13,6 +14,7 @@ n.transformDirection(ramp.matrixWorld);`,
   },
   {
     code: `// the lamp is scaled 2.5 on every axis and turned 70°
+lamp.updateMatrixWorld();
 const n = normal.clone().transformDirection(lamp.matrixWorld);`,
     ask: 'Is `n` the right normal, in the world?',
     choices: ['Yes: growing evenly tilts nothing', 'No: any scale at all tilts normals', 'No: its length is 2.5 instead of 1'],

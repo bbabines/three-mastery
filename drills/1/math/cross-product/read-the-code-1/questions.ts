@@ -28,11 +28,12 @@ const n = new Vector3().crossVectors(edge1, edge2);`,
     why: "`n` points the right way, straight up, but a cross product's length grows with its inputs, so it's rarely 1. Normals should have length 1, so call `.normalize()`.",
   },
   {
-    code: `const n = new Vector3().crossVectors(edge1, edge2).normalize();
-// edge1 and edge2 point the same way (a sliver triangle)`,
+    code: `const edge1 = new Vector3(1, 0, 0);
+const edge2 = new Vector3(2, 0, 0); // the same way as edge1
+const n = new Vector3().crossVectors(edge1, edge2).normalize();`,
     ask: 'What is `n`?',
     choices: ['(0, 0, 0), with no warning', '(0, 1, 0), a default of up', 'An error about parallel edges'],
     answer: 0,
-    why: 'Parallel inputs form no area, so the cross product is (0, 0, 0), and normalizing (0, 0, 0) leaves it (0, 0, 0).',
+    why: 'Parallel inputs form no area, so the cross product is (0, 0, 0), and normalizing (0, 0, 0) leaves it (0, 0, 0). Edges that only *almost* line up are worse: they give a tiny result that normalizes to length 1 in a random direction.',
   },
 ];

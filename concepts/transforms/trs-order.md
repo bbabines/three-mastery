@@ -6,7 +6,7 @@ tier: core
 prerequisites: [transforms.matrix-vs-matrixworld]
 misconceptions:
   order-irrelevant: '"Order doesn''t matter."'
-  parent-shear: Non-uniform scale on a parent shears rotated children.
+  parent-shear: '"A parent''s uneven scale just stretches a rotated child along the child''s own axes." It shears the child instead.'
 contexts:
   pivot-rotate: Rotating around a pivot
   orbit-point: Orbiting a point

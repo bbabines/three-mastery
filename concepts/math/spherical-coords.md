@@ -6,7 +6,7 @@ tier: light
 prerequisites: [math.point-vs-direction]
 misconceptions:
   phi-from-equator: '"Phi is measured from the equator."'
-  poles: The poles are degenerate.
+  poles: '"Theta still gives a heading at the poles." Straight up or down, every theta is the same point, and converting back gives 0.'
 contexts:
   orbit-camera: Orbit camera
   sphere-points: Points on a sphere

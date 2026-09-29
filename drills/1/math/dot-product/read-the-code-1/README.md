@@ -14,7 +14,7 @@ misconceptions:
 
 # Dot product
 
-> **In short:** One number that says how much two directions point the same way: 1 for the same way, 0 at right angles, −1 for opposite.
+> **In short:** One number that says how much two directions point the same way: 1 for the same way, 0 at right angles, −1 for opposite, when both have length 1.
 >
 > **Used for:** Lighting a surface, front-or-behind checks, vision cones for game characters, and measuring the angle between any two directions.
 
@@ -22,7 +22,7 @@ misconceptions:
 
 ### How much do two directions agree?
 
-The dot product takes two directions and gives back one number that says how much they point the same way:
+The dot product takes two directions and gives back one number that says how much they point the same way. When both have length 1:
 
 - **1** means they point the same way.
 - **0** means they're at right angles.
@@ -45,7 +45,7 @@ Multiply the matching parts and add them up: a.x × b.x + a.y × b.y + a.z × b.
 
 </details>
 
-### Only for length-1 directions
+### The 1 to −1 scale needs length-1 directions
 
 The 1 to −1 scale holds only when both directions have length 1. Otherwise the answer is multiplied by both lengths, so it can be 10 or −20. Normalize first when you want the agreement score. The sign still tells you something either way: positive means partly the same way, and negative means partly opposite.
 

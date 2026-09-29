@@ -25,7 +25,7 @@ This one is a recipe made from the cross product and dot product pages, and it a
 1. Cross two edges of a triangle. That gives the direction the triangle faces, its normal.
 2. Dot that normal with the move from the triangle to the point.
 
-The sign answers the question. Positive means the point is on the side the triangle faces, negative means the other side, and 0 means it's exactly on the surface.
+The sign answers the question. Positive means the point is on the side the triangle faces, negative means the other side, and 0 means it's exactly on the triangle's plane: the flat surface the triangle lies in, which carries on past its edges, so the point isn't necessarily inside the triangle.
 
 **Analogy: a cup and a table.** The table's top faces up. A cup sitting on it is on the facing side; a cup on the floor underneath is on the other side.
 
@@ -53,7 +53,7 @@ plane.distanceToPoint(point);
 
 ### Is an object mirrored?
 
-The same recipe applied to an object's three axes tells you whether it has been mirrored, for example by a scale of −1 on one axis. A mirrored object can light up inside-out:
+The same recipe applied to an object's three axes tells you whether it has been mirrored, for example by a scale of −1 on one axis. three.js notices a mirrored mesh and flips which side counts as the front, but anything it doesn't look at, like your own geometry code, instanced meshes, physics, or exporters, has to check for itself:
 
 ```js
 const mirrored = xAxis.dot(new Vector3().crossVectors(yAxis, zAxis)) < 0;

@@ -14,7 +14,7 @@ contexts:
 
 ## Definition
 
-A vector's length is how far it reaches in a straight line, and lengthSq is that length multiplied by itself, which is quicker to get and just as good for comparing.
+A vector's length is how far it reaches in a straight line, and lengthSq is that length multiplied by itself, which is quicker to get and just as good for comparing lengths with each other (square any fixed limit you compare against).
 
 ## Cost lens
 

@@ -47,13 +47,13 @@ More and more 3D code will be written or edited by AI. What a person adds is jud
 
 ## Examples from the inventory
 
-**Marker flush on a clicked surface** (cross-domain: 2, 5, 8). The bug: `face.normal` is transformed like a direction, so the marker tilts on a non-uniformly scaled part. The check scales the parent `(3, 1, 1)`, rotates it, then asserts the marker's world-space up is perpendicular to two world-space edges of the hit triangle. It fails with `transformDirection` and passes with the normal matrix.
+**Marker flush on a clicked surface** (cross-domain: 2, 5, 8). The bug: `face.normal` is transformed like a direction, so the marker tilts on a non-uniformly scaled part. The check scales the parent `(3, 1, 1)`, rotates it, raycasts a face that slopes relative to the stretch (a cone's side, or a part turned inside the stretched parent; a face lined up with the parent's axes keeps a correct normal either way), then asserts the marker's world-space up is perpendicular to two world-space edges of the hit triangle. It fails with `transformDirection` and passes with the normal matrix.
 
 **acos of an unclamped dot** (Domain 1). The bug: `Math.acos(a.dot(b))` returns NaN when rounding pushes the dot a hair above 1. The check feeds in two unit vectors that differ only by float noise and asserts the angle is finite. It guards against any future edit that drops the clamp.
 
 **Raycast right after a move** (Domain 2, update timing). The bug: reading `matrixWorld` before it's updated. The check moves an object, raycasts at its new position in the same tick, and asserts a hit. It fails without `updateMatrixWorld()`.
 
-**Memory climbs after 20 variant swaps** (cross-domain: 6, 7, 14). The bug: swapped-out materials and textures are never disposed. The check records `renderer.info.memory`, swaps variants 20 times, and asserts the counts return to baseline. This needs a real WebGL context; see open questions.
+**Memory climbs after 20 variant swaps** (cross-domain: 6, 7, 14). The bug: swapped-out materials and textures are never disposed. The check records `renderer.info.memory`, swaps variants 20 times, and asserts the geometry and texture counts return to baseline. `renderer.info.memory` doesn't count materials, so for those it also checks `renderer.info.programs.length` or counts `dispose` events. This needs a real WebGL context; see open questions.
 
 **Chrome finish looks black on mobile** (cross-domain: 6, 11, 13). This is partly visual. A check can assert that the environment map is set and its texture format is supported. Whether it *looks* right needs a person or a screenshot comparison, and the answer should say so.
 

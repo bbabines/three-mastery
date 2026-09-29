@@ -36,7 +36,9 @@ Change the angle, then try the second button:
 
 ### The normal must have length 1
 
-`reflect` assumes the normal has length 1. With a longer normal, the bounce comes out wrong: in the scene, a normal of length 2 sends the ball up seven times too fast. Normals from three.js, such as raycast hit normals, are already length 1; normals you build yourself, from a cross product for example, need `.normalize()`.
+`reflect` assumes the normal has length 1. With a longer normal, the bounce comes out wrong: in the scene, a normal of length 2 sends the ball up with seven times the upward speed it should have. From a raycast, `hit.face.normal` has length 1, but the smoothed `hit.normal` doesn't, so normalize it. Normals you build yourself, from a cross product for example, need `.normalize()` too.
+
+Both raycast normals are measured in the object's own space, not the world. Once the mesh is turned, reflecting a world velocity off them bounces the wrong way. `normal.clone().transformDirection(mesh.matrixWorld)` turns one into world space and also sets its length to 1. (For a stretched mesh, the exact fix is the normal matrix, which has its own page in the transforms domain.)
 
 ### Bounces that lose energy
 

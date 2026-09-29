@@ -19,6 +19,6 @@ const side = normal.dot(point.clone().sub(a));`,
       'When it has been turned upside down',
     ],
     answer: 0,
-    why: "Turning an object, even upside down, keeps its axes arranged the normal way. Only a flip, like a negative scale, reverses them, and this check's sign catches it.",
+    why: "Turning an object, even upside down, keeps its axes arranged the normal way. Only a flip, a negative scale on one axis or all three, reverses them, and this check's sign catches it.",
   },
 ];

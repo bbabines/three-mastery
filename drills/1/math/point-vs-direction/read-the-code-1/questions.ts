@@ -4,7 +4,7 @@ import type { Question } from '@harness/quiz';
 export const questions: Question[] = [
   {
     code: `const velocity = new Vector3(0, 0, -2); // per second
-ship.position.add(velocity);`,
+ship.position.addScaledVector(velocity, delta); // delta: seconds since the last frame`,
     ask: 'What do the numbers in `velocity` mean?',
     choices: [
       'A move: 2 units into the screen, every second',

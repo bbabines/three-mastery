@@ -8,6 +8,7 @@ context: transforms.update-timing/raycast-after-move
 lenses: []
 misconceptions:
   - transforms.update-timing/stale-read
+  - transforms.update-timing/parents-refresh
 ---
 
 # Update timing
@@ -72,7 +73,7 @@ Some methods refresh the saved transforms they need before they answer. Others r
 | Reading `object.matrix` or `object.matrixWorld` yourself | No |
 | `object.toJSON()` | No: it saves each `matrix` as it is |
 
-That's why `getWorldPosition` was right even a line after a move on the local vs world space page. Anything marked "No" needs a refresh first if something just moved.
+That's why `getWorldPosition` was right even a line after a move on the local vs world space page. Anything marked "No" needs a refresh first if something just moved. The "Yes" rows have one exception: they refresh the parents but not an object with auto-update off, covered below.
 
 ### Refreshing after moving a parent
 
@@ -106,7 +107,7 @@ Measure the thing that changed, `new Box3().setFromObject(shelf)`, or call `shel
 
 ### Syncing to external data
 
-- **Sending positions out,** to a server, a physics engine, a UI panel, or a save file: read them with the `getWorld…` methods, which refresh first. To read `matrixWorld` on many objects, call `scene.updateMatrixWorld()` once, then read them all. Watch out for `object.toJSON()`: it saves each `matrix` as it is, so a move since the last render is lost unless you refresh first. `GLTFExporter` rebuilds each `matrix` itself.
+- **Sending positions out,** to a server, a physics engine, a UI panel, or a save file: read them with the `getWorld…` methods, which refresh first. To read `matrixWorld` on many objects, call `scene.updateMatrixWorld()` once, then read them all. Watch out for `object.toJSON()`: it saves each `matrix` as it is, so a move since the last render is lost unless you refresh first. `GLTFExporter` doesn't have this problem: it rebuilds each `matrix` itself, or, with `trs: true`, writes `position`, `quaternion`, and `scale` as they are.
 - **Bringing positions in,** from a physics engine or a server each step: set `position` and `quaternion`, and let the render refresh the rest. If the same step then raycasts or measures, refresh first.
 
 ### Objects that never move
@@ -123,7 +124,7 @@ rack.matrixAutoUpdate = false; // three.js stops rebuilding it from here on
 
 Two things to know:
 
-- **Moving it does nothing until you call `updateMatrix()`.** With auto-update off, changing `position` doesn't change where the rack is drawn. That includes the first placement: set the position, turn auto-update off, skip `updateMatrix()`, and the rack sits at the center of the scene. `updateMatrix()` rebuilds only `matrix`; the next render combines it into `matrixWorld`. `getWorldPosition` doesn't help, because it only refreshes `matrixWorld`, from the old `matrix`.
+- **Moving it does nothing until you call `updateMatrix()`.** With auto-update off, changing `position` doesn't change where the rack is drawn. That includes the first placement: set the position, turn auto-update off, skip `updateMatrix()`, and the rack sits at the center of the scene. `updateMatrix()` rebuilds only `matrix`; the next render combines it into `matrixWorld`. `getWorldPosition` doesn't help: with auto-update off it doesn't refresh the rack at all, so it reads the saved `matrixWorld` as the last render left it, even if the rack's parent has moved since.
 - **It saves less than it sounds.** Every render still visits the rack and combines it with its parent, which is also why a rack with auto-update off still follows its parent. Skipping the rebuild alone makes little difference to how long the refresh takes. Bigger savings, like not refreshing parts of the scene that never move, belong to the optimization domain.
 
 Try both buttons, then move the rack. With auto-update off, it stays put until you press `rack.updateMatrix()`.

@@ -24,7 +24,7 @@ const flat = v.clone().projectOnPlane(new Vector3(0, 1, 0)); // the floor faces 
   },
   {
     code: `// wallNormal is (0.8, 0, 0.6): a wall at an angle
-// velocity is (−2, 0, 0): running straight into it
+// velocity is (−2, 0, 0): running along −X, into the wall at an angle
 velocity.x = 0;`,
     ask: 'What does the character do?',
     choices: ['It stops dead against the wall', 'It slides along the wall, as intended', 'It bounces back off the wall'],

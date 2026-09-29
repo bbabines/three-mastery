@@ -7,12 +7,12 @@ export const questions: Question[] = [
 trees.setMatrixAt(0, m);`,
     ask: 'What goes wrong?',
     choices: [
-      'The matrix fills with NaN, so copy 0 vanishes',
+      'The turn part fills with NaN, so copy 0 vanishes',
       'Nothing, rotation and quaternion hold the same turn',
       'compose throws an error about the wrong type',
     ],
     answer: 0,
-    why: "`compose` wants a quaternion. `crate.rotation` holds the same turn written a different way, which the rotation domain covers, so `compose` reads a value that isn't there. Plain JavaScript doesn't stop it: every number comes out NaN (not a number) and the copy disappears. TypeScript flags it before it runs. Pass `crate.quaternion` instead.",
+    why: "`compose` wants a quaternion. `crate.rotation` holds the same turn written a different way, which the rotation domain covers, so `compose` reads a value that isn't there. Plain JavaScript doesn't stop it: the turn part of the matrix comes out NaN (not a number), so every point drawn with it is NaN and copy 0 disappears. Raycasts against the whole InstancedMesh stop hitting too, even the other copies. TypeScript flags it before it runs. Pass `crate.quaternion` instead.",
   },
   {
     code: `rack.scale.set(2, 1, 1);  // stretched wide

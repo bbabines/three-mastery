@@ -42,7 +42,7 @@ camera.position.setFromSpherical(s);
 
 ### This is how orbit cameras work
 
-`OrbitControls` keeps the camera's position around its target as spherical coordinates: dragging changes theta and phi, and zooming changes the radius. You'd use the same idea to write your own orbit or turntable camera.
+`OrbitControls` keeps the camera's position around its target as spherical coordinates: dragging changes theta and phi, and zooming a perspective camera changes the radius (an orthographic camera changes `zoom` instead). You'd use the same idea to write your own orbit or turntable camera.
 
 ### Measured from a center
 

@@ -7,7 +7,7 @@ prerequisites: [math.normalize]
 misconceptions:
   only-three-values: '"Only −1, 0, or 1."'
   always-unit-range: '"Always within [−1, 1]."'
-  acos-unclamped: acos of an unclamped dot returns NaN.
+  acos-unclamped: '"Math.acos of the dot of two unit vectors is always safe." Rounding can push it just past 1, and acos returns NaN; angleTo clamps.'
 contexts:
   front-behind: Front/behind test
   lambert: Lambert N·L

@@ -76,7 +76,7 @@ To send an object along a move, add the move to its position:
 mesh.position.add(move);
 ```
 
-To put something halfway between two places, blend them. Don't add two positions together; the result isn't a meaningful place.
+To put something halfway between two places, blend them. Adding two positions doesn't give a place by itself; the sum only means something once you halve it, which is what `lerp(b, 0.5)` does.
 
 ```js
 const middle = a.clone().lerp(b, 0.5);

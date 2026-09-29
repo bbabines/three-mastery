@@ -74,7 +74,7 @@ Anything that asks "where is it in the world?" reads `matrixWorld`. `matrix` onl
 | `raycaster.intersectObject(mesh)`, checking what a ray hits | `matrixWorld` |
 | `new Box3().setFromObject(mesh)`, the box a mesh fills in the world | `matrixWorld` |
 | `getWorldPosition(v)` and the other `getWorld…` methods | `matrixWorld` |
-| `GLTFExporter` and `object.toJSON()`, saving a scene to a file | `matrix`, for every object in the tree |
+| `GLTFExporter` and `object.toJSON()`, saving a scene to a file | `matrix` (or `position`, `quaternion`, and `scale`, with GLTFExporter's `trs: true`), measured from the parent, for every object in the tree |
 
 ### Measuring an object in the world
 
@@ -100,7 +100,7 @@ With `mesh.matrix` in its place, the parents are left out. For a mesh inside a g
 
 What to save depends on whether the tree of parents gets saved too.
 
-- **A file that keeps the tree,** like glTF from `GLTFExporter`, or `object.toJSON()`: each object saves its `matrix`, measured from its parent. When the file loads, three.js rebuilds every `matrixWorld` from the tree, so everything lands where it was.
+- **A file that keeps the tree,** like glTF from `GLTFExporter`, or `object.toJSON()`: each object saves its own transform, usually its `matrix`, measured from its parent. When the file loads, three.js rebuilds every `matrixWorld` from the tree, so everything lands where it was.
 - **A flat list with no parents,** like a layout sent to a warehouse system, or placements sent to a server: save where each thing really is, from `matrixWorld` or `getWorldPosition`. A `matrix` in that list leaves out the parents, so a bin saved from a rack lands as if the rack stood at the center of the world.
 
 ### Moving an object to a new parent

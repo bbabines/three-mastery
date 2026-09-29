@@ -35,7 +35,7 @@ Move the target with the sliders. The yellow arrow reaches the target. The green
 
 ### Why length 1 matters
 
-Lots of code expects its directions to have length 1: lighting, raycasting, and the dot product all give wrong answers otherwise. A unit direction also makes speed simple: multiply it by how far you want to go.
+Lots of code expects its directions to have length 1: lighting and raycasting give wrong answers otherwise, and the dot product can't be read as a −1 to 1 score. A unit direction also makes speed simple: multiply it by how far you want to go.
 
 ## B · Working knowledge
 
@@ -54,7 +54,7 @@ Without `normalize()`, the ship would move faster the farther away the target is
 
 "Always normalize" is a myth. Normalizing throws the length away, so don't do it to anything whose length matters: a velocity (its length is the speed), an offset, or a distance.
 
-Many three.js methods already hand you unit directions, including `camera.getWorldDirection()`, a raycaster's ray, and face normals from a raycast.
+Many three.js methods already hand you unit directions, including `camera.getWorldDirection()`, a ray from `raycaster.setFromCamera()`, and `hit.face.normal` from a raycast (which is measured in the object's own space, not the world).
 
 ### The zero vector
 

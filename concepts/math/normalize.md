@@ -6,7 +6,7 @@ tier: light
 prerequisites: [math.length]
 misconceptions:
   always-normalize: '"Always normalize."'
-  zero-vector: A zero vector can't be normalized.
+  zero-vector: '"Normalizing a zero vector throws or gives a default direction." It quietly returns (0, 0, 0).'
 contexts:
   target-direction: Direction to a target
   surface-normal: Surface normal

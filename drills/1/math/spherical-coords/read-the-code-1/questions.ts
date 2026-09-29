@@ -32,6 +32,6 @@ camera.lookAt(target);`,
       'To make zooming in and out smoother',
     ],
     answer: 0,
-    why: "At the very top or bottom, every theta is the same point, so the camera can spin unpredictably. Staying a hair away keeps its orientation stable; this is what `makeSafe()` does.",
+    why: "At the very top or bottom, every theta is the same point, so the camera can spin unpredictably. Staying a hair away keeps its orientation stable; this is what `makeSafe()` does, with an even smaller margin.",
   },
 ];

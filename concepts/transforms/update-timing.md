@@ -5,7 +5,8 @@ domain: transforms
 tier: core
 prerequisites: [transforms.matrix-vs-matrixworld]
 misconceptions:
-  stale-read: Reading matrixWorld right after setting position returns the old value.
+  stale-read: '"Setting position updates matrixWorld right away."'
+  parents-refresh: '"updateMatrixWorld() also refreshes the parents."'
 contexts:
   raycast-after-move: Raycasting right after a move
   bounds-after-transform: Bounds after a transform

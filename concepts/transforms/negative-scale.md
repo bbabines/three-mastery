@@ -18,4 +18,4 @@ A negative scale on one axis mirrors an object, and the determinant is a single 
 
 ## Space lens
 
-three.js checks `object.matrixWorld.determinant()`, so a mirror on the object or on any of its parents counts. A mirror baked with `geometry.scale(-1, 1, 1)` changes the points measured from the object itself, and the object's matrices never show it.
+three.js checks the sign of the determinant of `object.matrixWorld` (r186 uses the quicker `determinantAffine()`, which gives the same number), so a mirror on the object or on any of its parents counts. A mirror baked with `geometry.scale(-1, 1, 1)` changes the points measured from the object itself, and the object's matrices never show it.

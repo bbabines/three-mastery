@@ -27,6 +27,7 @@ const spout = new Vector3(0, 1, 0).transformDirection(tank.matrixWorld);`,
   },
   {
     code: `// the scanner stands at (6, 1, 0) and isn't turned
+scanner.updateMatrixWorld();
 const ahead = new Vector3(0, 0, -1).applyMatrix4(scanner.matrixWorld);
 raycaster.set(scannerTip, ahead.normalize());`,
     ask: 'Which way does the ray go?',

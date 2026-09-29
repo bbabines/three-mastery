@@ -42,4 +42,31 @@ doorA.geometry.translate(0.4, 0, 0);`,
     answer: 0,
     why: "`translate` moves the points stored in the geometry, and both meshes draw that same geometry, so both doors shift 0.4 and now turn around their left edge. Neither `position` changes. To change only one door, give it its own copy with `shape.clone()`, or use a pivot group.",
   },
+  {
+    code: `// the lid is a box 1 deep, with its origin in its middle
+lid.pivot = new Vector3(0, 0, -0.5); // its back edge, measured from the lid
+lid.rotation.x = -Math.PI / 3;`,
+    ask: 'What does the lid do?',
+    choices: [
+      'Swings up around its back edge, with no group',
+      'Spins around its middle, since edges need a group',
+      'Slides back 0.5, then spins around its middle',
+    ],
+    answer: 0,
+    why: "Since r183, `pivot` makes `rotation` and `scale` work around that point instead of the origin, so the lid swings up on its back edge, the same as it would hanging from a pivot group. Setting `pivot` doesn't slide the lid: with no turn it changes nothing. A group is still the way for several parts, joint chains, or older three.js.",
+  },
+  {
+    code: `door.position.set(2, 0, 0);          // added straight to the scene
+door.pivot = new Vector3(-0.5, 0, 0); // its left edge
+door.rotation.y = Math.PI / 2;
+door.getWorldPosition(v);`,
+    ask: 'Where is `v`?',
+    choices: [
+      'Not at (2, 0, 0), since the origin swung around',
+      "At (2, 0, 0), since that is the door's position",
+      'At the hinge (1.5, 0, 0), where the pivot sits',
+    ],
+    answer: 0,
+    why: "`getWorldPosition` gives the door's origin, its middle. With `pivot` set, the spot that stays put is `position` plus `pivot`, the hinge at (1.5, 0, 0), and the middle swings around it to (1.5, 0, −0.5). `door.position` still reads (2, 0, 0), so read where the door is with `getWorldPosition`, not `position`.",
+  },
 ];

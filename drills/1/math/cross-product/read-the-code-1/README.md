@@ -79,7 +79,7 @@ The angle page builds on this.
 ### Gotchas
 
 - `a.cross(b)` overwrites `a` with the result, just like `sub`. Use `new Vector3().crossVectors(a, b)` to keep both inputs.
-- Parallel inputs give (0, 0, 0), and normalizing that gives (0, 0, 0) too. It shows up with sliver triangles, whose edges almost line up, and later with `lookAt` when the forward and up directions line up.
+- Exactly parallel inputs give (0, 0, 0), and normalizing leaves it (0, 0, 0). Nearly parallel ones, like the edges of a sliver triangle, give a tiny cross product that normalizes to length 1 pointing somewhere random, so check the length before normalizing. `lookAt` guards its own version of this, but the camera can spin suddenly when forward and up line up.
 - A triangle's area is half the cross product's length. `new Triangle(a, b, c).getArea()` does it for you.
 
 ## Drill · Read the code

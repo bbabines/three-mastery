@@ -18,7 +18,7 @@ The reader needs three things from every concept: what it is, what it's used for
 Some core ideas in the inventory are stated as theory, like "points use w=1 and directions use w=0", "matrixWorld = parent.matrixWorld × matrix", or "the inverse transpose of the upper 3×3". Teach what the reader can see and do instead:
 
 - **Say what happens.** Moving an object shifts the points attached to it; turning it turns both points and directions; neither changes a direction's length.
-- **Name the method that does it.** `applyMatrix4` treats a Vector3 as a point and includes the shift. `transformDirection` treats it as a direction: it only turns, and it also normalizes.
+- **Name the method that does it.** `applyMatrix4` treats a Vector3 as a point and includes the shift. `transformDirection` treats it as a direction: it leaves out the shift, applies the turn and resize, then sets the length back to 1.
 - **Show the bug** when the wrong one is used.
 
 The theory can appear once, in the collapsed "The math" note, or not at all. Describe matrices by what they hold and when three.js updates them, never as 16 numbers; reading the numbers is its own concept in the debugging domain.
