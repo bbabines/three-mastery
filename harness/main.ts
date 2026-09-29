@@ -2,7 +2,7 @@
 // places them with <div data-scene="name"> and <div data-quiz>.
 import { marked } from 'marked';
 import { parse } from 'yaml';
-import { renderNav } from './nav';
+import { renderNav, renderPace } from './nav';
 import { renderQuiz, type Question } from './quiz';
 import { createHarness, type SceneSetup } from './scene';
 
@@ -90,6 +90,8 @@ renderNav(
   })),
   selected,
 );
+const pace = document.querySelector<HTMLDivElement>('#pace')!;
+renderPace(pace, finished);
 
 async function renderDrill(drill: Drill) {
   const title = document.createElement('h1');
@@ -143,6 +145,8 @@ async function renderDrill(drill: Drill) {
       const at = await logFinished(drill, right, total);
       if (!at) return "Couldn't save your progress. Is npm run dev running?";
       showDone(at);
+      finished.set(drill.meta.id, at);
+      renderPace(pace, finished);
       return 'Logged as done.';
     });
   }

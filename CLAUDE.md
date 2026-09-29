@@ -47,6 +47,7 @@ Don't reopen these without Brad.
 | Decision | Why |
 | --- | --- |
 | Nothing is timed: no time limits, no timers, no minutes logged, and no time estimates on pages | Brad switches contexts constantly at work, so time spent says nothing. `pick.ts` logs only the date a drill was finished, which it needs for spacing. |
+| One exception: the sidebar's footer shows when the current Loop 1 domain and all of Loop 1 would be done at one page a day (`renderPace` in `harness/nav.ts`). It counts pages left, not time spent, and moves up when Brad does more than one a day | Brad's goal is one page a day and asked for something to aim for. An all-loops date was tried and removed: it pushed Brad toward getting done over learning. Don't add it back unless Brad asks. |
 | Pacing: all of Loop 1, then its checkpoint, then Loop 2 | Brad chose this over opening each domain's Loop 2 early. A checkpoint is a self-check: taking it moves `pick.ts` to the next loop, whatever the score. |
 | No placement check in Loop 1 | Loop 1 teaches. To skip a known page, collapse A and B and do the drill. |
 | Code drills (Loops 2–4): you write the code in `drill.ts` in your editor, the page runs it live in a scene, and a test checks it wherever a test is possible | Real editor, visible results, automatic checks. |

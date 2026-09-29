@@ -1,6 +1,7 @@
 // The viewer's left navigation: every loop and domain in the curriculum plan, with built pages as
 // links and the rest greyed out. Groups collapse, and which ones are open is remembered.
 import {
+  CORE_DOMAINS,
   CROSS_DRILLS,
   DOMAINS,
   LOOP_PLAN,
@@ -165,4 +166,29 @@ export function renderNav(container: HTMLElement, drills: NavDrill[], selected: 
 
   // `toggle` doesn't bubble, so listen during the capture phase.
   container.addEventListener('toggle', () => saveOpenGroups(container), true);
+}
+
+const DAY = 24 * 60 * 60 * 1000;
+const localDay = (date: Date) => date.toLocaleDateString('en-CA'); // YYYY-MM-DD in local time
+
+// When the current Loop 1 domain and all of Loop 1 would be done at one page a day, starting
+// today, or tomorrow if one is already done today. `finished` maps drill ids, like
+// "1.math.dot-product.read-the-code.1", to when they were done.
+export function renderPace(container: HTMLElement, finished: Map<string, string>) {
+  const today = new Date();
+  const doneToday = [...finished.values()].some((at) => localDay(new Date(at)) === localDay(today));
+  const doneCount = (prefix: string) => [...finished.keys()].filter((id) => id.startsWith(prefix)).length;
+  const doneIn = (left: number) => {
+    const end = new Date(today.getTime() + (left - (doneToday ? 0 : 1)) * DAY);
+    const date = end.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+    return `${left} ${left === 1 ? 'day' : 'days'} · ${date}`;
+  };
+  // The current domain is the first in teaching order with Loop 1 pages left.
+  const current = CORE_DOMAINS.find((domain) => doneCount(`1.${domain.slug}.`) < plannedDrillCount(domain, 1));
+  const loopLeft = LOOPS[0].estimate - doneCount('1.');
+  container.innerHTML = current
+    ? `<p class="pace-title">At one page a day</p>
+      <p><span title="${current.name}">Domain ${current.n}</span><span>${doneIn(plannedDrillCount(current, 1) - doneCount(`1.${current.slug}.`))}</span></p>
+      <p><span>Loop 1</span><span>${doneIn(loopLeft)}</span></p>`
+    : `<p class="pace-title">Loop 1 is done</p>`;
 }
