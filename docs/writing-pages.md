@@ -43,6 +43,8 @@ The same goes for the inventory's use contexts. Some are written as theory, like
 
 - **Spatial queries (8):** each entry in a raycast result is a "hit" (the docs say intersection). A ray is "a start and a direction", and it "only runs one way". `hit.point` is "in the world"; `hit.face.normal` and `hit.normal` are "measured from the hit object itself". An AABB is "a box lined up with the axes" (`Box3`); an OBB is "a box that turns with the object". The "target list" is the array passed to `intersectObjects`. Tests that rule things out are "quick checks", and their yes only means "maybe".
 
+- **Interaction (9):** "local" only means "the object's own axes", the way a gizmo uses it; otherwise say "its own axes" or "its parent's axes". Every drag makes the trip "screen pixels → NDC → a ray in the world → a hit in the world → measured from the parent". Use "grab offset", "the drag plane", and "delta" (the seconds since the last frame). "Dolly" moves the camera and "zoom" changes the lens; pages always point out that OrbitControls calls its dolly "zoom". "Which space is it in?" sections reuse Domain 4's wording ("CSS pixels from the canvas's top-left corner").
+
 Add a line here whenever a domain needs a wording decision, so later pages stay consistent.
 
 ## Files
@@ -221,6 +223,7 @@ export const agree: SceneSetup = ({ scene, camera, controls, container, onFrame 
 - For a second camera inside a scene: `showCamera` (a small body plus a `CameraHelper`), `cameraView` (what that camera sees, as a picture in the scene's top-right corner), and `screenTag` (an HTML label placed in CSS pixels over the canvas).
 - Scenes that need a real model load one of Brad's with `loadModel(MODELS.rackParts)` from `harness/models.ts`. The files live in `assets/models/` and are Draco-compressed, so the shared loader comes with a Draco decoder. `fitModel(model, size, at?)` puts a loaded model on display: it sits on the floor at `at`, scaled so its largest side is `size`.
 - `pointerSpot(container, canvas, controlsBar, onMove, start?)`: a pointer spot marked with a ring that two sliders can also drive, so a pointer-driven scene works from JavaScript checks too.
+- `pointerDrag(harness, handlers, replaySlider?)`: a real pointer drag (orbit off, pointer capture) plus a slider that replays a fixed drag, so checks can drive it from JavaScript. It doesn't call `updateMatrixWorld()`; a handler that moves something and then raycasts must.
 - `boxMarkers(scene)` returns `{ mark(objects, color?), clear() }`: box outlines around whatever some code found. `buttonGroup(bar, text?)` lets one controls bar hold two separate rows of `choiceButtons`.
 - For memory readouts: `collectResources(object)` (every geometry, material, and texture under an object, each once), `geometryBytes(geometry)`, `formatBytes(bytes)`, and `afterNextRender(onFrame)` (runs a callback once a render has drawn a change, for reading `renderer.info` after it).
 - Keep the readout short, about four lines, with no blank lines. It sits over the top of the scene and hides labels behind it.

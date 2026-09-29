@@ -576,3 +576,22 @@ export function roomEnvironment(renderer: THREE.WebGLRenderer, blur = 0.04) {
   pmrem.dispose();
   return texture;
 }
+
+// The color on screen where a point in the world lands, as '#rrggbb', for readouts that report what
+// the viewer actually sees (after lighting, tone mapping, and the sRGB output). It draws the frame
+// once more and reads that pixel straight away, before the browser shows the frame and clears it,
+// so call it from an onFrame callback, and not every frame. Returns '' when the point is off screen.
+export function screenColor(harness: { renderer: THREE.WebGLRenderer; scene: THREE.Scene; camera: THREE.Camera }, point: THREE.Vector3) {
+  const { renderer, scene, camera } = harness;
+  camera.updateMatrixWorld(); // project() reads the camera's matrices, which render() refreshes
+  const ndc = point.clone().project(camera);
+  if (Math.abs(ndc.x) > 1 || Math.abs(ndc.y) > 1) return '';
+  const size = renderer.getDrawingBufferSize(new THREE.Vector2());
+  const x = Math.min(size.x - 1, Math.floor(((ndc.x + 1) / 2) * size.x));
+  const y = Math.min(size.y - 1, Math.floor(((ndc.y + 1) / 2) * size.y));
+  renderer.render(scene, camera);
+  const gl = renderer.getContext();
+  const pixel = new Uint8Array(4);
+  gl.readPixels(x, y, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel);
+  return '#' + [pixel[0], pixel[1], pixel[2]].map((value) => value.toString(16).padStart(2, '0')).join('');
+}
