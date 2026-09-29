@@ -505,7 +505,20 @@ This domain owns the fixes. Every drill starts from a bottleneck proved with a D
 This optional domain covers real-time VFX and procedural masks. It builds on Domains 1, 10, 11, and 12, and transfers directly to Unreal's material editor and Niagara.
 
 - **Language:** TSL (`three/tsl` with `WebGPURenderer` from `three/webgpu`, which falls back to WebGL 2 where WebGPU is missing). Its node graphs map closely to Unreal's material nodes. Domain 12 teaches shaders in GLSL, and TSL keeps GLSL's function names (mix, fract, smoothstep, dFdx), so the ideas carry over.
-- **Format:** no four-loop pass. It comes after core Loop 2, as coding exercises that end with building each effect from memory into an existing scene. Tiers don't apply here. The page and exercise design is still being settled.
+- **Format:** no four-loop pass. It comes after core Loop 2, in two stages. Tiers don't apply here.
+  1. **Concept pages.** One page per concept below, in the Loop 1 shape: the concept in one sentence and several unrelated uses, then plain language with a live visual, then going deeper (the TSL you type, what each node does, the GLSL name from Domain 12, the Unreal node, the cost, and the common mistakes). Each page ends with a small coding exercise instead of a quiz: you write one TSL function in the page's `drill.ts`, and the page draws yours next to the reference at a frozen time and scores how closely the pixels match. Parts that are plain numbers (a particle step, a spawn count, a flipbook frame) are checked by a Vitest test instead.
+  2. **Effect builds.** Six effects that each combine several concepts, built into an existing scene (Brad's rack model in a product viewer). Each has a guided build, then a from-memory build: the scene is complete except for the effect's hook, and all you get is a description of the effect and a live reference to match by eye.
+
+  | Effect | Concepts it combines |
+  | --- | --- |
+  | Dissolve a part away | Value and gradient noise; fBm; mask remapping; a glowing edge |
+  | Selection ring under a clicked part | Signed distance fields; UV animation (polar); additive blending |
+  | Sparks when a part snaps in | Particle fundamentals; integration and forces; sprite facing (velocity-aligned) |
+  | Smoke puffs | Flipbooks; depth-based effects (soft particles); alpha blending |
+  | Shield or highlight shell | Cellular noise; UV animation (scrolling); depth-based effects (depth fade) |
+  | Swirling portal or energy | Domain warping and curl noise |
+
+  After the elective, `pick.ts` rotates the six from-memory builds to keep them fresh.
 
 | Concept | Core idea | Misconceptions to expose | Use contexts to rotate |
 | --- | --- | --- | --- |

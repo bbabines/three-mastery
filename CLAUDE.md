@@ -62,7 +62,7 @@ Don't reopen these without Brad.
 | The concept list and teaching order live in `scripts/lib/domains.ts` | One source for the sidebar and for `pick.ts`. |
 | TSL and Gaussian splats are sandboxes in `/experiments`, outside the core domains. The one exception: the Domain 15 VFX elective is written in TSL | Brad chose TSL for VFX on Sep 29, 2026. The core domains stay on WebGLRenderer and GLSL. |
 | Two electives: Domain 15, Procedural & VFX (after core Loop 2), and Blank-file scenes (after Loop 4) | Brad wanted the from-an-empty-file drills visible in the plan like everything else. |
-| The VFX elective has no four-loop pass: coding exercises that end with building each effect from memory into an existing scene | Brad's call. Its page and exercise design is still being settled. |
+| The VFX elective has no four-loop pass. Stage 1: a page per concept (plain language and a live visual, then going deeper) ending in a coding exercise scored against a reference on the page. Stage 2: six effects built into an existing scene, guided and then from memory | Brad picked this design (option 3 of three) on Sep 29, 2026. Concepts are taught on their own first, so no concept becomes "the thing from the dissolve effect". The inventory's Domain 15 section has the effect list. |
 
 ## Open needs
 
@@ -80,7 +80,7 @@ Settle these before, or while, building the parts that need them.
 - **Assets and scene graph domains (6–7)** want real loaded models, and there are no loader helpers yet. Brad's `.glb` files on the Desktop (racks, shelves, hardware; 6 KB to 624 KB each) are fine to use and to commit; they aren't confidential. Copy the ones a page needs into the repo.
 - **Interaction domain (9):** drag scenes need pointer helpers. Scenes already get `controls` and can set `controls.enabled = false` while dragging.
 - **GPU and optimization domains (10, 14):** Loop 1 describes costs in plain words. Measuring them in Loop 2 needs frame-time and `renderer.info` readouts in the harness.
-- **Domain 15 (VFX elective):** TSL is decided. The page and exercise format was proposed on Sep 29, 2026 and awaits Brad's pick. TSL pages need a `three/webgpu` version of the harness, since the drill harness uses `WebGLRenderer`.
+- **Domain 15 (VFX elective):** TSL and the format are decided (see the decisions table). A sample for Brad's review is being built first: the signed distance fields page with its exercise, and the selection-ring effect. The rest waits for that review. TSL pages need a `three/webgpu` version of the harness, since the drill harness uses `WebGLRenderer`.
 
 ## Git
 

@@ -279,7 +279,7 @@ export const DOMAINS: Domain[] = [
     slug: 'vfx',
     name: 'Procedural & VFX',
     elective: true,
-    note: 'In TSL, after Loop 2: coding exercises that end with building each effect from memory into an existing scene.',
+    note: 'In TSL, after Loop 2: a page and a coding exercise per concept, then six effects built into a scene, guided and then from memory.',
     concepts: [
       { slug: 'sdf', name: 'Signed distance fields' },
       { slug: 'value-noise', name: 'Value and gradient noise' },
