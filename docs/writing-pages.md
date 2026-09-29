@@ -41,6 +41,8 @@ The same goes for the inventory's use contexts. Some are written as theory, like
 
 - **Scene graph (7):** "everything under it" means an object's children, their children, and so on, at every depth; it replaces the docs' "descendants". A "part" is a product-level node, like the `(export) …` nodes in Brad's models; the "model" is `gltf.scene`. Names are the "cleaned name" and the "Blender name" (or "original name, in `userData.name`"). `Box3.setFromObject`'s default is the "loose box", and with `true` it's the "tight box". A raycast is defined in plain words on first use, and Domain 8 is named rather than taught.
 
+- **Spatial queries (8):** each entry in a raycast result is a "hit" (the docs say intersection). A ray is "a start and a direction", and it "only runs one way". `hit.point` is "in the world"; `hit.face.normal` and `hit.normal` are "measured from the hit object itself". An AABB is "a box lined up with the axes" (`Box3`); an OBB is "a box that turns with the object". The "target list" is the array passed to `intersectObjects`. Tests that rule things out are "quick checks", and their yes only means "maybe".
+
 Add a line here whenever a domain needs a wording decision, so later pages stay consistent.
 
 ## Files
@@ -218,6 +220,7 @@ export const agree: SceneSetup = ({ scene, camera, controls, container, onFrame 
 - `ship(color, opacity?)`: a small ship with its nose on +Z, wings along X, and a fin on +Y, so every turn shows, roll included. A lower opacity makes a see-through ghost for a start or end pose.
 - For a second camera inside a scene: `showCamera` (a small body plus a `CameraHelper`), `cameraView` (what that camera sees, as a picture in the scene's top-right corner), and `screenTag` (an HTML label placed in CSS pixels over the canvas).
 - Scenes that need a real model load one of Brad's with `loadModel(MODELS.rackParts)` from `harness/models.ts`. The files live in `assets/models/` and are Draco-compressed, so the shared loader comes with a Draco decoder. `fitModel(model, size, at?)` puts a loaded model on display: it sits on the floor at `at`, scaled so its largest side is `size`.
+- `pointerSpot(container, canvas, controlsBar, onMove, start?)`: a pointer spot marked with a ring that two sliders can also drive, so a pointer-driven scene works from JavaScript checks too.
 - `boxMarkers(scene)` returns `{ mark(objects, color?), clear() }`: box outlines around whatever some code found. `buttonGroup(bar, text?)` lets one controls bar hold two separate rows of `choiceButtons`.
 - For memory readouts: `collectResources(object)` (every geometry, material, and texture under an object, each once), `geometryBytes(geometry)`, `formatBytes(bytes)`, and `afterNextRender(onFrame)` (runs a callback once a render has drawn a change, for reading `renderer.info` after it).
 - Keep the readout short, about four lines, with no blank lines. It sits over the top of the scene and hides labels behind it.

@@ -379,3 +379,200 @@ export function buttonGroup(bar: HTMLElement, text = '') {
   bar.append(group);
   return group;
 }
+
+// A pointer for scenes that react to the mouse, which two sliders can also drive (for touch
+// screens, and for checks that click from code). It marks the spot with a ring and calls `onMove`
+// with a pointer event there: the real one when the mouse moves over the canvas, or one made up at
+// the sliders' spot. The sliders set the spot as a fraction of the canvas, across from the left and
+// down from the top. Calls `onMove` once at the start spot. Returns `fire`, which calls `onMove`
+// again at the current spot, for when the page has scrolled or the canvas has moved.
+export function pointerSpot(
+  container: HTMLElement,
+  canvas: HTMLElement,
+  controlsBar: HTMLElement,
+  onMove: (event: PointerEvent) => void,
+  start = { across: 0.6, down: 0.6 },
+) {
+  const spot = { ...start };
+  const ring = document.createElement('div');
+  ring.style.cssText =
+    'position: absolute; width: 14px; height: 14px; margin: -9px 0 0 -9px; border: 2px solid #e5e7eb; ' +
+    'border-radius: 50%; pointer-events: none;';
+  container.append(ring);
+
+  const inputs = (['across', 'down'] as const).map((key) => {
+    const wrapper = document.createElement('label');
+    wrapper.innerHTML = `Pointer ${key} <input type="range" min="0" max="1" step="0.01" value="${spot[key]}">`;
+    const input = wrapper.querySelector('input')!;
+    input.addEventListener('input', () => {
+      spot[key] = Number(input.value);
+      fire();
+    });
+    controlsBar.append(wrapper);
+    return input;
+  });
+
+  const place = () => {
+    ring.style.left = `${spot.across * 100}%`;
+    ring.style.top = `${spot.down * 100}%`;
+  };
+  function fire() {
+    place();
+    const rect = canvas.getBoundingClientRect();
+    onMove(
+      new PointerEvent('pointermove', {
+        clientX: rect.left + spot.across * rect.width,
+        clientY: rect.top + spot.down * rect.height,
+      }),
+    );
+  }
+  canvas.addEventListener('pointermove', (event) => {
+    const rect = canvas.getBoundingClientRect();
+    spot.across = (event.clientX - rect.left) / rect.width;
+    spot.down = (event.clientY - rect.top) / rect.height;
+    inputs[0].value = String(spot.across);
+    inputs[1].value = String(spot.down);
+    place();
+    onMove(event);
+  });
+  fire();
+  return fire;
+}
+
+// For scenes that draw each frame themselves, through an EffectComposer or a render target, instead
+// of leaving it to the harness. Moves everything in the harness's scene (the grid, the axes, the sky
+// light) and its background into a new scene and returns it: add objects to that one, and draw it
+// from an onFrame callback. The harness still calls renderer.render(scene, camera) after the
+// callbacks, but with that scene empty, no background, and autoClear off, the call draws nothing and
+// clears nothing, so what the callback drew stays on screen. Drawing the returned scene still clears
+// first, because it has a background. The harness's call does reset renderer.info, so read the
+// counts in the same callback, right after drawing.
+export function drawYourself(harness: { scene: THREE.Scene; renderer: THREE.WebGLRenderer }) {
+  const { scene, renderer } = harness;
+  const world = new THREE.Scene();
+  world.background = scene.background;
+  scene.background = null;
+  for (const child of [...scene.children]) world.add(child);
+  renderer.autoClear = false;
+  return world;
+}
+
+// A drag for scenes that move things with the pointer, which a slider can also replay (for touch
+// screens, and for checks that click from code). Pressing on the canvas calls `down` with the
+// pointer in NDC; if it returns true, the drag is on: the orbit controls switch off, the canvas
+// captures the pointer, and `move` runs on every pointer move until the release, when `up` runs and
+// the orbit comes back. The optional slider replays one drag along `path`, which gives the pointer's
+// spot for t from 0 to 1 as fractions of the canvas, across from the left and down from the top:
+// each change calls `reset`, then `down` at path(0), `move` at path(t), and `up`, and a ring marks
+// the spot. Returns `replay(t)`, which does the same from code.
+export function pointerDrag(
+  harness: { container: HTMLElement; renderer: THREE.WebGLRenderer; controls: { enabled: boolean } },
+  handlers: { down(ndc: THREE.Vector2): boolean; move(ndc: THREE.Vector2): void; up?(): void; reset?(): void },
+  replaySlider?: { bar: HTMLElement; text: string; path(t: number): { across: number; down: number } },
+) {
+  const { container, renderer, controls } = harness;
+  const canvas = renderer.domElement;
+  const ndc = new THREE.Vector2();
+  let dragging = false;
+
+  canvas.addEventListener('pointerdown', (event) => {
+    if (event.button !== 0 || !handlers.down(pointerToNdc(event, canvas, ndc))) return;
+    dragging = true;
+    controls.enabled = false;
+    canvas.setPointerCapture(event.pointerId);
+  });
+  canvas.addEventListener('pointermove', (event) => {
+    if (dragging) handlers.move(pointerToNdc(event, canvas, ndc));
+  });
+  const release = () => {
+    if (!dragging) return;
+    dragging = false;
+    controls.enabled = true;
+    handlers.up?.();
+  };
+  canvas.addEventListener('pointerup', release);
+  canvas.addEventListener('pointercancel', release);
+
+  const ring = document.createElement('div');
+  ring.style.cssText =
+    'position: absolute; width: 14px; height: 14px; margin: -9px 0 0 -9px; border: 2px solid #e5e7eb; ' +
+    'border-radius: 50%; pointer-events: none;';
+  const toNdc = (spot: { across: number; down: number }) => ndc.set(spot.across * 2 - 1, 1 - spot.down * 2);
+  const replay = (t: number) => {
+    if (!replaySlider) return;
+    handlers.reset?.();
+    const start = replaySlider.path(0);
+    if (handlers.down(toNdc(start))) {
+      handlers.move(toNdc(replaySlider.path(t)));
+      handlers.up?.();
+    }
+    const spot = replaySlider.path(t);
+    ring.style.left = `${spot.across * 100}%`;
+    ring.style.top = `${spot.down * 100}%`;
+  };
+  if (replaySlider) {
+    container.append(ring);
+    slider(replaySlider.bar, replaySlider.text, { min: 0, max: 1, step: 0.01, value: 0 }, replay);
+    const start = replaySlider.path(0);
+    ring.style.left = `${start.across * 100}%`;
+    ring.style.top = `${start.down * 100}%`;
+  }
+  return { replay };
+}
+
+// The WebGL calls a scene's renderer makes, counted by wrapping the methods on its WebGL context, the
+// way frame-capture tools do: program switches (useProgram), uniform uploads (every uniform…
+// method), texture binds, vertex-buffer binds (bindVertexArray), other state settings (enable,
+// depthMask, blendFunc, and so on), and draws. `counts` totals each kind, and `log` lists the calls
+// by name, in order. The harness renders after the onFrame callbacks, so read them in a callback to
+// see the last frame, then call reset() to start counting the next one.
+export function glCalls(renderer: THREE.WebGLRenderer) {
+  const gl = renderer.getContext() as unknown as Record<string, unknown>;
+  const counts = { programs: 0, uniforms: 0, textures: 0, buffers: 0, state: 0, draws: 0 };
+  const log: string[] = [];
+  const kinds: Record<string, keyof typeof counts> = {
+    useProgram: 'programs',
+    bindTexture: 'textures',
+    bindVertexArray: 'buffers',
+    drawArrays: 'draws',
+    drawElements: 'draws',
+    drawArraysInstanced: 'draws',
+    drawElementsInstanced: 'draws',
+  };
+  const stateCalls = ['enable', 'disable', 'depthMask', 'depthFunc', 'colorMask', 'cullFace', 'frontFace'];
+  stateCalls.push('blendFunc', 'blendFuncSeparate', 'blendEquation', 'blendEquationSeparate', 'polygonOffset');
+  stateCalls.push('stencilFunc', 'stencilOp', 'stencilMask');
+  for (const name of stateCalls) kinds[name] = 'state';
+  for (const name in gl) {
+    if (name.startsWith('uniform') && name !== 'uniformBlockBinding') kinds[name] = 'uniforms';
+  }
+  for (const [name, kind] of Object.entries(kinds)) {
+    const original = gl[name];
+    if (typeof original !== 'function') continue;
+    gl[name] = (...args: unknown[]) => {
+      counts[kind] += 1;
+      if (log.length < 50000) log.push(name);
+      return original.apply(gl, args);
+    };
+  }
+  const reset = () => {
+    for (const kind of Object.keys(counts) as (keyof typeof counts)[]) counts[kind] = 0;
+    log.length = 0;
+  };
+  return { counts, log, reset };
+}
+
+// A studio-like room for shiny and physically based materials to reflect and be lit by, with no
+// image file: three.js's RoomEnvironment (a room with a few bright panels, built in code),
+// prefiltered by PMREMGenerator so rougher surfaces get blurrier reflections. Returns the texture:
+// set it as scene.environment, and as scene.background too when the room itself should show.
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+
+export function roomEnvironment(renderer: THREE.WebGLRenderer, blur = 0.04) {
+  const pmrem = new THREE.PMREMGenerator(renderer);
+  const room = new RoomEnvironment();
+  const texture = pmrem.fromScene(room, blur).texture;
+  room.dispose();
+  pmrem.dispose();
+  return texture;
+}
