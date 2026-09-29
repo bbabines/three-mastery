@@ -1,5 +1,6 @@
 // Building blocks for lesson scenes: colors, labels, balls, arrows, lines, sliders, buttons, readouts.
 import * as THREE from 'three';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
 export const COLORS = {
   red: '#ef4444',
@@ -566,8 +567,6 @@ export function glCalls(renderer: THREE.WebGLRenderer) {
 // image file: three.js's RoomEnvironment (a room with a few bright panels, built in code),
 // prefiltered by PMREMGenerator so rougher surfaces get blurrier reflections. Returns the texture:
 // set it as scene.environment, and as scene.background too when the room itself should show.
-import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
-
 export function roomEnvironment(renderer: THREE.WebGLRenderer, blur = 0.04) {
   const pmrem = new THREE.PMREMGenerator(renderer);
   const room = new RoomEnvironment();
@@ -594,4 +593,12 @@ export function screenColor(harness: { renderer: THREE.WebGLRenderer; scene: THR
   const pixel = new Uint8Array(4);
   gl.readPixels(x, y, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel);
   return '#' + [pixel[0], pixel[1], pixel[2]].map((value) => value.toString(16).padStart(2, '0')).join('');
+}
+
+// Hides the harness's floor grid and axes, for scenes whose readouts count draw calls, triangles, or
+// what covers a pixel: each helper is a draw call of its own and adds lines to the picture.
+export function hideFloorHelpers(scene: THREE.Scene) {
+  for (const child of scene.children) {
+    if (child instanceof THREE.GridHelper || child instanceof THREE.AxesHelper) child.visible = false;
+  }
 }

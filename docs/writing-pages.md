@@ -47,6 +47,8 @@ The same goes for the inventory's use contexts. Some are written as theory, like
 
 - **GPU pipeline (10):** costs always use the same five phrases: "CPU time", "GPU vertex work", "GPU work for every pixel", "GPU memory", and "upload". A fragment is "one triangle's claim on one pixel", and overdraw is "the fragment shader running more times than there are pixels". A draw call is "one request to the GPU: draw this geometry with this material". Rendering goes "to the canvas" or "into a render target". Say "frame budget" and "frame time", in milliseconds, never FPS. General GPU behavior three.js can't prove (early-z, draw-call overhead being CPU and driver work, CPU/GPU overlap, MSAA shading once per pixel) is worded "as a rule of thumb".
 
+- **Materials, lighting, and color (11):** a "color map" (`map`, `emissiveMap`, marked sRGB) vs a "data map" (normal, roughness, metalness, AO, left at `NoColorSpace`); never "data texture", which clashes with the `DataTexture` class. "Linear" means "twice the number is twice the light". Say "lit" or "unlit" material, "diffuse" vs "specular" (or "shine"), and "environment" vs "background". View space is "measured from the camera", as in Domain 4. Tables about color spaces are titled "Which color space is it in?".
+
 Add a line here whenever a domain needs a wording decision, so later pages stay consistent.
 
 ## Files
@@ -221,6 +223,7 @@ export const agree: SceneSetup = ({ scene, camera, controls, container, onFrame 
 - Export each scene under the same name its `data-scene` uses.
 - Build from `harness/lesson.ts`: `label` and `LABEL_LIFT`, `ball`, `pointer` (a cone that aims with `lookAt`), `arrow` and `setArrow`, `line` and `setLine`, `outline` (a shape's edges as lines), `cornerAngle` (90° unless a stretched parent skews the object), `overlay('readout' | 'controls')`, `slider`, `choiceButtons`, `pointerToNdc` (a pointer event to NDC, measured against the canvas rect), `formatNumber`, `formatVector`, and `COLORS`.
 - `sunlight(scene, position, sky?, intensity?)`: for scenes where shading is the point. It dims the harness's sky light and adds a directional light shining from `position` toward the origin, and returns it.
+- `roomEnvironment(renderer, blur?)`: three.js's RoomEnvironment prefiltered through PMREMGenerator, for `scene.environment`; there are no HDR files in the repo. `screenColor(harness, point)` re-renders and reads back the on-screen `#rrggbb` where a point lands.
 - `ship(color, opacity?)`: a small ship with its nose on +Z, wings along X, and a fin on +Y, so every turn shows, roll included. A lower opacity makes a see-through ghost for a start or end pose.
 - For a second camera inside a scene: `showCamera` (a small body plus a `CameraHelper`), `cameraView` (what that camera sees, as a picture in the scene's top-right corner), and `screenTag` (an HTML label placed in CSS pixels over the canvas).
 - Scenes that need a real model load one of Brad's with `loadModel(MODELS.rackParts)` from `harness/models.ts`. The files live in `assets/models/` and are Draco-compressed, so the shared loader comes with a Draco decoder. `fitModel(model, size, at?)` puts a loaded model on display: it sits on the floor at `at`, scaled so its largest side is `size`.
