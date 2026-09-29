@@ -51,6 +51,8 @@ The same goes for the inventory's use contexts. Some are written as theory, like
 
 - **Shaders (12):** the vertex shader "runs once for each vertex and says where it lands"; the fragment shader "runs once for each fragment, a triangle's claim on one pixel, and says its color". Values in shaders use the Domain 2 and 4 space names ("measured from the object itself" for `position` and `normal`, "the world", "measured from the camera", "clip space"), and `gl_FragCoord` is always "device pixels from the bottom-left". A uniform is "one value for the whole draw call". A varying is "blended across the triangle"; "interpolation" is named once, and "barycentric" only in the math note. `#include <…>` blocks are "chunks". GLSL numbers in readouts and snippets always carry a decimal point (`1.0`).
 
+- **Debugging (13):** the five buckets are always "transform, geometry, material (lights included), camera, pipeline", in that order, and a bucket's test is its "first check" ("quick check" belongs to Domain 8). Matrices stay "saved transforms"; `elements` is stored "column by column" (column-major) and `set` reads "row by row" (row-major); the fourth column is "the move". A degenerate case is "an input with no sensible answer": three.js "returns a fallback", and NaN is "not a number" and "spreads". A "debug view" is a way of drawing that shows hidden data; a "capture" is a frame capture; "the scene graph is the plan, not the frame"; "the driver" is the GPU driver.
+
 Add a line here whenever a domain needs a wording decision, so later pages stay consistent.
 
 ## Files
