@@ -33,6 +33,8 @@ The same goes for the inventory's use contexts. Some are written as theory, like
 - **Matrices (2 onward):** a matrix is "a saved transform: a move, a turn, and a resize packed into one value that three.js can apply to any point in one step." The matrix vs matrixWorld page introduces it; later pages reuse that wording. Say what a matrix holds and when three.js refreshes it, never its 16 numbers.
 - **Quaternions before the rotation domain:** call a quaternion "three.js's way of storing a turn" and point ahead to the quaternions page.
 
+- **Camera and projection (4):** a point's trip has five stops, always named the same way: "the world", "measured from the camera" (view space), "clip space", "NDC", and "screen pixels". Each page's "Which space is it in?" section opens with "This page works between **X** and **Y**." View depth is "how far in front of the camera, along the way it faces", always set against straight-line distance. The projection matrix is "a saved transform too, but instead of a move, a turn, and a resize, it holds the lens". A second camera in a scene is "the camera in the scene", and "the picture in the top-right corner is what it sees". Pixels are always "CSS pixels" or "device pixels", never just "pixels".
+
 Add a line here whenever a domain needs a wording decision, so later pages stay consistent.
 
 ## Files
@@ -206,6 +208,7 @@ export const agree: SceneSetup = ({ scene, camera, controls, container, onFrame 
 
 - Export each scene under the same name its `data-scene` uses.
 - Build from `harness/lesson.ts`: `label` and `LABEL_LIFT`, `ball`, `pointer` (a cone that aims with `lookAt`), `arrow` and `setArrow`, `line` and `setLine`, `outline` (a shape's edges as lines), `cornerAngle` (90° unless a stretched parent skews the object), `overlay('readout' | 'controls')`, `slider`, `choiceButtons`, `pointerToNdc` (a pointer event to NDC, measured against the canvas rect), `formatNumber`, `formatVector`, and `COLORS`.
+- For a second camera inside a scene: `showCamera` (a small body plus a `CameraHelper`), `cameraView` (what that camera sees, as a picture in the scene's top-right corner), and `screenTag` (an HTML label placed in CSS pixels over the canvas).
 - Scenes that need a real model load one of Brad's with `loadModel(MODELS.rackParts)` from `harness/models.ts`. The files live in `assets/models/` and are Draco-compressed, so the shared loader comes with a Draco decoder.
 - Keep the readout short, about four lines, with no blank lines. It sits over the top of the scene and hides labels behind it.
 - A scene that moves something and then reads `matrixWorld`, raycasts, or uses `applyMatrix4(object.matrixWorld)` in the same step calls `updateMatrixWorld()` first, as the update timing page teaches.
