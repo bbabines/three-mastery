@@ -40,7 +40,11 @@ This doc is the source of truth for a repo that teaches foundational three.js an
 3. Apply: use it in an assigned context, rotated across drills.
 4. Break-and-fix: a subtly wrong implementation with a visible symptom to diagnose. You fix it and name the cause in one sentence.
 
-**Loop 1 pages.** Every concept gets one page. It opens with the concept in one sentence and a list of several unrelated places it's used, so no single example becomes the meaning of the concept. Then come three parts. A · The basics is for a first-time learner: the idea in plain words, an analogy, and a scene to play with. B · Working knowledge is what a working developer knows: the code you'd write, the mistakes people make, and which methods want which kind of value. The Drill is read-the-code questions covering both halves. Light concepts get a shorter page. Formulas appear at most once, in a collapsed note that names the technical term so you'll recognize it elsewhere.
+**Loop 1 pages.** Every concept gets one page. It opens with the concept in one sentence and a list of several unrelated places it's used, so no single example becomes the meaning of the concept. Then come three parts. A · The basics is for a first-time learner: the idea in plain words, an analogy, and a scene to play with. B · Working knowledge is what a working developer knows: the code you'd write, the mistakes people make, and which methods want which kind of value. The Drill is read-the-code questions covering both halves. Light concepts get a shorter page. Formulas appear at most once, in a collapsed note that names the technical term so you'll recognize it elsewhere. B shows the exact syntax a developer types, such as `renderer.setPixelRatio(Math.min(devicePixelRatio, 2))` on a DPR page, so the syntax is learned where the concept is.
+
+**Tour pages.** A tour is a light concept that covers a family of classes or an API surface rather than one idea, such as the materials or the Object3D API. Interviews often open with these basics before going deep. Each tour comes first in the domain it belongs to. Its page has one sentence for the family, a table of the members with when to use each and what it costs in plain words, a scene in A that switches between members, the constructor and the three or four properties you actually set in B, and the usual read-the-code drill. It names each member and points ahead to the page that teaches it in depth, rather than teaching it early. Later loops give tours apply and break-and-fix drills like any light concept, for example a RectAreaLight with no init call.
+
+**Use three.js, then write the code that uses it.** Where three.js provides the math (normals, ray intersection tests, closest points), drills teach what its methods return, which space the result is in, and when to reach for each. How a method works inside is at most a collapsed note, never a drill. What drills do ask you to write is the code around those methods, such as the full raycasting sequence from memory.
 
 **Code drill format (Loops 2–4).** You write the code in your own editor, in the drill's `drill.ts`. The drill's page runs your code in a live scene as you save, so you watch it work or break, and a test checks it wherever a test is possible.
 
@@ -68,7 +72,16 @@ COVERAGE.md   generated from drill frontmatter
 
 **Spaced practice.** `pick.ts` suggests the next drill, weighting the domains and modes practiced least recently, and logs the date each drill was finished, never how long it took.
 
-**Build order.** Build the harness, `pick.ts`, and Loop 1 for Domain 1, then stop for review. After approval, build Loop 1 for all domains so practice can start, then build each later loop while the previous one is in progress. Build Domain 15 after core Loop 2.
+**Build order.** Build the harness, `pick.ts`, and Loop 1 for Domain 1, then stop for review. After approval, build Loop 1 for all domains so practice can start, then build each later loop while the previous one is in progress. Build Loop 3 before polishing Loop 4: break-and-fix is the closest match to real debugging and interviews, and the misconceptions listed below become its bugs, so each one must be a mistake people really make. Build Domain 15 after core Loop 2.
+
+**Blank-file drills go last.** A drill set that starts from an empty file (renderer, scene, camera, resize, frame loop) comes after Loop 4. Setting up a project from scratch is rare, and people use the docs when they do. The concepts are already in the loops; the pages show their exact syntax in B:
+
+| Piece | Where it's taught | Syntax B shows |
+| --- | --- | --- |
+| DPR and its cost | Primer; Domain 14 Resolution and DPR; Domain 9 Pointer events; Domain 12 Fragment coordinates | `renderer.setPixelRatio(Math.min(devicePixelRatio, 2))` |
+| Resize | Domain 4 Aspect and resize | `renderer.setSize(w, h, false)`, `camera.aspect = w / h`, `camera.updateProjectionMatrix()` |
+| Fit a model to the camera | Domain 4 Fit to bounds | `Box3.setFromObject`, `getBoundingSphere` |
+| Disposal | Domain 6 Disposal ownership | `geometry.dispose()`, `material.dispose()`, `texture.dispose()` |
 
 ## Learning loops
 
@@ -76,12 +89,12 @@ The repo runs as four loops. Each loop covers every domain at a higher bar, so e
 
 | Loop | Proves | Drill modes | Scope | Est. drills |
 | --- | --- | --- | --- | --- |
-| 1. Literacy | I understand it and can read it in code | A/B page, read the code | Every concept, one page each; light pages are shorter | ~152 |
-| 2. Fluency | I can write it | Implement, apply | Core: two each. Light: apply, two concepts per drill | ~184 |
-| 3. Diagnosis | I can find what's wrong and prove it | Break-and-fix, misconception traps, proof experiments | Core: one each. Light: two concepts per drill | ~112 |
+| 1. Literacy | I understand it and can read it in code | A/B page, read the code | Every concept, one page each; light and tour pages are shorter | ~159 |
+| 2. Fluency | I can write it | Implement, apply | Core: two each. Light: apply, two concepts per drill | ~191 |
+| 3. Diagnosis | I can find what's wrong and prove it | Break-and-fix, misconception traps, proof experiments | Core: one each. Light: two concepts per drill | ~119 |
 | 4. Judgment | I can evaluate and direct | Cross-domain, AI review, teach-back | Integration across domains | ~45 |
 
-The total is about 490 pages and drills, or roughly 16 months at one a day. Placement checks in Loops 2–4 should cut that by an estimated 25–40% for a working practitioner.
+The total is about 515 pages and drills, or roughly 17 months at one a day. Placement checks in Loops 2–4 should cut that by an estimated 25–40% for a working practitioner.
 
 **Loop rules**
 
@@ -99,7 +112,7 @@ The total is about 490 pages and drills, or roughly 16 months at one a day. Plac
 
 ## Tiers
 
-72 of the 152 core-path concepts are core and get every drill mode. The other 80 are light and get a shorter Loop 1 page, then apply and break-and-fix, often two concepts per drill. Promote a light concept to core if it starts mattering in real work.
+72 of the 159 core-path concepts are core and get every drill mode. The other 87 are light and get a shorter Loop 1 page, then apply and break-and-fix, often two concepts per drill. The seven tour pages are all light. Promote a light concept to core if it starts mattering in real work.
 
 | Domain | Core concepts (everything else in the domain is light) |
 | --- | --- |
@@ -107,7 +120,7 @@ The total is about 490 pages and drills, or roughly 16 months at one a day. Plac
 | 2. Coordinate Spaces & Transforms | Local vs world space; matrix vs matrixWorld; update timing; TRS order; points vs directions; inverse matrices; normal matrix |
 | 3. Rotation | Euler angles and order; quaternions; rotation matrix as a basis; lookAt and the up vector |
 | 4. Camera & Projection | View matrix; projection matrix; clip space, NDC, screen; project and unproject; depth precision |
-| 5. Geometry & Buffer Data | BufferAttribute and itemSize; indexed vs non-indexed; winding order; face normals by hand; vertex normals; tangent space and normal maps |
+| 5. Geometry & Buffer Data | BufferAttribute and itemSize; indexed vs non-indexed; winding order; face normals; vertex normals; tangent space and normal maps |
 | 6. Assets & Runtime Delivery | glTF structure; decode, upload, compile; runtime memory math; disposal ownership |
 | 7. Scene Graph Traversal & Inspection | Traverse variants; world-space bounds; clone semantics |
 | 8. Spatial Queries | Ray from pointer; intersection anatomy; ray–plane; ray–triangle; BVH |
@@ -166,6 +179,7 @@ Most 3D bugs are a correct value in the wrong space. Every drill in this domain 
 
 | Concept | Core idea | Misconceptions to expose | Use contexts to rotate |
 | --- | --- | --- | --- |
+| Tour: the Object3D API | Every object in a scene is an Object3D. The members you use daily: position, rotation, scale, quaternion; add, remove, attach; getWorldPosition and friends; lookAt; visible; layers; userData. | "object.position = v sets the position." It's read-only and throws; use set or copy. "rotation and quaternion are two separate turns." They're two views of one turn and stay in sync. | Placing and turning a product; hiding a part; tagging a part with its SKU |
 | Local vs world space | Each object has its own frame; world is the scene root's frame. | "object.position is the world position." | A part's world position; attaching a light to a part; comparing nested objects |
 | matrix vs matrixWorld | matrix is local TRS relative to the parent. matrixWorld = parent.matrixWorld × matrix. | "matrixWorld is always current." | Reparenting; world-space bounds; exporting transforms |
 | Update timing | updateMatrix and updateMatrixWorld refresh matrices; render does it automatically. | Reading matrixWorld right after setting position returns the old value. | Raycasting right after a move; bounds after a transform; syncing to external data |
@@ -231,11 +245,12 @@ A mesh is typed arrays plus rules for reading them. Drills build and inspect tha
 
 | Concept | Core idea | Misconceptions to expose | Use contexts to rotate |
 | --- | --- | --- | --- |
+| Tour: object types | Mesh, InstancedMesh, BatchedMesh, Points, Line and LineSegments, Sprite, and Group: what each draws, and when each is one draw call. | "InstancedMesh and BatchedMesh are the same thing." Instances share one geometry; a batch holds different geometries under one material. "linewidth sets how thick a line draws." WebGL ignores it and draws 1-pixel lines. | A rack of repeated shelves; a point cloud scan; wireframe and dimension lines |
 | BufferAttribute and itemSize | A flat typed array; count = length ÷ itemSize. | "Array index equals vertex index." | Reading vertex 7's position; writing a color attribute; custom per-vertex data |
 | Interleaved attributes | Several attributes share one buffer with a stride and offset. | "Every attribute has its own array." | Reading loaded glTF data; manual vertex edits; cache-friendly layouts |
 | Indexed vs non-indexed | An index lets triangles share vertices. | "Shared vertices can have different normals." | Memory savings; flat shading; per-face colors |
 | Winding order | Counter-clockwise vertex order marks the front face. | "Flipping normals flips culling." Culling uses winding, not normals. | Inside-out imports; mirrored geometry; DoubleSide trade-offs |
-| Face normals by hand | normalize(cross(b − a, c − a)). | "The face normal is the average of its vertex normals." | Flat shading; back-face test against a direction; raycast face normal |
+| Face normals | A triangle's face normal points straight out of it. Get it from three.js (`Triangle.getNormal`, `hit.face.normal`), know that it's measured from the object itself, and move it to the world with a world normal matrix (`new Matrix3().getNormalMatrix(matrixWorld)`), not `object.normalMatrix`, which is view space. | "The face normal is the average of its vertex normals." | Flat shading; back-face test against a direction; raycast face normal |
 | Vertex normals | Averaged face normals; hard edges need duplicated vertices. | "Imported normals are always right." | Smoothing artifacts; low-poly look; fixing bad normals |
 | UVs | 2D texture coordinates, usually 0 to 1. A second UV set feeds light and AO maps. | "UVs must stay within 0–1." | Texture mapping; generating box UVs; lightmap setup |
 | Bounding box and sphere | Computed in local space and stored on the geometry; stale after edits. | "geometry.boundingBox is in world space." | Culling; raycast early-out; camera fitting |
@@ -257,6 +272,7 @@ A loaded model has four separate costs: download, decode, GPU upload, and shader
 
 | Concept | Core idea | Misconceptions to expose | Use contexts to rotate |
 | --- | --- | --- | --- |
+| Tour: loaders and textures | GLTFLoader with its helpers (DRACOLoader, KTX2Loader, the Meshopt decoder) and HDRLoader; TextureLoader, CanvasTexture, DataTexture, and VideoTexture. | "Each loader works on its own." GLTFLoader throws on compressed files until its decoders are attached. "A CanvasTexture follows its canvas." Redrawing needs `needsUpdate = true`. | A compressed product model; a price tag drawn on a canvas; a lookup table as a DataTexture |
 | glTF structure | Scenes → nodes → meshes → primitives → accessors → buffer views → buffers, plus materials and textures. | "One glTF mesh becomes one three.js Mesh." Multi-primitive meshes become a Group. | Finding a part by node name; auditing material assignments; explaining unexpected child meshes |
 | Load lifecycle | Loading is async, with progress, completion, and failure states. | "onLoad means it will render without a hitch." | Loading indicators; dependent loads; error states |
 | Decode, upload, compile | GPU upload happens on first render; shader programs compile on first use. | "Once loaded, it renders instantly." | First-interaction hitch; variant switch; pre-warming with compileAsync |
@@ -296,7 +312,7 @@ Traversal is how you question a scene you didn't build. Drills use unfamiliar lo
 
 ## 8. Spatial Queries: Raycasting, Bounds & BVH
 
-Raycasting and bounds tests are CPU math over the scene. Drills build them by hand, then measure them.
+Raycasting and bounds tests are CPU math over the scene. three.js provides every test here, so drills use its methods and measure them, never re-implement them. The skill that's typed from memory is the raycasting code itself: pointer to NDC using the canvas rect, `raycaster.setFromCamera`, `intersectObject` or `intersectObjects` with the recursive flag, reading the hit, filtering with layers or a target list, and walking up from the hit mesh to the part you care about (`traverseAncestors`, or checking `parent` and `userData`).
 
 | Concept | Core idea | Misconceptions to expose | Use contexts to rotate |
 | --- | --- | --- | --- |
@@ -304,13 +320,13 @@ Raycasting and bounds tests are CPU math over the scene. Drills build them by ha
 | Ray from pointer | Pointer → canvas-relative pixels → NDC → setFromCamera. | "Use the window size for NDC." Use the canvas rect. | Click; hover; drag start |
 | Intersection anatomy | distance, point (world), face (local-space normal), faceIndex, uv, instanceId, object; sorted by distance. | "face.normal is in world space." "The first hit is the visible one." | Orienting a marker; painting at a UV; picking an instance |
 | Filtering | The recursive flag, layers, and target lists limit what gets tested. | "Helpers are ignored automatically." | Ignoring helpers; selectable parts only; ground-only placement |
-| Ray–plane | Solve for t using the plane normal; parallel rays never hit. | "Every ray hits an infinite plane." | Dragging on a floor; placement grid; measuring |
-| Ray–sphere | A quadratic in t; a negative discriminant means a miss. | "A hit has one solution." | Coarse hit test; bounding sphere early-out; hotspot hit |
-| Ray–triangle | Möller–Trumbore returns t and barycentric coordinates. | "Barycentrics only matter for the hit test." | Exact picking; UV interpolation at a hit; back-face handling |
-| Ray–AABB | The slab method intersects three pairs of planes. | "A box test needs all six faces separately." | Early-out; BVH node test; grid lookup |
+| Ray–plane | `ray.intersectPlane(plane, target)` returns the hit point, or `null` when the ray is parallel or the plane is behind it. A ray lying in the plane hits at its own origin. | "Every ray hits an infinite plane." | Dragging on a floor; placement grid; measuring |
+| Ray–sphere | `ray.intersectSphere` returns the nearest hit point or `null`; `intersectsSphere` only says yes or no, which is enough for an early-out. | "A ray that starts inside the sphere misses it." It hits on the way out. | Coarse hit test; bounding sphere early-out; hotspot hit |
+| Ray–triangle | `ray.intersectTriangle(a, b, c, backfaceCulling, target)` returns the hit point or `null`. Raycasting a mesh runs this test per triangle, and the hit's barycentric coordinates blend the vertex values, such as the UV, at the hit. | "Barycentrics only matter for the hit test." | Exact picking; UV interpolation at a hit; back-face handling |
+| Ray–AABB | `ray.intersectBox` returns the entry point or `null`; `intersectsBox` is the cheap yes-or-no early-out that BVHs run on every node. | "A ray that starts inside the box misses it." It hits on the way out. |
 | Bounds primitives | Box3, Sphere, Plane, and Frustum containment and overlap tests. | "Plane distance is always positive." It's signed. | Placement overlap; visibility; trigger volumes |
 | AABB vs OBB | An AABB of a rotated object is loose; an OBB rotates with it. | "Box3 fits rotated objects tightly." | Tight overlap checks; rotated parts; bounds display |
-| Closest-point queries | Closest point on a line, box, or triangle. | "The closest point is the nearest vertex." | Snapping to an edge; distance measurement; proximity hover |
+| Closest-point queries | `ray.closestPointToPoint`, `Line3.closestPointToPoint`, `Box3.clampPoint`, and `Triangle.closestPointToPoint` return the closest point on each shape. | "The closest point is the nearest vertex." | Snapping to an edge; distance measurement; proximity hover |
 | BVH | A bounds hierarchy that cuts triangle tests from O(n) to about O(log n). | "A BVH speeds up everything." It helps large meshes, costs build time, and needs a refit after edits. | High-poly picking; shape casts; collision queries |
 
 **Lens notes**
@@ -326,6 +342,7 @@ Interaction is the integration domain. Each concept composes math, spaces, proje
 
 | Concept | Core idea | Misconceptions to expose | Use contexts to rotate |
 | --- | --- | --- | --- |
+| Tour: controls | OrbitControls, TransformControls, and PointerLockControls: what each one moves, and the setup each needs. | "Damping works without calling update()." "Add TransformControls to the scene." In r186 you add its `getHelper()`. | Product viewer orbit; moving a part with a gizmo; a walkthrough of a showroom |
 | Pointer events | Pointer events unify mouse, touch, and pen, in CSS pixels relative to the canvas. | "Multiply by DPR before computing NDC." | Click; touch tap; pen input |
 | Click vs drag | A movement threshold separates them; pointer capture keeps the drag. | "pointerup on the same object means a click." | Select vs orbit; tap vs pan; long press |
 | Hover and selection state | A small state machine (none, hover, selected) with restore on exit. | "Hover and selection can share one flag." | Part highlight; multi-select; deselect on empty click |
@@ -350,6 +367,7 @@ This domain owns the model of a frame and the proof of whether a scene is CPU- o
 
 | Concept | Core idea | Misconceptions to expose | Use contexts to rotate |
 | --- | --- | --- | --- |
+| Tour: renderer settings | The WebGLRenderer options you set once: `antialias` and `powerPreference` in the constructor, then `setPixelRatio`, `setSize`, `outputColorSpace`, `toneMapping` with `toneMappingExposure`, and `shadowMap.enabled`. | "antialias can be turned on later." It's fixed when the renderer is created. "Turning on shadowMap.enabled makes shadows appear." The light and the casting meshes also need `castShadow`, and the surfaces shadows fall on need `receiveShadow`. | A product viewer's first setup; a phone-friendly configurator; a studio shot with a soft shadow |
 | Pipeline stages | Buffers → vertex shader → clipping → rasterization → fragment shader → depth/stencil → blending → framebuffer. | "A fragment is a pixel." It's a candidate that may be discarded or overwritten. | Transparency order; vertex vs pixel cost; where discard happens |
 | Draw call anatomy | Bind a program, set uniforms, bind buffers and textures, draw. | "Draw calls are expensive on the GPU." The overhead is mostly CPU and driver. | Many small parts; shadow passes doubling calls; multi-material meshes |
 | State changes and sorting | three.js sorts opaque objects front to back and by program, and transparent objects back to front. | "Render order is scene order." | Material count; renderOrder fixes; early-z benefit |
@@ -384,6 +402,8 @@ Appearance comes from material, light, and the color pipeline. Most "it looks wr
 
 | Concept | Core idea | Misconceptions to expose | Use contexts to rotate |
 | --- | --- | --- | --- |
+| Tour: materials | MeshBasic, Lambert, Phong, Standard, Physical, Toon, Matcap, Normal, and Depth: which ones react to lights, and what each costs. | "Every material reacts to lights." Basic, Matcap, Normal, and Depth ignore them. | Unlit UI and labels; a physically based product finish; a quick debug view |
+| Tour: lights | Ambient, Hemisphere, Directional, Point, Spot, and RectArea, and each one's setup quirks. | "RectAreaLight works on any material." It lights only Standard and Physical, needs `RectAreaLightUniformsLib.init()`, and casts no shadows. "Light intensities from old tutorials look the same today." | Studio lighting for a product; a softbox or window; a room lit from above |
 | Color spaces | Lighting math runs in linear space. Color textures are sRGB; data textures (normal, roughness, metalness, AO) are linear. | "Every texture is sRGB." | Washed-out textures; wrong-looking normal maps; colors that don't match a picker |
 | Tone mapping and exposure | Maps HDR results into display range; exposure scales before mapping. | "Tone mapping leaves brand colors unchanged." | Blown highlights; matching product colors; bright environments |
 | Diffuse (Lambert) | Brightness = max(N·L, 0). | "Diffuse depends on the viewer." | Side lighting; the terminator line; toon shading |

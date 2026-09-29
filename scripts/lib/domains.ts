@@ -40,6 +40,7 @@ export const DOMAINS: Domain[] = [
     slug: 'transforms',
     name: 'Coordinate Spaces & Transforms',
     concepts: [
+      { slug: 'object3d-tour', name: 'Tour: the Object3D API', tier: 'light' },
       { slug: 'local-vs-world', name: 'Local vs world space', tier: 'core' },
       { slug: 'matrix-vs-matrixworld', name: 'matrix vs matrixWorld', tier: 'core' },
       { slug: 'update-timing', name: 'Update timing', tier: 'core' },
@@ -91,11 +92,12 @@ export const DOMAINS: Domain[] = [
     slug: 'geometry',
     name: 'Geometry & Buffer Data',
     concepts: [
+      { slug: 'object-types-tour', name: 'Tour: object types', tier: 'light' },
       { slug: 'buffer-attribute', name: 'BufferAttribute and itemSize', tier: 'core' },
       { slug: 'interleaved', name: 'Interleaved attributes', tier: 'light' },
       { slug: 'indexed', name: 'Indexed vs non-indexed', tier: 'core' },
       { slug: 'winding-order', name: 'Winding order', tier: 'core' },
-      { slug: 'face-normals', name: 'Face normals by hand', tier: 'core' },
+      { slug: 'face-normals', name: 'Face normals', tier: 'core' },
       { slug: 'vertex-normals', name: 'Vertex normals', tier: 'core' },
       { slug: 'uvs', name: 'UVs', tier: 'light' },
       { slug: 'bounding-volumes', name: 'Bounding box and sphere', tier: 'light' },
@@ -110,6 +112,7 @@ export const DOMAINS: Domain[] = [
     slug: 'assets',
     name: 'Assets & Runtime Delivery',
     concepts: [
+      { slug: 'loaders-tour', name: 'Tour: loaders and textures', tier: 'light' },
       { slug: 'gltf-structure', name: 'glTF structure', tier: 'core' },
       { slug: 'load-lifecycle', name: 'Load lifecycle', tier: 'light' },
       { slug: 'decode-upload-compile', name: 'Decode, upload, compile', tier: 'core' },
@@ -161,6 +164,7 @@ export const DOMAINS: Domain[] = [
     slug: 'interaction',
     name: 'Interaction & Manipulation',
     concepts: [
+      { slug: 'controls-tour', name: 'Tour: controls', tier: 'light' },
       { slug: 'pointer-events', name: 'Pointer events', tier: 'light' },
       { slug: 'click-vs-drag', name: 'Click vs drag', tier: 'light' },
       { slug: 'hover-selection', name: 'Hover and selection state', tier: 'light' },
@@ -180,6 +184,7 @@ export const DOMAINS: Domain[] = [
     slug: 'gpu',
     name: 'GPU Pipeline & Bottleneck Diagnosis',
     concepts: [
+      { slug: 'renderer-tour', name: 'Tour: renderer settings', tier: 'light' },
       { slug: 'pipeline-stages', name: 'Pipeline stages', tier: 'core' },
       { slug: 'draw-call-anatomy', name: 'Draw call anatomy', tier: 'core' },
       { slug: 'state-sorting', name: 'State changes and sorting', tier: 'light' },
@@ -199,6 +204,8 @@ export const DOMAINS: Domain[] = [
     slug: 'materials',
     name: 'Materials, Lighting & Color',
     concepts: [
+      { slug: 'materials-tour', name: 'Tour: materials', tier: 'light' },
+      { slug: 'lights-tour', name: 'Tour: lights', tier: 'light' },
       { slug: 'color-spaces', name: 'Color spaces', tier: 'core' },
       { slug: 'tone-mapping', name: 'Tone mapping and exposure', tier: 'core' },
       { slug: 'lambert', name: 'Diffuse (Lambert)', tier: 'core' },
@@ -300,9 +307,9 @@ export function teachingOrder(conceptId: string) {
 }
 
 export const LOOPS = [
-  { n: 1, name: 'Literacy', proves: 'I understand it and can read it in code', estimate: 152 },
-  { n: 2, name: 'Fluency', proves: 'I can write it', estimate: 184 },
-  { n: 3, name: 'Diagnosis', proves: "I can find what's wrong and prove it", estimate: 112 },
+  { n: 1, name: 'Literacy', proves: 'I understand it and can read it in code', estimate: 159 },
+  { n: 2, name: 'Fluency', proves: 'I can write it', estimate: 191 },
+  { n: 3, name: 'Diagnosis', proves: "I can find what's wrong and prove it", estimate: 119 },
   { n: 4, name: 'Judgment', proves: 'I can evaluate and direct', estimate: 45 },
 ];
 

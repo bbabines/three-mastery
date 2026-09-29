@@ -90,11 +90,11 @@ COVERAGE.md    generated
 
 ## Build status
 
-The harness, `pick.ts`, and Loop 1 for Domains 1 and 2 are built: all 23 of their concepts have a card and a Loop 1 page, covering every misconception listed for them. Loop 1 for Domains 3–14 is next. There are no code drills yet; those start in Loop 2. [CLAUDE.md](CLAUDE.md) has the current status, and [COVERAGE.md](COVERAGE.md) tracks the rest.
+The harness, `pick.ts`, and Loop 1 for Domains 1 and 2 are built: all 24 of their concepts have a card and a Loop 1 page, covering every misconception listed for them. That includes the first tour page, Tour: the Object3D API, which covers a family of members instead of one idea; the other six tours come first in Domains 5, 6, 9, 10, and 11. Loop 1 for Domains 3–14 is next. There are no code drills yet; those start in Loop 2. [CLAUDE.md](CLAUDE.md) has the current status, and [COVERAGE.md](COVERAGE.md) tracks the rest.
 
 ## Authoring
 
-Loop 1 pages follow [docs/writing-pages.md](docs/writing-pages.md). [CLAUDE.md](CLAUDE.md) holds the project's status, the decisions made so far and why, and known gotchas; Claude Code reads it at the start of every session.
+Loop 1 pages follow [docs/writing-pages.md](docs/writing-pages.md), which also has the tour-page variant. [CLAUDE.md](CLAUDE.md) holds the project's status, the decisions made so far and why, and known gotchas; Claude Code reads it at the start of every session.
 
 Code drills, from Loop 2 on:
 

@@ -8,15 +8,15 @@ Brad's repo for learning three.js and 3D graphics in plain language, then keepin
 - `docs/writing-pages.md` is the recipe for a Loop 1 page. Follow it for every new page.
 - `docs/addendum-write-the-check.md` has the rules and examples for writing the automated check at the end of a break-and-fix drill. It's adopted; its status line records one change to it.
 - `README.md` has the commands and repo layout.
-- `docs/brief-interview-review.md` lists agreed changes that haven't been applied yet: tour pages, the r186 check, and using three.js for normals and raycasting instead of hand math. Read it before editing the inventory.
+- `docs/brief-interview-review.md` records the changes from the interview-readiness review and why. Its status line says which are applied. `docs/r186-check/` is the r186 check's report and evidence.
 
 ## Status
 
 Update this section whenever it changes.
 
-- **Built:** the drill viewer (`/harness/`), `pick.ts`, `coverage.ts`, `verify.ts`, and Loop 1 for Domains 1 and 2 (12 and 11 pages). The sidebar shows the whole plan, with unbuilt pages greyed out and finished pages ticked; `progress/log.jsonl` has what Brad has finished. There are also sandboxes for TSL and Gaussian splats in `/experiments`.
+- **Built:** the drill viewer (`/harness/`), `pick.ts`, `coverage.ts`, `verify.ts`, and Loop 1 for Domains 1 and 2 (12 and 12 pages, counting the Object3D API tour). The sidebar shows the whole plan, with unbuilt pages greyed out and finished pages ticked; `progress/log.jsonl` has what Brad has finished. There are also sandboxes for TSL and Gaussian splats in `/experiments`.
 - **Reviewed:** Brad approved the page format on Point vs direction, the wording on Local vs world space, and Domain 2 as a whole. The other Domain 1 pages haven't had a page-by-page review; Brad was reminded when Domain 2 started.
-- **Next:** another session is running the r186 check from `docs/brief-interview-review.md`; leave the existing pages and the inventory to it. Domain 3 is on hold until Brad says to start it; then Loop 1 for Domains 3–14 in the order in `scripts/lib/domains.ts`. This is the inventory's build order: Loop 1 for every domain comes before any later loop. For each new domain, build its first page and show Brad before building the rest, because a new domain raises new questions. Show Brad each finished domain before starting the next.
+- **Next:** Brad reviews the Object3D API tour, the first tour page. The other six tours (object types, loaders and textures, controls, renderer settings, materials, lights) are built with their domains, as each domain's first page, once Brad approves the format. Domain 3 is on hold until Brad says to start it; then Loop 1 for Domains 3–14 in the order in `scripts/lib/domains.ts`. This is the inventory's build order: Loop 1 for every domain comes before any later loop. For each new domain, build its first page and show Brad before building the rest, because a new domain raises new questions. Show Brad each finished domain before starting the next.
 - **Not built:** the Loop 1 checkpoint, Loops 2–4, Domain 15, the cross-domain drills, and placement checks for Loops 2–4.
 
 ## Decisions already made
@@ -37,6 +37,9 @@ Don't reopen these without Brad.
 | Light concepts get a Loop 1 page too, just shorter | They're building blocks: normalize is needed for dot product. |
 | Loop 1 pages use `lenses: []`, describing spaces and costs in plain words | The formal lens sections start with code drills in Loop 2. |
 | Every Domain 2 page has a "Which space is it in?" table in B | Domain 2 is about spaces; the table makes the inventory's "every drill names its spaces" concrete. |
+| Tour pages: a light page per family of classes (Object3D API, object types, loaders and textures, controls, renderer settings, materials, lights), first in its domain | Interviews often open with these basics before going deep. `writing-pages.md` has the variant. |
+| B shows the exact syntax a developer types, including setup lines like `setPixelRatio` and `updateProjectionMatrix` | Blank-file drills (a scene from an empty file) are deferred to after Loop 4, so the syntax is learned on the pages that teach each piece. |
+| Normals and raycasting use three.js's methods (`Triangle.getNormal`, `ray.intersectBox`, …), never hand-built math; the raycasting code around them is typed from memory | Same reason as dropping hand calculation. Writing the code that uses the methods is the practical skill. |
 
 **How the loops work**
 
@@ -50,6 +53,7 @@ Don't reopen these without Brad.
 | Loop 2's "build it" means writing the real code where that's the practical skill, never re-implementing math three.js provides | Same reason as dropping hand calculation. |
 | Loop 3 break-and-fix: fix it, name the cause in a sentence, and write the check that would have caught it wherever that can be automated | Brad wants automated checks wherever they're possible. Misconception traps are break-and-fix drills where the bug is a wrong belief. |
 | Proof experiments show frame time and draw counts on the page, and also use Chrome's performance tools | Brad wanted both. |
+| Loop 3 is built before Loop 4 is polished, and every misconception must be a mistake people really make | Break-and-fix is the closest match to real debugging and interviews, and misconceptions become Loop 3's bugs. |
 | Loop 4 AI review: stored snippets, regenerated periodically. Teach-back: a box on the page, then reveal the key points; ungraded | A retry is the same drill, and nothing needs grading. |
 | Progress is one log, `progress/log.jsonl`. Loop 1 pages log themselves as done when the last quiz question is answered, through the dev server's `/api/progress` (`vite.config.ts`); the sidebar shows a ✓ | Brad expected the viewer to show what's finished. One log keeps the viewer and `pick.ts` in agreement. |
 | The log is committed to carry progress between work and home; `.gitattributes` merges it with `merge=union` | Both machines only add lines, so keeping both sides never loses anything. |

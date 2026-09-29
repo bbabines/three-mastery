@@ -130,6 +130,42 @@ Pick an answer for each snippet. You'll see right away whether it's right and wh
 - **A** builds on earlier pages and names them: "the dot product page", never "the last page", because the order can change. Every A has an everyday analogy and at least one scene.
 - **B** is organized by task: "Aim, then move at a speed", "Sliding along a wall". Point ahead to a later page in one line when it's relevant ("add vs attach comes later in this domain"). Don't teach the later page early.
 - **Size:** a core page has about two scenes and four or five questions. A light page has one scene and two or three questions.
+- **Exact syntax in B.** Show the line a developer actually types, not a description of it. The inventory's "Blank-file drills go last" table lists the setup lines that must appear on the pages that teach them, such as `renderer.setPixelRatio(Math.min(devicePixelRatio, 2))`, because no drill has Brad type them from an empty file until after Loop 4.
+- **Use three.js, don't re-implement it.** When three.js has a method for something (`Triangle.getNormal`, `ray.intersectBox`, `closestPointToPoint`), B teaches what the method returns, which space the result is in, and when to reach for it. How it works inside is at most a collapsed note.
+
+## Tour pages
+
+A tour covers a family of classes or an API surface, like the materials or the Object3D API, instead of one idea. It's a light concept, it's the first page in its domain, and its title starts with "Tour:" to match `domains.ts`. It uses the same files, frontmatter, and opening block as any page. What changes is the body:
+
+```md
+# Tour: <family>
+
+> **In short:** <The family in one plain sentence.>
+>
+> **Used for:** <Three or four unrelated places it shows up.>
+
+## A · The basics
+
+### <What the family has in common>
+
+<A table of members: what each one is, when you'd pick it, and what it costs in plain words.>
+
+<div data-scene="name"></div>   <- a scene with a switcher between members
+
+## B · Working knowledge
+
+### <Member or task>
+
+<The constructor and the three or four properties you actually set, with the mistake people make.>
+
+## Drill · Read the code
+```
+
+- **Name, don't teach.** A tour is a map. For each member, say what it's for and name the page that teaches it in depth ("the add vs attach page"). Don't teach that page early; a tour of the Object3D API names `attach` without explaining when it keeps the world transform.
+- **The table** has a row per member and plain-word columns: what it is, when to pick it, and its cost ("free", "CPU time on every call", "one more draw call"). Keep each cell to a line.
+- **The scene** shows the members side by side or behind a row of `choiceButtons`, and the readout shows the line of code for the one selected.
+- **B** is organized by member or by task. For each: the constructor, the few properties you set, and one mistake. Setup quirks belong here, like RectAreaLight's `RectAreaLightUniformsLib.init()`.
+- **Size:** one scene and three questions, like a light page. The drill spreads its questions across different members.
 
 ## Questions (`questions.ts`)
 
@@ -187,5 +223,6 @@ export const agree: SceneSetup = ({ scene, camera, controls, container, onFrame 
      `node --input-type=module -e 'import { Vector3 } from "three"; …'`
      This is how Domain 1 confirmed that normalizing (0, 0, 0) returns (0, 0, 0), that `Math.acos(u.dot(u))` can be NaN, and the exact float32 gaps.
    - For behavior, like "does this method update the matrices first?", read the source in `node_modules/three/src`.
-2. Run `npm run typecheck` and `npm run coverage`. In `COVERAGE.md`, check that every misconception is exposed, the frontmatter matches the cards, and the answers don't give themselves away.
-3. Open the page in the viewer. Every scene mounts, the quiz renders, there are no console errors, and each scene's controls do what the text says.
+2. Check that each misconception on the card is a mistake people really make, not a true fact or a strawman. Loop 3 turns each one into a bug to fix, so a fake one becomes a fake drill.
+3. Run `npm run typecheck` and `npm run coverage`. In `COVERAGE.md`, check that every misconception is exposed, the frontmatter matches the cards, and the answers don't give themselves away.
+4. Open the page in the viewer. Every scene mounts, the quiz renders, there are no console errors, and each scene's controls do what the text says.
