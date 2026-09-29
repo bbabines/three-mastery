@@ -17,7 +17,9 @@ export interface Harness {
 export type SceneSetup = (harness: Harness) => void;
 
 export function createHarness(container: HTMLElement): Harness {
-  const renderer = new THREE.WebGLRenderer({ antialias: true });
+  // stencil: true because three.js leaves the stencil buffer off by default, and the stencil page's
+  // scenes need one.
+  const renderer = new THREE.WebGLRenderer({ antialias: true, stencil: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   container.appendChild(renderer.domElement);
 
