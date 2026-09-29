@@ -49,6 +49,8 @@ The same goes for the inventory's use contexts. Some are written as theory, like
 
 - **Materials, lighting, and color (11):** a "color map" (`map`, `emissiveMap`, marked sRGB) vs a "data map" (normal, roughness, metalness, AO, left at `NoColorSpace`); never "data texture", which clashes with the `DataTexture` class. "Linear" means "twice the number is twice the light". Say "lit" or "unlit" material, "diffuse" vs "specular" (or "shine"), and "environment" vs "background". View space is "measured from the camera", as in Domain 4. Tables about color spaces are titled "Which color space is it in?".
 
+- **Shaders (12):** the vertex shader "runs once for each vertex and says where it lands"; the fragment shader "runs once for each fragment, a triangle's claim on one pixel, and says its color". Values in shaders use the Domain 2 and 4 space names ("measured from the object itself" for `position` and `normal`, "the world", "measured from the camera", "clip space"), and `gl_FragCoord` is always "device pixels from the bottom-left". A uniform is "one value for the whole draw call". A varying is "blended across the triangle"; "interpolation" is named once, and "barycentric" only in the math note. `#include <…>` blocks are "chunks". GLSL numbers in readouts and snippets always carry a decimal point (`1.0`).
+
 Add a line here whenever a domain needs a wording decision, so later pages stay consistent.
 
 ## Files
