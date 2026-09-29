@@ -1,3 +1,7 @@
+# Check text files out with LF on every machine. The viewer and the scripts parse frontmatter
+# that starts with "---\n", which a Windows checkout's CRLF endings would break.
+* text=auto eol=lf
+
 # The practice log only ever gains lines. When work and home both add to it, keep both sides'
 # lines instead of reporting a conflict.
 progress/log.jsonl merge=union

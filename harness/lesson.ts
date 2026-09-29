@@ -136,6 +136,13 @@ export function choiceButtons(parent: HTMLElement, choices: { html: string; sele
   buttons[0].click();
 }
 
+// A pointer event's spot in NDC: −1 to 1 across the canvas, with y pointing up. Measured against
+// the canvas's own rect, not the window, since the canvas sits inside the page.
+export function pointerToNdc(event: PointerEvent, canvas: HTMLElement, target = new THREE.Vector2()) {
+  const rect = canvas.getBoundingClientRect();
+  return target.set(((event.clientX - rect.left) / rect.width) * 2 - 1, -((event.clientY - rect.top) / rect.height) * 2 + 1);
+}
+
 export const formatNumber = (n: number, digits = 2) => String(+n.toFixed(digits));
 
 export const formatVector = (v: THREE.Vector3, digits = 1) =>

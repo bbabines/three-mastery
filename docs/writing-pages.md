@@ -205,7 +205,8 @@ export const agree: SceneSetup = ({ scene, camera, controls, container, onFrame 
 ```
 
 - Export each scene under the same name its `data-scene` uses.
-- Build from `harness/lesson.ts`: `label` and `LABEL_LIFT`, `ball`, `pointer` (a cone that aims with `lookAt`), `arrow` and `setArrow`, `line` and `setLine`, `outline` (a shape's edges as lines), `cornerAngle` (90° unless a stretched parent skews the object), `overlay('readout' | 'controls')`, `slider`, `choiceButtons`, `formatNumber`, `formatVector`, and `COLORS`.
+- Build from `harness/lesson.ts`: `label` and `LABEL_LIFT`, `ball`, `pointer` (a cone that aims with `lookAt`), `arrow` and `setArrow`, `line` and `setLine`, `outline` (a shape's edges as lines), `cornerAngle` (90° unless a stretched parent skews the object), `overlay('readout' | 'controls')`, `slider`, `choiceButtons`, `pointerToNdc` (a pointer event to NDC, measured against the canvas rect), `formatNumber`, `formatVector`, and `COLORS`.
+- Scenes that need a real model load one of Brad's with `loadModel(MODELS.rackParts)` from `harness/models.ts`. The files live in `assets/models/` and are Draco-compressed, so the shared loader comes with a Draco decoder.
 - Keep the readout short, about four lines, with no blank lines. It sits over the top of the scene and hides labels behind it.
 - A scene that moves something and then reads `matrixWorld`, raycasts, or uses `applyMatrix4(object.matrixWorld)` in the same step calls `updateMatrixWorld()` first, as the update timing page teaches.
 - The harness hands each scene its `controls` (the OrbitControls). A scene that drags objects with the pointer sets `controls.enabled = false` while dragging.

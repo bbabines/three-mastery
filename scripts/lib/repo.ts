@@ -65,7 +65,10 @@ function readDocuments(topDir: string, fileName: (name: string) => boolean): Doc
     });
 }
 
-const relativeDir = (file: string) => path.relative(ROOT, path.dirname(file));
+// Always with forward slashes, even on Windows, so paths match the viewer's `?drill=` URLs and
+// checks like `dir.includes('/1/')`.
+const toPosix = (file: string) => file.split(path.sep).join('/');
+const relativeDir = (file: string) => toPosix(path.relative(ROOT, path.dirname(file)));
 const isReadme = (name: string) => name === 'README.md';
 
 export function loadDrills(): Drill[] {
@@ -94,6 +97,6 @@ export function loadCheckpoints(): Checkpoint[] {
 export function loadCards(): Card[] {
   return readDocuments('concepts', (name) => name.endsWith('.md')).map(({ data, file }) => ({
     ...(data as unknown as Card),
-    file: path.relative(ROOT, file),
+    file: toPosix(path.relative(ROOT, file)),
   }));
 }
