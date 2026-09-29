@@ -82,6 +82,8 @@ drills/        <loop>/<domain>/<concept>/<mode>-<n>/
 placement/     <loop>/<domain>/: one check per domain, Loops 2–4
 checkpoints/   <loop>/: one set per loop
 cross/         cross-domain drills
+electives/     elective pages and builds (Procedural & VFX, in TSL)
+assets/        Brad's models, loaded by harness/models.ts
 solutions/     mirrored tree, never opened during a drill
 scripts/       pick.ts, coverage.ts, verify.ts
 experiments/   TSL and Gaussian splat sandboxes, outside the curriculum
@@ -90,7 +92,7 @@ COVERAGE.md    generated
 
 ## Build status
 
-The harness, `pick.ts`, and Loop 1 for Domains 1 and 2 are built: all 24 of their concepts have a card and a Loop 1 page, covering every misconception listed for them. That includes the first tour page, Tour: the Object3D API, which covers a family of members instead of one idea; the other six tours come first in Domains 5, 6, 9, 10, and 11. Loop 1 for Domains 3–14 is next. There are no code drills yet; those start in Loop 2. [CLAUDE.md](CLAUDE.md) has the current status, and [COVERAGE.md](COVERAGE.md) tracks the rest.
+The harness, `pick.ts`, and all of Loop 1 are built: each of the 159 concepts in Domains 1–14 has a card and a Loop 1 page, covering every misconception listed for them, including the seven tour pages that cover a family of classes instead of one idea. Domains 3–14 haven't been reviewed yet; [docs/loop1-build-notes.md](docs/loop1-build-notes.md) lists what came up while building them. The sidebar also shows two electives: Procedural & VFX (in TSL, with a sample page and effect built for review) and Blank-file scenes. There are no code drills yet; those start in Loop 2. [CLAUDE.md](CLAUDE.md) has the current status, and [COVERAGE.md](COVERAGE.md) tracks the rest.
 
 ## Authoring
 

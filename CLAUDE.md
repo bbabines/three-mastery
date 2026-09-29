@@ -14,10 +14,10 @@ Brad's repo for learning three.js and 3D graphics in plain language, then keepin
 
 Update this section whenever it changes.
 
-- **Built:** the drill viewer (`/harness/`), `pick.ts`, `coverage.ts`, `verify.ts`, and Loop 1 for Domains 1 and 2 (12 and 12 pages, counting the Object3D API tour). On Sep 29, 2026 Brad asked for every remaining domain to be built in one go, committed and pushed a domain at a time, without the usual per-domain review; built so far: Domains 3–14 (9, 10, 13, 10, 9, 12, 13, 13, 14, 11, 10, and 11 pages). The sidebar shows the whole plan, with unbuilt pages greyed out and finished pages ticked; `progress/log.jsonl` has what Brad has finished. There are also sandboxes for TSL and Gaussian splats in `/experiments`.
+- **Built:** the drill viewer (`/harness/`), `pick.ts`, `coverage.ts`, `verify.ts`, and all of Loop 1: a page and a card for each of the 159 concepts in Domains 1–14, all seven tours included. Domains 1 and 2 came first (12 pages each). On Sep 29, 2026 Brad asked for every remaining domain to be built in one go, committed and pushed a domain at a time, without the usual first-page and per-domain reviews; that built Domains 3–14 (9, 10, 13, 10, 9, 12, 13, 13, 14, 11, 10, and 11 pages). Also built: a sample of the VFX elective for review (see Open needs). The sidebar shows the whole plan, with unbuilt pages greyed out and finished pages ticked; `progress/log.jsonl` has what Brad has finished. There are also sandboxes for TSL and Gaussian splats in `/experiments`.
 - **Reviewed:** Brad approved the page format on Point vs direction, the wording on Local vs world space, and Domain 2 as a whole. The other Domain 1 pages haven't had a page-by-page review; Brad was reminded when Domain 2 started. None of the Domain 3–14 pages has been reviewed yet.
 - **r186 check:** done, and its fixes applied Sep 29, 2026 (`docs/r186-check/`). The Pivots page now teaches `Object3D.pivot` and what it changes; that addition hasn't been reviewed.
-- **Next:** Brad reviews the Object3D API tour, the first tour page. The other six tours (object types, loaders and textures, controls, renderer settings, materials, lights) are built with their domains, as each domain's first page, once Brad approves the format. Domain 3 is on hold until Brad says to start it; then Loop 1 for Domains 3–14 in the order in `scripts/lib/domains.ts`. This is the inventory's build order: Loop 1 for every domain comes before any later loop. For each new domain, build its first page and show Brad before building the rest, because a new domain raises new questions. Show Brad each finished domain before starting the next.
+- **Next:** Brad reviews the new pages (the tours first: the Object3D API tour sets the format for the other six) and the VFX sample, and decides the flags raised during the build (`docs/loop1-build-notes.md`). Then the Loop 1 checkpoint, then Loop 2, per the inventory's build order. Every page was checked for mounting, quiz rendering, and console errors in the viewer, and each builder checked its claims against r186; the browser pane was mostly hidden during the build, so many scenes' framing was checked through the DOM or offscreen renders rather than by eye.
 - **Not built:** the Loop 1 checkpoint, Loops 2–4, the two electives (Domain 15 VFX and Blank-file scenes), the cross-domain drills, and placement checks for Loops 2–4.
 
 ## Decisions already made
@@ -68,7 +68,6 @@ Don't reopen these without Brad.
 
 Settle these before, or while, building the parts that need them.
 
-- **Answer lengths.** The right answer is the longest choice in only 6 of 89 questions, which is a small tell in the other direction. `coverage.ts` only checks the upper bound.
 
 - **The Loop 1 checkpoint** has no design yet (question count, pass bar), and the tooling expects a code test. See `checkpoints/README.md`.
 - **Browser checks.** Vitest runs in Node, without WebGL. Checks on rendering, shaders, draw counts, or GPU memory need Vitest's browser mode with Playwright (a one-time setup that downloads Chrome, about 150 MB). Add it when the first drill needs one. How far automated checks reach, by domain:
@@ -77,9 +76,9 @@ Settle these before, or while, building the parts that need them.
   - **Partly:** 11 (settings like texture color space yes; whether it looks right needs eyes or a screenshot comparison).
   - **In a browser:** 10, 12, 14 (draw counts, shader compiles, pixel readback, memory back to baseline). Frame time is too noisy to pass or fail on, so those drills measure instead.
   - Where no check is possible, the drill asks what a person has to look at (the addendum's rule 6).
-- **Assets and scene graph domains (6–7)** want real loaded models, and there are no loader helpers yet. Brad's `.glb` files on the Desktop (racks, shelves, hardware; 6 KB to 624 KB each) are fine to use and to commit; they aren't confidential. Copy the ones a page needs into the repo.
-- **Interaction domain (9):** drag scenes need pointer helpers. Scenes already get `controls` and can set `controls.enabled = false` while dragging.
-- **GPU and optimization domains (10, 14):** Loop 1 describes costs in plain words. Measuring them in Loop 2 needs frame-time and `renderer.info` readouts in the harness.
+- **Models:** two of Brad's `.glb` files (rack parts and J-cups, Draco-compressed) are in `assets/models/`, loaded through `harness/models.ts`. His other rack models on the Desktop (`WFH/Rogue Models/`, 212 KB to 639 KB) are fine to use and to commit; they aren't confidential. Neither model has glTF extras, so the userData page tags parts in code.
+- **GPU and optimization domains (10, 14):** Loop 1 describes costs in plain words, with live `renderer.info` counts. Measuring them in Loop 2 needs frame-time readouts in the harness.
+- **BVH drills (Loops 2–3)** need `three-mesh-bvh`, which isn't installed; the Loop 1 page builds a teaching tree from `Box3`s. Adding the dependency is Brad's call.
 - **Domain 15 (VFX elective):** TSL and the format are decided (see the decisions table). A sample for Brad's review is built: the signed distance fields page with its scored exercise (`?drill=electives/vfx/sdf`), and the selection-ring effect, guided and from memory (`?drill=electives/vfx/effects/selection-ring/guided` and `/from-memory`). The rest waits for that review. Elective items live in `/electives`, with ids like `vfx.sdf.page`; `pick` and `coverage` leave them out. The viewer loads each item's `/solutions` mirror to draw the reference, which Brad never opens. Open choices for Brad: the 95% match bar, and logging an exercise once on its first pass. TSL pages need a `three/webgpu` version of the harness, since the drill harness uses `WebGLRenderer`.
 
 ## Git
@@ -98,7 +97,7 @@ Settle these before, or while, building the parts that need them.
 - Brad moves on after understanding a page, not when a score says so. Treat `pick.ts`, placement checks, and checkpoints as helpers, not gates. Scores are recorded for reference only; don't add time pressure or enforcement unless Brad asks.
 - Brad likes seeing what's ahead; the sidebar shows the full plan for that reason.
 - Brad doesn't want to approve routine commands. `.claude/settings.json` allows the common ones, but a command chained with `&&`, `;` or `|` only skips the prompt when every part is allowed. Run commands one per call, use Grep/Read/Edit/Write instead of `grep`/`cat`/`sed -i`/`cat > file`, and never chain `rm` onto anything.
-- Brad reviews in the Claude desktop app's browser pane. `.claude/launch.json` starts the dev server on port 5173.
+- Brad reviews in the Claude desktop app's browser pane. `.claude/launch.json` starts the dev server on port 5173 (`dev`), or on 5180 (`dev-5180`) when 5173 is taken.
 
 ## Gotchas
 
@@ -125,4 +124,4 @@ Settle these before, or while, building the parts that need them.
 - `Box3.setFromObject(mesh)` boxes the mesh's children too, so an outline or label added as a child makes the box bigger.
 - `harness/main.ts` globs every drill file, so saving any page or harness file makes Vite reload every open viewer page. A long scripted browser check can be cut off mid-run; check one page per call.
 - A background tab in the browser pane screenshots blank, and a hidden pane doesn't animate, so readouts filled each frame stay empty. Front the tab (`tabs_select`) before a screenshot.
-- On Brad's Windows machine, port 5173 can be taken by another project's dev server. `vite.config.ts` doesn't read a port, so start this one with `npm run dev -- --port 5180`.
+- On Brad's Windows machine, port 5173 can be taken by another project's dev server (his portfolio). Use the `dev-5180` launch entry, or `npm run dev -- --port 5180`.
