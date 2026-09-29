@@ -1,10 +1,15 @@
 // Drill viewer: renders a drill's README as a page, mounting its scenes and quiz where the README
-// places them with <div data-scene="name"> and <div data-quiz>.
+// places them with <div data-scene="name"> and <div data-quiz>. Elective items (in /electives) are
+// pages too; theirs can also place a scored exercise (<div data-exercise>), an effect build's
+// viewer (<div data-effect>), and a "Mark done" button (<div data-mark-done>).
 import { marked } from 'marked';
 import { parse } from 'yaml';
+import { DOMAINS } from '../scripts/lib/domains';
+import type { EffectSetup, MaskExercise } from './exercise';
 import { renderNav, renderPace } from './nav';
 import { renderQuiz, type Question } from './quiz';
 import { createHarness, type SceneSetup } from './scene';
+import type { TslSceneSetup } from './tsl';
 
 interface DrillMeta {
   id: string;
@@ -12,6 +17,10 @@ interface DrillMeta {
   mode: string;
   concepts: string[];
   context: string;
+  // Elective items have these instead of loop, mode, and context.
+  elective?: string; // the elective domain's slug, like "vfx"
+  kind?: 'page' | 'guided' | 'from-memory';
+  renderer?: 'webgpu'; // scenes mount on the TSL harness (tsl.ts)
 }
 
 interface Drill {
@@ -21,13 +30,16 @@ interface Drill {
   body: string;
 }
 
-const readmeFiles = import.meta.glob<string>(['/drills/**/README.md', '/cross/**/README.md'], {
+const readmeFiles = import.meta.glob<string>(['/drills/**/README.md', '/cross/**/README.md', '/electives/**/README.md'], {
   query: '?raw',
   import: 'default',
   eager: true,
 });
 const sceneModules = import.meta.glob<Record<string, SceneSetup>>(['/drills/**/scenes.ts', '/cross/**/scenes.ts']);
 const questionModules = import.meta.glob<{ questions: Question[] }>(['/drills/**/questions.ts', '/cross/**/questions.ts']);
+// Elective pages: TSL scenes and exercises, and each drill.ts with its reference from /solutions.
+const electiveSceneModules = import.meta.glob<Record<string, unknown>>('/electives/**/scenes.ts');
+const drillModules = import.meta.glob<Record<string, unknown>>(['/electives/**/drill.ts', '/solutions/electives/**/drill.ts']);
 
 // Folder READMEs without frontmatter are notes, not drills.
 const drills: Drill[] = Object.entries(readmeFiles).flatMap(([path, text]) => {
@@ -59,12 +71,12 @@ async function loadFinished() {
 }
 
 // Returns when the drill was logged, or undefined if it couldn't be saved.
-async function logFinished(drill: Drill, right: number, total: number) {
+async function logFinished(drill: Drill, score?: { right: number; total: number }) {
   try {
     const response = await fetch('/api/progress', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id: drill.meta.id, score: { right, total } }),
+      body: JSON.stringify({ id: drill.meta.id, score }),
     });
     return response.ok ? ((await response.json()) as { at: string }).at : undefined;
   } catch {
@@ -84,6 +96,10 @@ renderNav(
   drills.map((drill) => ({
     folder: drill.folder,
     loop: drill.meta.loop,
+    elective: drill.meta.elective,
+    kind: drill.meta.kind,
+    // Effect builds' ids read <elective>.effects.<effect>.<kind>.
+    effect: drill.meta.kind === 'page' ? undefined : drill.meta.id.split('.')[2],
     concept: drill.meta.concepts[0],
     title: drill.title,
     done: finished.has(drill.meta.id),
@@ -93,12 +109,21 @@ renderNav(
 const pace = document.querySelector<HTMLDivElement>('#pace')!;
 renderPace(pace, finished);
 
+const KIND_LABELS: Record<string, string> = { page: 'exercise', guided: 'guided build', 'from-memory': 'build from memory' };
+
+function metaLine(drill: Drill) {
+  const { elective, kind, loop, mode } = drill.meta;
+  if (!elective) return `Loop ${loop} · ${mode.replaceAll('-', ' ')}`;
+  const domain = DOMAINS.find((item) => item.slug === elective);
+  return `Elective · ${domain?.name ?? elective} · ${KIND_LABELS[kind ?? 'page']}`;
+}
+
 async function renderDrill(drill: Drill) {
   const title = document.createElement('h1');
   title.textContent = drill.title;
   const meta = document.createElement('p');
   meta.className = 'meta';
-  const metaText = `Loop ${drill.meta.loop} · ${drill.meta.mode.replaceAll('-', ' ')}`;
+  let metaText = metaLine(drill);
   meta.textContent = metaText;
   const showDone = (at: string) => {
     meta.innerHTML = `${metaText} · <span class="done">✓ Done ${formatDate(at)}</span>`;
@@ -126,6 +151,22 @@ async function renderDrill(drill: Drill) {
     }
   }
 
+  if (drill.meta.elective) {
+    const recordDone = (at: string) => {
+      showDone(at);
+      finished.set(drill.meta.id, at);
+      renderPace(pace, finished);
+    };
+    const backend = await mountElective(drill, content, recordDone);
+    if (backend) {
+      metaText += ` · ${backend}`;
+      const at = finished.get(drill.meta.id);
+      if (at) showDone(at);
+      else meta.textContent = metaText;
+    }
+    return;
+  }
+
   const scenePlaceholders = content.querySelectorAll<HTMLElement>('[data-scene]');
   const scenes = scenePlaceholders.length ? await sceneModules[`/${drill.folder}/scenes.ts`]?.() : undefined;
   for (const placeholder of scenePlaceholders) {
@@ -142,7 +183,7 @@ async function renderDrill(drill: Drill) {
   const quiz = quizPlaceholder ? await questionModules[`/${drill.folder}/questions.ts`]?.() : undefined;
   if (quizPlaceholder && quiz) {
     renderQuiz(quizPlaceholder, quiz.questions, async (right, total) => {
-      const at = await logFinished(drill, right, total);
+      const at = await logFinished(drill, { right, total });
       if (!at) return "Couldn't save your progress. Is npm run dev running?";
       showDone(at);
       finished.set(drill.meta.id, at);
@@ -150,6 +191,100 @@ async function renderDrill(drill: Drill) {
       return 'Logged as done.';
     });
   }
+}
+
+const message = (error: unknown) => (error instanceof Error ? error.message : String(error));
+
+// Loads a drill.ts module, or reports why it couldn't: Brad's file may not compile yet.
+async function loadDrillModule(path: string) {
+  const load = drillModules[path];
+  if (!load) return { problem: `There's no ${path.slice(1)}.` };
+  try {
+    return { module: await load() };
+  } catch (error) {
+    return { problem: `${path.slice(1)} didn't load: ${message(error)}` };
+  }
+}
+
+// Mounts an elective page's scenes, exercise, effect viewer, and "Mark done" button. The TSL code
+// loads only here, so Loop 1 pages never load three/webgpu. Returns the backend the scenes ran on.
+async function mountElective(drill: Drill, content: HTMLElement, recordDone: (at: string) => void) {
+  const webgpu = drill.meta.renderer === 'webgpu';
+  let backend: string | undefined;
+  const scenes = await electiveSceneModules[`/${drill.folder}/scenes.ts`]?.();
+
+  const scenePlaceholders = content.querySelectorAll<HTMLElement>('[data-scene]');
+  if (scenePlaceholders.length && webgpu) {
+    const { createTslHarness } = await import('./tsl');
+    for (const placeholder of scenePlaceholders) {
+      const setup = scenes?.[placeholder.dataset.scene ?? ''] as TslSceneSetup | undefined;
+      if (!setup) {
+        placeholder.textContent = `No scene named "${placeholder.dataset.scene}" in scenes.ts.`;
+        continue;
+      }
+      placeholder.className = 'scene';
+      const harness = await createTslHarness(placeholder);
+      backend = harness.backend;
+      setup(harness);
+    }
+  }
+
+  const exercisePlaceholder = content.querySelector<HTMLElement>('[data-exercise]');
+  if (exercisePlaceholder) {
+    const exercise = scenes?.exercise as MaskExercise<unknown> | undefined;
+    const yours = await loadDrillModule(`/${drill.folder}/drill.ts`);
+    const reference = await loadDrillModule(`/solutions/${drill.folder}/drill.ts`);
+    if (!exercise) exercisePlaceholder.textContent = "This page's scenes.ts doesn't export an exercise.";
+    else if (!yours.module || !reference.module) exercisePlaceholder.textContent = yours.problem ?? reference.problem ?? '';
+    else {
+      const { mountMaskExercise } = await import('./exercise');
+      backend = await mountMaskExercise(exercisePlaceholder, exercise, { yours: yours.module, reference: reference.module }, async () => {
+        // Logged once: a solved drill.ts stays solved, so reopening the page adds nothing.
+        const doneAt = finished.get(drill.meta.id);
+        if (doneAt) return `Done ${formatDate(doneAt)}.`;
+        const at = await logFinished(drill);
+        if (!at) return "Couldn't save your progress. Is npm run dev running?";
+        recordDone(at);
+        return 'Logged as done.';
+      });
+    }
+  }
+
+  const effectPlaceholder = content.querySelector<HTMLElement>('[data-effect]');
+  if (effectPlaceholder) {
+    const yours = await loadDrillModule(`/${drill.folder}/drill.ts`);
+    const reference = await loadDrillModule(`/solutions/${drill.folder}/drill.ts`);
+    effectPlaceholder.className = 'scene effect';
+    const { mountEffect } = await import('./exercise');
+    backend = await mountEffect(effectPlaceholder, {
+      yours: yours.module?.effect as EffectSetup | undefined,
+      reference: reference.module?.effect as EffectSetup | undefined,
+      hook: effectPlaceholder.dataset.effect || 'your hook',
+    });
+    if (yours.problem) {
+      const problem = document.createElement('p');
+      problem.className = 'problem';
+      problem.textContent = yours.problem;
+      effectPlaceholder.after(problem);
+    }
+  }
+
+  for (const placeholder of content.querySelectorAll<HTMLElement>('[data-mark-done]')) {
+    placeholder.className = 'mark-done';
+    const button = document.createElement('button');
+    button.textContent = 'Mark done';
+    const status = document.createElement('span');
+    button.addEventListener('click', async () => {
+      button.disabled = true;
+      const at = await logFinished(drill);
+      button.disabled = false;
+      status.textContent = at ? 'Logged as done.' : "Couldn't save your progress. Is npm run dev running?";
+      if (at) recordDone(at);
+    });
+    placeholder.append(button, status);
+  }
+
+  return backend;
 }
 
 const drill = drills.find((item) => item.folder === selected);

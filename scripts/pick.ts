@@ -33,9 +33,11 @@ interface Item {
 const HOURS_IF_NEVER = 10_000;
 const HOURS_PER_WEEK = 24 * 7;
 
+// Only the loops are picked from. Elective pages and builds (in /electives) are never loaded as
+// items, and their cards are left out too.
 const drills = loadDrills();
-const cards = new Map(loadCards().map((card) => [card.id, card]));
 const coreDomains = new Set(CORE_DOMAINS.map((domain) => domain.slug));
+const cards = new Map(loadCards().filter((card) => coreDomains.has(card.domain)).map((card) => [card.id, card]));
 
 const items: Item[] = [
   ...drills.map((drill): Item => ({ kind: 'drill', ...drill, drill })),

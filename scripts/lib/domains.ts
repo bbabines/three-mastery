@@ -7,6 +7,14 @@ export interface Concept {
   tier?: 'core' | 'light'; // tiers don't apply to the elective domains
 }
 
+// An effect an elective builds into a scene, combining several of its concepts. Each is built
+// twice: guided, then from memory.
+export interface Effect {
+  slug: string;
+  name: string;
+  concepts: string[]; // concept slugs in the same domain
+}
+
 export interface Domain {
   n: number;
   slug: string;
@@ -14,6 +22,7 @@ export interface Domain {
   elective?: boolean;
   note?: string; // for an elective: when it runs and how, shown under its heading in the sidebar
   concepts: Concept[];
+  effects?: Effect[]; // for an elective with effect builds, in the inventory's order
 }
 
 export const DOMAINS: Domain[] = [
@@ -294,6 +303,14 @@ export const DOMAINS: Domain[] = [
       { slug: 'sprite-facing', name: 'Sprite facing' },
       { slug: 'depth-effects', name: 'Depth-based effects' },
       { slug: 'blending-modes', name: 'Additive vs alpha blending' },
+    ],
+    effects: [
+      { slug: 'dissolve', name: 'Dissolve a part away', concepts: ['value-noise', 'fbm', 'mask-compositing'] },
+      { slug: 'selection-ring', name: 'Selection ring under a clicked part', concepts: ['sdf', 'uv-animation', 'blending-modes'] },
+      { slug: 'sparks', name: 'Sparks when a part snaps in', concepts: ['particles', 'integration-forces', 'sprite-facing'] },
+      { slug: 'smoke', name: 'Smoke puffs', concepts: ['flipbooks', 'depth-effects', 'blending-modes'] },
+      { slug: 'shield', name: 'Shield or highlight shell', concepts: ['cellular-noise', 'uv-animation', 'depth-effects'] },
+      { slug: 'portal', name: 'Swirling portal or energy', concepts: ['domain-warping'] },
     ],
   },
   {

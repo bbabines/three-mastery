@@ -15,7 +15,9 @@ interface Check {
 }
 
 const drills = loadDrills();
-const cards = loadCards();
+// Electives have no loop coverage to track, so their cards (in /concepts/vfx, say) stay out of it.
+const coreDomainSlugs = new Set(CORE_DOMAINS.map((domain) => domain.slug));
+const cards = loadCards().filter((card) => coreDomainSlugs.has(card.domain));
 const placements = loadPlacements();
 const checkpoints = loadCheckpoints();
 const passedIds = new Set(readLog().flatMap((entry) => (entry.type === 'done' && entry.passed ? [entry.id] : [])));

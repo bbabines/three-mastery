@@ -14,11 +14,20 @@ import {
 
 export interface NavDrill {
   folder: string;
-  loop: number;
+  loop?: number; // loop pages and drills
+  elective?: string; // elective items: the elective domain's slug, like "vfx"
+  kind?: string; // elective items: page, guided, or from-memory
+  effect?: string; // effect builds: the effect's slug in domains.ts
   concept: string; // the drill's first concept id, like "math.dot-product"
   title: string;
   done: boolean; // finished at least once, according to the practice log
 }
+
+// An effect is built twice, in this order.
+const BUILD_KINDS = [
+  ['guided', 'guided'],
+  ['from-memory', 'from memory'],
+] as const;
 
 const STORAGE_KEY = 'drill-viewer:open-groups';
 
@@ -58,14 +67,16 @@ function note(text: string) {
   return paragraph;
 }
 
-function pageLink(drill: NavDrill, number: number, selected: string | null) {
-  const link = document.createElement('a');
-  link.className = drill.done ? 'drill done' : 'drill';
-  link.href = `?drill=${drill.folder}`;
-  link.textContent = `${number}. ${drill.title}`;
-  if (drill.folder === selected) link.setAttribute('aria-current', 'page');
-  return link;
+function link(drill: NavDrill, text: string, selected: string | null) {
+  const anchor = document.createElement('a');
+  anchor.className = drill.done ? 'drill done' : 'drill';
+  anchor.href = `?drill=${drill.folder}`;
+  anchor.textContent = text;
+  if (drill.folder === selected) anchor.setAttribute('aria-current', 'page');
+  return anchor;
 }
+
+const pageLink = (drill: NavDrill, number: number, selected: string | null) => link(drill, `${number}. ${drill.title}`, selected);
 
 function upcoming(text: string, detail?: string) {
   const item = document.createElement('span');
@@ -87,7 +98,11 @@ function plannedModes(concept: Concept, loop: number) {
 export function renderNav(container: HTMLElement, drills: NavDrill[], selected: string | null) {
   const stored = readOpenGroups();
   const current = drills.find((drill) => drill.folder === selected);
-  const currentGroups = current ? [`loop-${current.loop}`, `loop-${current.loop}/${current.concept.split('.')[0]}`] : [];
+  const currentGroups = !current
+    ? []
+    : current.elective
+      ? [`elective/${current.elective}`]
+      : [`loop-${current.loop}`, `loop-${current.loop}/${current.concept.split('.')[0]}`];
   // The current page's groups always open. Otherwise the remembered state wins over the default.
   const isOpen = (id: string, byDefault: boolean) => currentGroups.includes(id) || (stored ? stored.has(id) : byDefault);
 
@@ -96,17 +111,53 @@ export function renderNav(container: HTMLElement, drills: NavDrill[], selected: 
     const loopDrills = drills.filter((drill) => drill.loop === loop && drill.concept.startsWith(`${domain.slug}.`));
     const total = LOOP_PLAN[loop] ? plannedDrillCount(domain, loop) : domain.concepts.length;
     const doneCount = loopDrills.filter((drill) => drill.done).length;
-    const label = domain.elective ? `Elective · ${domain.name}` : `${domain.n}. ${domain.name}`;
     const details = group(
       id,
       'domain',
-      `<span>${label}</span><span class="count">${doneCount ? `<span class="done">✓ ${doneCount}</span> · ` : ''}${loopDrills.length}/${total}</span>`,
+      `<span>${domain.n}. ${domain.name}</span><span class="count">${doneCount ? `<span class="done">✓ ${doneCount}</span> · ` : ''}${loopDrills.length}/${total}</span>`,
       isOpen(id, byDefault),
     );
     domain.concepts.forEach((concept, index) => {
       const built = loopDrills.filter((drill) => drill.concept === `${domain.slug}.${concept.slug}`);
       if (built.length === 0) details.append(upcoming(`${index + 1}. ${concept.name}`, plannedModes(concept, loop)));
       for (const drill of built) details.append(pageLink(drill, index + 1, selected));
+    });
+    return details;
+  };
+
+  // An elective lists its concept pages in teaching order, then its effects, each built guided and
+  // then from memory.
+  const electiveGroup = (domain: Domain) => {
+    const id = `elective/${domain.slug}`;
+    const items = drills.filter((drill) => drill.elective === domain.slug);
+    const total = domain.concepts.length + (domain.effects?.length ?? 0) * BUILD_KINDS.length;
+    const doneCount = items.filter((drill) => drill.done).length;
+    const details = group(
+      id,
+      'domain elective',
+      `<span>Elective · ${domain.name}</span><span class="count">${doneCount ? `<span class="done">✓ ${doneCount}</span> · ` : ''}${items.length}/${total}</span>`,
+      isOpen(id, false),
+    );
+    if (domain.note) details.append(note(domain.note));
+    domain.concepts.forEach((concept, index) => {
+      const page = items.find((drill) => drill.kind === 'page' && drill.concept === `${domain.slug}.${concept.slug}`);
+      details.append(page ? pageLink(page, index + 1, selected) : upcoming(`${index + 1}. ${concept.name}`));
+    });
+    if (!domain.effects) return details;
+    details.append(note('Effects, built into the product viewer:'));
+    domain.effects.forEach((effect, index) => {
+      const heading = document.createElement('span');
+      heading.className = 'effect';
+      heading.textContent = `${index + 1}. ${effect.name}`;
+      const names = effect.concepts.map((slug) => domain.concepts.find((concept) => concept.slug === slug)?.name ?? slug);
+      heading.title = `Combines: ${names.join('; ')}`;
+      details.append(heading);
+      for (const [kind, text] of BUILD_KINDS) {
+        const build = items.find((drill) => drill.effect === effect.slug && drill.kind === kind);
+        const entry = build ? link(build, text, selected) : upcoming(text);
+        entry.classList.add('build');
+        details.append(entry);
+      }
     });
     return details;
   };
@@ -156,12 +207,7 @@ export function renderNav(container: HTMLElement, drills: NavDrill[], selected: 
     container.append(loopGroup);
   }
 
-  for (const elective of DOMAINS.filter((domain) => domain.elective)) {
-    const electiveGroup = domainGroup(`elective/${elective.slug}`, elective, 1, false);
-    electiveGroup.classList.add('elective');
-    if (elective.note) electiveGroup.querySelector('summary')!.after(note(elective.note));
-    container.append(electiveGroup);
-  }
+  for (const elective of DOMAINS.filter((domain) => domain.elective)) container.append(electiveGroup(elective));
 
   // `toggle` doesn't bubble, so listen during the capture phase.
   container.addEventListener('toggle', () => saveOpenGroups(container), true);
@@ -175,7 +221,8 @@ const localDay = (date: Date) => date.toLocaleDateString('en-CA'); // YYYY-MM-DD
 // "1.math.dot-product.read-the-code.1", to when they were done.
 export function renderPace(container: HTMLElement, finished: Map<string, string>) {
   const today = new Date();
-  const doneToday = [...finished.values()].some((at) => localDay(new Date(at)) === localDay(today));
+  // Only loop pages count toward the pace; elective items (ids like "vfx.sdf.page") don't.
+  const doneToday = [...finished].some(([id, at]) => /^\d+\./.test(id) && localDay(new Date(at)) === localDay(today));
   const doneCount = (prefix: string) => [...finished.keys()].filter((id) => id.startsWith(prefix)).length;
   const doneIn = (left: number) => {
     const end = new Date(today.getTime() + (left - (doneToday ? 0 : 1)) * DAY);
