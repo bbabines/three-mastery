@@ -214,7 +214,8 @@ function start(id: string | undefined) {
 
 // Drills checked on the page or by eye instead of by a test are confirmed with `done --pass`.
 function acceptanceCheckPasses(item: Item, flag: string | undefined) {
-  if (!existsSync(path.join(ROOT, item.dir, 'drill.test.ts'))) return flag === '--pass';
+  const hasTest = ['drill.test.ts', 'drill.browser.test.ts'].some((file) => existsSync(path.join(ROOT, item.dir, file)));
+  if (!hasTest) return flag === '--pass';
   const results = runVitest([item.dir]);
   return results.length > 0 && results.every((result) => result.passed);
 }

@@ -2,6 +2,7 @@
 // links and the rest greyed out. Groups collapse, and which ones are open is remembered.
 import {
   CORE_DOMAINS,
+  CORE_MODES,
   CROSS_DRILLS,
   DOMAINS,
   FIRST_PLACEMENT_LOOP,
@@ -21,6 +22,7 @@ export interface NavDrill {
   effect?: string; // effect builds: the effect's slug in domains.ts
   concept: string; // the drill's first concept id, like "math.dot-product"
   concepts: string[]; // every concept id; a shared drill is listed under each
+  mode?: string; // read-the-code, implement, apply, or break-and-fix
   check?: 'placement' | 'checkpoint';
   domain?: string; // a placement check's domain slug
   title: string;
@@ -127,7 +129,10 @@ export function renderNav(container: HTMLElement, drills: NavDrill[], selected: 
     if (placement) details.append(link(placement, 'Placement check', selected));
     else if (loop >= FIRST_PLACEMENT_LOOP) details.append(upcoming('Placement check'));
     domain.concepts.forEach((concept, index) => {
-      const built = loopDrills.filter((drill) => drill.concepts.includes(`${domain.slug}.${concept.slug}`));
+      // In the order a loop plans them: build it before use it.
+      const built = loopDrills
+        .filter((drill) => drill.concepts.includes(`${domain.slug}.${concept.slug}`))
+        .sort((a, b) => CORE_MODES.indexOf(a.mode ?? '') - CORE_MODES.indexOf(b.mode ?? ''));
       if (built.length === 0) details.append(upcoming(`${index + 1}. ${concept.name}`, plannedModes(concept, loop)));
       for (const drill of built) details.append(pageLink(drill, index + 1, selected));
     });

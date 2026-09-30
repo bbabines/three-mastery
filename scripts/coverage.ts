@@ -39,7 +39,9 @@ const TOTAL_LIGHT = TOTAL_CONCEPTS - TOTAL_CORE;
 const MIN_CONTEXTS = { core: 3, light: 2 };
 
 const drillsFor = (card: Card) => drills.filter((drill) => drill.concepts.includes(card.id));
-const contextsUsed = (card: Card) => new Set(drillsFor(card).map((drill) => drill.context));
+// A shared drill's context belongs to one of its cards; it counts only for that one.
+const contextsUsed = (card: Card) =>
+  new Set(drillsFor(card).map((drill) => drill.context).filter((context) => context.startsWith(`${card.id}/`)));
 const requiredModes = (card: Card) => (card.tier === 'core' ? CORE_MODES : LIGHT_MODES);
 const missingModes = (card: Card) => {
   const modes = new Set(drillsFor(card).map((drill) => drill.mode));

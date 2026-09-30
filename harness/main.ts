@@ -4,7 +4,7 @@
 // viewer (<div data-effect>), and a "Mark done" button (<div data-mark-done>).
 import { marked } from 'marked';
 import { parse } from 'yaml';
-import { DOMAINS } from '../scripts/lib/domains';
+import { DOMAINS, MODE_LABELS } from '../scripts/lib/domains';
 import type { EffectSetup, MaskExercise } from './exercise';
 import { renderNav, renderPace } from './nav';
 import { renderQuiz, type Question } from './quiz';
@@ -121,6 +121,7 @@ renderNav(
     effect: drill.meta.kind === 'page' ? undefined : drill.meta.id.split('.')[2],
     concept: drill.meta.concepts[0] ?? '',
     concepts: drill.meta.concepts,
+    mode: drill.meta.mode,
     check: checkKind(drill),
     domain: drill.meta.domain,
     title: drill.title,
@@ -137,7 +138,7 @@ function metaLine(drill: Drill) {
   const { elective, kind, loop, mode } = drill.meta;
   const check = checkKind(drill);
   if (check) return `Loop ${loop} · ${check === 'checkpoint' ? 'checkpoint' : 'placement check'}`;
-  if (!elective) return `Loop ${loop} · ${mode.replaceAll('-', ' ')}`;
+  if (!elective) return `Loop ${loop} · ${MODE_LABELS[mode] ?? mode.replaceAll('-', ' ')}`;
   const domain = DOMAINS.find((item) => item.slug === elective);
   return `Elective · ${domain?.name ?? elective} · ${KIND_LABELS[kind ?? 'page']}`;
 }
@@ -192,9 +193,21 @@ async function renderDrill(drill: Drill) {
   }
 
   const scenePlaceholders = content.querySelectorAll<HTMLElement>('[data-scene]');
-  const scenes = scenePlaceholders.length ? await sceneModules[`/${drill.folder}/scenes.ts`]?.() : undefined;
+  // A code drill's scenes.ts imports Brad's drill.ts, which may not compile mid-edit. Say so in the
+  // scene instead of leaving it blank.
+  let scenes: Record<string, SceneSetup> | undefined;
+  let loadProblem: string | undefined;
+  try {
+    scenes = scenePlaceholders.length ? await sceneModules[`/${drill.folder}/scenes.ts`]?.() : undefined;
+  } catch (error) {
+    loadProblem = `The scene couldn't load, often because drill.ts doesn't compile yet: ${error instanceof Error ? error.message : String(error)}`;
+  }
   for (const placeholder of scenePlaceholders) {
     const setup = scenes?.[placeholder.dataset.scene ?? ''];
+    if (loadProblem) {
+      placeholder.textContent = loadProblem;
+      continue;
+    }
     if (!setup) {
       placeholder.textContent = `No scene named "${placeholder.dataset.scene}" in scenes.ts.`;
       continue;

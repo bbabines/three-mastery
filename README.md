@@ -92,13 +92,13 @@ COVERAGE.md    generated
 
 ## Build status
 
-The harness, `pick.ts`, and all of Loop 1 are built: each of the 159 concepts in Domains 1–14 has a card and a Loop 1 page, covering every misconception listed for them, including the seven tour pages that cover a family of classes instead of one idea. After a blind review, every domain except Domain 2 (kept as Brad approved it) was brought to Domain 1's size and voice, which `npm run coverage` now measures; [docs/loop1-build-notes.md](docs/loop1-build-notes.md) lists what came up while building them. The sidebar also shows two electives: Procedural & VFX (in TSL, with a sample page and effect built for review) and Blank-file scenes. There are no code drills yet; those start in Loop 2. [CLAUDE.md](CLAUDE.md) has the current status, and [COVERAGE.md](COVERAGE.md) tracks the rest.
+The harness, `pick.ts`, and all of Loop 1 are built: each of the 159 concepts in Domains 1–14 has a card and a Loop 1 page, covering every misconception listed for them, including the seven tour pages that cover a family of classes instead of one idea. After a blind review, every domain except Domain 2 (kept as Brad approved it) was brought to Domain 1's size and voice, which `npm run coverage` now measures; [docs/loop1-build-notes.md](docs/loop1-build-notes.md) lists what came up while building them. The sidebar also shows two electives: Procedural & VFX (in TSL, with a sample page and effect built for review) and Blank-file scenes. The Loop 1 checkpoint is built, and Loop 2's code drills are being built domain by domain, starting with Domain 1. [CLAUDE.md](CLAUDE.md) has the current status, and [COVERAGE.md](COVERAGE.md) tracks the rest.
 
 ## Authoring
 
 Loop 1 pages follow [docs/writing-pages.md](docs/writing-pages.md), which also has the tour-page variant, the size and voice limits taken from Domain 1, and the VFX elective's page format. [CLAUDE.md](CLAUDE.md) holds the project's status, the decisions made so far and why, and known gotchas; Claude Code reads it at the start of every session.
 
-Code drills, from Loop 2 on:
+Code drills, from Loop 2 on, follow [docs/writing-drills.md](docs/writing-drills.md); the Domain 1 drills in `drills/2/math/` are its reference. In short:
 
 - Folder: `drills/<loop>/<domain>/<concept>/<mode>-<n>/`. Id: `<loop>.<domain>.<concept>.<mode>.<n>`.
 - Frontmatter: `id`, `loop`, `tier`, `concepts`, `mode`, `context`, `lenses`, `misconceptions`. `concepts` holds card ids like `math.dot-product`. `context` and each `misconceptions` entry reference a key on that card: `math.dot-product/cone-check`.

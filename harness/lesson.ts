@@ -602,3 +602,20 @@ export function hideFloorHelpers(scene: THREE.Scene) {
     if (child instanceof THREE.GridHelper || child instanceof THREE.AxesHelper) child.visible = false;
   }
 }
+
+export type Attempt<T> = { ok: true; value: T } | { ok: false; note: string };
+
+// For code drills' scenes, which run the function Brad is writing in drill.ts. Calls `run` and
+// returns { ok: true, value } with its answer, or { ok: false, note } with a line for the readout:
+// "<name>: not answered yet" while it still returns null, or the error it threw. Either way the scene
+// keeps running while drill.ts is half-written. Pass the function copies of the scene's vectors, so
+// one that changes its inputs can't knock the scene over; the drill's test catches that instead.
+export function attempt<T>(name: string, run: () => T | null | undefined): Attempt<T> {
+  try {
+    const value = run();
+    if (value === null || value === undefined) return { ok: false, note: `${name}: not answered yet` };
+    return { ok: true, value };
+  } catch (error) {
+    return { ok: false, note: `${name} threw: ${error instanceof Error ? error.message : String(error)}` };
+  }
+}
