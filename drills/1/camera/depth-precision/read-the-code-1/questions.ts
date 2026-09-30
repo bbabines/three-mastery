@@ -4,39 +4,39 @@ import type { Question } from '@harness/quiz';
 export const questions: Question[] = [
   {
     code: `const camera = new PerspectiveCamera(50, 1, 0.1, 100);
-// A wall stands 1 unit in front of the camera.`,
-    ask: "About how much of the depth buffer's range lies between the near plane and the wall?",
+// a wall stands 1 unit in front of the camera`,
+    ask: 'What share of the steps lie before the wall?',
     choices: ['About 1%', 'About 50%', 'About 90%'],
     answer: 2,
-    why: "A perspective camera spends most of its depth steps just past `near`. The wall's depth value is about 0.9, so the first 0.9 units past the near plane use 90% of the steps, and the other 99 units share the last 10%.",
+    why: "A perspective camera spends most of its steps just past `near`. The wall's depth value is about 0.9, so the other 99 units share the last 10%.",
   },
   {
     code: `const camera = new PerspectiveCamera(50, 1, 0.0001, 100);
-// A rug lies 0.005 above the floor, 20 units from the camera.`,
+// a rug lies 0.005 above the floor, 20 units from the camera`,
     ask: 'What happens to the rug?',
     choices: ['It flickers through the floor', 'It draws cleanly on top', 'It vanishes past `far`'],
     answer: 0,
-    why: "With `near` at 0.0001, almost every depth step is used up within a few centimeters of the camera. At 20 units away, the rug and the floor are a small fraction of a step apart, so they z-fight. Raising `near` to 0.1 gives a thousand times more steps there.",
+    why: 'With `near` at 0.0001, nearly every step is used up within centimeters of the camera, so at 20 units the rug and floor share a step. Raise `near` to 0.1.',
   },
   {
     code: `const camera = new PerspectiveCamera(50, aspect, 0.001, 5000);
-// Hills 300 units away flicker through each other.`,
+// hills 300 units away flicker through each other`,
     ask: 'Which change helps most?',
     choices: ['Lowering far to 1000', 'Both, since they matter equally', 'Raising near to 0.1'],
     answer: 2,
-    why: 'The depth steps at a distance depend almost entirely on `near`: raising it from 0.001 to 0.1 gives about 100 times more steps at every distance. Once `far` is much bigger than `near`, lowering it barely changes anything.',
+    why: 'The steps at a distance depend almost entirely on `near`: raising it to 0.1 gives about 100 times more. Lowering `far` barely changes anything.',
   },
   {
     code: `const sticker = new Mesh(new PlaneGeometry(1, 1), stickerMaterial);
-sticker.position.copy(spotOnWall); // exactly on the wall's surface`,
-    ask: 'The sticker flickers with the wall. What fixes it?',
+sticker.position.copy(spotOnWall); // exactly on the wall: it flickers`,
+    ask: 'What fixes the flicker?',
     choices: [
       'Turning on `polygonOffset`, with negative values',
       'Raising `near` from 0.1 to 1',
       'Lowering `far` from 100 to 50',
     ],
     answer: 0,
-    why: "Two surfaces at exactly the same depth fight however precise the depth buffer is. `polygonOffset` with a negative `polygonOffsetFactor` and `polygonOffsetUnits` nudges the sticker's depth toward the camera by a few depth steps, so it wins at any distance. Lifting it a little off the wall works too.",
+    why: 'Surfaces at exactly the same depth fight however precise the buffer is. Negative `polygonOffset` values nudge the sticker toward the camera by a few depth steps.',
   },
   {
     code: `const renderer = new WebGLRenderer({ logarithmicDepthBuffer: true });`,
@@ -47,6 +47,6 @@ sticker.position.copy(spotOnWall); // exactly on the wall's surface`,
       'Less GPU memory, in return for worse precision',
     ],
     answer: 1,
-    why: "It spreads the depth steps out over the whole distance, so far-off surfaces stop fighting. The cost: each pixel's depth is written from the fragment shader, which stops the GPU from skipping hidden pixels before shading them. That's GPU work for every pixel.",
+    why: "It spreads the steps over the whole distance, but writes each pixel's depth from the fragment shader, so the GPU can't skip hidden pixels before shading them.",
   },
 ];

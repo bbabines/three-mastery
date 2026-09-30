@@ -15,7 +15,7 @@ contexts:
 
 ## Definition
 
-A camera's projection matrix is its lens: how much of the world it sees and the nearest and farthest distances it draws, and three.js rebuilds it only when you call `updateProjectionMatrix()`.
+A camera's projection matrix is its lens, holding how much of the world it sees and the nearest and farthest distances it draws.
 
 ## Space lens
 

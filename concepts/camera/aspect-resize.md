@@ -14,7 +14,7 @@ contexts:
 
 ## Definition
 
-When the canvas changes shape, `renderer.setSize` resizes the canvas only; the camera needs its own update, `camera.aspect = w / h` and then `camera.updateProjectionMatrix()`, or the picture stretches to fill the new shape.
+When the canvas changes shape, resizing the renderer isn't enough: the camera needs its new aspect and a rebuilt projection matrix too, or the picture stretches to fill the new shape.
 
 ## Space lens
 

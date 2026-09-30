@@ -14,7 +14,7 @@ contexts:
 
 ## Definition
 
-The frustum is the part of the world a camera can see, bounded by six planes that three.js builds from the projection and view matrices, and three.js skips drawing any object whose bounding sphere lies completely outside it.
+The frustum is the part of the world a camera can see, bounded by six flat planes, and three.js skips drawing any object whose bounding sphere lies completely outside it.
 
 ## Space lens
 

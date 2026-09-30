@@ -73,7 +73,7 @@ export const culling: SceneSetup = (harness) => {
       `<span style="color:${COLORS.orange}">■</span> plank: ${plankDrawn ? 'drawn, every triangle, though none show' : 'skipped'}`,
     ].join('\n');
   };
-  slider(sliders, 'Turn camera', { min: -60, max: 60, step: 10, value: turn }, (value) => {
+  slider(sliders, 'turn camera', { min: -60, max: 60, step: 10, value: turn }, (value) => {
     turn = value;
     update();
   });

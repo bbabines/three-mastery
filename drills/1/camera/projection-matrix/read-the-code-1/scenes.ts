@@ -75,7 +75,7 @@ export const zoomVsDolly: SceneSetup = (harness) => {
       },
     },
   ]);
-  slider(controlsBar, 'Frame tighter', { min: 0, max: 1, step: 0.1, value: tighter }, (value) => {
+  slider(controlsBar, 'frame tighter', { min: 0, max: 1, step: 0.1, value: tighter }, (value) => {
     tighter = value;
     update();
   });
@@ -163,7 +163,7 @@ export const perspectiveVsOrtho: SceneSetup = (harness) => {
       },
     },
   ]);
-  slider(controlsBar, 'Camera distance', { min: 4, max: 7, step: 0.5, value: distance }, (value) => {
+  slider(controlsBar, 'camera distance', { min: 4, max: 7, step: 0.5, value: distance }, (value) => {
     distance = value;
     update();
   });

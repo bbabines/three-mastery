@@ -46,7 +46,7 @@ export const underCursor: SceneSetup = ({ scene, camera, controls, container, re
     ].join('\n');
   };
 
-  slider(sliders, 'Distance', { min: 2, max: 10, step: 1, value: distance }, (value) => (distance = value));
+  slider(sliders, 'distance', { min: 2, max: 10, step: 1, value: distance }, (value) => (distance = value));
 };
 
 export const behind: SceneSetup = ({ scene, camera, controls, container, renderer }) => {
@@ -102,5 +102,5 @@ export const behind: SceneSetup = ({ scene, camera, controls, container, rendere
       select: () => (checkZ = true),
     },
   ]);
-  slider(controlsBar, 'Move the sign', { min: -3, max: 9, step: 0.5, value: z }, (value) => (z = value));
+  slider(controlsBar, 'move sign', { min: -3, max: 9, step: 0.5, value: z }, (value) => (z = value));
 };

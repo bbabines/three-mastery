@@ -9,7 +9,7 @@ camera.position.copy(sphere.center).addScaledVector(back, distance);`,
     ask: 'How does the model fit?',
     choices: ['It fits, with room to spare', 'Its top and bottom are cut off', 'Its sides are cut off'],
     answer: 2,
-    why: "`fov` is the angle from bottom to top. On a screen half as wide as it is tall, the side-to-side angle is only about 26°, so a camera backed off for 50° is too close to fit the model across. Use the narrower of the two angles.",
+    why: '`fov` is the angle from bottom to top. On this tall screen the side-to-side angle is only about 26°, so the sides get cut. Use the narrower angle.',
   },
   {
     code: `const box = new Box3().setFromObject(group); // nothing has loaded into the group yet
@@ -18,7 +18,7 @@ const distance = sphere.radius / Math.sin(fov / 2);`,
     ask: 'What goes wrong?',
     choices: ['It throws an error for an empty box', 'The distance comes out negative', 'The distance comes out as 0'],
     answer: 1,
-    why: "An empty `Box3` gives a sphere with a radius of −1, and nothing warns you. The distance comes out negative, so the camera lands on the wrong side of the center, facing away. Check `box.isEmpty()` before fitting.",
+    why: 'An empty `Box3` gives a sphere with a radius of −1, with no warning, so the camera lands on the wrong side, facing away. Check `box.isEmpty()` first.',
   },
   {
     code: `camera.aspect = 2; // a wide window
@@ -32,6 +32,6 @@ const angle = Math.min(vertical, horizontal);`,
       'Whichever the camera used last',
     ],
     answer: 0,
-    why: "On a screen twice as wide as it is tall, the side-to-side angle is wider than `fov`, so the vertical one is narrower and decides the distance. On a tall screen it's the other way around, which is why the code takes the smaller of the two instead of assuming.",
+    why: "On a wide screen the side-to-side angle is wider than `fov`, so the vertical one is narrower. On a tall screen it's the other way, hence `Math.min`.",
   },
 ];

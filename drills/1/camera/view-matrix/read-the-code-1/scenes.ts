@@ -54,11 +54,11 @@ export const fromCamera: SceneSetup = ({ scene, camera, controls, container }) =
       v.z < 0 ? `    ${formatNumber(-v.z, 1)} in front of the camera` : '    behind the camera: z is positive',
     ].join('\n');
   };
-  slider(sliders, 'Move camera', { min: -2, max: 2, step: 0.5, value: values.x }, (value) => {
+  slider(sliders, 'move camera', { min: -2, max: 2, step: 0.5, value: values.x }, (value) => {
     values.x = value;
     update();
   });
-  slider(sliders, 'Turn camera', { min: -90, max: 90, step: 15, value: values.turn }, (value) => {
+  slider(sliders, 'turn camera', { min: -90, max: 90, step: 15, value: values.turn }, (value) => {
     values.turn = value;
     update();
   });
@@ -120,11 +120,11 @@ export const inFront: SceneSetup = ({ scene, camera, controls, container }) => {
       },
     },
   ]);
-  slider(controlsBar, 'Move camera', { min: -1.5, max: 1.5, step: 0.5, value: values.x }, (value) => {
+  slider(controlsBar, 'move camera', { min: -1.5, max: 1.5, step: 0.5, value: values.x }, (value) => {
     values.x = value;
     update();
   });
-  slider(controlsBar, 'Turn camera', { min: -60, max: 60, step: 15, value: values.turn }, (value) => {
+  slider(controlsBar, 'turn camera', { min: -60, max: 60, step: 15, value: values.turn }, (value) => {
     values.turn = value;
     update();
   });

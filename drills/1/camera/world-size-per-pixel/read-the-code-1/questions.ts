@@ -7,18 +7,18 @@ export const questions: Question[] = [
 pin.position.copy(spot); // 5 units in front of the camera
 // The camera backs away until the pin is 20 units in front of it.`,
     ask: 'How big does the pin look now?',
-    choices: ['The same size as before', 'A quarter of its size before', 'Half its size before'],
+    choices: ['Just as big as before', 'A quarter as big', 'Half as big'],
     answer: 1,
-    why: "A pixel covers four times as much of the world at four times the depth, so a pin of fixed size covers a quarter as many pixels. To keep it the same size on screen, scale it with its depth: `24 * worldPerPixel` for 24 pixels.",
+    why: 'At four times the depth, a pixel covers four times as much of the world, so the pin looks a quarter as big. Scale it by `worldPerPixel` to keep its size.',
   },
   {
     code: `const d = camera.position.distanceTo(hotspot.position);
 const worldPerPixel = camera.getViewSize(d, size).y / canvas.clientHeight;
 hotspot.scale.setScalar(24 * worldPerPixel);`,
-    ask: 'How big do hotspots near the edges of a wide view come out?',
-    choices: ['Exactly 24 pixels', 'Smaller than 24 pixels', 'Bigger than 24 pixels'],
+    ask: "How big are hotspots near the view's edges?",
+    choices: ['Exactly 24 CSS pixels', 'Smaller than 24 CSS pixels', 'Bigger than 24 CSS pixels'],
     answer: 2,
-    why: "`getViewSize` wants the depth straight along the way the camera faces. A hotspot off to the side is farther away in a straight line than its depth, so the size comes out too big: about 28 pixels at the edge of a view twice as wide as it is tall. Use `-hotspot.position.clone().applyMatrix4(camera.matrixWorldInverse).z`.",
+    why: "`getViewSize` wants view depth. Off to the side, the straight-line distance is longer than the depth, so edge hotspots come out too big. Use the depth from the view matrix.",
   },
   {
     code: `renderer.setPixelRatio(2);
@@ -27,6 +27,6 @@ marker.scale.setScalar(24 * worldPerPixel); // meant to match a 24px CSS icon`,
     ask: 'How big is the marker next to the icon?',
     choices: ["Half the icon's height", 'The same height as the icon', "Twice the icon's height"],
     answer: 0,
-    why: "`domElement.height` counts device pixels, twice as many as CSS pixels at a pixel ratio of 2, so `worldPerPixel` comes out half as big and so does the marker: 24 device pixels is 12 CSS pixels. Divide by `renderer.domElement.clientHeight` to match CSS sizes.",
+    why: '`domElement.height` counts device pixels, twice the CSS pixels at a pixel ratio of 2, so the marker comes out half as big. Divide by `clientHeight` instead.',
   },
 ];

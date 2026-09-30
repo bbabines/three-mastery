@@ -65,11 +65,11 @@ export const cameraArrows: SceneSetup = ({ scene, camera, controls, container })
       },
     },
   ]);
-  slider(controlsBar, 'Turn', { min: -180, max: 180, step: 15, value: values.turn }, (value) => {
+  slider(controlsBar, 'turn', { min: -180, max: 180, step: 15, value: values.turn }, (value) => {
     values.turn = value;
     update();
   });
-  slider(controlsBar, 'Tilt', { min: -90, max: 60, step: 15, value: values.tilt }, (value) => {
+  slider(controlsBar, 'tilt', { min: -90, max: 60, step: 15, value: values.tilt }, (value) => {
     values.tilt = value;
     update();
   });

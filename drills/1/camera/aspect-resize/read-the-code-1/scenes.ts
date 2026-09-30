@@ -64,7 +64,7 @@ export const stretch: SceneSetup = (harness) => {
       },
     },
   ]);
-  slider(controlsBar, 'Canvas width', { min: 200, max: 720, step: 40, value: width }, (value) => {
+  slider(controlsBar, 'canvas width', { min: 200, max: 720, step: 40, value: width }, (value) => {
     width = value;
     update();
   });

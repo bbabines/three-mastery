@@ -101,7 +101,7 @@ export const fitView: SceneSetup = (harness) => {
       },
     },
   ]);
-  slider(controlsBar, 'Screen shape', { min: 0, max: ASPECTS.length - 1, step: 1, value: ASPECTS.indexOf(aspect) }, (value) => {
+  slider(controlsBar, 'screen shape', { min: 0, max: ASPECTS.length - 1, step: 1, value: ASPECTS.indexOf(aspect) }, (value) => {
     aspect = ASPECTS[value];
     update();
   });

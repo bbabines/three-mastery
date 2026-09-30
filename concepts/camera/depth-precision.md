@@ -14,11 +14,11 @@ contexts:
 
 ## Definition
 
-The depth buffer stores how far away the nearest surface at each pixel is, as a value from 0 at the near plane to 1 at the far plane, and a perspective camera spends most of those values just past the near plane, so `near` decides how finely distant surfaces can be told apart.
+A perspective camera's depth buffer spends most of its values just past the near plane, so the near distance decides how finely distant surfaces can be told apart.
 
 ## Space lens
 
-The depth buffer's value is NDC z squeezed from −1 to 1 into 0 to 1. `polygonOffsetFactor` and `polygonOffsetUnits` nudge depth in depth-buffer terms, not world units.
+The depth buffer's value is NDC z squeezed from −1 to 1 into 0 to 1. `polygonOffsetFactor` and `polygonOffsetUnits` nudge depth in depth-buffer steps, not world units.
 
 ## Cost lens
 

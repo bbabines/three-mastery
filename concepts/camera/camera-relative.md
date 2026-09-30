@@ -14,7 +14,7 @@ contexts:
 
 ## Definition
 
-A camera looks down its own −Z, so its forward in the world comes from `getWorldDirection`, and its right and up on screen come from the first two columns of its `matrixWorld`.
+A camera looks down its own −Z, so its forward, right, and up in the world come from its own axes turned by its matrix, not from the world's axes.
 
 ## Space lens
 

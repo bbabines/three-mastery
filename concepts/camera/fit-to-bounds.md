@@ -14,7 +14,7 @@ contexts:
 
 ## Definition
 
-To frame an object, wrap it in a bounding sphere and back the camera off until the sphere fits the narrower of the view's two angles: the vertical `fov` on a wide screen, the side-to-side angle on a tall one.
+To frame an object, wrap it in a bounding sphere and back the camera off until the sphere fits the narrower of the view's two angles, which on a tall screen is the side-to-side one.
 
 ## Space lens
 

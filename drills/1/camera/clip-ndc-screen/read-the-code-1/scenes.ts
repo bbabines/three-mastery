@@ -44,9 +44,9 @@ export const trip: SceneSetup = ({ scene, camera, controls, container, renderer 
     ].join('\n');
   };
 
-  slider(sliders, 'X', { min: -4, max: 4, step: 0.5, value: values.x }, (value) => (values.x = value));
-  slider(sliders, 'Y', { min: 0.5, max: 3, step: 0.25, value: values.y }, (value) => (values.y = value));
-  slider(sliders, 'Z', { min: -4, max: 4, step: 0.5, value: values.z }, (value) => (values.z = value));
+  slider(sliders, 'x', { min: -4, max: 4, step: 0.5, value: values.x }, (value) => (values.x = value));
+  slider(sliders, 'y', { min: 0.5, max: 3, step: 0.25, value: values.y }, (value) => (values.y = value));
+  slider(sliders, 'z', { min: -4, max: 4, step: 0.5, value: values.z }, (value) => (values.z = value));
 };
 
 export const labelFlip: SceneSetup = ({ scene, camera, controls, container, renderer, onFrame }) => {
@@ -95,5 +95,5 @@ export const labelFlip: SceneSetup = ({ scene, camera, controls, container, rend
       select: () => (flip = false),
     },
   ]);
-  slider(controlsBar, 'Speed', { min: 0, max: 1, step: 0.25, value: speed }, (value) => (speed = value));
+  slider(controlsBar, 'speed', { min: 0, max: 1, step: 0.25, value: speed }, (value) => (speed = value));
 };
