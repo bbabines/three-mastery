@@ -8,7 +8,7 @@ Sep 29, 2026 · Brad
 
 - Every claim was checked against `three@0.186.0`: behavior in Node where possible, rendering behavior in the r186 source or in the browser. Every quiz answer and wrong choice was checked the same way.
 - Every page was opened in the viewer: every scene mounts, the quiz renders, and the console has no errors.
-- The browser pane was hidden for most of the build, and other builders' saves kept reloading it, so screenshots often failed. Many scenes' framing was checked through the DOM, pixel readback, or offscreen renders instead of by eye. **Shaders pages 3–11 in particular haven't been looked at by eye.**
+- The browser pane was hidden for most of the build, and other builders' saves kept reloading it, so screenshots often failed. Many scenes' framing was checked through the DOM, pixel readback, or offscreen renders instead of by eye. In the Sep 30 tightening pass, every shader scene was rendered offscreen in all 44 of its button and slider states and looked at as images; the pane itself was too small for screenshots.
 - `npm run typecheck` is clean for the whole repo. `COVERAGE.md` shows all 184 misconceptions on the 159 cards listed on a page, and the right answer is the longest choice in 171 of 601 questions (28%).
 - No quiz was finished during the build, so `progress/log.jsonl` has no new lines.
 
@@ -174,6 +174,14 @@ The Sep 30 pass brought each domain to Domain 1's size and voice, which meant cu
 - `texture.clone()` shares the image and keeps one GPU copy while the settings match, even with a different offset or repeat. `TextureUtils.getByteLength` gives exact byte counts.
 - Program leaks come from making materials with new settings each cycle and never disposing them. Listeners on window resize or controls `change`, and frame-loop callbacks holding an old model, keep models alive.
 
+**Shaders (Domain 12):**
+- three.js compiles a ShaderMaterial as GLSL ES 3.00 and adds lines so `attribute`, `varying`, `gl_FragColor`, and `texture2D` still work. A `color` attribute is declared for you only with `vertexColors: true`.
+- A Color or Vector3 uniform holds the object itself, so `.value.set(...)` in place works. Interpolation across a triangle is perspective-correct; `Triangle.getInterpolation` does the same blend in JavaScript.
+- For world normals on an unevenly stretched object, pass `new Matrix3().getNormalMatrix(mesh.matrixWorld)` as a uniform. On an InstancedMesh, a custom vertex shader must apply `instanceMatrix` itself, or every copy draws in one spot.
+- `mix` with `t` outside 0–1 overshoots. `smoothstep` with reversed edges is undefined; use `1.0 - smoothstep(...)`. `mediump` guarantees a range of about ±16,384.
+- Derivatives are undefined inside an `if` that goes different ways for neighboring pixels, so compute them first; they change with distance, zoom, and pixel ratio. The bottom-left pixel's center is (0.5, 0.5), and `gl_FragCoord.z` is depth from 0 to 1.
+- `step` and `mix` compute both sides, so they aren't automatically faster than an `if`. `#ifdef` with `material.defines` compiles one program per combination and needs `needsUpdate` after a change. `alphaTest` carries into the shadow pass only for built-in materials with `map` or `alphaMap`; a `discard` you write needs a `customDepthMaterial` that discards too.
+
 ## Page lengths
 
-Several pages run over the recipe's guide: most light pages are 72–90 lines against 50–70, and some core pages reach 130–145 against about 120 (the camera domain's, and Attributes, uniforms, varyings). The extra is mostly B's code blocks. Trim if Brad finds them long.
+The Sep 30 tightening pass brought every page in Domains 3–14 within Domain 1's limits (`COVERAGE.md`, "Size and voice"). A few now sit a little under Domain 1's ranges rather than over; nothing was padded. Domain 2 is still over, by Brad's choice to keep it as approved.
