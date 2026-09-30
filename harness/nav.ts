@@ -4,6 +4,7 @@ import {
   CORE_DOMAINS,
   CROSS_DRILLS,
   DOMAINS,
+  FIRST_PLACEMENT_LOOP,
   LOOP_PLAN,
   LOOPS,
   MODE_LABELS,
@@ -19,6 +20,9 @@ export interface NavDrill {
   kind?: string; // elective items: page, guided, or from-memory
   effect?: string; // effect builds: the effect's slug in domains.ts
   concept: string; // the drill's first concept id, like "math.dot-product"
+  concepts: string[]; // every concept id; a shared drill is listed under each
+  check?: 'placement' | 'checkpoint';
+  domain?: string; // a placement check's domain slug
   title: string;
   done: boolean; // finished at least once, according to the practice log
 }
@@ -102,13 +106,16 @@ export function renderNav(container: HTMLElement, drills: NavDrill[], selected: 
     ? []
     : current.elective
       ? [`elective/${current.elective}`]
-      : [`loop-${current.loop}`, `loop-${current.loop}/${current.concept.split('.')[0]}`];
+      : [`loop-${current.loop}`, `loop-${current.loop}/${current.domain ?? current.concept.split('.')[0]}`];
   // The current page's groups always open. Otherwise the remembered state wins over the default.
   const isOpen = (id: string, byDefault: boolean) => currentGroups.includes(id) || (stored ? stored.has(id) : byDefault);
 
   // One collapsible domain listing every concept in teaching order, with what the loop plans for it.
   const domainGroup = (id: string, domain: Domain, loop: number, byDefault: boolean) => {
-    const loopDrills = drills.filter((drill) => drill.loop === loop && drill.concept.startsWith(`${domain.slug}.`));
+    const loopDrills = drills.filter(
+      (drill) => drill.loop === loop && !drill.check && drill.concepts.some((id) => id.startsWith(`${domain.slug}.`)),
+    );
+    const placement = drills.find((drill) => drill.loop === loop && drill.check === 'placement' && drill.domain === domain.slug);
     const total = LOOP_PLAN[loop] ? plannedDrillCount(domain, loop) : domain.concepts.length;
     const doneCount = loopDrills.filter((drill) => drill.done).length;
     const details = group(
@@ -117,8 +124,10 @@ export function renderNav(container: HTMLElement, drills: NavDrill[], selected: 
       `<span>${domain.n}. ${domain.name}</span><span class="count">${doneCount ? `<span class="done">✓ ${doneCount}</span> · ` : ''}${loopDrills.length}/${total}</span>`,
       isOpen(id, byDefault),
     );
+    if (placement) details.append(link(placement, 'Placement check', selected));
+    else if (loop >= FIRST_PLACEMENT_LOOP) details.append(upcoming('Placement check'));
     domain.concepts.forEach((concept, index) => {
-      const built = loopDrills.filter((drill) => drill.concept === `${domain.slug}.${concept.slug}`);
+      const built = loopDrills.filter((drill) => drill.concepts.includes(`${domain.slug}.${concept.slug}`));
       if (built.length === 0) details.append(upcoming(`${index + 1}. ${concept.name}`, plannedModes(concept, loop)));
       for (const drill of built) details.append(pageLink(drill, index + 1, selected));
     });
@@ -186,6 +195,10 @@ export function renderNav(container: HTMLElement, drills: NavDrill[], selected: 
       for (const domain of DOMAINS.filter((item) => !item.elective)) {
         loopGroup.append(domainGroup(`${loopId}/${domain.slug}`, domain, loop.n, loop.n === 1 && domain.n === 1));
       }
+      const checkpoint = drills.find((drill) => drill.loop === loop.n && drill.check === 'checkpoint');
+      const entry = checkpoint ? link(checkpoint, `Loop ${loop.n} checkpoint`, selected) : upcoming(`Loop ${loop.n} checkpoint`);
+      entry.classList.add('checkpoint');
+      loopGroup.append(entry);
     } else {
       // Loop 4 is still only a plan: nothing here links to built drills yet. When the first
       // cross-domain drill is built, match it by title and link it like the loops above.
@@ -223,7 +236,9 @@ export function renderPace(container: HTMLElement, finished: Map<string, string>
   const today = new Date();
   // Only loop pages count toward the pace; elective items (ids like "vfx.sdf.page") don't.
   const doneToday = [...finished].some(([id, at]) => /^\d+\./.test(id) && localDay(new Date(at)) === localDay(today));
-  const doneCount = (prefix: string) => [...finished.keys()].filter((id) => id.startsWith(prefix)).length;
+  // Pages only: a checkpoint or placement check isn't one of the loop's pages.
+  const doneCount = (prefix: string) =>
+    [...finished.keys()].filter((id) => id.startsWith(prefix) && !/\.(checkpoint|placement)$/.test(id)).length;
   const doneIn = (left: number) => {
     const end = new Date(today.getTime() + (left - (doneToday ? 0 : 1)) * DAY);
     const date = end.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });

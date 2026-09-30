@@ -84,8 +84,10 @@ function consecutiveContextRepeats(): string[] {
 function missingSolutions(): string[] {
   const expected = [
     ...drills.filter((drill) => existsSync(path.join(ROOT, drill.dir, 'drill.ts'))).map((drill) => `${drill.dir}/drill.ts`),
-    ...placements.map((placement) => `${placement.dir}/check.ts`),
-    ...checkpoints.map((checkpoint) => `${checkpoint.dir}/check.ts`),
+    // A check you fill in has a mirrored reference answer; a quiz checkpoint (Loop 1's) has none.
+    ...[...placements, ...checkpoints]
+      .filter((item) => existsSync(path.join(ROOT, item.dir, 'check.ts')))
+      .map((item) => `${item.dir}/check.ts`),
   ];
   return expected.filter((file) => !existsSync(path.join(ROOT, 'solutions', file)));
 }

@@ -7,6 +7,7 @@ export interface Question {
   choices: string[];
   answer: number; // index into choices
   why: string;
+  domain?: string; // a checkpoint question's domain slug, so misses can be reported per domain
 }
 
 const inline = (markdown: string) => marked.parseInline(markdown, { async: false });
@@ -20,15 +21,16 @@ function shuffled<T>(items: T[]) {
   return copy;
 }
 
-// `onComplete` runs once every question is answered, with the score, and returns the text to
-// show under it (such as whether the page was logged as done).
+// `onComplete` runs once every question is answered, with the score and the domains of any missed
+// questions, and returns the text to show under it (such as whether the page was logged as done).
 export function renderQuiz(
   container: HTMLElement,
   questions: Question[],
-  onComplete: (right: number, total: number) => Promise<string>,
+  onComplete: (right: number, total: number, missedDomains: string[]) => Promise<string>,
 ) {
   let answered = 0;
   let right = 0;
+  const missedDomains = new Set<string>();
   const score = document.createElement('p');
   score.className = 'score';
 
@@ -57,12 +59,16 @@ export function renderQuiz(
 
         answered += 1;
         if (correct) right += 1;
+        else if (question.domain) missedDomains.add(question.domain);
         why.innerHTML = `<strong>${correct ? 'Right.' : 'Not quite.'}</strong> ${inline(question.why)}`;
         why.hidden = false;
         if (answered === questions.length) {
-          score.textContent = `${right} of ${questions.length} right.`;
-          onComplete(right, questions.length).then((status) => {
-            score.textContent = `${right} of ${questions.length} right. ${status}`;
+          // A checkpoint names the domains worth another look, so a thin topic shows up.
+          const revisit = missedDomains.size ? ` Worth another look: ${[...missedDomains].join(', ')}.` : '';
+          const result = `${right} of ${questions.length} right.${revisit}`;
+          score.textContent = result;
+          onComplete(right, questions.length, [...missedDomains]).then((status) => {
+            score.textContent = `${result} ${status}`;
           });
         }
       });

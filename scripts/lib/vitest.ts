@@ -19,7 +19,9 @@ interface JsonReport {
   }[];
 }
 
-const VITEST = path.join(ROOT, 'node_modules', '.bin', 'vitest');
+// Vitest's own entry, run through Node: `node_modules/.bin/vitest` is a shell script that Windows
+// can't spawn directly.
+const VITEST = path.join(ROOT, 'node_modules', 'vitest', 'vitest.mjs');
 const REPORT_FILE = path.join(ROOT, '.pick', 'vitest.json');
 
 // Empty `targets` runs every test. `quiet` hides Vitest's own output.
@@ -28,7 +30,7 @@ export function runVitest(targets: string[], options: { env?: Record<string, str
   rmSync(REPORT_FILE, { force: true });
 
   const reporters = options.quiet ? ['--reporter=json'] : ['--reporter=default', '--reporter=json'];
-  spawnSync(VITEST, ['run', ...targets, ...reporters, `--outputFile.json=${REPORT_FILE}`], {
+  spawnSync(process.execPath, [VITEST, 'run', ...targets, ...reporters, `--outputFile.json=${REPORT_FILE}`], {
     cwd: ROOT,
     env: { ...process.env, ...options.env },
     stdio: options.quiet ? 'ignore' : 'inherit',

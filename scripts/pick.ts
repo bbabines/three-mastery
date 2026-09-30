@@ -198,7 +198,9 @@ function start(id: string | undefined) {
   appendLog({ type: 'start', id: item.id, at: new Date().toISOString() });
   console.log(`Working on ${item.id}.\n`);
   console.log(`  Open:  http://localhost:5173/harness/?drill=${item.dir}  (needs npm run dev)`);
-  if (item.kind !== 'drill') {
+  if (item.kind !== 'drill' && !existsSync(path.join(ROOT, item.dir, 'check.test.ts'))) {
+    console.log('\nNo docs for this one. The page logs it when you answer its last question.');
+  } else if (item.kind !== 'drill') {
     console.log('\nNo docs for this one.');
     console.log('When finished: npm run pick -- done');
   } else if (item.drill?.mode === 'read-the-code') {
@@ -231,6 +233,12 @@ function finishDrill(item: Item, flag: string | undefined) {
 
 // Placement checks and checkpoints: the result is logged either way, with the parts that missed.
 function finishCheck(item: Item) {
+  // Loop 1's checkpoint is a quiz: the page logged it, with the domains that had misses.
+  if (!existsSync(path.join(ROOT, item.dir, 'check.test.ts'))) {
+    const logged = doneEntries.some((entry) => entry.id === item.id);
+    console.log(logged ? `\n${item.id} is already logged from its page.` : '\nThis one logs itself when you answer its last question on the page.');
+    return;
+  }
   const results = runVitest([item.dir]);
   const failedParts = [...new Set(results.flatMap((result) => result.failedSuites))];
   const passed = results.length > 0 && results.every((result) => result.passed);

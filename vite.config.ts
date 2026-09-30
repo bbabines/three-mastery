@@ -1,5 +1,6 @@
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import path from 'node:path';
+import { playwright } from '@vitest/browser-playwright';
 import { defineConfig, type Plugin } from 'vitest/config';
 import { appendLog, readLog } from './scripts/lib/log';
 
@@ -44,19 +45,33 @@ function progressApi(): Plugin {
         if (request.method === 'GET') return sendJson(response, 200, readLog());
         if (request.method !== 'POST') return sendJson(response, 405, { error: 'Use GET or POST' });
 
-        let parsed: { id?: unknown; score?: { right?: unknown; total?: unknown } };
+        let parsed: { id?: unknown; score?: { right?: unknown; total?: unknown }; failedParts?: unknown };
         try {
           parsed = JSON.parse(await readBody(request));
         } catch {
           return sendJson(response, 400, { error: 'Body must be JSON' });
         }
-        const { id, score } = parsed;
+        const { id, score, failedParts } = parsed;
         const validScore = typeof score?.right === 'number' && typeof score?.total === 'number';
-        if (typeof id !== 'string' || !/^[a-z0-9.-]+$/.test(id) || (score !== undefined && !validScore)) {
-          return sendJson(response, 400, { error: 'Expected { id, score?: { right, total } }' });
+        // A checkpoint quiz sends the domains its missed questions came from.
+        const validParts = Array.isArray(failedParts) && failedParts.every((part) => typeof part === 'string' && /^[a-z0-9-]+$/.test(part));
+        if (
+          typeof id !== 'string' ||
+          !/^[a-z0-9.-]+$/.test(id) ||
+          (score !== undefined && !validScore) ||
+          (failedParts !== undefined && !validParts)
+        ) {
+          return sendJson(response, 400, { error: 'Expected { id, score?: { right, total }, failedParts?: string[] }' });
         }
         const at = new Date().toISOString();
-        appendLog({ type: 'done', id, at, passed: true, score: validScore ? { right: score.right as number, total: score.total as number } : undefined });
+        appendLog({
+          type: 'done',
+          id,
+          at,
+          passed: true,
+          score: validScore ? { right: score.right as number, total: score.total as number } : undefined,
+          failedParts: validParts ? (failedParts as string[]) : undefined,
+        });
         sendJson(response, 200, { at });
       });
     },
@@ -69,9 +84,33 @@ export default defineConfig({
   },
   plugins: [solutionsSwap(), progressApi()],
   test: {
-    include: ['{drills,placement,checkpoints,cross}/**/*.test.ts'],
-    environment: 'node',
     // Loop 1 is all read-the-code pages; code drills with tests start in Loop 2.
     passWithNoTests: true,
+    projects: [
+      {
+        extends: true,
+        test: {
+          name: 'node',
+          include: ['{drills,placement,checkpoints,cross}/**/*.test.ts'],
+          exclude: ['**/*.browser.test.ts', '**/node_modules/**'],
+          environment: 'node',
+        },
+      },
+      {
+        // Checks that need WebGL (draw counts, shader compiles, pixels, GPU memory) run in headless
+        // Chromium through Playwright. Name those files *.browser.test.ts.
+        extends: true,
+        test: {
+          name: 'browser',
+          include: ['{drills,placement,checkpoints,cross}/**/*.browser.test.ts'],
+          browser: {
+            enabled: true,
+            headless: true,
+            provider: playwright(),
+            instances: [{ browser: 'chromium' }],
+          },
+        },
+      },
+    ],
   },
 });

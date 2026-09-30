@@ -17,6 +17,7 @@ interface DrillMeta {
   mode: string;
   concepts: string[];
   context: string;
+  domain?: string; // placement checks name their domain instead of concepts
   // Elective items have these instead of loop, mode, and context.
   elective?: string; // the elective domain's slug, like "vfx"
   kind?: 'page' | 'guided' | 'from-memory';
@@ -30,13 +31,21 @@ interface Drill {
   body: string;
 }
 
-const readmeFiles = import.meta.glob<string>(['/drills/**/README.md', '/cross/**/README.md', '/electives/**/README.md'], {
-  query: '?raw',
-  import: 'default',
-  eager: true,
-});
-const sceneModules = import.meta.glob<Record<string, SceneSetup>>(['/drills/**/scenes.ts', '/cross/**/scenes.ts']);
-const questionModules = import.meta.glob<{ questions: Question[] }>(['/drills/**/questions.ts', '/cross/**/questions.ts']);
+const readmeFiles = import.meta.glob<string>(
+  ['/drills/**/README.md', '/cross/**/README.md', '/placement/**/README.md', '/checkpoints/**/README.md', '/electives/**/README.md'],
+  { query: '?raw', import: 'default', eager: true },
+);
+const sceneModules = import.meta.glob<Record<string, SceneSetup>>([
+  '/drills/**/scenes.ts',
+  '/cross/**/scenes.ts',
+  '/placement/**/scenes.ts',
+  '/checkpoints/**/scenes.ts',
+]);
+const questionModules = import.meta.glob<{ questions: Question[] }>([
+  '/drills/**/questions.ts',
+  '/cross/**/questions.ts',
+  '/checkpoints/**/questions.ts',
+]);
 // Elective pages: TSL scenes and exercises, and each drill.ts with its reference from /solutions.
 const electiveSceneModules = import.meta.glob<Record<string, unknown>>('/electives/**/scenes.ts');
 const drillModules = import.meta.glob<Record<string, unknown>>(['/electives/**/drill.ts', '/solutions/electives/**/drill.ts']);
@@ -47,7 +56,9 @@ const drills: Drill[] = Object.entries(readmeFiles).flatMap(([path, text]) => {
   if (!match) return [];
   const title = match[2].match(/^# (.+)$/m)?.[1] ?? path;
   const body = match[2].replace(/^# .+$/m, '');
-  return [{ folder: path.slice(1, -'/README.md'.length), meta: parse(match[1]) as DrillMeta, title, body }];
+  const meta = parse(match[1]) as DrillMeta;
+  meta.concepts ??= []; // placement checks and checkpoints have none
+  return [{ folder: path.slice(1, -'/README.md'.length), meta, title, body }];
 });
 
 interface LogEntry {
@@ -71,12 +82,13 @@ async function loadFinished() {
 }
 
 // Returns when the drill was logged, or undefined if it couldn't be saved.
-async function logFinished(drill: Drill, score?: { right: number; total: number }) {
+// `failedParts` names the domains a checkpoint's missed questions came from.
+async function logFinished(drill: Drill, score?: { right: number; total: number }, failedParts?: string[]) {
   try {
     const response = await fetch('/api/progress', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id: drill.meta.id, score }),
+      body: JSON.stringify({ id: drill.meta.id, score, failedParts }),
     });
     return response.ok ? ((await response.json()) as { at: string }).at : undefined;
   } catch {
@@ -91,6 +103,13 @@ const selected = new URLSearchParams(location.search).get('drill');
 const nav = document.querySelector<HTMLDivElement>('#drills')!;
 const article = document.querySelector<HTMLElement>('#drill')!;
 
+// Placement checks and checkpoints are pages too, told apart by their ids.
+function checkKind(drill: Drill) {
+  if (drill.meta.id.endsWith('.checkpoint')) return 'checkpoint' as const;
+  if (drill.meta.id.endsWith('.placement')) return 'placement' as const;
+  return undefined;
+}
+
 renderNav(
   nav,
   drills.map((drill) => ({
@@ -100,7 +119,10 @@ renderNav(
     kind: drill.meta.kind,
     // Effect builds' ids read <elective>.effects.<effect>.<kind>.
     effect: drill.meta.kind === 'page' ? undefined : drill.meta.id.split('.')[2],
-    concept: drill.meta.concepts[0],
+    concept: drill.meta.concepts[0] ?? '',
+    concepts: drill.meta.concepts,
+    check: checkKind(drill),
+    domain: drill.meta.domain,
     title: drill.title,
     done: finished.has(drill.meta.id),
   })),
@@ -113,6 +135,8 @@ const KIND_LABELS: Record<string, string> = { page: 'exercise', guided: 'guided 
 
 function metaLine(drill: Drill) {
   const { elective, kind, loop, mode } = drill.meta;
+  const check = checkKind(drill);
+  if (check) return `Loop ${loop} · ${check === 'checkpoint' ? 'checkpoint' : 'placement check'}`;
   if (!elective) return `Loop ${loop} · ${mode.replaceAll('-', ' ')}`;
   const domain = DOMAINS.find((item) => item.slug === elective);
   return `Elective · ${domain?.name ?? elective} · ${KIND_LABELS[kind ?? 'page']}`;
@@ -182,8 +206,8 @@ async function renderDrill(drill: Drill) {
   const quizPlaceholder = content.querySelector<HTMLElement>('[data-quiz]');
   const quiz = quizPlaceholder ? await questionModules[`/${drill.folder}/questions.ts`]?.() : undefined;
   if (quizPlaceholder && quiz) {
-    renderQuiz(quizPlaceholder, quiz.questions, async (right, total) => {
-      const at = await logFinished(drill, { right, total });
+    renderQuiz(quizPlaceholder, quiz.questions, async (right, total, missedDomains) => {
+      const at = await logFinished(drill, { right, total }, missedDomains.length ? missedDomains : undefined);
       if (!at) return "Couldn't save your progress. Is npm run dev running?";
       showDone(at);
       finished.set(drill.meta.id, at);
