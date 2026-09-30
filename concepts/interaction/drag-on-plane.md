@@ -14,11 +14,11 @@ contexts:
 
 ## Definition
 
-Dragging on a plane means intersecting the pointer's ray with a plane through the grabbed spot on every move, then placing the object at the hit plus the offset it was grabbed at.
+Dragging on a plane means finding where the pointer's ray crosses a plane through the grabbed spot on every move, and placing the object at that hit plus the grab offset.
 
 ## Space lens
 
-Every drag goes screen → NDC → world ray → world hit point → the parent's space (`parent.worldToLocal`) to set `position`. The plane, the hit, and the grab offset are in the world; `position` is measured from the parent.
+Every drag goes screen pixels → NDC → a ray in the world → a hit in the world → measured from the parent, where `position` lives. The plane, the hit, and the grab offset are in the world, so convert with `parent.worldToLocal` at the end.
 
 ## Cost lens
 

@@ -153,5 +153,5 @@ export const threshold: SceneSetup = ({ scene, camera, controls, container, rend
   go.textContent = 'Orbit and come back';
   go.addEventListener('click', startReplay);
   bar.append(go);
-  slider(bar, 'How far (px)', { min: 0, max: 60, step: 5, value: distance }, (value) => (distance = value));
+  slider(bar, 'how far (px)', { min: 0, max: 60, step: 5, value: distance }, (value) => (distance = value));
 };

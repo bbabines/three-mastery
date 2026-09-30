@@ -15,7 +15,7 @@ contexts:
 
 ## Definition
 
-Controls are three.js add-ons that turn the mouse, touch, and keys into moves: OrbitControls swings the camera around a point, TransformControls moves one object by its handles, and PointerLockControls turns the camera with the mouse like a first-person game.
+Controls are three.js add-ons that turn mouse, touch, and key input into moves: circling the camera around a point, dragging one object by its handles, or looking around like a first-person game.
 
 ## Cost lens
 

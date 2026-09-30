@@ -66,7 +66,7 @@ export const pixelRatio: SceneSetup = ({ scene, camera, controls, container, ren
     { html: '<code>(clientX - rect.left) / rect.width</code>', select: () => (multiply = false) },
     { html: '<code>… * devicePixelRatio / rect.width</code>', select: () => (multiply = true) },
   ]);
-  slider(bar, 'Pixel ratio', { min: 1, max: 3, step: 0.5, value: ratio }, (value) => (ratio = value));
+  slider(bar, 'pixel ratio', { min: 1, max: 3, step: 0.5, value: ratio }, (value) => (ratio = value));
   pointerSpot(
     container,
     canvas,

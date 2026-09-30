@@ -73,7 +73,7 @@ export const bothMove: SceneSetup = ({ scene, camera, controls, container, rende
     { html: 'Nothing wired', select: () => ((wired = false), (controls.enabled = true), replay()) },
     { html: '<code>dragging-changed</code> turns the orbit off', select: () => ((wired = true), replay()) },
   ]);
-  slider(bar, 'Drag the X arrow', { min: 0, max: 1, step: 0.05, value: t }, (value) => {
+  slider(bar, 'drag the X arrow', { min: 0, max: 1, step: 0.05, value: t }, (value) => {
     t = value;
     replay();
   });

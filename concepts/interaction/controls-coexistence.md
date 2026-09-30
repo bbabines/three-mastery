@@ -14,4 +14,4 @@ contexts:
 
 ## Definition
 
-Every controls object listens to the same pointer on the same canvas and knows nothing about the others, so while a gizmo or your own drag is moving something, the camera controls have to be switched off.
+Every controls object listens to the same pointer on the same canvas and knows nothing about the others, so the camera controls have to be switched off while a gizmo or your own drag moves something.

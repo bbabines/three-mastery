@@ -83,7 +83,7 @@ export const moves: SceneSetup = ({ scene, camera, controls, container }) => {
       },
     })),
   );
-  slider(bar, 'Amount', { min: 0, max: 1, step: 0.05, value: amount }, (value) => {
+  slider(bar, 'amount', { min: 0, max: 1, step: 0.05, value: amount }, (value) => {
     amount = value;
     update();
   });

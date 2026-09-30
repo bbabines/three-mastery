@@ -4,28 +4,21 @@ import type { Question } from '@harness/quiz';
 export const questions: Question[] = [
   {
     code: `camera.fov = 25; // it was 50
-camera.updateProjectionMatrix();`,
-    ask: 'Compared with dollying in until the product looks just as big, what is different?',
-    choices: [
-      'Nothing, as dolly and zoom are the same move',
-      'Things behind it look bigger than after a dolly',
-      'Things behind it look smaller than after a dolly',
-    ],
+camera.updateProjectionMatrix();
+// compared with a dolly that makes the product just as big`,
+    ask: 'How big does the background look?',
+    choices: ['The same as after the dolly', 'Bigger than after the dolly', 'Smaller than after the dolly'],
     answer: 1,
-    why: "A smaller `fov` is a zoom: the camera stays put and everything in view grows by the same amount. A dolly moves the camera much closer to the product but only a little closer to what's behind it, so the background grows less. Same product size, different picture.",
+    why: "A zoom grows everything by the same amount. A dolly gets much closer to the product than to what's behind it, so the background grows less.",
   },
   {
     code: `const camera = new OrthographicCamera(-8, 8, 6, -6, 0.1, 100);
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.maxDistance = 20;`,
-    ask: 'The user keeps scrolling the wheel out. What stops it?',
-    choices: [
-      'Nothing, since the wheel changes camera.zoom',
-      'maxDistance stops it 20 units from the target',
-      "The far plane, 100 units from the camera",
-    ],
+    ask: 'What stops the wheel scrolling out?',
+    choices: ['Nothing, since the wheel changes camera.zoom', 'maxDistance, 20 units from the target', 'The far plane, 100 units from the camera'],
     answer: 0,
-    why: "Moving an orthographic camera closer or farther changes nothing about sizes, so OrbitControls' wheel changes `camera.zoom` instead of the distance, and `maxDistance` never comes into it. Limit it with `controls.minZoom` and `controls.maxZoom`.",
+    why: "An orthographic camera's sizes don't change with distance, so the wheel changes `camera.zoom` and `maxDistance` never applies. Limit it with `minZoom` and `maxZoom`.",
   },
   {
     code: `controls.pan(300, 0);             // what a right drag does
@@ -33,6 +26,6 @@ controls.rotateLeft(Math.PI / 4); // then a left drag`,
     ask: 'What does the orbit circle around?',
     choices: ['The first target, where the product still is', "The world's origin, at (0, 0, 0)", 'The target, moved along by the pan'],
     answer: 2,
-    why: "Pan moves `controls.target` and the camera together, so the orbit after it circles the new target, and the product swings around off to one side. In a product viewer that should stay centered, turn it off with `controls.enablePan = false`.",
+    why: 'Pan moves `controls.target` along with the camera, so the orbit circles the new target. Set `controls.enablePan = false` to keep a product centered.',
   },
 ];

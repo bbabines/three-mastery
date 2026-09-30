@@ -132,7 +132,7 @@ export const axisPlane: SceneSetup = (harness) => {
     },
     {
       bar,
-      text: 'Drag',
+      text: 'drag',
       path: (t) => {
         const spot = screenSpot(setup.start, camera);
         return { across: spot.across + 0.2 * t, down: spot.down - 0.22 * t };
@@ -240,7 +240,7 @@ export const screenDelta: SceneSetup = (harness) => {
     },
     {
       bar,
-      text: 'Drag right',
+      text: 'drag right',
       path: (t) => {
         const spot = screenSpot(START, camera);
         return { across: spot.across + 0.22 * t, down: spot.down };
@@ -262,7 +262,7 @@ export const screenDelta: SceneSetup = (harness) => {
     { html: '<code>position.x += event.movementX * 0.01</code>', select: () => ((useRay = false), again()) },
     { html: 'Ray, plane, and <code>dot</code>', select: () => ((useRay = true), again()) },
   ]);
-  slider(bar, 'Orbit', { min: 0, max: 180, step: 15, value: orbit }, (value) => {
+  slider(bar, 'orbit', { min: 0, max: 180, step: 15, value: orbit }, (value) => {
     orbit = value;
     placeCamera();
     again();

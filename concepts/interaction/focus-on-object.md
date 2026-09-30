@@ -14,4 +14,4 @@ contexts:
 
 ## Definition
 
-Focusing on an object works out a view that fits its bounding sphere, then moves the camera and the orbit target to it together, so the camera ends up looking at the object and orbits around it afterward.
+Focusing on an object works out a view that fits its bounding sphere and moves the camera and the orbit target there together, so the camera looks at the object and orbits around it afterward.

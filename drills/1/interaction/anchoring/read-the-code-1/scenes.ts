@@ -83,7 +83,7 @@ export const pin: SceneSetup = ({ scene, camera, controls, container, renderer }
     { html: 'Check the view only', select: () => (useRaycast = false) },
     { html: 'Also raycast for blockers', select: () => (useRaycast = true) },
   ]);
-  slider(bar, 'Turn the product', { min: 0, max: 360, step: 15, value: turn }, (value) => (turn = value));
+  slider(bar, 'turn the product', { min: 0, max: 360, step: 15, value: turn }, (value) => (turn = value));
 };
 
 // A label element styled like the harness's screen tags, for CSS2DObject.
@@ -169,7 +169,7 @@ export const css2d: SceneSetup = ({ scene, camera, controls, container }) => {
     { html: '<code>CSS2DRenderer</code> alone', select: () => (useRaycast = false) },
     { html: 'Plus a raycast for blockers', select: () => (useRaycast = true) },
   ]);
-  slider(bar, 'Walk forward', { min: 0, max: 1, step: 0.05, value: walk }, (value) => {
+  slider(bar, 'walk forward', { min: 0, max: 1, step: 0.05, value: walk }, (value) => {
     walk = value;
     place();
   });

@@ -14,7 +14,7 @@ contexts:
 
 ## Definition
 
-Orbit swings the camera around a target point, pan slides the camera and the target together across the view, and dolly moves the camera toward or away from the target, which isn't the same as zooming the lens.
+Orbit swings the camera around a target point, pan slides the camera and the target together, and dolly moves the camera toward or away from the target, unlike a zoom, which changes the lens.
 
 ## Space lens
 

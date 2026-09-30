@@ -18,7 +18,7 @@ Anchoring pins an HTML label to a spot in the scene by projecting the spot to th
 
 ## Space lens
 
-The anchor is a spot in the world. `project(camera)` gives NDC, and the label's position is CSS pixels from the canvas's top-left corner. The blocking test compares distances in world units along a ray from the camera.
+The anchor is a spot in the world, `project(camera)` gives NDC, and the label sits in CSS pixels from the canvas's top-left corner. The blocking test compares world distances along a ray from the camera.
 
 ## Cost lens
 

@@ -12,21 +12,21 @@ misconceptions:
 
 # Controls coexistence
 
-> **In short:** Every controls object listens to the same pointer on the same canvas and knows nothing about the others, so while a gizmo or your own drag is moving something, switch the camera controls off.
+> **In short:** Controls on one canvas all hear the same press, so switch the orbit off while something else is dragging.
 >
-> **Used for:** A move gizmo in an editor next to an orbiting camera; dragging parts around in a configurator you can also spin; HTML buttons and labels on top of a 3D view; and a measuring tool that draws with the pointer.
+> **Used for:** Editor gizmos beside an orbit camera, dragging parts in a configurator, HTML labels over a view, and measuring tools.
 
 ## A · The basics
 
 ### Every listener hears every press
 
-The controls tour showed that each controls object adds its own pointer listeners to the canvas. None of them knows the others exist. Press on a gizmo's arrow with both running, and `TransformControls` starts moving the crate while `OrbitControls` starts orbiting the view. The view swings, and because the camera moves under the pointer, the crate slides somewhere unexpected too.
+Each controls object adds its own pointer listeners to the canvas, and none of them knows the others exist. Press a gizmo's arrow with an orbit running, and the crate moves while the view swings, so the crate slides somewhere unexpected too.
 
-The fix is one line: when the gizmo starts dragging, switch the orbit off, and when it stops, switch it back on. `controls.enabled = false` makes a controls object ignore the pointer.
+The fix is to switch the orbit off while the gizmo drags and back on after. `controls.enabled = false` makes a controls object ignore the pointer.
 
 **Analogy: two waiters at one table.** Both hear "the check, please", and with no word between them, both bring a bill.
 
-Drag one of the gizmo's arrows, or use the slider, which replays a drag of the X arrow. With nothing wired, the view orbits during the drag too. With the listener, only the crate moves.
+Pick each button, then drag one of the gizmo's arrows or use the slider. With nothing wired, the view orbits during the drag too.
 
 <div data-scene="bothMove"></div>
 
@@ -40,26 +40,22 @@ gizmo.addEventListener('dragging-changed', (event) => {
 });
 ```
 
-`dragging-changed` fires when a drag on a handle starts, with `value` true, and when it ends, with `value` false.
+`dragging-changed` fires when a handle drag starts, with `value` true, and when it ends, with `value` false.
 
 ### Your own drag
 
 ```js
 canvas.addEventListener('pointerdown', (event) => {
-  if (!partUnder(event)) return; // empty space: leave the press to the orbit
-  controls.enabled = false;
-  canvas.setPointerCapture(event.pointerId);
+  if (partUnder(event)) controls.enabled = false; // empty space still orbits
 });
 canvas.addEventListener('pointerup', () => (controls.enabled = true));
 ```
 
-- Only switch the orbit off when the press lands on something draggable, so a drag on empty space still orbits.
-- `OrbitControls` stops reacting to pointer moves the moment `enabled` is false, even partway into its own drag, and it still tidies up on the release.
-- **`enabled = false` doesn't stop a glide.** With damping on, `update()` keeps spending the leftover motion, so a view that was flicked just before the press drifts on for a moment.
+`enabled = false` doesn't stop a glide. With damping on, `update()` still spends the leftover motion, so a view flicked just before the press drifts on for a moment.
 
 ### HTML on top of the canvas
 
-An HTML element over the canvas gets the pointer events where it sits, and the canvas under it gets none. That's right for a button. But a layer of labels that covers the whole view blocks the orbit everywhere. Let the layer pass the pointer through, and catch it only on the parts meant to be clicked:
+An HTML element over the canvas takes the pointer where it sits, so a layer of labels covering the view blocks the orbit everywhere. Let the layer pass the pointer through, and catch it only where something is clickable:
 
 ```js
 labelLayer.style.pointerEvents = 'none';
@@ -70,7 +66,7 @@ The 3D-to-2D anchoring page builds a layer like this.
 
 ### The gizmo shows up in raycasts
 
-The gizmo's helper is part of the scene, so a raycast against `scene.children` also hits its handles, including invisible ones it uses for picking: 11 hits from a single ray in the r186 check. Raycast a list of your own parts instead, as the filtering page in the spatial queries domain covers.
+The gizmo's helper is in the scene, so a raycast against `scene.children` hits its handles too, including invisible ones it uses for picking. Raycast a list of your own parts instead.
 
 ## Drill · Read the code
 

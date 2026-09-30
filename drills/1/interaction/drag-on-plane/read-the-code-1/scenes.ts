@@ -105,7 +105,7 @@ export const floorDrag: SceneSetup = (harness) => {
     },
     {
       bar,
-      text: 'Drag',
+      text: 'drag',
       path: (t) => {
         const start = screenSpot(START.clone().add(GRAB), camera);
         return { across: start.across + 0.32 * t, down: start.down + 0.08 * t };
@@ -187,7 +187,7 @@ export const grabOffset: SceneSetup = (harness) => {
     },
     {
       bar,
-      text: 'Drag',
+      text: 'drag',
       path: (t) => {
         const start = screenSpot(START.clone().add(GRAB), camera);
         return { across: start.across + 0.3 * t, down: start.down - 0.04 * t };

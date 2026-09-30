@@ -14,4 +14,4 @@ contexts:
 
 ## Definition
 
-A few small functions shape how a value travels between two ends: `clamp` keeps it in range, `smoothstep` eases its start and finish, `mapLinear` converts one range to another, and `Quaternion.slerp` blends turns; other easing curves come from outside three.js's core.
+A few small functions shape how a value travels between two ends: keeping it in range, easing its start and finish, converting one range to another, and blending turns.

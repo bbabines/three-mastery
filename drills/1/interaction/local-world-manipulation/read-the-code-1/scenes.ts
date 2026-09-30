@@ -65,7 +65,7 @@ export const gizmoSpace: SceneSetup = ({ scene, camera, controls, container, ren
     { html: "<code>gizmo.setSpace('world')</code>", select: () => (gizmo.setSpace('world'), slide()) },
     { html: "<code>gizmo.setSpace('local')</code>", select: () => (gizmo.setSpace('local'), slide()) },
   ]);
-  slider(bar, 'Slide along X', { min: -1, max: 2, step: 0.25, value: distance }, (value) => {
+  slider(bar, 'slide along X', { min: -1, max: 2, step: 0.25, value: distance }, (value) => {
     distance = value;
     slide();
   });
@@ -120,7 +120,7 @@ export const turnKnob: SceneSetup = ({ scene, camera, controls, container }) => 
     { html: '<code>knob.rotateY(a)</code>', select: () => ((own = true), update()) },
     { html: '<code>knob.rotateOnWorldAxis(worldUp, a)</code>', select: () => ((own = false), update()) },
   ]);
-  slider(bar, 'Turn a', { min: 0, max: 180, step: 15, value: degrees }, (value) => {
+  slider(bar, 'turn a', { min: 0, max: 180, step: 15, value: degrees }, (value) => {
     degrees = value;
     update();
   });

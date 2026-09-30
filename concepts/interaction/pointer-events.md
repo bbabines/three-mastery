@@ -14,8 +14,8 @@ contexts:
 
 ## Definition
 
-Pointer events are the browser's one set of events for a mouse, a finger, or a pen, and their `clientX` and `clientY` are CSS pixels measured from the window's corner, so you subtract the canvas's rectangle to find the spot on the canvas.
+Pointer events are the browser's one set of events for a mouse, a finger, or a pen, and they give the spot in CSS pixels from the window's corner.
 
 ## Space lens
 
-`clientX` and `clientY` are CSS pixels from the window's top-left corner. Subtracting `canvas.getBoundingClientRect()` gives CSS pixels from the canvas's top-left corner, and dividing by the rectangle's size gives NDC. Device pixels never enter: the pixel ratio cancels out.
+The spot is in CSS pixels from the window's top-left corner, and subtracting the canvas's rectangle and dividing by its size turns it into NDC. Device pixels never enter, since the pixel ratio cancels out.

@@ -14,4 +14,4 @@ contexts:
 
 ## Definition
 
-A press and a release count as a click only if the pointer barely moved in between; past a small threshold it's a drag, and pointer capture keeps a drag's events coming wherever the pointer goes.
+A press and a release count as a click only when the pointer stays within a small distance in between, and past that it's a drag.

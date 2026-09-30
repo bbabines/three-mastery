@@ -119,6 +119,24 @@ The Sep 30 pass brought each domain to Domain 1's size and voice, which meant cu
 - `material.allowOverride = false` opts a material out of `scene.overrideMaterial`, which otherwise covers helpers too. Never dispose a saved original you'll put back.
 - When splitting a group, `attach` keeps each child where it is in the world.
 
+**Spatial queries (Domain 8):**
+- `ray.at(t)` is plain arithmetic, so a negative `t` gives a spot behind the start; only the intersect tests keep to the front. `ray.closestPointToPoint` returns the ray's start when the point is behind it.
+- Listening on `window` instead of `renderer.domElement` lets clicks on UI outside the canvas pick things; orbiting also fires `pointerdown`. For an orthographic camera every ray points the way the camera faces and the start moves to the pointer.
+- A ray exactly along an edge two triangles share gets one hit from each, at the same distance. `hit.face.normal` always points out of the front, even when a `DoubleSide` mesh is hit from behind. A mesh with no `uv` attribute gives no `hit.uv`. With the recursive flag off, a Group is never hit.
+- A ray lying exactly in a plane counts as a hit at its own start. `BackSide` tests a triangle's corners reversed.
+- `tri.getBarycoord(spot, target)` gives the weights for a spot you found yourself; `plane.projectPoint(p, target)` gives the spot on a plane straight across from a point.
+- A plank turned 45° gets a `Box3` about 5–6 times its own volume. `setFromObject(obj, true)` costs a pass over every vertex.
+- A BVH's O(log n) is typical, not guaranteed: a ray skimming along a surface enters many boxes. A mesh that changes shape every frame pays for a refit every frame; three-mesh-bvh can build in a worker.
+
+**Interaction (Domain 9):**
+- `event.button` is 0 for the main button, a finger, or a pen tip, and 2 for a right-click. `event.offsetX` measures from the padding edge, so it breaks with a border or a CSS transform. Touch gets pointer capture automatically; a mouse needs `setPointerCapture`.
+- OrbitControls: pan also works with Shift, Ctrl, or Cmd plus a left drag; `zoomToCursor = true`; moving from code uses `rotateLeft`, `rotateUp`, `pan(dx, dy)` in CSS pixels, and `dollyIn`/`dollyOut`. It stops mid-drag as soon as `enabled` is false. MapControls uses `screenSpacePanning = false`.
+- `intersectPlane` returning null leaves `hit` at its old value. An axis pointing at the camera gives a near-zero drag-plane normal; TransformControls hides that arrow.
+- `setFromMatrixColumn(matrixWorld, 0).normalize()` gives an object's axis in the world (normalize, since scaled columns aren't length 1). `translate*` distances are in the parent's units. Gizmo handles sit at the origin even when an object has a `pivot`.
+- A raycast against `scene.children` hit the TransformControls gizmo 11 times from one ray. Reset `near` and `far` after focusing on something at a new distance.
+- An anchor exactly on a surface was hidden by that surface in about 1 view in 4. CSS2DRenderer also hides hidden objects, objects under a hidden parent, and objects on a layer the camera doesn't see.
+- A per-frame lerp closes 96% of the gap in a quarter second at 120 Hz vs 79% at 60 Hz; `lerp(x, target, 10 * delta)` is slightly off even at normal rates; cap delta with `Math.min(delta, 0.1)`. There's no `MathUtils.remap`; three.js calls it `mapLinear`. tween.js ships at `three/addons/libs/tween.module.js`.
+
 ## Page lengths
 
 Several pages run over the recipe's guide: most light pages are 72–90 lines against 50–70, and some core pages reach 130–145 against about 120 (the camera domain's, and Attributes, uniforms, varyings). The extra is mostly B's code blocks. Trim if Brad finds them long.

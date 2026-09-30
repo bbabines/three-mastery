@@ -14,8 +14,8 @@ contexts:
 
 ## Definition
 
-The same drag or turn can follow the world's axes, which never turn, or the object's own axes, which turn with it; editors call the second choice "local".
+The same drag or turn can follow the world's axes, which never turn, or the object's own axes, which turn with it, and editors call the second choice "local".
 
 ## Space lens
 
-The world's X is `(1, 0, 0)` everywhere. The object's own X, as a direction in the world, is `(1, 0, 0)` turned by `getWorldQuaternion`; turned by `quaternion` instead, it's measured in the parent's axes. `rotateOnWorldAxis` takes its axis in the parent's axes, which match the world's only when no parent is turned.
+The object's own X, as a direction in the world, is (1, 0, 0) turned by `getWorldQuaternion`, while `quaternion` gives it in the parent's axes. `rotateOnWorldAxis` takes its axis in the parent's axes, which match the world's only when no parent is turned.

@@ -14,7 +14,7 @@ contexts:
 
 ## Definition
 
-Anything that moves a little every frame has to be scaled by how long the frame took, so it moves the same at any frame rate; for easing toward a goal, that means damping with `MathUtils.damp` instead of a fixed `lerp` fraction.
+Anything that changes a little every frame has to be scaled by how long the frame took, so it moves the same at any frame rate, and easing toward a goal needs a fraction worked out from the frame's length instead of a fixed one.
 
 ## Cost lens
 
