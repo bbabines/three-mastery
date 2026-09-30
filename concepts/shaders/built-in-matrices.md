@@ -14,8 +14,8 @@ contexts:
 
 ## Definition
 
-three.js hands every ShaderMaterial's vertex shader the matrices that carry a vertex from the object's own measurements to the world (`modelMatrix`), to the camera (`viewMatrix`, or both at once with `modelViewMatrix`), and into clip space (`projectionMatrix`), plus a `normalMatrix` that turns normals into the camera's space, not the world's.
+three.js hands a custom vertex shader the matrices that carry a vertex from the object itself to the world, to the camera, and into clip space, plus one that turns normals into the camera's space, not the world's.
 
 ## Space lens
 
-This concept is the space lens for shaders. `position` and `normal` are measured from the object itself; `modelMatrix` and `cameraPosition` are about the world; `modelViewMatrix`, `viewMatrix`, and `normalMatrix` give values measured from the camera; `gl_Position` is clip space. Two values can only be compared when they're in the same space.
+`position` and `normal` are measured from the object itself, `modelMatrix` gives the world, and `modelViewMatrix` and `normalMatrix` give values measured from the camera. Two values can only be compared when they're in the same space.

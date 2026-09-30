@@ -14,7 +14,7 @@ contexts:
 
 ## Definition
 
-A shader has no console, so you inspect any value in it by writing that value out as the color, mapped into 0 to 1 first: normals, UVs, depth, positions, masks, or anything else an effect depends on.
+Any value inside a shader can be inspected by mapping it into 0 to 1 and writing it out as the fragment's color for a moment.
 
 ## Space lens
 

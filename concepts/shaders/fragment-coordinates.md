@@ -14,11 +14,11 @@ contexts:
 
 ## Definition
 
-`gl_FragCoord` tells a fragment shader which pixel it's coloring, counted in device pixels from the bottom-left corner of the canvas or render target, so the pixel ratio changes its numbers.
+A fragment shader can read which pixel it's coloring, and that spot is counted in device pixels from the bottom-left, so the pixel ratio changes its numbers.
 
 ## Space lens
 
-`gl_FragCoord.xy` is in device pixels, y up, from the bottom-left. Pointer events and HTML layout are in CSS pixels, y down, from the top-left. `renderer.getDrawingBufferSize()` gives the canvas size in device pixels; `renderer.getSize()` gives it in CSS pixels.
+`gl_FragCoord.xy` is in device pixels from the bottom-left, y up, while pointer events and HTML layout are in CSS pixels from the top-left, y down. `renderer.getDrawingBufferSize()` gives the canvas in device pixels, and `renderer.getSize()` in CSS pixels.
 
 ## Cost lens
 

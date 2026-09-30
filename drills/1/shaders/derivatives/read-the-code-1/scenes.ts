@@ -87,7 +87,7 @@ export const grid: SceneSetup = ({ scene, camera, controls, container }) => {
       },
     })),
   );
-  slider(controlsBar, 'Width', { min: 0.5, max: 4, step: 0.5, value: uniforms.uWidth.value }, (value) => {
+  slider(controlsBar, 'width', { min: 0.5, max: 4, step: 0.5, value: uniforms.uWidth.value }, (value) => {
     uniforms.uWidth.value = value;
     update();
   });

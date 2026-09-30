@@ -52,7 +52,7 @@ export const flag: SceneSetup = ({ scene, camera, controls, container, onFrame }
     cloth.geometry.dispose();
     cloth.geometry = new THREE.PlaneGeometry(3, 2, segments, 1);
   };
-  slider(sliders, 'Detail', { min: 0, max: SEGMENTS.length - 1, step: 1, value: SEGMENTS.indexOf(segments) }, (value) => {
+  slider(sliders, 'detail', { min: 0, max: SEGMENTS.length - 1, step: 1, value: SEGMENTS.indexOf(segments) }, (value) => {
     segments = SEGMENTS[value];
     update();
   });
@@ -153,7 +153,7 @@ export const overdraw: SceneSetup = ({ scene, camera, controls, container }) => 
       },
     },
   ]);
-  slider(controlsBar, 'Panes', { min: 1, max: MAX_PANES, step: 1, value: count }, (value) => {
+  slider(controlsBar, 'panes', { min: 1, max: MAX_PANES, step: 1, value: count }, (value) => {
     count = value;
     update();
   });

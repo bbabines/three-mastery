@@ -14,7 +14,7 @@ contexts:
 
 ## Definition
 
-A shader gets its inputs three ways: an attribute is a value stored for each vertex, a uniform is one value for the whole draw call, set from JavaScript, and a varying is a value the vertex shader hands to the fragment shader, blended across each triangle on the way.
+An attribute is stored for each vertex, a uniform is one value for the whole draw call, and a varying is handed from the vertex shader to the fragment shader, blended across the triangle.
 
 ## Space lens
 

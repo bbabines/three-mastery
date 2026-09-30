@@ -72,7 +72,7 @@ export const cutout: SceneSetup = ({ scene, camera, controls, container }) => {
       },
     })),
   );
-  slider(controlsBar, 'Hole size', { min: 0.1, max: 0.45, step: 0.05, value: uniforms.uHoleSize.value }, (value) => {
+  slider(controlsBar, 'hole size', { min: 0.1, max: 0.45, step: 0.05, value: uniforms.uHoleSize.value }, (value) => {
     uniforms.uHoleSize.value = value;
   });
 };

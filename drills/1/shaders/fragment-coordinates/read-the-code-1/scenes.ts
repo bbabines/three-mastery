@@ -86,7 +86,7 @@ export const screen: SceneSetup = ({ scene, camera, controls, container, rendere
       },
     },
   ]);
-  slider(controlsBar, 'Pixel ratio', { min: 0, max: RATIOS.length - 1, step: 1, value: RATIOS.indexOf(ratio) }, (value) => {
+  slider(controlsBar, 'pixel ratio', { min: 0, max: RATIOS.length - 1, step: 1, value: RATIOS.indexOf(ratio) }, (value) => {
     ratio = RATIOS[value];
     renderer.setPixelRatio(ratio);
   });

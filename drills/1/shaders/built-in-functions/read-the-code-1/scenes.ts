@@ -83,11 +83,11 @@ export const stripes: SceneSetup = ({ scene, camera, controls, container }) => {
       },
     })),
   );
-  slider(controlsBar, 'Repeats', { min: 2, max: 30, step: 1, value: uniforms.uCount.value }, (value) => {
+  slider(controlsBar, 'repeats', { min: 2, max: 30, step: 1, value: uniforms.uCount.value }, (value) => {
     uniforms.uCount.value = value;
     update();
   });
-  slider(controlsBar, 'Turn away', { min: 0, max: 85, step: 5, value: turn }, (value) => {
+  slider(controlsBar, 'turn away', { min: 0, max: 85, step: 5, value: turn }, (value) => {
     turn = value;
     update();
   });
@@ -156,11 +156,11 @@ export const rings: SceneSetup = ({ scene, camera, controls, container, onFrame 
     uniforms.uTime.value = elapsed * 0.5;
   });
 
-  slider(controlsBar, 'Fade starts (uInner)', { min: 0, max: 3, step: 0.1, value: values.inner }, (value) => {
+  slider(controlsBar, 'fade starts (uInner)', { min: 0, max: 3, step: 0.1, value: values.inner }, (value) => {
     values.inner = value;
     update();
   });
-  slider(controlsBar, 'Fade ends (uOuter)', { min: 0.2, max: 3.4, step: 0.1, value: values.outer }, (value) => {
+  slider(controlsBar, 'fade ends (uOuter)', { min: 0.2, max: 3.4, step: 0.1, value: values.outer }, (value) => {
     values.outer = value;
     update();
   });

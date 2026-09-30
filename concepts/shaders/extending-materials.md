@@ -14,8 +14,8 @@ contexts:
 
 ## Definition
 
-To change how something is drawn, you either write both shaders yourself with a `ShaderMaterial`, or keep a built-in material, with all its lighting, and patch a few lines of its shader with `onBeforeCompile` before three.js compiles it.
+To change how something is drawn, you either write both shaders yourself or keep a built-in material, lighting and all, and patch a few lines of its shader before it compiles.
 
 ## Cost lens
 
-Each patched variant is its own shader program, compiled the first time it's drawn. The shadow pass draws meshes with a separate depth material, so a patch that moves vertices needs the same patch on a `customDepthMaterial` (`customDistanceMaterial` for point lights), drawn again for every shadow-casting light.
+Each patched variant is its own shader program, compiled the first time it's drawn. A patch that moves vertices also belongs on the mesh's depth material, which the shadow pass draws again for every shadow-casting light.

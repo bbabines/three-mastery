@@ -98,7 +98,7 @@ export const normals: SceneSetup = ({ scene, camera, controls, container, onFram
       },
     })),
   );
-  slider(controlsBar, 'Turn the part', { min: -90, max: 90, step: 15, value: 0 }, (value) => {
+  slider(controlsBar, 'turn the part', { min: -90, max: 90, step: 15, value: 0 }, (value) => {
     assembly.rotation.y = THREE.MathUtils.degToRad(value);
   });
 };

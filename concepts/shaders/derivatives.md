@@ -14,7 +14,7 @@ contexts:
 
 ## Definition
 
-`dFdx`, `dFdy`, and `fwidth` tell a fragment shader how much a value changes between its pixel and the neighboring pixel across or up, which lets it size an edge to one pixel or find which way the surface faces.
+Derivatives tell a fragment shader how much a value changes between its pixel and the neighboring pixel, across or up the screen.
 
 ## Space lens
 

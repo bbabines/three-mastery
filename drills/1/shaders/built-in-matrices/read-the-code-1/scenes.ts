@@ -89,11 +89,11 @@ export const heights: SceneSetup = ({ scene, camera, controls, container, onFram
       },
     })),
   );
-  slider(controlsBar, 'Tilt', { min: -50, max: 50, step: 5, value: values.tilt }, (value) => {
+  slider(controlsBar, 'tilt', { min: -50, max: 50, step: 5, value: values.tilt }, (value) => {
     values.tilt = value;
     update();
   });
-  slider(controlsBar, 'Lift', { min: 1.3, max: 2, step: 0.1, value: values.lift }, (value) => {
+  slider(controlsBar, 'lift', { min: 1.3, max: 2, step: 0.1, value: values.lift }, (value) => {
     values.lift = value;
     update();
   });

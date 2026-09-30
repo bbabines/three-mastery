@@ -14,8 +14,8 @@ contexts:
 
 ## Definition
 
-GLSL comes with small built-in functions, like `mix`, `step`, `smoothstep`, `clamp`, `fract`, `mod`, `dot`, and `reflect`, that shaders combine to make patterns, edges, fades, and blends, working on each part of a vector at once.
+GLSL comes with small built-in functions for blending, cutting, fading, and repeating values, which shaders chain together to make patterns and effects.
 
 ## Cost lens
 
-In a fragment shader they're GPU work for every pixel. As a rule of thumb each one is cheap, so choosing between `step` and `smoothstep` is about how the edge looks, not what it costs.
+In a fragment shader they're GPU work for every pixel. Each one is usually cheap, so choosing between `step` and `smoothstep` is about how the edge looks, not what it costs.

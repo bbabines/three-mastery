@@ -89,11 +89,11 @@ export const blend: SceneSetup = ({ scene, camera, controls, container }) => {
       },
     },
   ]);
-  slider(controlsBar, 'Red to green', { min: 0, max: 1, step: 0.05, value: values.across }, (value) => {
+  slider(controlsBar, 'red to green', { min: 0, max: 1, step: 0.05, value: values.across }, (value) => {
     values.across = value;
     update();
   });
-  slider(controlsBar, 'Toward blue', { min: 0, max: 1, step: 0.05, value: values.up }, (value) => {
+  slider(controlsBar, 'toward blue', { min: 0, max: 1, step: 0.05, value: values.up }, (value) => {
     values.up = value;
     update();
   });

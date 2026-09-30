@@ -76,7 +76,7 @@ export const clock: SceneSetup = ({ scene, camera, controls, container, onFrame 
     { html: '<code>uTime.value = elapsed</code>', select: () => (wrapped = false) },
     { html: '<code>uTime.value = elapsed % period</code>', select: () => (wrapped = true) },
   ]);
-  slider(controlsBar, 'Page open for', { min: 0, max: OPEN_FOR.length - 1, step: 1, value: openFor }, (value) => {
+  slider(controlsBar, 'page open for', { min: 0, max: OPEN_FOR.length - 1, step: 1, value: openFor }, (value) => {
     openFor = value;
   });
 };

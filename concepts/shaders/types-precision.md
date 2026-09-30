@@ -14,8 +14,8 @@ contexts:
 
 ## Definition
 
-GLSL never converts between whole numbers (`int`) and decimals (`float`) for you, and every float has a precision, `highp`, `mediump`, or `lowp`, that sets how finely it can tell nearby numbers apart.
+GLSL never converts between whole numbers and decimals for you, and every decimal has a precision that sets how finely it can tell nearby numbers apart.
 
 ## Cost lens
 
-As a rule of thumb, lower precision can save GPU time on some mobile GPUs. three.js asks for `highp` by default, and any saving from `mediump` is something to measure on the device, not a given.
+Lower precision can save GPU time on some mobile GPUs, but three.js asks for `highp` by default, and any saving is something to measure on the device.

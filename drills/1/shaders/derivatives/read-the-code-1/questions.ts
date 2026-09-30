@@ -14,20 +14,20 @@ float line = 1.0 - min(min(inPixels.x, inPixels.y), 1.0);`,
       'Thick near the camera, gone far away',
     ],
     answer: 1,
-    why: '`fwidth(vWorldPos.xz)` is how much ground one pixel covers at that spot, so dividing the distance to a line by it gives the distance in pixels. Every line then fades out over about one pixel, near or far, all on two triangles. Without the divide, the lines would have a fixed width in world units: fat up close, and breaking up far away.',
+    why: '`fwidth` is how much ground one pixel covers there, so dividing by it measures the distance to a line in pixels. Every line fades over about one pixel, with no extra geometry.',
   },
   {
     code: `// vertex shader: vViewPos = (modelViewMatrix * vec4(position, 1.0)).xyz;
-// fragment shader
+// fragment shader, on a smooth, indexed ball
 vec3 n = normalize(cross(dFdx(vViewPos), dFdy(vViewPos)));`,
-    ask: 'A smooth, indexed ball is lit with `n`. How does it look?',
+    ask: 'Lit with `n`, how does the ball look?',
     choices: [
       'Smooth: just like its vertex normals',
       'Black: derivatives are 0 on curved faces',
       'Faceted: one flat shade for each triangle',
     ],
     answer: 2,
-    why: "`dFdx` and `dFdy` of the position are two small steps along the surface, across and up the screen, and their cross product points straight out of the triangle. The steps are the same everywhere on a flat triangle, so each triangle gets one normal: a faceted look, without splitting the shared vertices. three.js's `flatShading: true` does exactly this.",
+    why: "The derivatives are two steps along a flat triangle, and their cross product points straight out of it, so each triangle gets one normal. That's how `flatShading: true` works.",
   },
   {
     code: `// vertex shader
@@ -39,6 +39,6 @@ float w = fwidth(position.x);`,
       'It compiles: w is always 0 in a vertex shader',
     ],
     answer: 0,
-    why: "Derivatives compare a value with the neighboring pixel's, and only fragments have neighboring pixels, so `dFdx`, `dFdy`, and `fwidth` exist only in the fragment shader. Work out what you need in the vertex shader, hand it over as a varying, and take its derivative in the fragment shader.",
+    why: "Derivatives compare a value with the neighboring pixel's, so they exist only in the fragment shader. Hand the value over as a varying and take its derivative there.",
   },
 ];
