@@ -58,11 +58,11 @@ export const zones: SceneSetup = ({ scene, camera, controls, container }) => {
       }`,
     ].join('\n');
   };
-  slider(sliders, 'Walk x', { min: -3, max: 3, step: 0.1, value: at.x }, (value) => {
+  slider(sliders, 'walk x', { min: -3, max: 3, step: 0.1, value: at.x }, (value) => {
     at.x = value;
     update();
   });
-  slider(sliders, 'Walk z', { min: -2, max: 2, step: 0.1, value: at.z }, (value) => {
+  slider(sliders, 'walk z', { min: -2, max: 2, step: 0.1, value: at.z }, (value) => {
     at.z = value;
     update();
   });

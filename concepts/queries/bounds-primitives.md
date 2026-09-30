@@ -14,7 +14,7 @@ contexts:
 
 ## Definition
 
-`Box3`, `Sphere`, `Plane`, and `Frustum` are simple shapes that answer "is this point inside?" and "do these two overlap?", and a plane's distance to a point is signed: positive on the side its normal points to, negative on the other.
+Boxes, spheres, planes, and camera frustums are simple shapes that answer "is this inside?" and "do these overlap?" quickly, and a plane's distance to a point is signed.
 
 ## Space lens
 

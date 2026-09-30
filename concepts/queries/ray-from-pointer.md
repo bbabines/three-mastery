@@ -14,11 +14,11 @@ contexts:
 
 ## Definition
 
-A ray from the pointer starts at the camera and runs through the spot under the mouse; you get it by turning the pointer's position on the canvas into NDC and handing that to `raycaster.setFromCamera`.
+A ray from the pointer starts at the camera and runs out through the spot under the mouse.
 
 ## Space lens
 
-`event.clientX` and `clientY` are CSS pixels from the window's top-left corner. Subtracting the canvas rect gives CSS pixels from the canvas's corner, which become NDC. `setFromCamera` turns NDC into a ray in the world.
+The pointer's CSS pixels are measured from the canvas's top-left corner and turned into NDC, and `setFromCamera` turns NDC into a ray in the world.
 
 ## Cost lens
 

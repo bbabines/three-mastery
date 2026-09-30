@@ -68,11 +68,11 @@ export const nearestSpot: SceneSetup = ({ scene, camera, controls, container }) 
       }`,
     ].join('\n');
   };
-  slider(sliders, 'Move p across', { min: -3.5, max: 3.5, step: 0.1, value: at.x }, (value) => {
+  slider(sliders, 'move p across', { min: -3.5, max: 3.5, step: 0.1, value: at.x }, (value) => {
     at.x = value;
     update();
   });
-  slider(sliders, 'Move p up', { min: 0.2, max: 2.6, step: 0.1, value: at.y }, (value) => {
+  slider(sliders, 'move p up', { min: 0.2, max: 2.6, step: 0.1, value: at.y }, (value) => {
     at.y = value;
     update();
   });

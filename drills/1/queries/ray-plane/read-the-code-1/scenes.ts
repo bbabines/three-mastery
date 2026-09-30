@@ -59,11 +59,11 @@ export const laserFloor: SceneSetup = ({ scene, camera, controls, container }) =
       result,
     ].join('\n');
   };
-  slider(sliders, 'Tilt', { min: -60, max: 30, step: 5, value: values.tilt }, (value) => {
+  slider(sliders, 'tilt', { min: -60, max: 30, step: 5, value: values.tilt }, (value) => {
     values.tilt = value;
     update();
   });
-  slider(sliders, 'Height', { min: 0, max: 2, step: 0.5, value: values.height }, (value) => {
+  slider(sliders, 'height', { min: 0, max: 2, step: 0.5, value: values.height }, (value) => {
     values.height = value;
     update();
   });

@@ -14,7 +14,7 @@ contexts:
 
 ## Definition
 
-`ray.intersectPlane(plane, target)` gives the spot where a ray crosses an endless flat surface, or `null` when the ray runs parallel to it or points away from it.
+A ray–plane test gives the spot where a ray crosses an endless flat surface, or nothing when the ray runs parallel to it or points away.
 
 ## Space lens
 

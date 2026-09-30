@@ -50,7 +50,7 @@ export const startInside: SceneSetup = ({ scene, camera, controls, container }) 
       }`,
     ].join('\n');
   };
-  slider(sliders, 'Move the start', { min: -3, max: 3, step: 0.25, value: startX }, (value) => {
+  slider(sliders, 'move the start', { min: -3, max: 3, step: 0.25, value: startX }, (value) => {
     startX = value;
     update();
   });

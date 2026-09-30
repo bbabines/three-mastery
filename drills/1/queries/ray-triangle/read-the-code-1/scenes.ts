@@ -61,11 +61,11 @@ export const paintPots: SceneSetup = ({ scene, camera, controls, container }) =>
       `hit.point ${formatVector(hit.point, 2)}`,
     ].join('\n');
   };
-  slider(sliders, 'Aim across', { min: -1.8, max: 1.8, step: 0.05, value: aim.x }, (value) => {
+  slider(sliders, 'aim across', { min: -1.8, max: 1.8, step: 0.05, value: aim.x }, (value) => {
     aim.x = value;
     update();
   });
-  slider(sliders, 'Aim up', { min: 0.1, max: 2.7, step: 0.05, value: aim.y }, (value) => {
+  slider(sliders, 'aim up', { min: 0.1, max: 2.7, step: 0.05, value: aim.y }, (value) => {
     aim.y = value;
     update();
   });

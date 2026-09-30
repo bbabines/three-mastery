@@ -12,32 +12,28 @@ misconceptions:
 
 # Ray from pointer
 
-> **In short:** To find what's under the mouse, you turn the pointer's spot on the canvas into NDC, and `raycaster.setFromCamera` builds a ray from the camera through that spot, out into the scene.
+> **In short:** A click lands on one spot of a flat screen, and three.js turns it into a ray from the camera through that spot.
 >
-> **Used for:** Selecting a part with a click, highlighting whatever the mouse is over, starting a drag on the object that was grabbed, and dropping new furniture where the user points.
+> **Used for:** Clicking to select a part, hover highlights, starting a drag, and dropping furniture where you point.
 
 ## A · The basics
 
 ### From a spot on the screen to a ray in the world
 
-A click tells you a spot on the screen, in pixels. The scene is 3D. Every point along a line straight out from the camera lands on that same spot, as the project and unproject page showed, so the click really picks a line, not a point. That line, starting at the camera and running out through the spot, is a ray, as on the ray page.
+A click gives you a spot on the screen, but the scene is 3D. Every point on a line straight out from the camera lands on that same spot, so a click really picks a line. That line, from the camera out through the spot, is a ray.
 
-Getting it takes three steps:
+Three steps get you there. The pointer event says where the mouse is, in CSS pixels. You measure that against the canvas and turn it into **NDC**, where −1 to 1 runs across the canvas and up it. Then `raycaster.setFromCamera(pointer, camera)` builds a ray that starts at the camera and points through that spot.
 
-1. **The pointer event** says where the mouse is, in CSS pixels from the window's top-left corner.
-2. **Measure it on the canvas, then turn it into NDC,** the −1 to 1 view from the clip space, NDC, screen page, with y pointing up.
-3. **`raycaster.setFromCamera(pointer, camera)`** turns that NDC spot into a ray: it starts at the camera's position and points through the spot.
+**Analogy: pointing through a window.** Put your finger on the glass over a tree, and the line from your eye through your fingertip runs on to the tree. Your eye is the camera, and the glass is the screen.
 
-**Analogy: pointing through a window.** Stand at a window and put your finger on the glass over a tree. The line from your eye through your fingertip runs on until it reaches the tree. Your eye is the camera, the glass is the screen, and your fingertip is the pointer.
-
-Move the pointer on the camera in the scene's screen, the white pane in front of it. The red ray runs from the camera through the dot. The picture in the top-right corner is what that camera sees: whatever the ray hits sits right where the pointer is.
+Move the pointer with the sliders. The red ray runs from the camera in the scene through the dot on its screen, and the picture in the top-right corner is what it sees.
 
 <div data-scene="throughTheView"></div>
 
 <details>
 <summary>The math, if you're curious</summary>
 
-`setFromCamera` uses **unprojection**, from the project and unproject page. For a perspective camera, it unprojects the NDC spot to a point in the world, subtracts the camera's position to get a direction, and normalizes it. An orthographic camera works differently: every ray points the way the camera faces, and the start moves to the pointer's spot instead.
+For a perspective camera, `setFromCamera` **unprojects** the NDC spot: it takes it back through the lens to a point in the world, then aims the ray from the camera's position at that point.
 
 </details>
 
@@ -59,44 +55,30 @@ renderer.domElement.addEventListener('pointerdown', (event) => {
 });
 ```
 
-`pickable` is your own list of the objects that can be picked; the filtering page covers why. Reading `hits` is the intersection anatomy page.
+`pickable` is your target list: the objects that can be picked. Reading the hits is the intersection anatomy page.
 
-### Measure from the canvas, not the window
+### Measure the canvas, not the window
 
-Many examples use the window's size: `event.clientX / window.innerWidth * 2 - 1`. That's only right when the canvas fills the whole window from its top-left corner. Put the canvas beside a sidebar, below a header, or partway down a page that scrolls, and the ray goes somewhere other than the pointer. `getBoundingClientRect()` gives where the canvas is on the screen right now, scrolling included.
+Many examples divide by `window.innerWidth`. That only works when the canvas fills the window from its top-left corner; beside a sidebar or partway down a page that scrolls, the ray goes somewhere else. `getBoundingClientRect()` gives where the canvas is right now, scrolling included.
 
-Try both buttons, then move the pointer or the sliders. This canvas sits beside the sidebar and partway down the page, so with the window's size the ring and the hit part company.
+The y line has a minus sign because the page's y runs down and NDC's runs up. And divide by `rect.width`, never `canvas.width`: after `setPixelRatio`, the canvas counts device pixels while `clientX` counts CSS pixels.
+
+Try both buttons, then move the pointer or the sliders. With the window's size, the hit lands away from the ring.
 
 <div data-scene="canvasRect"></div>
 
-### Three more ways to get it wrong
+### Hover, and a camera moved in code
 
-- **No minus sign on y.** The page's y runs down and NDC's runs up, so the y line is flipped. Without the minus, pointing near the top casts the ray near the bottom.
-- **`canvas.width` instead of the rect's width.** After `renderer.setPixelRatio(Math.min(devicePixelRatio, 2))`, `canvas.width` counts device pixels, while `clientX` counts CSS pixels. At a ratio of 2, pointing at the right edge lands in the middle.
-- **Listening on `window`.** Clicks on buttons and panels outside the canvas then pick things too. Listen on `renderer.domElement`. Orbiting with the mouse also fires `pointerdown`; telling a click from a drag is the click vs drag page, in the interaction domain.
-
-### Hover
-
-For hover highlighting, save the pointer in a `pointermove` handler and raycast from it once per frame, in the frame loop. The camera is current there, and the highlight stays right while the camera moves under a mouse that's standing still. Each raycast is CPU work, so once a frame is plenty.
-
-### The camera it reads
-
-`setFromCamera` reads the camera's saved `matrixWorld` and its projection matrix; it doesn't refresh them. In a click handler that's fine, since the last render left them current. After moving the camera in code, call `camera.updateMatrixWorld()` first, as on the update timing page, and after changing `fov` or `aspect`, `camera.updateProjectionMatrix()`.
-
-It gives a direction of length 1, so the ray page's warning about `set` doesn't apply.
+For hover, save the pointer in a `pointermove` handler and raycast from it once per frame, so the highlight stays right while the camera moves under a still mouse. `setFromCamera` reads the camera's saved matrices without refreshing them, so after moving the camera in code, call `camera.updateMatrixWorld()` first.
 
 ### Which space is it in?
 
-This page works from **CSS pixels**, through **NDC**, out into **the world**.
-
 | Value | Space |
 | --- | --- |
-| `event.clientX`, `event.clientY` | CSS pixels from the window's top-left corner, y down |
-| `event.clientX - rect.left`, `event.clientY - rect.top` | CSS pixels from the canvas's top-left corner, y down |
-| `pointer` after the two lines | NDC: −1 to 1 across the canvas and up |
-| `canvas.width`, `canvas.height` | Device pixels, so don't mix them with `clientX` |
-| `raycaster.ray.origin` | The world: the camera's position |
-| `raycaster.ray.direction` | A direction in the world, length 1 |
+| `event.clientX`, `clientY` | CSS pixels from the window's top-left corner |
+| `event.clientX - rect.left` | CSS pixels from the canvas's top-left corner |
+| `pointer` | NDC: −1 to 1 across the canvas and up |
+| `raycaster.ray` | The world, starting at the camera |
 
 ## Drill · Read the code
 

@@ -71,7 +71,7 @@ export const beam: SceneSetup = ({ scene, camera, controls, container }) => {
       },
     },
   ]);
-  slider(controlsBar, 'Slide the crate', { min: -3, max: 3, step: 1, value: crateX }, (value) => {
+  slider(controlsBar, 'slide the crate', { min: -3, max: 3, step: 1, value: crateX }, (value) => {
     crateX = value;
     update();
   });

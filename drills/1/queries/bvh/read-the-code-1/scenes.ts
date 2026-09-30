@@ -188,15 +188,15 @@ export const boxesInBoxes: SceneSetup = ({ scene, camera, controls, container })
     ].join('\n');
   };
 
-  slider(sliders, 'Aim across', { min: -1.6, max: 1.6, step: 0.05, value: values.across }, (value) => {
+  slider(sliders, 'aim across', { min: -1.6, max: 1.6, step: 0.05, value: values.across }, (value) => {
     values.across = value;
     update();
   });
-  slider(sliders, 'Aim up', { min: -1.2, max: 1.2, step: 0.05, value: values.up }, (value) => {
+  slider(sliders, 'aim up', { min: -1.2, max: 1.2, step: 0.05, value: values.up }, (value) => {
     values.up = value;
     update();
   });
-  slider(sliders, 'Detail', { min: 1, max: 4, step: 1, value: values.detail }, (value) => {
+  slider(sliders, 'detail', { min: 1, max: 4, step: 1, value: values.detail }, (value) => {
     values.detail = value;
     rebuild();
     update();

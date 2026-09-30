@@ -12,24 +12,24 @@ misconceptions:
 
 # Ray–sphere
 
-> **In short:** `ray.intersectSphere(sphere, target)` finds where a ray first touches a ball, even when the ray starts inside it, and `ray.intersectsSphere(sphere)` just says whether it touches it at all.
+> **In short:** Tests a ray against a ball, the cheapest shape there is, and a ray from inside still hits it on the way out.
 >
-> **Used for:** Clickable info dots on a product, skipping objects a ray can't come near before testing their triangles, rough hit tests for round things like planets and balloons, and checking whether a laser passes through a sensor's range.
+> **Used for:** Clickable info dots, skipping objects a ray can't reach, rough hits on round things, and sensor ranges.
 
 ## A · The basics
 
 ### A ball is the cheapest thing to test
 
-A `Sphere` is a center and a radius. Testing a ray against it is a handful of multiplications, whatever is inside the ball, which is why three.js checks every mesh's bounding sphere before its triangles (the bounding box and sphere page). You can ask two things:
+A `Sphere` is a center and a radius. Testing a ray against it is a handful of multiplications, whatever is inside the ball, which is why three.js checks every mesh's bounding sphere before its triangles. You can ask two things:
 
 - **`ray.intersectsSphere(sphere)`**: does it touch? `true` or `false`.
 - **`ray.intersectSphere(sphere, spot)`**: where? It writes the spot into `spot` and returns it, or returns `null`.
 
 ### Starting inside
 
-A ray that starts inside the ball still touches it: on the way out. `intersectSphere` gives the nearest spot in front of the start, so from inside that's the exit, and from outside it's the entry. A ball entirely behind the start gives `null`.
+A ray that starts inside the ball still touches it, on the way out. `intersectSphere` gives the nearest spot in front of the start, so from inside that's the exit, and from outside it's the entry. A ball entirely behind the start gives `null`.
 
-**Analogy: a flashlight in a tent.** Shine it from outside and the beam lands on the near wall. Switch it on inside and it still lands on the tent, on the far wall. Walk past the tent and point away, and it lands on nothing.
+**Analogy: a flashlight in a tent.** Shine it from outside and the beam lands on the near wall. Switch it on inside and it still lands on the tent, on the far wall.
 
 Move the start of the ray through the ball.
 
@@ -47,11 +47,11 @@ raycaster.setFromCamera(pointer, camera);
 if (raycaster.ray.intersectsSphere(hotspot)) showInfo(dot);
 ```
 
-`intersectsSphere` is enough when you only need yes or no. It doesn't know what's in front, though: a hotspot behind the product still says yes. Compare distances, or raycast the product too, when that matters.
+`intersectsSphere` doesn't know what's in front, though: a hotspot behind the product still says yes. Compare distances, or raycast the product too, when that matters.
 
 ### Bounding spheres, in the world
 
-A geometry's `boundingSphere` is measured from the object itself, around where the shape would be at the center of the scene. Move it into the world before testing it against a world ray:
+A geometry's `boundingSphere` is measured from the object itself. Move it into the world before testing it against a world ray:
 
 ```js
 mesh.geometry.computeBoundingSphere(); // null until something computes it
@@ -59,7 +59,7 @@ const ball = mesh.geometry.boundingSphere.clone().applyMatrix4(mesh.matrixWorld)
 const maybe = raycaster.ray.intersectsSphere(ball); // false: the mesh can't be hit
 ```
 
-That's the first step three.js takes for each mesh in a raycast. A yes only means "maybe": the ray can pass through the ball and miss the shape inside, like the corner of a box. The triangle test on the ray–triangle page has the final say.
+That's the quick check three.js makes for each mesh in a raycast, and a yes only means "maybe": the ray can pass through the ball and miss the shape inside. The triangle test on the ray–triangle page has the final say.
 
 ## Drill · Read the code
 

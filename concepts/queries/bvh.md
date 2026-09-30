@@ -14,12 +14,12 @@ contexts:
 
 ## Definition
 
-A BVH (bounding volume hierarchy) is a tree of boxes built over a mesh's triangles, so a query tests a few boxes and skips every triangle inside the boxes it misses, instead of testing them all.
+A BVH (bounding volume hierarchy) is a tree of boxes built over a mesh's triangles, so a query can rule out whole groups of triangles with one box test.
 
 ## Space lens
 
-The tree is built from the geometry, so its boxes are measured from the object itself. Moving or turning the mesh doesn't make them stale; the ray is moved into the mesh's own space, as for any raycast. Only changing the vertices does.
+The tree's boxes are measured from the object itself, so moving or turning the mesh doesn't make them stale; only changing the vertices does.
 
 ## Cost lens
 
-Without a tree, a raycast tests every triangle of a mesh whose bounding sphere it touches. With one, it tests a few boxes per level and a handful of triangles. Building the tree takes CPU time and memory up front, and editing vertices needs a refit. None of it changes what drawing the mesh costs.
+With a tree, a raycast tests a few boxes per level and a handful of triangles instead of every triangle. Building it takes CPU time and memory up front, and it doesn't change what drawing the mesh costs.

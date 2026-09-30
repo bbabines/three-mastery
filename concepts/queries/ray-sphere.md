@@ -14,7 +14,7 @@ contexts:
 
 ## Definition
 
-`ray.intersectSphere(sphere, target)` gives the nearest spot in front of the ray where it touches a ball, or `null`, and `ray.intersectsSphere(sphere)` only answers yes or no.
+A ray–sphere test says whether a ray touches a ball, and where it first does, counting the way out when the ray starts inside.
 
 ## Space lens
 

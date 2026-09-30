@@ -14,7 +14,7 @@ contexts:
 
 ## Definition
 
-Closest-point methods give the spot on a shape, a ray, a line segment, a box, a sphere, or a triangle, that's nearest to a given point, and that spot is usually on an edge or a face, not at a corner.
+A closest-point query gives the spot on a ray, segment, box, sphere, or triangle that's nearest to a given point, usually on an edge or a face.
 
 ## Space lens
 

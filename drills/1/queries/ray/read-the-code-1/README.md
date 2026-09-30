@@ -12,15 +12,15 @@ misconceptions:
 
 # Ray
 
-> **In short:** A ray is a starting point and a direction: a line that starts somewhere and runs one way forever, and three.js can tell you what it runs into.
+> **In short:** A ray is a line with a start but no end, and three.js can tell you what lies in its path.
 >
-> **Used for:** Finding what the mouse is over, checking whether a guard in a game can see the player, dropping a part straight down onto a shelf or the floor, and measuring how far a laser sensor reaches.
+> **Used for:** Finding what the mouse is over, line of sight in games, dropping parts onto a shelf, and laser sensors.
 
 ## A · The basics
 
 ### A start and a direction
 
-A **ray** is two things: a **start**, which is a place, and a **direction**, which is a move of length 1, as on the point vs direction and normalize pages. From the start it runs along the direction, on and on, and never ends.
+A **ray** is two things: a **start**, which is a place, and a **direction**, a move of length 1. From the start it runs along the direction, on and on, and never ends.
 
 It only runs one way. Everything behind the start is outside the ray, even when it sits on the same line.
 
@@ -30,9 +30,9 @@ Slide the crate along the line, then flip the direction. The raycast finds the c
 
 <div data-scene="beam"></div>
 
-### What three.js does with a ray
+### Asking what it runs into
 
-Asking "what does this ray run into?" is called **raycasting**. three.js's `Raycaster` holds a ray in `raycaster.ray` and tests it against the objects you hand it. The answer is a list of **hits**, nearest first, each with the spot where the ray met the object. Finding the ray under the mouse and reading those hits are the next two pages.
+Asking "what does this ray run into?" is called **raycasting**. three.js's `Raycaster` holds a ray and tests it against the objects you hand it. The answer is a list of **hits**, nearest first, each with the spot where the ray met the object.
 
 ## B · Working knowledge
 
@@ -40,25 +40,24 @@ Asking "what does this ray run into?" is called **raycasting**. three.js's `Rayc
 
 ```js
 const raycaster = new Raycaster();
-raycaster.set(start, direction);                // a place, then a direction of length 1
-const hits = raycaster.intersectObject(crate);  // [] when it misses
+raycaster.set(start, direction);               // a place, then a direction of length 1
+const hits = raycaster.intersectObject(crate); // [] when it misses
 ```
 
-`set` stores the direction exactly as you pass it. three.js expects length 1, and with a shorter one a raycast can miss things the ray goes straight through. Normalize it first. `raycaster.setFromCamera`, from the ray from pointer page, does that for you.
+`set` keeps the direction exactly as you pass it. One shorter than 1 can miss a crate dead ahead, so normalize it first.
 
 ### Line of sight
 
-Can the guard see the player? Cast from the guard toward the player, and count only what's in between:
+Can the guard see the player? Cast from the guard's eye toward the player, and stop the ray at the player:
 
 ```js
-const eye = guard.getWorldPosition(new Vector3());
 const toPlayer = player.getWorldPosition(new Vector3()).sub(eye);
 raycaster.set(eye, toPlayer.clone().normalize());
-raycaster.far = toPlayer.length();              // ignore anything past the player
+raycaster.far = toPlayer.length(); // ignore anything past the player
 const blocked = raycaster.intersectObjects(walls).length > 0;
 ```
 
-`near` and `far` are distances along the ray, in world units. Hits closer than `near` or farther than `far` are left out. They start at 0 and `Infinity`.
+`near` and `far` are distances along the ray, in world units, and hits outside them are left out. They start at 0 and `Infinity`.
 
 ### Placing on the ground
 
@@ -70,11 +69,7 @@ const hit = raycaster.intersectObjects(surfaces)[0]; // the nearest: the top sur
 if (hit) marker.position.copy(hit.point);           // hit.point is in the world
 ```
 
-Start it below the shelf and it only finds the floor: the shelf is behind the start.
-
-### Spots along a ray
-
-`raycaster.ray.at(t, target)` gives the spot `t` units along the ray. It's plain arithmetic, so `at(-2, v)` happily gives a spot behind the start. Only the tests, like `intersectObject` and the ray methods on the later pages, keep to the front.
+Start it below the shelf and it only finds the floor, because the shelf is behind the start.
 
 ## Drill · Read the code
 

@@ -14,7 +14,7 @@ contexts:
 
 ## Definition
 
-`ray.intersectBox(box, target)` gives the first spot in front of the ray where it touches a box lined up with the axes (a `Box3`), or `null`, and `ray.intersectsBox(box)` only answers yes or no.
+A ray–box test says whether a ray touches a box lined up with the axes, and where it first does, treating the box as solid.
 
 ## Space lens
 

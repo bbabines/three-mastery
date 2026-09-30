@@ -46,11 +46,11 @@ export const roomLaser: SceneSetup = ({ scene, camera, controls, container }) =>
       }`,
     ].join('\n');
   };
-  slider(sliders, 'Move the start', { min: -4, max: 1.5, step: 0.25, value: values.x }, (value) => {
+  slider(sliders, 'move the start', { min: -4, max: 1.5, step: 0.25, value: values.x }, (value) => {
     values.x = value;
     update();
   });
-  slider(sliders, 'Turn the laser', { min: -180, max: 180, step: 10, value: values.turn }, (value) => {
+  slider(sliders, 'turn the laser', { min: -180, max: 180, step: 10, value: values.turn }, (value) => {
     values.turn = value;
     update();
   });

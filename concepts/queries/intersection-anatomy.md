@@ -15,12 +15,12 @@ contexts:
 
 ## Definition
 
-A raycast returns an array of hits, nearest first, and each hit says how far along the ray it is, where it is in the world, and which object, triangle, texture spot, and instance it landed on.
+A raycast returns a list of hits sorted nearest first, and each hit describes where the ray met an object and which part of it.
 
 ## Space lens
 
-`hit.point` and `hit.distance` are in the world. `hit.face.normal` and `hit.normal` are measured from the hit object itself, because three.js moves the ray into each object's own space to test its triangles. `hit.uv` is a spot on the texture, 0 to 1 across and up.
+`hit.point` and `hit.distance` are in the world, while `hit.face.normal` and `hit.normal` are measured from the hit object itself. `hit.uv` is a spot on the texture, 0 to 1 across and up.
 
 ## Cost lens
 
-Each mesh in the list costs a bounding-sphere test. Only meshes whose sphere the ray hits pay for a matrix inverse and a test against every triangle. It's all CPU work, done before the call returns.
+Each mesh in the list costs a quick check against its bounding sphere, and only the meshes that pass pay for a test of every triangle, all on the CPU.

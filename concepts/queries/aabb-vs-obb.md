@@ -14,7 +14,7 @@ contexts:
 
 ## Definition
 
-An AABB, three.js's `Box3`, always stays lined up with the world's axes, so it grows loose around a turned object, while an OBB, the `OBB` add-on, turns with the object and keeps a tight fit.
+An AABB stays lined up with the world's axes and grows loose around a turned object, while an OBB turns with the object and keeps a tight fit.
 
 ## Space lens
 

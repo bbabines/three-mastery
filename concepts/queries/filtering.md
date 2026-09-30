@@ -14,7 +14,7 @@ contexts:
 
 ## Definition
 
-Filtering decides which objects a raycast tests, with a target list, the recursive flag, or layers, and walking up from the hit mesh finds the part you actually care about.
+Filtering chooses which objects a raycast tests, and walking up from the mesh it hits finds the part you actually want.
 
 ## Cost lens
 

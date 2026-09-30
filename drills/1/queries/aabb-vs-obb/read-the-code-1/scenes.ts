@@ -53,7 +53,7 @@ export const turnedPlanks: SceneSetup = ({ scene, camera, controls, container })
       `each Box3 is ${formatNumber(volume(boxes[0]) / (2.6 * 0.2 * 0.3), 1)} × the plank's volume`,
     ].join('\n');
   };
-  slider(sliders, 'Turn both', { min: 0, max: 90, step: 5, value: turn }, (value) => {
+  slider(sliders, 'turn both', { min: 0, max: 90, step: 5, value: turn }, (value) => {
     turn = value;
     update();
   });

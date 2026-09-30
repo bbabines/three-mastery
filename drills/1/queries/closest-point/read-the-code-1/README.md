@@ -12,9 +12,9 @@ misconceptions:
 
 # Closest-point queries
 
-> **In short:** three.js can give you the spot on a ray, a line segment, a box, a sphere, or a triangle that's nearest to any point you choose, and that spot is usually partway along an edge or in the middle of a face, not at a corner.
+> **In short:** three.js can find the spot on any simple shape nearest to a point, and it's rarely a corner.
 >
-> **Used for:** Snapping a dragged cable to the nearest edge of a shelf, measuring how far a part is from a wall, highlighting a tiny marker when the mouse ray passes close to it, and keeping a camera or character a set distance from a surface.
+> **Used for:** Snapping cables to edges, measuring gaps to walls, hovering near tiny markers, and keeping cameras off surfaces.
 
 ## A · The basics
 
@@ -25,7 +25,7 @@ Ask "what's the nearest spot on this triangle to that point?" and the answer is 
 three.js has a method for each shape, and each one writes the nearest spot into a target you pass:
 
 ```js
-triangle.closestPointToPoint(p, spot); // on the face, an edge, or a corner
+triangle.closestPointToPoint(p, spot);      // on the face, an edge, or a corner
 segment.closestPointToPoint(p, true, spot); // true: stop at the segment's ends
 ```
 
@@ -41,14 +41,11 @@ Move the point. The white lines run to the nearest spot on the triangle and on t
 
 | Code | Gives back |
 | --- | --- |
-| `ray.closestPointToPoint(p, spot)` | The nearest spot on the ray, or its start if `p` is behind it |
-| `line.closestPointToPoint(p, true, spot)` | The nearest spot on a `Line3` segment; `false` treats it as a line that never ends |
-| `box.clampPoint(p, spot)` | The nearest spot in a `Box3`: `p` itself when it's inside |
+| `ray.closestPointToPoint(p, spot)` | The nearest spot on the ray |
+| `line.closestPointToPoint(p, true, spot)` | The nearest spot on a `Line3` |
+| `box.clampPoint(p, spot)` | The nearest spot in a `Box3`: `p` if inside |
 | `sphere.clampPoint(p, spot)` | The same for a `Sphere` |
 | `triangle.closestPointToPoint(p, spot)` | The nearest spot on a `Triangle` |
-| `plane.projectPoint(p, spot)` | The spot on a `Plane` straight across from `p` |
-
-For just the distance: `ray.distanceToPoint(p)`, `box.distanceToPoint(p)`, and `plane.distanceToPoint(p)`, as on the bounds primitives page.
 
 ### Snapping to an edge
 

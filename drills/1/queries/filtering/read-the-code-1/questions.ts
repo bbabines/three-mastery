@@ -5,31 +5,34 @@ export const questions: Question[] = [
   {
     code: `scene.add(new GridHelper(10, 10)); // lines on the floor
 scene.add(crate);                   // standing on the floor
+// on its way down to the crate, the ray passes half a unit above a grid line
 const hits = raycaster.intersectObjects(scene.children);`,
-    ask: 'On its way down to the crate, the ray passes half a unit above a grid line. What is `hits[0].object`?',
+    ask: 'What is `hits[0].object`?',
     choices: [
       'The crate, since lines are too thin to hit',
       'The `GridHelper`, since a line counts within 1 unit',
       'The crate, since three.js skips helpers',
     ],
     answer: 1,
-    why: "Helpers are ordinary objects to the raycaster. A ray counts as touching a line when it passes within `raycaster.params.Line.threshold`, 1 unit by default, and the grid line is nearer than the crate. Pass a list of what can be picked instead of `scene.children`.",
+    why: 'Helpers are ordinary objects to a raycaster, and a line counts as hit within `raycaster.params.Line.threshold`, 1 unit by default. Pass a target list instead of `scene.children`.',
   },
   {
     code: `raycaster.layers.set(1);
 rack.layers.set(1); // rack: a Group holding the shelf meshes
+// the ray passes straight through two shelves
 const hits = raycaster.intersectObject(rack);`,
-    ask: 'The ray passes straight through two shelves. What does `hits` hold?',
-    choices: ['Both shelves, since they sit inside the rack', 'One hit on the rack group itself', 'No hits, since the shelves are still on layer 0'],
+    ask: 'What does `hits` hold?',
+    choices: ['Both shelves, since they sit inside the rack', 'One hit, on the rack group itself', 'No hits, since the shelves are still on layer 0'],
     answer: 2,
-    why: "Layers are tested on each object alone. The rack is on layer 1, but a group has no shape to hit, and its shelves are still on layer 0, so the raycaster skips them. `rack.traverse((o) => o.layers.enable(1))` puts every shelf on layer 1 too.",
+    why: 'Layers are tested per object. The group is on layer 1 but has no shape, and its shelves are still on layer 0. Enable layer 1 on each with `rack.traverse`.',
   },
   {
-    code: `let part = hits[0].object; // a screw, inside the toolbox's lid
+    code: `// only the toolbox group has a userData.sku
+let part = hits[0].object; // a screw, inside the toolbox's lid
 while (part && !part.userData.sku) part = part.parent;`,
-    ask: 'Only the toolbox group has a `userData.sku`. What is `part` after the loop?',
+    ask: 'What is `part` after the loop?',
     choices: ['The toolbox group', 'The screw that was hit', 'The scene, at the very top'],
     answer: 0,
-    why: "The loop climbs one parent at a time, from the screw to the lid to the toolbox, and stops at the first object with an sku. If nothing above had one, it would climb past the scene and end at `null`.",
+    why: 'The loop climbs one parent at a time and stops at the first object with an sku: the toolbox. With none above, it would end at `null`.',
   },
 ];

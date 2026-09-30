@@ -403,7 +403,7 @@ export function pointerSpot(
 
   const inputs = (['across', 'down'] as const).map((key) => {
     const wrapper = document.createElement('label');
-    wrapper.innerHTML = `Pointer ${key} <input type="range" min="0" max="1" step="0.01" value="${spot[key]}">`;
+    wrapper.innerHTML = `pointer ${key} <input type="range" min="0" max="1" step="0.01" value="${spot[key]}">`;
     const input = wrapper.querySelector('input')!;
     input.addEventListener('input', () => {
       spot[key] = Number(input.value);

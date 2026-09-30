@@ -91,15 +91,15 @@ export const readTheHit: SceneSetup = ({ scene, camera, controls, container }) =
     ].join('\n');
   };
 
-  slider(controlsBar, 'Aim across', { min: -0.8, max: 0.8, step: 0.05, value: values.across }, (value) => {
+  slider(controlsBar, 'aim across', { min: -0.8, max: 0.8, step: 0.05, value: values.across }, (value) => {
     values.across = value;
     update();
   });
-  slider(controlsBar, 'Aim up', { min: -0.6, max: 0.6, step: 0.05, value: values.up }, (value) => {
+  slider(controlsBar, 'aim up', { min: -0.6, max: 0.6, step: 0.05, value: values.up }, (value) => {
     values.up = value;
     update();
   });
-  slider(controlsBar, 'Turn board', { min: -45, max: 45, step: 5, value: values.turn }, (value) => {
+  slider(controlsBar, 'turn board', { min: -45, max: 45, step: 5, value: values.turn }, (value) => {
     values.turn = value;
     update();
   });
