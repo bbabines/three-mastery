@@ -18,4 +18,4 @@ A material's cost is the work its shader does for every pixel it covers, which g
 
 ## Cost lens
 
-Pixel work for every pixel a mesh covers, with lighting work for each light that reaches it. Each shadow-casting light renders the casting meshes again every frame, six times for a point light, and transmission renders every solid object again every frame. Changing a material's type or features, or the number of lights, also builds new shader programs (the decode, upload, compile page).
+Pixel work for every pixel a mesh covers, with lighting work for each light that reaches it. Each shadow-casting light draws the casting meshes again every frame, and transmission draws every solid object again.

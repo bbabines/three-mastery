@@ -5,40 +5,39 @@ export const questions: Question[] = [
   {
     code: `// flash: a white plane covering the whole view, transparent: true
 flash.material.opacity = 0; // the fade after a click has ended`,
-    ask: 'The flash is invisible now. What does it cost each frame?',
+    ask: 'What does the invisible flash cost each frame?',
     choices: [
-      'Nothing, since the GPU skips fully transparent pixels',
-      'Only its draw call, since no pixel changes color',
-      'A full screen of pixel work, as when it showed',
+      'Nothing, since the GPU skips clear pixels',
+      'Only its draw call, since no pixel changes',
+      'A full screen of pixel work, as before',
     ],
     answer: 2,
-    why: 'Opacity 0 is still a draw: every pixel the flash covers runs the fragment shader and is blended, just with no visible result. `flash.visible = false` skips it completely; set it back to `true` before the next fade in.',
+    why: 'Opacity 0 is still a draw: every pixel the flash covers is shaded and blended, with no visible result. `flash.visible = false` skips it completely.',
   },
   {
-    code: `for (let i = 0; i < 8; i++) {
-  const fog = new Mesh(bigPlane, new MeshBasicMaterial({ color: 'gray', transparent: true, opacity: 0.1, depthWrite: false }));
-  fog.position.z = -i * 0.5; // each layer covers the whole view
-  scene.add(fog);
-}`,
-    ask: 'How much pixel work do the fog layers add each frame?',
+    code: `const fog = new MeshBasicMaterial({ color: 'gray', transparent: true, opacity: 0.1 });
+const layers = Array.from({ length: 8 }, () => new Mesh(bigPlane, fog));
+layers.forEach((layer, i) => (layer.position.z = -i * 0.5)); // each covers the whole view
+scene.add(...layers);`,
+    ask: 'How much pixel work do the fog layers add?',
     choices: [
       'Eight full screens, one for each layer',
-      'Less than one full screen, since each is only 10% opaque',
-      'One full screen, since the layers cover the same pixels',
+      'Under one full screen, each only 10% opaque',
+      'One full screen, since they cover the same pixels',
     ],
     answer: 0,
-    why: "Each layer is shaded and blended at every pixel it covers, whatever its opacity, and see-through layers don't hide each other. So eight full-screen layers are eight full screens of pixel work. One layer at opacity 0.57 looks the same from the front, for an eighth of the work.",
+    why: "Each layer is shaded at every pixel it covers, whatever its opacity, and see-through layers don't hide each other. One layer at 0.57 looks the same, for an eighth of the work.",
   },
   {
     code: `fence.material.transparent = false;
 fence.material.alphaTest = 0.5; // the texture: solid wire and fully clear holes`,
-    ask: 'What changes, compared with drawing the fence with blending?',
+    ask: 'What changes, compared with blending?',
     choices: [
-      'The holes are skipped before shading, so they cost nothing',
-      'It writes depth and needs no sorting, but its holes are still shaded',
-      'Nothing, since alphaTest only works together with transparent',
+      'Its holes are never shaded, so they cost nothing',
+      'It writes depth, but its holes are still shaded',
+      'Nothing, since alphaTest needs transparent too',
     ],
     answer: 1,
-    why: "With `alphaTest`, each fragment is either kept solid or thrown away, so the fence is drawn with the solid objects: it writes depth, needs no back-to-front sorting, and hides what's behind its wire. The throwing away happens inside the fragment shader, though, so the holes are shaded first, and as a rule of thumb a shader that can discard can lose early-z.",
+    why: '`alphaTest` keeps each fragment solid or throws it away, so the fence writes depth and needs no sorting. But the throwing away happens inside the fragment shader, after the holes are shaded.',
   },
 ];

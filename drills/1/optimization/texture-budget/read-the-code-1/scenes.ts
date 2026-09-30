@@ -83,8 +83,8 @@ export const onScreen: SceneSetup = ({ scene, camera, controls, container, rende
   place(3.2);
 
   const bar = overlay(container, 'controls');
-  slider(bar, 'Texture size', { min: 0, max: SIZES.length - 1, step: 1, value: SIZES.indexOf(size) }, (index) => setSize(SIZES[index]));
-  slider(bar, 'Distance', { min: 0.8, max: 8, step: 0.1, value: 3.2 }, place);
+  slider(bar, 'texture size', { min: 0, max: SIZES.length - 1, step: 1, value: SIZES.indexOf(size) }, (index) => setSize(SIZES[index]));
+  slider(bar, 'distance', { min: 0.8, max: 8, step: 0.1, value: 3.2 }, place);
 
   const readout = overlay(container, 'readout');
   onFrame(() => {

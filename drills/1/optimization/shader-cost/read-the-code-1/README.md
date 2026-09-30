@@ -12,28 +12,28 @@ misconceptions:
 
 # Shader and material cost
 
-> **In short:** Every material runs a shader for each pixel it covers, and that work grows with the material type, each extra feature switched on, the number of lights, and shadows, so the cheapest material that still looks right is the one to pick.
+> **In short:** Each material type, feature, light, and shadow adds work at every pixel, so pick the cheapest material that still looks right.
 >
-> **Used for:** A lighter look for phones and low-end laptops; a showroom or a street at night lit by many lights; deciding which parts cast shadows; and choosing between Standard and Physical for car paint, fabric, or glass.
+> **Used for:** Lighter looks for phones, showrooms lit by many lights, choosing which parts cast shadows, and car paint or glass.
 
 ## A · The basics
 
 ### The cost is paid at every pixel
 
-The materials tour gave each material's cost, and the pipeline stages page showed where it's paid: the fragment shader runs for every pixel a mesh covers. Four things set how much work each of those pixels takes:
+The fragment shader runs for every pixel a mesh covers, and four things set how much work each of those pixels takes:
 
-- **The type.** Basic does almost nothing; Lambert and Phong a little for each light; Standard and Physical the most, since they work out light the way real surfaces reflect it.
-- **Features switched on.** Each map and each extra adds work. three.js builds every shader with only the features its material uses.
-- **Lights.** A lit material works out every light at every pixel, so each light adds lighting work everywhere it's drawn.
-- **Shadows.** Each light that casts shadows draws the casting meshes again every frame, into its shadow map (the draw call anatomy page).
+- The type: Basic does almost nothing, Lambert and Phong a little for each light, and Standard and Physical the most.
+- The maps and features switched on. three.js builds each shader with only the features its material uses.
+- The lights, each one worked out at every lit pixel.
+- The shadows: each light that casts them draws the casting meshes again every frame.
 
 ### Physical costs what you switch on
 
-`MeshPhysicalMaterial` is Standard plus extras: clearcoat, sheen, transmission, and more. Each extra starts at 0 and is left out of the shader while it's 0, so a Physical material with none switched on costs close to a Standard one. Each extra you switch on adds shader work. Transmission, for glass, adds far more: every frame, three.js draws all the solid objects a second time into a picture for the glass to show through.
+`MeshPhysicalMaterial` is Standard plus extras like clearcoat, sheen, and transmission. Each starts at 0 and is left out of the shader while it's 0, so a Physical material with none switched on costs close to a Standard one. Each extra you switch on adds shader work, and transmission, for glass, adds far more: every frame, three.js draws all the solid objects again into a picture for the glass to show through.
 
-**Analogy: options on a car.** The top model with every option left unticked costs close to the base one. Each option you tick adds to the bill, and one of them, like a sunroof, means cutting a hole in the roof.
+**Analogy: options on a car.** The top model with every option unticked costs close to the base one. Each option you tick adds to the bill, and one of them, like a sunroof, means cutting a hole in the roof.
 
-Try each material on the sphere. The readout shows the line that made it, the features its compiled shader was built with, and the draw calls.
+Try each material on the sphere, and watch which features its shader was built with and the draw calls.
 
 <div data-scene="materials"></div>
 
@@ -47,21 +47,24 @@ part.material = quality === 'low'
   : new MeshStandardMaterial({ color, map, roughness: 0.5 });
 ```
 
-- Basic or Matcap for things that don't need lighting, Lambert for matte parts, Phong for a shine. The cheaper ones look different, so check them side by side.
-- Choosing `quality` is the adaptive quality page's job, later in this domain.
+Use Basic for things that don't need lighting, Lambert for matte parts, and Phong for a shine. The cheaper ones look different, so check them side by side.
 
 ### Lights
 
-- **Keep lights few.** Light that never changes can be baked into textures instead (the baked lighting page, in the materials domain).
-- **`intensity = 0` doesn't remove a light.** It still sits in every lit material's shader, costing work at every pixel. `light.visible = false` takes it out, and like adding or removing a light, it makes three.js build new shaders for every lit material (the decode, upload, compile page).
+```js
+lamp.intensity = 0;   // still worked out at every lit pixel
+lamp.visible = false; // out of the shaders, which rebuild once
+```
+
+Keep lights few, and bake light that never changes into textures. A light at `intensity = 0` stays in every lit material's shader. Hiding it takes it out, and like adding or removing a light, it makes three.js rebuild the shaders of every lit material.
 
 ### Shadows
 
 ```js
-sun.shadow.mapSize.set(1024, 1024); // 512 by default; bigger costs memory and pixel work
-crate.castShadow = true;            // only on the meshes whose shadows show
-renderer.shadowMap.autoUpdate = false; // for a still scene: draw shadows once,
-renderer.shadowMap.needsUpdate = true; // and again only after something moves
+sun.shadow.mapSize.set(1024, 1024);     // 512 by default; bigger costs memory and pixel work
+crate.castShadow = true;                // only on the meshes whose shadows show
+renderer.shadowMap.autoUpdate = false;  // for a still scene: draw shadows once,
+renderer.shadowMap.needsUpdate = true;  // and again only after something moves
 ```
 
 ## Drill · Read the code

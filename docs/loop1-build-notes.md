@@ -165,6 +165,15 @@ The Sep 30 pass brought each domain to Domain 1's size and voice, which meant cu
 - Double rendering also comes from a resize handler, or from `render()` after `composer.render()`. Remove helpers before timing; they're draw calls too.
 - A shader compile log shows twelve lines around the error, and the driver's wording depends on the browser. The docs suggest turning `checkShaderErrors` off in production for speed.
 
+**Optimization (Domain 14):**
+- `mergeGeometries` logs an error and returns `null` when the pieces' attributes differ (some with UVs, some without) or they mix indexed and non-indexed geometry.
+- An `EffectComposer` reads the pixel ratio when it's created, so call `composer.setPixelRatio(r)` after changing it. Every full-screen pass costs 4× at a ratio of 2; shadow map size doesn't follow the pixel ratio.
+- Each raycast hit is a new object with its own `point`, which adds up at thousands of rays a frame. `v.toArray(array, offset)` writes into an existing array.
+- LOD distance is divided by `camera.zoom`; `lod.getCurrentLevel()` says which version is showing. BatchedMesh's `perObjectFrustumCulled` is on by default. Culling ignores anything in the way: an object behind a wall is still drawn. Call `computeBoundingSphere()` after editing vertices.
+- A point light's shadows render six times. Matcap is a cheap lit-looking option.
+- `texture.clone()` shares the image and keeps one GPU copy while the settings match, even with a different offset or repeat. `TextureUtils.getByteLength` gives exact byte counts.
+- Program leaks come from making materials with new settings each cycle and never disposing them. Listeners on window resize or controls `change`, and frame-loop callbacks holding an old model, keep models alive.
+
 ## Page lengths
 
 Several pages run over the recipe's guide: most light pages are 72–90 lines against 50–70, and some core pages reach 130–145 against about 120 (the camera domain's, and Attributes, uniforms, varyings). The extra is mostly B's code blocks. Trim if Brad finds them long.

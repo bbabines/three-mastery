@@ -14,8 +14,8 @@ contexts:
 
 ## Definition
 
-Draw call reduction draws the same picture with fewer draw calls: parts that never move are merged into one mesh, repeats become one InstancedMesh, and different shapes that share a material become one BatchedMesh.
+Draw call reduction merges parts that never move, and draws repeats, or different shapes that share a material, together, so the same picture takes fewer draw calls.
 
 ## Cost lens
 
-Every draw call removed saves CPU time every frame. The GPU still processes the same vertices and the same pixels, so a scene that's slow on pixel work gets no faster. Merging copies each part's vertices into the merged geometry, so merging repeats of one shape costs memory that instancing doesn't.
+Every draw call removed saves CPU time every frame, but the GPU still does the same vertex and pixel work. Merging repeats of one shape stores its vertices once per copy, which instancing avoids.

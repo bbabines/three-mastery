@@ -12,35 +12,29 @@ misconceptions:
 
 # Draw call reduction
 
-> **In short:** Draw call reduction draws the same picture with fewer draw calls, by merging parts that never move, drawing repeats as one InstancedMesh, and drawing different shapes that share a material as one BatchedMesh, which saves CPU time but not GPU work.
+> **In short:** Draws the same picture with fewer draw calls, which saves CPU time but none of the GPU's pixel work.
 >
-> **Used for:** A warehouse full of identical racks and bins; a room, a factory floor, or a city block that never moves; a CAD model that arrives as thousands of small parts; and a forest or a crowd grown from a handful of shapes.
+> **Used for:** Racks of identical bins, a factory floor that never moves, CAD models in thousands of parts, and forests.
 
 ## A · The basics
 
 ### Same picture, fewer requests
 
-The draw call anatomy page showed that every mesh in view costs at least one draw call, and that each one costs about the same CPU time, however small the mesh. Five hundred bolts are five hundred draw calls, even when they share a geometry and a material. Draw call reduction draws the same picture with fewer calls. Three tools do most of the work:
+Every mesh in view is at least one draw call, and each one costs about the same CPU time, however small the mesh. Five hundred bolts are five hundred draw calls, even when they share a geometry and a material.
 
-| Tool | What it does | Reach for it when | The catch |
-| --- | --- | --- | --- |
-| `mergeGeometries` | Joins many geometries into one, drawn as one mesh | Parts that never move: shelving, walls, a factory floor | The merged parts can't move, hide, or be culled one by one |
-| `InstancedMesh` | Draws one geometry many times in one call (the InstancedMesh page) | Repeats: bolts, bins, chairs | One shape and one material for every copy |
-| `BatchedMesh` | Draws different geometries that share one material in one call | Many different parts with the same look | One call only where the browser has multi-draw |
+Three tools draw the same thing with fewer calls, and all three need the parts to share one material. **Merging** joins parts that never move into one mesh. An `InstancedMesh` draws one shape many times in one call, as the InstancedMesh page showed. A `BatchedMesh` draws different shapes that share a material in one call.
 
-All three need the parts to share one material. Sharing a material is where it starts, but on its own it merges nothing.
+**Analogy: sending mail.** Two hundred letters to one street are two hundred trips to the mailbox, and one parcel is one trip. The carrier still walks to every door, the way the GPU still draws every triangle.
 
-**Analogy: sending mail.** Two hundred letters to one street are two hundred stamps and two hundred trips to the mailbox, whatever's inside. Pack them in one parcel (merging), or send one form letter with a list of addresses (instancing), and the post office handles one item. The carrier still walks to every door: the GPU still draws every triangle.
-
-Try each tool on the rack's steel frame and on its bins. The readout shows the code, and the draw calls and triangles from `renderer.info.render`. The floor grid is hidden so it doesn't add to the count.
+Try each tool on the rack's frame and on its bins. The draw calls drop; the triangles don't.
 
 <div data-scene="fixes"></div>
 
 ### Fewer calls, same pixels
 
-Cutting a draw call saves its CPU time. The GPU's work stays: the same triangles land on the same pixels, and each pixel is shaded as before. So fewer draw calls only speed up a frame that was waiting on the CPU. A scene that's slow because of pixel work, which you'll see called **fill-rate-bound**, stays just as slow. The frame budget page covers why the slower side sets the pace, and Loop 3's proof experiments find out which side that is.
+Cutting a draw call saves its CPU time, not pixel work: the GPU still shades every pixel each triangle covers. So it only speeds up a frame that was waiting on the CPU. A scene that's slow because of pixel work, called **fill-rate-bound**, stays just as slow.
 
-Twelve see-through panels overlap in front of the camera. Each one adds a little light wherever it's drawn, so a pixel's brightness shows how many panels were shaded there. Switch to one InstancedMesh: the draw calls drop to 1, and the picture, with all the pixel work in it, stays the same.
+Each panel adds a little light where it's drawn, so brightness shows the pixel work. Switch to one InstancedMesh: the draw calls drop to 1, and the picture doesn't change.
 
 <div data-scene="fillRate"></div>
 
@@ -50,47 +44,32 @@ Twelve see-through panels overlap in front of the camera. Each one adds a little
 
 ```js
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
-
-const pieces = [];
 frame.updateMatrixWorld();
-frame.traverse((part) => {
-  if (part.isMesh) pieces.push(part.geometry.clone().applyMatrix4(part.matrixWorld));
-});
+const pieces = parts.map((part) => part.geometry.clone().applyMatrix4(part.matrixWorld));
 scene.add(new Mesh(mergeGeometries(pieces), steel));
 ```
 
-- **Bake each part's place into its copy.** A geometry doesn't know where its mesh stands. Without `applyMatrix4(part.matrixWorld)`, every piece lands at the center of the scene, on top of the others. `clone()` first, since `applyMatrix4` changes the geometry itself, and other meshes may share it.
-- **The pieces must match:** the same attributes (all with UVs, or none), and all indexed or none. Otherwise `mergeGeometries` logs an error and returns `null`.
-- **The merged mesh is one object.** It's culled, hidden, and raycast as a whole. Merge what never changes.
-- `mergeGeometries(pieces, true)` keeps a group per piece, for a material array, and with a material array each group is its own draw call again (the groups page).
+A geometry doesn't know where its mesh stands, so `applyMatrix4(part.matrixWorld)` bakes that into each copy. Without it, every piece lands at the center of the scene. Clone first, since `applyMatrix4` changes the geometry itself. The merged mesh is one object: it's culled, hidden, and raycast as a whole.
+
+`mergeGeometries(pieces, true)` keeps a group per piece, for a material array, and then each group is a draw call again.
 
 ### Repeats: instance, don't merge
 
-Merging 500 bolts puts 500 copies of the bolt's vertices in GPU memory. An InstancedMesh keeps one copy plus a matrix for each bolt, and it's one draw call too. Merge unique parts; instance repeats.
+Merging 500 bolts stores the bolt's vertices 500 times. An InstancedMesh stores them once, plus a matrix for each bolt, and it's one draw call too. Merge unique parts; instance repeats.
 
-### Different shapes, one material: BatchedMesh
+### Different shapes, one material
 
 ```js
 const batch = new BatchedMesh(200, 20000, 40000, steel); // copies, vertices, indices it can hold
 const postId = batch.addGeometry(postGeometry);          // each shape once
-const i = batch.addInstance(postId);                     // then any number of copies
-batch.setMatrixAt(i, post.matrixWorld);
+batch.setMatrixAt(batch.addInstance(postId), post.matrixWorld); // then any number of copies
 ```
 
-- It's one draw call where the browser has WebGL's multi-draw extension, and `renderer.extensions.has('WEBGL_multi_draw')` says whether it does. Without it, three.js draws each visible copy with a call of its own.
-- Unlike a merged mesh, it culls each copy on its own, and each copy can still move.
+Unlike a merged mesh, each copy can still move and is culled on its own. It's one draw call only where the browser has multi-draw, which `renderer.extensions.has('WEBGL_multi_draw')` reports. Without it, each visible copy is a call of its own.
 
 ### Parts with different textures
 
-Parts with different textures can't share a material. A **texture atlas** packs their pictures into one texture, and each part's UVs point at its own patch of it (the UVs page), so the parts can share a material and be merged or batched. Atlases are usually made along with the model, before it reaches three.js.
-
-### Which space is it in?
-
-| Value | Space |
-| --- | --- |
-| A part's geometry, before merging | Measured from the part itself |
-| The merged geometry, after `applyMatrix4(part.matrixWorld)` | The world, so the merged mesh stays at the origin, unturned and unscaled |
-| The matrix passed to `setMatrixAt`, on an InstancedMesh or a BatchedMesh | Measured from the InstancedMesh or BatchedMesh itself |
+Parts with different textures can't share a material. A **texture atlas** packs their pictures into one texture, with each part's UVs pointing at its own patch, so the parts can share a material and be merged or batched.
 
 ## Drill · Read the code
 

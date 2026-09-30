@@ -61,7 +61,7 @@ export const pixels: SceneSetup = ({ scene, camera, controls, container, rendere
   // Starts at the ratio the harness chose, Math.min(devicePixelRatio, 2), or the nearest one listed.
   const start = RATIOS.reduce((best, ratio, i) => (Math.abs(ratio - renderer.getPixelRatio()) < Math.abs(RATIOS[best] - renderer.getPixelRatio()) ? i : best), 0);
   renderer.setPixelRatio(RATIOS[start]);
-  slider(overlay(container, 'controls'), 'Pixel ratio', { min: 0, max: RATIOS.length - 1, step: 1, value: start }, (index) => {
+  slider(overlay(container, 'controls'), 'pixel ratio', { min: 0, max: RATIOS.length - 1, step: 1, value: start }, (index) => {
     renderer.setPixelRatio(RATIOS[index]);
   });
 
@@ -113,7 +113,7 @@ export const orbit: SceneSetup = ({ scene, camera, controls, container, renderer
   const offset = camera.position.clone().sub(controls.target);
   const spherical = new THREE.Spherical().setFromVector3(offset);
   const startTheta = spherical.theta;
-  slider(bar, 'Orbit', { min: -60, max: 60, step: 1, value: 0 }, (degrees) => {
+  slider(bar, 'orbit', { min: -60, max: 60, step: 1, value: 0 }, (degrees) => {
     if (!orbiting) onStart();
     spherical.theta = startTheta + THREE.MathUtils.degToRad(degrees);
     camera.position.setFromSpherical(spherical).add(controls.target);

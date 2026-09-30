@@ -119,7 +119,7 @@ export const shared: SceneSetup = ({ scene, camera, controls, container, onFrame
     { html: 'return the scratch vector', select: () => (fixed = false) },
     { html: 'write into a target', select: () => (fixed = true) },
   ]);
-  slider(bar, 'Move shelf B', { min: 0.2, max: 2.2, step: 0.1, value: shelfB.position.x }, (x) => (shelfB.position.x = x));
+  slider(bar, 'move shelf b', { min: 0.2, max: 2.2, step: 0.1, value: shelfB.position.x }, (x) => (shelfB.position.x = x));
 
   const readout = overlay(container, 'readout');
   onFrame(() => {

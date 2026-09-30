@@ -14,8 +14,8 @@ contexts:
 
 ## Definition
 
-A texture budget sizes each texture to what it covers on screen, and keeps the total of all the textures loaded at once within what the weakest target device can hold, by sizing, sharing, compressing, and mipmapping them.
+A texture budget sizes each texture to what it covers on screen, and keeps all the textures loaded at once within what the weakest target device can hold.
 
 ## Cost lens
 
-GPU memory: width × height × 4 bytes for 8-bit color, plus a third for mipmaps, for every texture loaded at the same time (the runtime memory math page). The upload on first use grows with the same bytes. Pixels beyond what the surface covers on screen cost that memory and add nothing you can see.
+GPU memory for every texture loaded at once, 4 bytes a pixel for 8-bit color plus a third for mipmaps, and an upload of the same bytes on first use. Pixels beyond what the surface covers on screen cost that memory and add nothing you can see.

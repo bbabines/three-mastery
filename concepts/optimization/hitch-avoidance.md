@@ -14,8 +14,8 @@ contexts:
 
 ## Definition
 
-Hitch avoidance keeps the one-time work of showing something new, like compiling shaders and uploading textures, out of the frame where the user is watching, by doing it early, spreading it over several frames, or doing it off the main thread.
+Hitch avoidance keeps the one-time work of showing something new out of the frame the user is watching, by doing it early, spreading it out, or moving it off the main thread.
 
 ## Cost lens
 
-The same total work, moved. Compiles and uploads still cost main-thread and GPU time, but in moments when nothing is expected to change, or split so that no single frame misses its refresh. Decoding in workers uses other CPU cores instead of the main thread.
+The same total work, moved to moments when nothing is expected to change, or split so no single frame misses its refresh. Decoding in workers uses other CPU cores instead of the main thread.

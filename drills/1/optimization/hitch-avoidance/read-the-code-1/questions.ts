@@ -5,14 +5,14 @@ export const questions: Question[] = [
   {
     code: `const gltf = await loader.loadAsync('armchair-velvet.glb'); // loaded as the page opened
 optionButton.addEventListener('click', () => scene.add(gltf.scene));`,
-    ask: 'The file finished loading long before the click. What can still make the click stutter?',
+    ask: 'What can still make the click stutter?',
     choices: [
-      'Uploading its textures and compiling its shaders in that frame',
-      'Nothing, since everything was ready once the load finished',
-      'Downloading the file again, since add() fetches the model',
+      'Uploads and shader compiles in that frame',
+      'Nothing, since the load already finished',
+      'Downloading the file again on add()',
     ],
     answer: 0,
-    why: "Loading ends at decode. three.js uploads the geometry and textures and compiles the shaders in the first frame that draws the model, which is the frame right after the click. Warm it up after loading instead: `renderer.compileAsync(gltf.scene, camera, scene)`, and `renderer.initTexture` for its textures.",
+    why: 'Loading ends at decode. three.js uploads and compiles in the first frame that draws the model, right after the click. Warm up after loading with `compileAsync` and `initTexture`.',
   },
   {
     code: `const queue = [...newShelves]; // 400 shelves for the next aisle
@@ -20,26 +20,26 @@ renderer.setAnimationLoop(() => {
   for (let i = 0; i < 20 && queue.length > 0; i++) scene.add(queue.shift());
   renderer.render(scene, camera);
 });`,
-    ask: 'What does this do, compared with adding all 400 at once?',
+    ask: 'What does this change, compared with all at once?',
     choices: [
-      'Cuts the total work to a twentieth, 20 at a time',
-      'Spreads the work over 20 frames of 20 shelves',
-      'Nothing, since three.js batches adds into one frame',
+      'It cuts the total work to a twentieth',
+      'It spreads the same work over 20 frames',
+      'Nothing, since three.js batches adds',
     ],
     answer: 1,
-    why: "The total work doesn't change: every shelf still costs its draw call, and anything drawn for the first time still uploads and compiles. But each frame takes on a twentieth of it, so no single frame has to swallow it all.",
+    why: "Every shelf still costs its draw call, and anything new still uploads and compiles, so the total doesn't change. But each frame takes a twentieth of it, so no frame swallows it all.",
   },
   {
     code: `await renderer.compileAsync(showroom, camera, scene);
 scene.add(new SpotLight('white', 50)); // a spotlight, added afterwards
 scene.add(showroom);`,
-    ask: 'What happens in the first frame that draws the showroom?',
+    ask: 'What happens in the first frame that draws it?',
     choices: [
-      'Nothing new, since compileAsync already built every shader',
+      'Nothing new, since compileAsync built every shader',
       'The spotlight is ignored until the next warm-up',
       'Its lit materials compile again, for the new light',
     ],
     answer: 2,
-    why: "A lit material's shader is built for the lights the scene has at that moment. Adding the spotlight changes that, so every lit material needs a new program on its next draw, and the hitch is back. Set up the lights and the environment first, then warm up (the decode, upload, compile page).",
+    why: "A lit material's shader is built for the scene's lights at that moment. Adding a spotlight changes them, so every lit material compiles again. Set up the lights first, then warm up.",
   },
 ];

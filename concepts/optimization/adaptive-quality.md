@@ -14,8 +14,8 @@ contexts:
 
 ## Definition
 
-Adaptive quality watches frame times while the app runs, steps settings like the pixel ratio down when frames run late and back up when they've been on time for a while, and keeps a gap between the two, called hysteresis, so it doesn't flip back and forth.
+Adaptive quality steps settings like the pixel ratio down when frames run late and back up once they've been on time for a while, with a gap between the two so it doesn't flip back and forth.
 
 ## Cost lens
 
-A little CPU time every frame to track frame times. In return, it gives up picture quality only when and where the frames need it: on a slow device, in a heavy view, or on a phone that has slowed down as it heats up.
+A little CPU time every frame to track frame times. In return, it gives up picture quality only when and where the frames need it.

@@ -14,8 +14,8 @@ contexts:
 
 ## Definition
 
-The pixel ratio sets how many device pixels the canvas draws for each CSS pixel, and the number of pixels drawn grows with its square, so capping it, and lowering it while the view moves, cuts pixel work more than almost any other setting.
+The pixel ratio is how many device pixels the canvas draws for each CSS pixel, and keeping it low, all the time or while the view moves, is one of the biggest cuts to pixel work.
 
 ## Cost lens
 
-Pixel work for every pass over the screen, and the memory of the canvas and of every render target sized to match it, grow with the pixel ratio squared: 4 times at a ratio of 2, 9 times at 3. The CPU's share of a frame doesn't change.
+Pixel work, and the memory of the canvas and of render targets sized to match it, grow with the pixel ratio squared. The CPU's share of a frame doesn't change.

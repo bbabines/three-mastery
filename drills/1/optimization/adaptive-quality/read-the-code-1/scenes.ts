@@ -62,7 +62,7 @@ export const controller: SceneSetup = ({ scene, camera, controls, container, ren
     { html: 'one threshold', select: () => ((hysteresis = false), restart()) },
     { html: 'hysteresis', select: () => ((hysteresis = true), restart()) },
   ]);
-  slider(bar, 'Load', { min: 0.4, max: 2, step: 0.1, value: load }, (value) => (load = value));
+  slider(bar, 'load', { min: 0.4, max: 2, step: 0.1, value: load }, (value) => (load = value));
 
   const readout = overlay(container, 'readout');
   onFrame((delta) => {

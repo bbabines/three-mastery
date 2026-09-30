@@ -105,8 +105,8 @@ export const aisle: SceneSetup = ({ scene, camera, controls, container, renderer
       },
     })),
   );
-  slider(bar, 'Walk', { min: 0, max: 24, step: 0.5, value: 0 }, (value) => ((view.walk = value), place()));
-  slider(bar, 'Turn', { min: -80, max: 80, step: 1, value: 0 }, (value) => ((view.turn = value), place()));
+  slider(bar, 'walk', { min: 0, max: 24, step: 0.5, value: 0 }, (value) => ((view.walk = value), place()));
+  slider(bar, 'turn', { min: -80, max: 80, step: 1, value: 0 }, (value) => ((view.turn = value), place()));
 
   const readout = overlay(container, 'readout');
   // Runs before each render, so the counts are the last frame's.
