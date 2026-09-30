@@ -36,7 +36,7 @@ export const roundTrip: SceneSetup = ({ scene, camera, controls, container }) =>
     ].join('\n');
   };
   for (const axis of ['x', 'y', 'z'] as const) {
-    slider(sliders, axis.toUpperCase(), { min: -180, max: 180, step: 15, value: degrees[axis] }, (value) => {
+    slider(sliders, axis, { min: -180, max: 180, step: 15, value: degrees[axis] }, (value) => {
       degrees[axis] = value;
       update();
     });

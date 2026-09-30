@@ -15,8 +15,8 @@ contexts:
 
 ## Definition
 
-A quaternion is three.js's way of storing a turn: four numbers with a length of 1 that hold an axis and an angle together, where none of the numbers is an angle, q and −q are the same turn, and the order you multiply two of them decides whose axes the second turn uses.
+A quaternion is three.js's way of storing a turn: four numbers that hold an axis and an angle together, none of which is an angle.
 
 ## Space lens
 
-`object.quaternion` is measured from the parent, and `getWorldQuaternion` gives the turn in the world. `q.multiply(d)` applies `d` around the object's own axes; `q.premultiply(d)` applies it around the parent's axes, which are the world's only when no parent is turned. The two directions given to `setFromUnitVectors` must be in the same space as each other.
+An object's quaternion is measured from its parent. `multiply` adds a turn around the object's own axes, and `premultiply` adds one around the parent's axes.

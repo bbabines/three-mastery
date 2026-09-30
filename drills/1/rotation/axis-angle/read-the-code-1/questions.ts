@@ -7,33 +7,25 @@ export const questions: Question[] = [
 // every frame:
 fan.rotateOnAxis(new Vector3(0, 1, 0), 2 * delta);`,
     ask: 'Which line does the fan spin around?',
-    choices: ['Its own Y axis, which leans 30° along with it', "The world's upright Y axis, straight up", "The world's Z, where the lean was set"],
+    choices: ['Its own Y, which leans 30° with the fan', "The world's upright Y, straight up", "The world's Z, where the lean was set"],
     answer: 0,
-    why: "`rotateOnAxis` reads the axis as measured from the fan itself, so (0, 1, 0) is the fan's own Y, which leans with it: the fan spins in place like a tilted desk fan. `rotateOnWorldAxis` would spin it around the upright Y instead, and its lean would swing around in a circle.",
+    why: "`rotateOnAxis` measures the axis from the fan itself, so (0, 1, 0) is the fan's own leaning Y. Use `rotateOnWorldAxis` to spin around the upright Y.",
   },
   {
     code: `const hinge = new Vector3(1, 1, 0); // along the lid's slanted edge
 lid.setRotationFromAxisAngle(hinge, Math.PI / 2);`,
     ask: 'What goes wrong?',
-    choices: [
-      'Nothing goes wrong, because three.js normalizes the axis for you',
-      'The lid turns, but also comes out stretched and skewed',
-      "It throws an error, since the axis isn't length 1",
-    ],
+    choices: ['Nothing, since three.js normalizes it', 'The lid turns, but comes out skewed', 'It throws an error about the length'],
     answer: 1,
-    why: "three.js assumes the axis is unit length and doesn't check. (1, 1, 0) is about 1.41 long, so the quaternion comes out longer than 1, and that stretches the lid as well as turning it: its corners stop being square. Use `new Vector3(1, 1, 0).normalize()`.",
+    why: "three.js assumes the axis has length 1 and doesn't check, so a longer axis stretches the lid as well as turning it. Use `hinge.normalize()` first.",
   },
   {
     code: `turntable.rotation.x = MathUtils.degToRad(90); // tipped onto its side
 turntable.add(vase);
 vase.rotateOnWorldAxis(new Vector3(0, 1, 0), 0.5);`,
-    ask: 'Which line in the world does the vase turn around?',
-    choices: [
-      "World Z: it's really the tipped turntable's Y",
-      'World Y: the upright world axis, as the method name says',
-      "The vase's own Y: the same as rotateOnAxis would use",
-    ],
+    ask: 'Which world line does the vase turn around?',
+    choices: ["World Z, the turntable's tipped Y", 'World Y, as the method name says', "The vase's own Y, like rotateOnAxis"],
     answer: 0,
-    why: "`rotateOnWorldAxis` measures the axis from the vase's parent, the turntable, and the turntable's Y now points along the world's Z. three.js's source notes the method assumes no turned parent. To turn around the true world Y, turn the axis into the parent's space first with the inverse of `turntable.getWorldQuaternion(q)`.",
+    why: "`rotateOnWorldAxis` measures the axis from the parent, and the turntable's Y now points along world Z. Turn the axis by the inverse of the parent's world quaternion first.",
   },
 ];

@@ -14,8 +14,8 @@ contexts:
 
 ## Definition
 
-The first three columns of an object's matrix are where its own +X, +Y, and +Z point after its turn, each as long as its scale on that axis, so you can read which way it faces straight out of the matrix, or build a turn from three axes.
+The turn inside a matrix is the object's own three axes, written as its first three columns.
 
 ## Space lens
 
-The columns of `object.matrix` are the object's own axes measured in its parent's space; the columns of `matrixWorld` are the same axes in the world. They carry scale, so normalize them before using them as directions. An ordinary object's front is +Z, the third column; a camera looks down −Z, so the way it looks is the third column negated.
+The columns of `matrix` are the object's own axes in its parent's space, and those of `matrixWorld` are the same axes in the world. They carry scale, so normalize one before using it as a direction.

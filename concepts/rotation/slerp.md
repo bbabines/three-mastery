@@ -14,8 +14,8 @@ contexts:
 
 ## Definition
 
-Slerp blends between two turns by a fraction t, turning at an even speed along the shortest way round.
+Slerp gives the turn a fraction of the way between two turns, the way lerp does for positions.
 
 ## Space lens
 
-Both quaternions must be measured from the same place, like two `object.quaternion` values under the same parent; the blend is measured from there too.
+Both turns must be measured from the same place, like two quaternions under the same parent, and the blend is measured from there too.

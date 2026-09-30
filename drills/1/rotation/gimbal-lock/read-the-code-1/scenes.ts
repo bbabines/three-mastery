@@ -61,18 +61,18 @@ export const rings: SceneSetup = ({ scene, camera, controls, container }) => {
       locked
         ? `<span style="color:${COLORS.orange}">roll axis lines up with the yaw axis: gimbal lock</span>`
         : `<span style="color:${COLORS.blue}">roll axis</span> is ${formatNumber(gap, 0)}° from the <span style="color:${COLORS.green}">yaw axis</span>`,
-      locked ? 'Yaw and Roll now spin the ship around the same line.' : 'Yaw and Roll turn the ship different ways.',
+      locked ? 'yaw and roll now spin the ship around the same line' : 'yaw and roll turn the ship different ways',
     ].join('\n');
   };
-  slider(sliders, 'Yaw', { min: -90, max: 90, step: 15, value: degrees.yaw }, (value) => {
+  slider(sliders, 'yaw', { min: -90, max: 90, step: 15, value: degrees.yaw }, (value) => {
     degrees.yaw = value;
     update();
   });
-  slider(sliders, 'Pitch', { min: -90, max: 90, step: 15, value: degrees.pitch }, (value) => {
+  slider(sliders, 'pitch', { min: -90, max: 90, step: 15, value: degrees.pitch }, (value) => {
     degrees.pitch = value;
     update();
   });
-  slider(sliders, 'Roll', { min: -90, max: 90, step: 15, value: degrees.roll }, (value) => {
+  slider(sliders, 'roll', { min: -90, max: 90, step: 15, value: degrees.roll }, (value) => {
     degrees.roll = value;
     update();
   });

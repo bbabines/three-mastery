@@ -14,8 +14,8 @@ contexts:
 
 ## Definition
 
-When the middle of the three Euler turns reaches 90° up or down, the first and last turns go around the same line, so two of the angles do the same thing and one way of turning is lost until the middle angle moves away.
+Gimbal lock is the spot where two of the three Euler angles do the same thing, because the middle turn has lined up the first and last axes.
 
 ## Space lens
 
-At the lock, the last turn's axis (the object's own axis) lines up with the first turn's axis (the parent's axis), so changing either angle turns the object around the same line.
+At the lock, the last turn's axis, the object's own, lines up with the first turn's axis, the parent's, so either angle turns the object around the same line.

@@ -41,15 +41,15 @@ export const columns: SceneSetup = ({ scene, camera, controls, container }) => {
       ),
     ].join('\n');
   };
-  slider(sliders, 'Turn', { min: -180, max: 180, step: 15, value: values.turn }, (value) => {
+  slider(sliders, 'turn', { min: -180, max: 180, step: 15, value: values.turn }, (value) => {
     values.turn = value;
     update();
   });
-  slider(sliders, 'Tip', { min: -60, max: 60, step: 15, value: values.tip }, (value) => {
+  slider(sliders, 'tip', { min: -60, max: 60, step: 15, value: values.tip }, (value) => {
     values.tip = value;
     update();
   });
-  slider(sliders, 'Size', { min: 0.5, max: 2, step: 0.25, value: values.size }, (value) => {
+  slider(sliders, 'size', { min: 0.5, max: 2, step: 0.25, value: values.size }, (value) => {
     values.size = value;
     update();
   });
@@ -117,11 +117,11 @@ export const build: SceneSetup = ({ scene, camera, controls, container }) => {
       },
     },
   ]);
-  slider(controlsBar, 'Heading', { min: -90, max: 90, step: 15, value: heading }, (value) => {
+  slider(controlsBar, 'heading', { min: -90, max: 90, step: 15, value: heading }, (value) => {
     heading = value;
     update();
   });
-  slider(controlsBar, 'Slope', { min: 0, max: 60, step: 10, value: slope }, (value) => {
+  slider(controlsBar, 'slope', { min: 0, max: 60, step: 10, value: slope }, (value) => {
     slope = value;
     update();
   });

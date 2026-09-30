@@ -14,8 +14,8 @@ contexts:
 
 ## Definition
 
-Any turn can be written as one angle around one line through the object's origin, its axis; three.js takes the axis as a unit-length Vector3 and the angle in radians.
+Axis-angle describes a turn as one angle around one line through the object's origin, with the line given as a direction of length 1.
 
 ## Space lens
 
-The axis passed to `rotateOnAxis` (and `rotateX`, `rotateY`, `rotateZ`) is measured from the object itself, so it leans when the object leans. The axis passed to `rotateOnWorldAxis` is measured from the parent, which is the world only when no parent is turned. `setRotationFromAxisAngle` sets the whole turn, measured from the parent. `vector.applyAxisAngle` turns a vector around a line through (0, 0, 0) of whatever space the vector is in.
+An axis passed to `rotateOnAxis` is measured from the object itself, so it leans when the object leans. An axis passed to `rotateOnWorldAxis` is measured from the parent, which is the world only when no parent is turned.

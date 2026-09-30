@@ -49,7 +49,7 @@ export const inside: SceneSetup = ({ scene, camera, controls, container }) => {
       },
     })),
   );
-  slider(controlsBar, 'Angle', { min: 0, max: 360, step: 15, value: degrees }, (value) => {
+  slider(controlsBar, 'angle', { min: 0, max: 360, step: 15, value: degrees }, (value) => {
     degrees = value;
     update();
   });
@@ -107,7 +107,7 @@ export const combine: SceneSetup = ({ scene, camera, controls, container }) => {
       },
     },
   ]);
-  slider(controlsBar, 'Tip', { min: 0, max: 90, step: 15, value: degrees }, (value) => {
+  slider(controlsBar, 'tip', { min: 0, max: 90, step: 15, value: degrees }, (value) => {
     degrees = value;
     update();
   });

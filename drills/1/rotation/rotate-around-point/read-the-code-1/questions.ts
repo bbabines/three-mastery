@@ -7,13 +7,9 @@ export const questions: Question[] = [
 moon.position.set(5, 0, 0); // both straight in the scene
 moon.position.applyAxisAngle(new Vector3(0, 1, 0), Math.PI);`,
     ask: 'Where does the moon end up?',
-    choices: [
-      '(3, 0, 0): swung halfway around the planet',
-      '(−5, 0, 0): swung around the center of the world',
-      '(5, 0, 0): turned in place, without moving',
-    ],
+    choices: ['(3, 0, 0), halfway around the planet', '(−5, 0, 0), around the world center', '(5, 0, 0), turned in place'],
     answer: 1,
-    why: "`applyAxisAngle` turns a vector around (0, 0, 0) of its own space, and the moon's position is measured from the scene, so it swings around the world's center and ends up 9 units from the planet. To swing around the planet, turn the offset from the planet and add the planet back.",
+    why: "`applyAxisAngle` turns around (0, 0, 0) of the position's space, here the world's center. Turn the offset from the planet instead, then add the planet back.",
   },
   {
     code: `// planet at (4, 0, 0), moon starting at (5, 0, 0)
@@ -23,7 +19,7 @@ moon.position.copy(planet.position).add(offset);`,
     ask: 'Where does the moon end up?',
     choices: ['(0, 0, −5)', '(4, 0, −1)', '(5, 0, 0)'],
     answer: 1,
-    why: "The offset from the planet is (1, 0, 0). A quarter turn around Y swings it to (0, 0, −1), and adding the planet back gives (4, 0, −1): a quarter circle around the planet, still 1 away. (0, 0, −5) is where a quarter turn around the world's center would put it.",
+    why: "The offset (1, 0, 0) turns to (0, 0, −1), and adding the planet back gives (4, 0, −1), still 1 away. (0, 0, −5) is a turn around the world's center.",
   },
   {
     code: `// the chair sits straight in the scene
@@ -31,12 +27,8 @@ const center = new Box3().setFromObject(chair).getCenter(new Vector3());
 chair.position.sub(center).applyAxisAngle(up, angle).add(center);
 chair.rotateOnWorldAxis(up, angle);`,
     ask: 'What does the chair do?',
-    choices: [
-      'Swings around the world origin, then spins',
-      'Turns by `angle` around its own middle, which stays put',
-      'Spins around its origin, then drifts off',
-    ],
+    choices: ['Swings around the world origin', 'Turns in place around its middle', 'Spins, then drifts off its spot'],
     answer: 1,
-    why: "`sub` makes `position` the offset from the middle, `applyAxisAngle` turns it, and `add` puts the middle back, all on `position` itself. `rotateOnWorldAxis` turns the chair by the same amount, so its middle stays exactly where it was. The `Box3` center is in the world, which matches `position` only because the chair sits straight in the scene.",
+    why: 'The first line turns the offset from the middle, and `rotateOnWorldAxis` turns the chair to match, so its middle stays put. Inside a group, convert the center first.',
   },
 ];

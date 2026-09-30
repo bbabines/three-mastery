@@ -15,8 +15,8 @@ contexts:
 
 ## Definition
 
-`object.rotation` stores a turn as three angles in radians, one around each axis, done one after another in a set order; with the default 'XYZ', the object turns around its own X, then its new Y, then its new Z, so the same three angles in another order give a different turn.
+Euler angles describe a turn as three angles, one around each axis, done in a set order, and the same angles in another order make a different turn.
 
 ## Space lens
 
-The three angles are measured from the parent. Each turn after the first goes around the object's own axis, as the turns before it left it. Seen from the parent, 'XYZ' is the same as turning around the parent's Z, then Y, then X, so the X angle always turns around the parent's X and the Z angle around the object's own Z.
+The angles are measured from the parent. The first turn goes around the parent's axis, and each later turn around the object's own axis, as the turns before it left it.

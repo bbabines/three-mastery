@@ -80,7 +80,7 @@ export const steps: SceneSetup = ({ scene, camera, controls, container }) => {
       },
     },
   ]);
-  slider(controlsBar, 'Step', { min: 0, max: 3, step: 1, value: step }, (value) => {
+  slider(controlsBar, 'step', { min: 0, max: 3, step: 1, value: step }, (value) => {
     step = value;
     update();
   });
@@ -153,11 +153,11 @@ export const yawPitch: SceneSetup = (harness) => {
       },
     },
   ]);
-  slider(controlsBar, 'Pitch (x)', { min: -40, max: 40, step: 5, value: pitch }, (value) => {
+  slider(controlsBar, 'pitch (x)', { min: -40, max: 40, step: 5, value: pitch }, (value) => {
     pitch = value;
     update();
   });
-  slider(controlsBar, 'Yaw (y)', { min: -90, max: 90, step: 15, value: yaw }, (value) => {
+  slider(controlsBar, 'yaw (y)', { min: -90, max: 90, step: 15, value: yaw }, (value) => {
     yaw = value;
     update();
   });

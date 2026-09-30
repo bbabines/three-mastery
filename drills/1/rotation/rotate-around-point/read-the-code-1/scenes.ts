@@ -88,7 +88,7 @@ export const orbit: SceneSetup = ({ scene, camera, controls, container }) => {
       },
     },
   ]);
-  slider(controlsBar, 'Turn a', { min: 0, max: 360, step: 15, value: degrees }, (value) => {
+  slider(controlsBar, 'turn a', { min: 0, max: 360, step: 15, value: degrees }, (value) => {
     degrees = value;
     update();
   });

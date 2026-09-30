@@ -65,7 +65,7 @@ export const facing: SceneSetup = ({ scene, camera, controls, container }) => {
       `<span style="color:${COLORS.blue}">+Z</span>: the turret's points at the ball, the camera's points away`,
     ].join('\n');
   };
-  slider(sliders, 'Move ball', { min: -2.5, max: 2.5, step: 0.25, value: x }, (value) => {
+  slider(sliders, 'move ball', { min: -2.5, max: 2.5, step: 0.25, value: x }, (value) => {
     x = value;
     update();
   });
@@ -157,7 +157,7 @@ export const upHint: SceneSetup = (harness) => {
       },
     })),
   );
-  slider(controlsBar, 'Ball z', { min: -1.5, max: 1.5, step: 0.25, value: z }, (value) => {
+  slider(controlsBar, 'ball z', { min: -1.5, max: 1.5, step: 0.25, value: z }, (value) => {
     z = value;
     update();
   });
@@ -234,7 +234,7 @@ export const spot: SceneSetup = ({ scene, camera, controls, container }) => {
       },
     },
   ]);
-  slider(controlsBar, 'Move ball', { min: -2, max: 2, step: 0.25, value: x }, (value) => {
+  slider(controlsBar, 'move ball', { min: -2, max: 2, step: 0.25, value: x }, (value) => {
     x = value;
     update();
   });

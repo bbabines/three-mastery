@@ -13,122 +13,85 @@ misconceptions:
 
 # Euler angles and order
 
-> **In short:** `object.rotation` stores a turn as three angles, one around each axis, done one after another in a set order, so the same three angles in a different order give a different turn.
+> **In short:** `rotation` is three turns, one around each axis, done one after another, so the order they run in changes the result.
 >
-> **Used for:** Rotation sliders and number boxes in an editor or a product configurator, reading the rotation of a model someone else exported, a first-person camera that looks left-right and up-down, and a turret or robot arm with one motor per axis.
+> **Used for:** Rotation sliders in an editor, reading imported rotations, first-person mouse-look, and a robot arm with one motor per axis.
 
 ## A · The basics
 
 ### Three angles, one per axis
 
-The Object3D tour showed `rotation` next to `position` and `scale`. It holds three angles, in radians:
-
-- `rotation.x` turns the object around the X axis.
-- `rotation.y` turns it around the Y axis.
-- `rotation.z` turns it around the Z axis.
+`rotation` holds three angles in radians: `rotation.x` turns the object around X, `.y` around Y, and `.z` around Z. Angles like these are called **Euler angles** (say "oiler").
 
 ```js
 ship.rotation.set(0, MathUtils.degToRad(90), 0); // a quarter turn around Y
 ```
 
-Three angles like these are called **Euler angles** (say "oiler", after the mathematician Leonhard Euler), and `rotation` is a three.js `Euler`. Which way counts as positive follows the right-hand rule from the cross product page: point your right thumb along the axis, and your fingers curl the positive way.
+For something whose nose is its +Z and whose top is its +Y, the three turns have names. **Yaw** swings the nose side to side, **pitch** tips it up or down, and **roll** tilts it around the nose.
 
-Three words come up all the time. For something whose nose points along its +Z and whose top is its +Y, like the yellow ship below:
+### The order changes the result
 
-- **Yaw** swings the nose left or right, around the up axis, like shaking your head.
-- **Pitch** tips the nose up or down, around the side-to-side axis, like nodding.
-- **Roll** tilts it around the nose, like a plane banking into a turn.
+Three turns can't happen at once, so three.js does them in the sequence `rotation.order` names, `'XYZ'` unless you change it. Each turn goes around the object's own axis, wherever the turns before it left it. So the same three angles in another order give a different turn.
 
-### The three turns happen one after another
+**Analogy: a book on a table.** Stand it on its spine, then spin it a quarter turn. Spin it first and then stand it up, and the cover faces a different way.
 
-Three turns can't happen at once, so three.js does them in a sequence. `rotation.order` names the sequence, and it starts as `'XYZ'`:
-
-1. Turn around the object's own X axis.
-2. Then turn around its own Y axis, wherever the first turn left it.
-3. Then turn around its own Z axis, wherever the first two left it.
-
-Each turn moves the axes the next turn uses, so the order changes the result. Keep the same three angles, change the order, and the object ends up facing somewhere else.
-
-**Analogy: a book on a table.** Stand it up on its spine, then spin it a quarter turn. Now lay it flat again, spin it first, then stand it up. Same two moves in a different order, and the cover faces a different way.
-
-Step through the three turns. The arrows are the ship's own axes, and the faint line is the axis the latest turn went around. In step 2, the turn goes around the green arrow where step 1 left it, not around the world's upright Y. Then switch the order and step through again: same three angles, a different ship.
+Step through the three turns, then switch the order and step through again. The faint line is the axis the latest turn went around.
 
 <div data-scene="steps"></div>
 
 <details>
 <summary>The math, if you're curious</summary>
 
-Turning around the object's own, moving axes is called an **intrinsic** rotation. Turning around fixed axes that never move is **extrinsic**. three.js's 'XYZ' is intrinsic X, then Y, then Z, which is the same turn as extrinsic Z, then Y, then X: the fixed axes, in reverse. As matrices, 'XYZ' is **R = Rx · Ry · Rz**. Angles around three different axes like these are also called **Tait–Bryan angles**. When another tool or a paper says "XYZ", check which kind it means.
+Turns around the object's own, moving axes are called **intrinsic**. As matrices, three.js's `'XYZ'` is R = Rx · Ry · Rz.
 
 </details>
 
 ### rotation.y isn't always yaw
 
-`rotation.y` only yaws around the upright axis when the Y turn comes first, or when the turns before it are zero. With the default 'XYZ', the X turn comes first. So once a camera is tipped to look down, its Y turn goes around its own tipped Y. The view turns, but the horizon tilts too: a roll nobody asked for, even though `rotation.z` is 0.
+With `'XYZ'`, the X turn comes first. Once a camera is tipped to look down, `rotation.y` turns it around its own tipped Y, and the horizon tilts: a roll nobody asked for. The order `'YXZ'` does yaw first, around the upright axis, so the horizon stays level.
 
-For something you steer with yaw and pitch, like a first-person camera, use the order `'YXZ'`: yaw first, around the upright axis, then pitch around the camera's own side-to-side axis. The horizon stays level.
-
-The picture in the corner is what the gray camera sees, with the far edge of the ground as its horizon. With `'XYZ'`, look down and then yaw: the horizon tilts in the picture, though `rotation.z` is still 0. With `'YXZ'` it stays level whatever you do.
+The picture in the corner is what the gray camera sees. With `'XYZ'`, drag yaw and watch the horizon tilt. With `'YXZ'`, it stays level.
 
 <div data-scene="yawPitch"></div>
 
 ## B · Working knowledge
 
-### Setting a rotation in degrees
+### Rotation sliders
+
+Sliders give degrees, so convert each one:
 
 ```js
-part.rotation.set(0, MathUtils.degToRad(90), 0);  // radians in, so convert degrees
-part.rotation.y += MathUtils.degToRad(15);        // 15° more around Y
-console.log(MathUtils.radToDeg(part.rotation.y)); // back to degrees, for a label
+part.rotation.x = MathUtils.degToRad(xSlider.value);
+part.rotation.y = MathUtils.degToRad(ySlider.value);
+part.rotation.z = MathUtils.degToRad(zSlider.value);
 ```
 
-`part.rotation.y = 90` turns 90 radians: more than 14 full turns, landing about 117° round. No error, just an odd angle.
-
-### UI rotation sliders
-
-Three sliders wired to `rotation.x`, `.y`, and `.z` behave like the steps above. With `'XYZ'`:
-
-- The X slider always turns the part around its parent's X, which never moves.
-- The Y slider turns it around its own Y, as the X turn left it.
-- The Z slider always turns it around its own Z, wherever that points.
-
-That's why a slider can seem to change what it does as you move the others. When a control should always turn around the world's up, whatever else is set, turn with `rotateOnWorldAxis` instead; the axis-angle page covers it.
+With `'XYZ'`, the x slider always turns the part around its parent's X, but the y and z sliders turn it around its own axes, as the turns before them left them. That's why one slider seems to change what it does as you move the others.
 
 ### A yaw/pitch camera
 
 ```js
-camera.rotation.order = 'YXZ'; // yaw first, around the upright axis, then pitch
-camera.rotation.y = yaw;       // left and right, from the mouse
-camera.rotation.x = pitch;     // up and down, from the mouse
+camera.rotation.order = 'YXZ'; // yaw first, around the upright axis
+camera.rotation.y = yaw;       // from the mouse's left-right
+camera.rotation.x = pitch;     // from the mouse's up-down
 ```
 
-three.js's own `PointerLockControls`, the first-person mouse-look addon, uses `'YXZ'` for the same reason. It also stops the pitch at straight up and straight down, so the camera can't flip over the top; the gimbal lock page covers what happens there.
+`PointerLockControls`, three.js's first-person mouse-look, uses `'YXZ'` for the same reason.
 
 ### Changing the order
 
-Setting `rotation.order` keeps the three numbers and reads them in the new order, so the object jumps to a different turn. To keep the turn and get new numbers for it, use `reorder`:
+Setting `rotation.order` keeps the three numbers and reads them in the new order, so the object jumps. `reorder` keeps the turn and changes the numbers instead:
 
 ```js
-cam.rotation.order = 'YXZ';  // same numbers, new meaning: the camera jumps
+cam.rotation.order = 'YXZ';  // same numbers, new turn: the camera jumps
 cam.rotation.reorder('YXZ'); // same turn, new numbers
 ```
 
-The simplest rule: set the order once, before you set any angles.
+Simplest of all: set the order once, before any angles.
 
 ### Reading imported rotations
 
-glTF files store each part's turn as a quaternion, not as angles, so `GLTFLoader` sets `quaternion` and three.js works out `rotation` from it, in `'XYZ'`. A part the designer turned 120° around up can read back as (−180°, 60°, −180°): the same turn, written another way. The converting representations page covers why.
-
-Other programs don't all mean the same thing by "XYZ", either. In some, the letters name turns around fixed axes, which three.js would call `'ZYX'`. When angles copied from another program come out wrong, test one axis at a time.
-
-### Which space is it in?
-
-| Value | Space |
-| --- | --- |
-| `rotation.x`, `.y`, `.z` | Measured from the parent |
-| The axis the first turn goes around (X, for `'XYZ'`) | The parent's axis, which never moves |
-| The axis each later turn goes around | The object's own axis, as the turns before it left it |
-| The same turn seen from the parent, for `'XYZ'` | The parent's Z, then Y, then X |
+A glTF file stores each turn as a quaternion, and three.js works out `rotation` from it in `'XYZ'`. A part turned 120° around Y can read back as (−180°, 60°, −180°): the same turn, written another way. Other programs may mean something else by "XYZ", so test one axis at a time.
 
 ## Drill · Read the code
 

@@ -7,51 +7,39 @@ export const questions: Question[] = [
 a.rotation.set(Math.PI / 2, Math.PI / 2, 0);        // order 'XYZ'
 const b = new Object3D();
 b.rotation.set(Math.PI / 2, Math.PI / 2, 0, 'ZYX');`,
-    ask: 'Do `a` and `b` end up facing the same way?',
+    ask: 'Do `a` and `b` face the same way?',
     choices: [
-      'No: the same turns in another order end up elsewhere',
-      'Yes: they hold the same three angles, so the same turn',
-      'Yes: order only matters once all three angles are set',
+      'No: the order changes the turn',
+      'Yes: they hold the same three angles',
+      "Yes: order matters only when z isn't 0",
     ],
     answer: 0,
-    why: "Each turn goes around an axis the turns before it have moved, so the order changes the result. `a` ends with its nose (+Z) along +X, and `b` with its nose pointing straight down: 120° apart. Even with Z at 0, X then Y isn't the same as Y then X.",
+    why: 'Each turn goes around an axis the earlier turns moved, so the order changes the result: these two end up 120° apart. Set the order once, before the angles.',
   },
   {
     code: `// camera.rotation.order is the default, 'XYZ'
 camera.rotation.x = MathUtils.degToRad(-30); // look down
 camera.rotation.y = MathUtils.degToRad(45);  // then turn`,
     ask: 'What does the view do?',
-    choices: [
-      'It turns left, with the horizon kept level',
-      'It turns, but the horizon comes out tilted',
-      'It rolls sideways, and the view stays put',
-    ],
+    choices: ['Turns, with the horizon level', 'Turns, with the horizon tilted', 'Rolls, without turning at all'],
     answer: 1,
-    why: "With `'XYZ'`, the X turn comes first, so `rotation.y` turns around the camera's own Y after it has tipped down. The view turns, but the horizon tilts about 21°: a roll nobody asked for, even though `rotation.z` is 0. Set `camera.rotation.order = 'YXZ'` so yaw goes first, around the upright axis.",
+    why: "The X turn comes first, so `rotation.y` turns around the camera's own tipped Y, and the horizon tilts about 21°. Set `rotation.order = 'YXZ'` first.",
   },
   {
-    code: `cam.rotation.set(-0.5, 0.8, 0); // set with the default 'XYZ'
+    code: `cam.rotation.set(-0.5, 0.8, 0); // with the default 'XYZ'
 cam.rotation.order = 'YXZ';`,
     ask: 'What happens to the camera?',
-    choices: [
-      'Nothing: the order only affects changes made later',
-      'It jumps: the same numbers now mean another turn',
-      'It stays put: the three numbers change to match',
-    ],
+    choices: ['Nothing, until an angle changes', 'It jumps to a different turn', 'It stays put, with new numbers'],
     answer: 1,
-    why: "Setting `order` keeps the three numbers and reads them in the new order, so the camera turns about 22° to a new pose straight away. To keep the turn and get new numbers for it, call `cam.rotation.reorder('YXZ')`. Simpler still: set the order once, before any angles.",
+    why: "Setting `order` keeps the numbers and reads them in the new order, so the camera turns about 22°. `cam.rotation.reorder('YXZ')` keeps the turn and changes the numbers.",
   },
   {
     code: `head.rotation.order = 'YXZ';
 head.rotation.y = yaw;   // from the mouse's left-right
 head.rotation.x = pitch; // from the mouse's up-down`,
     ask: "Why use `'YXZ'` here?",
-    choices: [
-      'Units: it makes rotation.x and rotation.y read in degrees',
-      'Level horizon: yaw goes first, around the upright Y',
-      'No reason: each angle always turns around its own fixed axis',
-    ],
+    choices: ['So the angles read in degrees', 'So yaw keeps the horizon level', 'It makes no difference here'],
     answer: 1,
-    why: "`'YXZ'` does the Y turn first, around the upright axis, then tips the head around its own side-to-side axis. Looking left and right never tilts the horizon, however far it looks up or down. three.js's `PointerLockControls` uses the same order. The angles are still radians.",
+    why: "`'YXZ'` does yaw first, around the upright axis, then pitch around the head's own side axis, so the horizon never tilts. The angles are still radians.",
   },
 ];

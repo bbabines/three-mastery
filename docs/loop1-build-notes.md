@@ -64,6 +64,21 @@ These surprised the builders and are worth knowing in an interview or a Loop 3 b
 - **Debugging:** raycasting an object with NaN positions returns a hit for every triangle, with NaN distances; NaN in vertex positions is the one NaN case three.js reports (through `computeBoundingSphere`); `EffectComposer.render()` restores whatever render target was set before it.
 - **Optimization:** the first Standard or Physical material uploads a lookup texture, so the texture count never returns to 0; `LOD.addLevel` takes a hysteresis argument; a light at intensity 0 still stays in every lit shader; `EffectComposer` reads the pixel ratio only once.
 
+## Cut in the tightening pass, kept for later loops
+
+The Sep 30 pass brought each domain to Domain 1's size and voice, which meant cutting true details. The ones that could become Loop 2–3 drills are kept here.
+
+**Rotation (Domain 3):**
+- OrbitControls calls `camera.lookAt(target)` on every update, undoing any turn you give the camera; animate `controls.target` and `camera.position` instead. `slerp(goal, 0.1)` every frame finishes faster at 120 Hz than at 60 Hz.
+- `SpotLightHelper.update()` and `DirectionalLightHelper.update()` refresh the light's target, which can hide a target that was never added to the scene.
+- `rotateOnWorldAxis` under a turned parent: turn the axis by the inverse of `parent.getWorldQuaternion` first.
+- Turning around a point with `applyMatrix4` keeps adding, so start each frame from a saved pose. Inside a group, convert a `Box3` center with `parent.worldToLocal` first.
+- A rail pointing straight up makes `worldUp × forward` (0, 0, 0), so building a basis needs another helper direction. `getWorldDirection` refreshes the matrices first; reading `matrixWorld` yourself gives the last render's values.
+- `lookAt` handles a turned parent but not one stretched differently on each axis. Its nudge when looking straight along `up` is exactly 0.0001; OrbitControls stops 0.000001 rad short of straight down, and PointerLockControls clamps pitch at ±90°.
+- three.js's 'XYZ' order equals fixed-axis Z, then Y, then X, so another program's "XYZ" can mean three.js's 'ZYX'. Reading Euler angles back puts the first and last between −180° and 180°.
+- `setFromUnitVectors` with an input that isn't length 1 still returns a length-1 quaternion, just the wrong lean. Quaternion rounding drift is negligible: after a million multiplies the length is still 1 to ten places. Slerp falls back to a plain blend when two turns are nearly the same.
+- Conversion methods not on the page: `makeRotationFromEuler`, `makeRotationFromQuaternion`, `makeRotationAxis`, `Vector4.setAxisAngleFromQuaternion`, and `Matrix4.extractRotation`.
+
 ## Page lengths
 
 Several pages run over the recipe's guide: most light pages are 72–90 lines against 50–70, and some core pages reach 130–145 against about 120 (the camera domain's, and Attributes, uniforms, varyings). The extra is mostly B's code blocks. Trim if Brad finds them long.

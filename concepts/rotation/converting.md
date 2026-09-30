@@ -14,8 +14,8 @@ contexts:
 
 ## Definition
 
-Euler angles, a quaternion, a rotation matrix, and an axis with an angle are four ways of writing the same turn; three.js converts between any of them, but the numbers that come back can differ from the ones that went in while still meaning the same turn.
+Euler angles, a quaternion, a rotation matrix, and an axis with an angle are four ways of writing one turn, and converting between them can change the numbers without changing the turn.
 
 ## Space lens
 
-Converting never changes the space: a turn measured from the parent, like `object.quaternion`, converts to angles or a matrix measured from the parent too. `getWorldQuaternion` and the turn inside `matrixWorld` are in the world.
+Converting never changes the space: a turn measured from the parent converts to one measured from the parent.
