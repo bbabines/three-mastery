@@ -14,8 +14,8 @@ contexts:
 
 ## Definition
 
-Each load of a file builds a complete new copy of everything in it, so load each file once and reuse the result, cloning it where it's needed, since clones share the original's geometry, materials, and textures.
+Every load of a file builds a complete new copy, while a clone of a loaded model shares its geometry, materials, and textures.
 
 ## Cost lens
 
-A second load of the same URL costs another decode and another full copy in memory, even when the browser skips the download. A clone costs a few objects on the CPU and a draw call per mesh, and no new GPU memory.
+A second load of the same URL costs another decode and another full copy in memory. A clone costs a few objects and a draw call per mesh, and no new GPU memory.

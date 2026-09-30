@@ -14,8 +14,8 @@ contexts:
 
 ## Definition
 
-Between a file arriving and a model appearing, three jobs run: decoding the file's packed data into arrays and pixels, uploading those to the GPU, and compiling a shader program for each new kind of material; decoding happens during the load, and three.js does the other two on the first render that draws the model unless you ask for them earlier.
+Before a loaded model can be drawn, its data is decoded, uploaded to GPU memory, and given compiled shader programs, and three.js leaves the last two for the first render that draws it.
 
 ## Cost lens
 
-Decoding is CPU time, mostly off the main thread: Draco runs in workers and the browser decodes images. Uploading and compiling happen during a render, and the main thread waits for them, so when they're big they show up as a frozen frame.
+Decoding is CPU time, mostly off the main thread. Uploading and compiling happen during a render while the main thread waits, so when they're big they show up as a frozen frame.

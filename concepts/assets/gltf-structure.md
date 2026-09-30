@@ -14,8 +14,8 @@ contexts:
 
 ## Definition
 
-A glTF file is a tree of nodes, where a node can carry a mesh made of one or more primitives (geometry with one material each), and GLTFLoader turns each node into an Object3D and each primitive into its own Mesh.
+A glTF file is a tree of nodes whose meshes are made of primitives, pieces of geometry with one material each, and GLTFLoader makes each primitive its own Mesh.
 
 ## Space lens
 
-A node's position, rotation, and scale are measured from its parent node. The numbers in a primitive's position accessor, which become `geometry.attributes.position`, are measured from the mesh itself.
+A node's position, rotation, and scale are measured from its parent node. The vertex positions in its geometry are measured from the object itself.

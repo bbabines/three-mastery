@@ -8,26 +8,22 @@ await Promise.all(productUrls.map((url) => loader.loadAsync(url)));
 showProduct(0);`,
     ask: 'What does loading everything up front cost?',
     choices: [
-      'A long wait for the first product, and memory for all 200',
-      'Nothing, since every switch after that is instant',
-      'Only download time, since models use no memory until drawn',
+      'Nothing, since every switch is then instant',
+      'A long first wait, and memory for all 200',
+      'Only download time, not any memory',
     ],
-    answer: 0,
-    why: "Nothing shows until all 200 have downloaded and decoded, and every one then sits in memory, whether or not the shopper ever looks at it. Load the first product, show it, preload the likely next few, and lazy-load the rest.",
+    answer: 1,
+    why: "Nothing shows until all 200 have loaded, and each holds its memory whether it's viewed or not. Show the first, preload the likely next few, and lazy-load the rest.",
   },
   {
     code: `colorButton.onclick = async () => {
   const gltf = await loader.loadAsync(url); // the first click on this color
   swapModel(gltf.scene);
 };`,
-    ask: 'What does the shopper see right after the first click?',
-    choices: [
-      'The old model, until the new one downloads and decodes',
-      'The new model straight away, since the click started it',
-      'A blank scene, until the new model is ready',
-    ],
-    answer: 0,
-    why: '`swapModel` runs only after the `await`, so the old model stays on screen while the new one downloads and decodes, and the frame that first draws it still uploads and compiles. That wait is the price of lazy loading; preload the likeliest colors to avoid it.',
+    ask: 'What does the shopper see right after clicking?',
+    choices: ['The new model, straight away', 'A blank scene, until the new one loads', 'The old model, until the new one loads'],
+    answer: 2,
+    why: '`swapModel` runs only after the `await`, so the old model stays up during the download and decode. That wait is the cost of lazy loading; preload the likeliest colors.',
   },
   {
     code: `const first = await load('/models/rack-black.glb');
@@ -35,11 +31,11 @@ scene.add(first.scene);
 load('/models/rack-white.glb'); // no await`,
     ask: 'What does the last line do?',
     choices: [
-      'Starts the white rack loading while the black one is shown',
-      'Nothing, because the promise is never awaited',
-      'Waits for the white rack before anything draws',
+      'Starts loading the white rack in the background',
+      'Nothing, since the promise is never awaited',
+      'Blocks drawing until the white rack loads',
     ],
     answer: 0,
-    why: "A load starts as soon as `loadAsync` is called; `await` only waits for it. With no `await`, the white rack loads in the background while the black one is already on screen, so a later switch to white is instant. With the load-once map from the reuse and caching page, that later `load` call returns the same promise.",
+    why: 'A load starts when `loadAsync` is called, and `await` only waits for it. The white rack loads while the black one is on screen, so switching later is instant.',
   },
 ];

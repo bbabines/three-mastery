@@ -6,14 +6,14 @@ export const questions: Question[] = [
     code: `const gltf = await loader.loadAsync('/models/rack.glb');
 scene.add(gltf.scene);
 spinner.hidden = true; // "ready"`,
-    ask: "When the spinner hides, what hasn't happened yet?",
+    ask: 'When the spinner hides, what is still to do?',
     choices: [
+      'Decoding the textures inside the .glb',
+      'Nothing, since the load has resolved',
       'The GPU upload and the shader compile',
-      'Decoding the textures packed inside the .glb',
-      'Nothing, since a resolved load is ready to draw',
     ],
-    answer: 0,
-    why: "The promise resolves once the objects are built in JavaScript memory, textures included. The GPU gets nothing until the first render that draws the model, which uploads its geometry and textures and compiles its shaders, and on a big model that frame can freeze. Hide the spinner after that render, or do the work early, as the decode, upload, compile page shows.",
+    answer: 2,
+    why: 'The promise resolves once the objects exist in JavaScript memory. The first render uploads them and compiles shaders, which can freeze a frame, so hide the spinner after it.',
   },
   {
     code: `// the server doesn't send the file's size
@@ -22,12 +22,12 @@ loader.load(url, onLoad, (event) => {
 });`,
     ask: 'What does the progress bar do?',
     choices: [
-      'It never moves: total is 0, so the width is Infinity%',
-      'It fills normally: loaded grows toward the total',
-      'It jumps to full: the first chunk counts as done',
+      'It fills as loaded grows toward the total',
+      'It never moves, since the width is Infinity%',
+      'It jumps to full on the first chunk',
     ],
-    answer: 0,
-    why: "Without a size from the server, `event.total` is 0 and `event.lengthComputable` is `false`. Dividing by 0 gives `Infinity`, and the browser ignores a width of `Infinity%`. Check `lengthComputable` and show a spinner when it's `false`.",
+    answer: 1,
+    why: "Without a size, `event.total` is 0, so the width is `Infinity%`, which the browser ignores. Check `event.lengthComputable` and show a spinner when it's `false`.",
   },
   {
     code: `// "rakc" is a typo, so the file doesn't exist
@@ -36,11 +36,11 @@ loader.load('/models/rakc.glb', (gltf) => {
 });`,
     ask: 'What does the user see?',
     choices: [
-      'An empty scene, with the error only in the console',
-      'An error message that three.js shows on the page for you',
-      'A gray placeholder box where the model would go',
+      'An empty scene, with the error in the console',
+      'An error message three.js puts on the page',
+      'A gray placeholder box where the model goes',
     ],
     answer: 0,
-    why: "With no `onError`, GLTFLoader logs the error to the console and does nothing else, so the page just stays empty. Pass an `onError`, or use `loadAsync` in a `try`/`catch`, and show a message the user can see.",
+    why: 'With no `onError`, GLTFLoader only logs the error, so the page stays empty. Pass an `onError`, or catch the `loadAsync` rejection, and show a message.',
   },
 ];

@@ -15,8 +15,8 @@ contexts:
 
 ## Definition
 
-Loaders turn files such as models and images into three.js objects, and texture classes wrap any grid of pixels, from a file, a canvas, an array, or a video, so a material can draw with it.
+Loaders turn files into three.js objects, and texture classes hold the pixels a material draws with, whether they come from an image, a canvas, an array, or a video.
 
 ## Cost lens
 
-Every file costs a download, then CPU time to turn it into objects. Compressed files also need a decoder, whose own files download once. Every texture is copied to the GPU when it's first drawn, and again each time it's marked as changed.
+Every file costs a download and CPU time to build its objects. Every texture is copied to the GPU on its first draw, and again each time it's marked changed.

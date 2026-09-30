@@ -12,55 +12,46 @@ misconceptions:
 
 # Reuse and caching
 
-> **In short:** Every load of a file builds a brand-new copy of everything in it, so load each file once and clone the result, because clones share the original's geometry, materials, and textures.
+> **In short:** Load a file once and clone the result, because a second load builds everything again while clones share what the first one built.
 >
-> **Used for:** A warehouse scene with hundreds of identical racks; switching a configurator between variants without loading them again; a parts catalog where the same bolt appears in many assemblies; and tracking down memory that grows every time a user reopens the same model.
+> **Used for:** Rows of identical racks, variant swaps, bolts repeated across assemblies, and memory that grows each time a model reopens.
 
 ## A · The basics
 
 ### Loading twice makes two of everything
 
-GLTFLoader doesn't remember what it has loaded. Load the same URL twice and it downloads the file again, or takes it from the browser's cache, then decodes it again and builds new geometries, materials, and textures. The GPU ends up with two full copies, as the runtime memory math page would count them.
+GLTFLoader doesn't remember what it has loaded. Load the same URL twice and it decodes the file again and builds new geometries, materials, and textures, so the GPU ends up holding two full copies.
 
 ### A clone shares
 
-`gltf.scene.clone()` copies the objects, the tree of groups and meshes with their positions, but every cloned mesh points at the same geometry and material as the original, and so at the same textures. A clone costs a few objects on the CPU and one more draw call per mesh, and nothing new in GPU memory.
+`gltf.scene.clone()` copies the tree of objects, but every cloned mesh points at the same geometry and material as the original, and so at the same textures. A clone costs a few objects and one more draw call per mesh, and no new GPU memory.
 
-**Analogy: a rubber stamp.** Loading the file each time is carving a new stamp for every print. Loading once and cloning is carving the stamp once and stamping as many prints as you like: each print is cheap, and they all come from the one stamp.
+**Analogy: a rubber stamp.** Loading the file for every copy is carving a new stamp for every print. Loading once and cloning is carving one stamp and printing as often as you like.
 
-Add copies of Brad's J-cups both ways and watch what the GPU holds.
+Add copies of the J-cups both ways and watch what the GPU holds.
 
 <div data-scene="copies"></div>
 
-Because clones share their materials, recoloring a material on one copy recolors every copy. Domain 7's clone semantics page covers what's shared and how to give one copy its own material.
+Because clones share their materials, recoloring one copy recolors every copy. The clone semantics page covers giving one copy its own material.
 
 ## B · Working knowledge
 
 ### Load once, then clone
 
 ```js
-const loads = new Map();
-
 function loadOnce(url) {
-  if (!loads.has(url)) {
-    const promise = loader.loadAsync(url);
-    promise.catch(() => loads.delete(url)); // let a failed load be tried again
-    loads.set(url, promise);
-  }
+  if (!loads.has(url)) loads.set(url, loader.loadAsync(url)); // loads: a Map
   return loads.get(url);
-}
-
-const gltf = await loadOnce('/models/rack.glb');
-for (const spot of rackSpots) {
-  const rack = gltf.scene.clone();
-  rack.position.copy(spot);
-  scene.add(rack);
 }
 ```
 
-- **Keep the promise, not the result.** A second call that arrives while the first load is still running gets the same promise and waits for the same load, instead of starting another.
-- **Leave the original out of the scene, or use it as the first copy.** Either way, the clones share its resources.
-- When hundreds of copies are one mesh each, `InstancedMesh` draws them all in one draw call; the InstancedMesh page in Domain 5 covers it.
+Keep the promise, not the result: a second call made while the first load is still running gets the same promise instead of starting another. Then clone for each copy you place:
+
+```js
+const gltf = await loadOnce('/models/rack.glb');
+const rack = gltf.scene.clone();
+scene.add(rack);
+```
 
 ### THREE.Cache
 
@@ -68,16 +59,11 @@ for (const spot of rackSpots) {
 THREE.Cache.enabled = true;
 ```
 
-It's off by default. Turned on, the loaders keep each file's bytes in memory by URL, so a second load skips the download. It still decodes the file and builds a complete new copy, so it saves network time, not memory. The browser's own HTTP cache often skips the download anyway.
+It's off by default. Turned on, loaders keep each file's bytes by URL, so a second load skips the download but still decodes and builds a full new copy. It saves network time, not memory.
 
-### Variant swaps
+### Variant swaps and leaks
 
-- **Keep each variant after its first load,** in a map like the one above. Switching back is then just a swap in the scene: no download, no decode, and, if you didn't dispose it, no upload either. The price is keeping it in memory; the preload vs lazy load page weighs that.
-- **Share finish materials.** Make one material per finish and assign it to every mesh that uses it, rather than one per mesh.
-
-### Duplicate-load leaks
-
-A panel that loads a model each time it opens and removes it each time it closes adds a full copy to memory on every open, because removing it frees nothing on the GPU. `renderer.info.memory.geometries` climbs with each open. Load it once, or dispose each copy when you remove it, which the disposal ownership page covers.
+Keep each variant after its first load, in a map like the one above, and switching back is just a swap in the scene. A panel that loads a model on every open and only removes it on close adds a full copy to GPU memory each time, and `renderer.info.memory.geometries` climbs. Load it once, or dispose each copy when you remove it.
 
 ## Drill · Read the code
 

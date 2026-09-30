@@ -123,6 +123,10 @@ const LIMITS = {
   pageLines: { light: 85, core: 110, tour: 115 },
   links: 3,
 };
+// Pages whose point is a whole sequence typed from memory (the raycasting code) may show it as one
+// longer block.
+const FULL_SEQUENCE_PAGES = new Set(['queries.ray-from-pointer', 'queries.intersection-anatomy']);
+const FULL_SEQUENCE_CODE_LINES = 12;
 const OFF_VOICE: [RegExp, string][] = [
   [/\bBrad\b/, 'names Brad'],
   [/\bLoop [1-4]\b/, 'names a loop'],
@@ -151,8 +155,10 @@ function styleProblems(drill: Drill, questions: Question[]): string[] {
   const b = body.split('## B · ')[1]?.split('## Drill')[0] ?? '';
   if (b.split('\n').length > LIMITS.bLines) problems.push(`B is ${b.split('\n').length} lines`);
   const longestCode = Math.max(0, ...[...body.matchAll(/```[a-z]*\n([\s\S]*?)```/g)].map((m) => m[1].trimEnd().split('\n').length));
-  if (longestCode > LIMITS.codeLines) problems.push(`longest code block ${longestCode} lines`);
-  const links = (body.match(/\bthe [^.\n]{2,40}? page\b/gi) ?? []).length;
+  const codeLimit = drill.concepts.some((id) => FULL_SEQUENCE_PAGES.has(id)) ? FULL_SEQUENCE_CODE_LINES : LIMITS.codeLines;
+  if (longestCode > codeLimit) problems.push(`longest code block ${longestCode} lines`);
+  // "the dot product page": a page's name between "the" and "page", with no comma or second "the".
+  const links = (body.match(/\bthe (?:(?!the\b)[^.,;:\n]){2,40}? page\b/gi) ?? []).length;
   if (!tour && links > LIMITS.links) problems.push(`${links} links to other pages`);
   for (const [pattern, label] of OFF_VOICE) if (pattern.test(body)) problems.push(label);
   const longWhys = questions.filter((question) => wordCount(question.why) > LIMITS.whyWords).length;

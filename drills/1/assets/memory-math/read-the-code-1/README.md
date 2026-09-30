@@ -12,31 +12,26 @@ misconceptions:
 
 # Runtime memory math
 
-> **In short:** What a model costs in memory is set by how many vertices and pixels it has and how each is stored, not by its file size, and a few sums in code give you the number.
+> **In short:** A model's memory is set by how many vertices and pixels it has and how each is stored, never by its file size.
 >
-> **Used for:** Checking that a product model fits on a phone before it ships; working out why a tab crashes on a phone but not on a laptop; choosing the lighter of two versions of a model; and setting texture sizes for the artists making the models.
+> **Used for:** A model's footprint, tab crashes on phones, comparing two versions of a model, and texture sizes for artists.
 
 ## A · The basics
 
 ### Two things take the memory
 
-The decode, upload, compile page showed that the GPU gets the unpacked arrays and pixels. Their size comes from two things:
+The GPU gets unpacked arrays and pixels, and their size comes from two things. **Geometry** stores 4-byte numbers for every vertex: a position, normal, and UV together cost 32 bytes, and each index adds 2 or 4. **Textures** cost 4 bytes a pixel for ordinary color images, and **mipmaps**, the smaller copies for drawing at a distance, add a third. JPG, PNG, and Draco all shrink the file, and all are undone before the GPU sees the data.
 
-- **Geometry:** every vertex stores numbers, 4 bytes each as floats. A position is 3 of them, a normal 3, and a UV 2, so a vertex with all three costs 32 bytes. The index list adds 2 or 4 bytes per index, three indices per triangle.
-- **Textures:** every pixel costs 4 bytes as 8-bit color with alpha, and mipmaps, the smaller copies for drawing at a distance, add a third. Half-float pixels, which HDR images use, cost 8 bytes and full floats 16.
+**Analogy: a tent in its bag.** The bag is what you carry, the file. Once it's pitched, the tent covers the ground its floor size says, however small the bag packed.
 
-The file hides both: JPG, PNG, and Draco all shrink the file, and all of them are undone before the GPU sees the data. The GPU formats from the KTX2 page are the one exception.
-
-**Analogy: a tent in its bag.** The bag is what you carry, the file. Once it's pitched, the tent covers the ground its floor size says, however small the bag packed. Memory math is reading the floor size off the label instead of weighing the bag.
-
-Pick one of Brad's models. The blue bar is its file and the other bar is what it takes on the GPU: geometry in orange, textures in green.
+Pick a model and compare its file with what it takes on the GPU.
 
 <div data-scene="footprint"></div>
 
 <details>
 <summary>The math, if you're curious</summary>
 
-Why mipmaps add a third: each smaller copy, called a **mip level**, has half the width and half the height of the one before, so a quarter of its pixels. The whole **mip chain** adds 1/4 + 1/16 + 1/64 + …, which comes to 1/3. So a texture costs width × height × bytes per pixel × 4/3. For a 1024 × 1024 color texture: 1024 × 1024 × 4 × 4/3, about 5.6 MB.
+Each smaller copy has a quarter of the pixels of the one before, so the whole **mip chain** adds 1/4 + 1/16 + 1/64 + …, which comes to 1/3. A texture costs width × height × bytes per pixel × 4/3: for a 1024 × 1024 color texture, about 5.6 MB.
 
 </details>
 
@@ -44,52 +39,32 @@ Why mipmaps add a third: each smaller copy, called a **mip level**, has half the
 
 ### A model's footprint, in code
 
-```js
-const geometries = new Set();
-const textures = new Set();
-model.traverse((object) => {
-  if (!object.isMesh) return;
-  geometries.add(object.geometry);
-  for (const value of Object.values(object.material)) if (value?.isTexture) textures.add(value);
-});
+Collect each geometry and texture into a Set first, since meshes share them, then add up their bytes:
 
-let bytes = 0;
-for (const geometry of geometries) {
-  for (const attribute of Object.values(geometry.attributes)) bytes += attribute.array.byteLength;
-  if (geometry.index) bytes += geometry.index.array.byteLength;
-}
-for (const texture of textures) {
-  const { width, height } = texture.image;
-  const full = TextureUtils.getByteLength(width, height, texture.format, texture.type);
-  const hasMipmaps = texture.generateMipmaps || texture.mipmaps.length > 1; // KTX2 files bring their own
-  bytes += hasMipmaps ? full * (4 / 3) : full;
-}
+```js
+for (const attribute of Object.values(geometry.attributes)) bytes += attribute.array.byteLength;
+if (geometry.index) bytes += geometry.index.array.byteLength;
+const full = TextureUtils.getByteLength(width, height, texture.format, texture.type);
+bytes += texture.generateMipmaps || texture.mipmaps.length > 1 ? full * (4 / 3) : full;
 ```
 
-- **Count each geometry and texture once.** Meshes share them, which is why the code collects them into Sets first.
-- **`TextureUtils.getByteLength(width, height, format, type)`** gives the full-size image's bytes for any format, compressed ones included. It leaves out mipmaps, so add a third when the texture has them.
-- **`attribute.array.byteLength`** is exactly what's uploaded. Attributes that share one interleaved array would be counted twice by this loop; the interleaved attributes page covers them.
-- **`renderer.info.memory`** counts geometries and textures on the GPU, not bytes. It's the quick check that disposal worked, which the disposal ownership page uses.
+`getByteLength` gives the full-size image's bytes for any format, compressed ones included, but leaves out mipmaps. `renderer.info.memory` counts geometries and textures on the GPU, not bytes; it's the quick check that disposal worked.
 
 ### What else uses memory
 
-- **The JavaScript copies.** After uploading, three.js keeps the arrays and images, since raycasting and bounding boxes read them. A model costs its memory twice: once in JavaScript, once on the GPU.
-- **The canvas and render targets,** which grow with the square of the device pixel ratio. The resolution and DPR page in Domain 14 covers them.
-- **Shadow maps and environment maps,** which are textures the renderer makes for you.
+three.js keeps the arrays and images in JavaScript after uploading them, since raycasting and bounding boxes read them, so a model costs its memory twice. The canvas, render targets, shadow maps, and environment maps take GPU memory too.
 
 ### Why phones crash
 
-A phone's browser gives a page far less memory than a desktop does. A page that asks for more GPU memory than it can have may lose its WebGL context, which fires a `webglcontextlost` event and blanks the canvas, or the browser may reload the tab. Add up everything that's loaded at the same time, including models that are hidden or no longer shown but never disposed.
+A phone's browser gives a page far less memory than a desktop does. Ask for too much and the page may lose its WebGL context, which blanks the canvas, or the browser may reload the tab. Add up everything loaded at once, including models that are hidden, or removed but never disposed.
 
 ### Comparing versions of a model
 
-Try the texture sizes and formats: the base is the full-size image, and each layer above it is the next mip level.
+Halving a texture's width and height cuts its memory to a quarter, so one 4096 × 4096 texture costs as much as sixteen 1024 × 1024 ones. Each map on a material counts on its own, and HDR images use half floats, 8 bytes a pixel. Two files of the same size can differ tenfold in memory, so compare pixel counts and formats, never file sizes.
+
+Try the sizes and formats: each layer is the next mip level.
 
 <div data-scene="mipPyramid"></div>
-
-- **Halving a texture's width and height cuts its memory to a quarter.** A 4096 × 4096 texture costs as much as sixteen 1024 × 1024 ones.
-- **Every map counts:** a material with a color, normal, and roughness map has three textures, each costing its own pixels.
-- **Two files of the same size can differ tenfold in memory.** Compare pixel counts and formats, never file sizes.
 
 ## Drill · Read the code
 

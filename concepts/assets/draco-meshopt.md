@@ -14,8 +14,8 @@ contexts:
 
 ## Definition
 
-Draco and Meshopt are two ways to compress a glTF model's geometry for the download; both are undone when the model loads, so they shrink the file, not the memory the geometry takes once it's loaded.
+Draco and Meshopt are two ways to compress a glTF model's geometry, and both are undone when the model loads.
 
 ## Cost lens
 
-Both save download time. Draco costs more CPU time to decode, in workers; Meshopt decodes quickly, on the main thread unless given workers. Neither changes GPU memory; only quantization, storing numbers in fewer bytes, does.
+Both save download time, and Draco costs more CPU time to decode. Neither changes GPU memory; only quantization, storing numbers in fewer bytes, does.

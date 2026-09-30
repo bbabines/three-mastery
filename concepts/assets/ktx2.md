@@ -14,8 +14,8 @@ contexts:
 
 ## Definition
 
-KTX2 is a texture file whose Basis Universal data KTX2Loader converts at load time into a compressed format the device's GPU reads directly, so the texture stays compressed in GPU memory, while a JPG or PNG is unpacked to full-size pixels however small its file.
+KTX2 is a texture file that KTX2Loader converts, as it loads, into a compressed format the device's GPU reads directly, so it stays compressed in GPU memory.
 
 ## Cost lens
 
-A decoded JPG or PNG costs 4 bytes a pixel on the GPU, plus a third for mipmaps. The GPU-compressed formats KTX2Loader picks cost 1 byte a pixel or less. Converting a KTX2 file costs CPU time in a worker, plus a one-time download of the transcoder.
+A decoded JPG or PNG costs 4 bytes a pixel on the GPU, plus a third for mipmaps, while the formats KTX2Loader picks cost 1 byte a pixel or less. Converting costs CPU time in a worker.

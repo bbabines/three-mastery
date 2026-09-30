@@ -164,6 +164,7 @@ Domain 1 is the standard for every Loop 1 page, and Point vs direction is its ap
 - **A:** one to three `###` subsections. Bold a new term where it's defined. One analogy of two or three sentences. Before each scene, a sentence or two saying what to try ("Drag the sliders."), never how the scene is built.
 - **The math note:** optional. One formula and the one technical term it names; not a glossary.
 - **B:** two to four `###` subsections named for a job. Each is a sentence or two around a code block of four lines or fewer (five at most), about 40 lines in all. Tables have two columns and short cells. Prefer sentences to bullet lists, and don't write bold-lead rule bullets.
+- **One exception to the code limit:** the ray from pointer and intersection anatomy pages show the whole raycasting sequence in one block, because typing it from memory is the skill.
 - **Page length:** a light page about 65–80 lines and a core page about 75–105, frontmatter included. A tour may run longer for its table.
 - **Links to other pages:** one or two, named by subject ("the angle page builds on this"). A tour names the page for each member it maps.
 - **Never on a page:** the reader's name, loop or domain numbers, version numbers, "this repo", citations (MDN, the spec, the docs, the source), "as a rule of thumb" (say "usually"), or notes about how the course or the scene was built. Verify every claim as the checklist below says; the page then states the behavior plainly.

@@ -14,8 +14,8 @@ contexts:
 
 ## Definition
 
-A load runs in the background while the page carries on, reports its progress as the file downloads, and ends by handing over the loaded objects or an error.
+A load runs while the page carries on and ends in one of two ways: with the loaded objects, or with an error.
 
 ## Cost lens
 
-Downloading and parsing happen before `onLoad`. Copying the result to the GPU and compiling its shaders happen after, on the first render that draws it.
+Downloading and parsing happen before the load is done. Uploading the result to the GPU and compiling its shaders happen after, on the first render that draws it.

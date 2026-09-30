@@ -79,6 +79,25 @@ The Sep 30 pass brought each domain to Domain 1's size and voice, which meant cu
 - `setFromUnitVectors` with an input that isn't length 1 still returns a length-1 quaternion, just the wrong lean. Quaternion rounding drift is negligible: after a million multiplies the length is still 1 to ten places. Slerp falls back to a plain blend when two turns are nearly the same.
 - Conversion methods not on the page: `makeRotationFromEuler`, `makeRotationFromQuaternion`, `makeRotationAxis`, `Vector4.setAxisAngleFromQuaternion`, and `Matrix4.extractRotation`.
 
+**Assets (Domain 6):**
+- A `.gltf` file's progress covers only its JSON, not the `.bin` or textures, so the bar reaches 100% early; a LoadingManager counts files, not bytes, and its total grows, so a percentage built on it can jump backward. A real 404 is in `error.response.status`.
+- A file that marks KTX2 or Meshopt optional falls back silently to its uncompressed copy when the decoder is missing. `TextureLoader` never calls `onProgress`. `RGBELoader` still works but warns.
+- A DataTexture defaults to `NearestFilter` with no mipmaps; a VideoTexture skips mipmaps. A logo loaded with TextureLoader and put on a glTF material needs `flipY = false`.
+- GLTFLoader never builds material arrays with geometry groups; it makes separate meshes. Cleaned names are unique within one load, not across loads, and identical textures come back as one `Texture`.
+- An image from TextureLoader may stay undecoded until upload, adding the decode to that frame. Without the parallel-compile extension, `compileAsync` behaves like `compile`.
+- DRACOLoader uses up to 4 workers (`setWorkerLimit`). Sizes: the Draco decoder about 345 KB, Meshopt's 29 KB, the Basis transcoder about 585 KB; three.js warns when several KTX2Loaders are active.
+- A per-attribute byte count counts interleaved attributes twice. Full-float textures cost 16 bytes a pixel.
+- A load-once cache should drop a failed promise so the load can be retried. A mesh's `material` can be an array (`[object.material].flat()`).
+
+**Scene graph (Domain 7):**
+- `traverseVisible` checks only `visible`: it still visits objects that are off screen, on a layer the camera doesn't draw, or with `material.visible = false`. Called on a hidden object, it visits nothing, not even that object.
+- GLTFLoader doesn't clean material names (`Zinc.003` keeps its dot). Every object created in code starts with the name `''`.
+- `expandByObject` includes everything under the object; lights, cameras, and empty nodes add nothing to a box. A box doesn't follow a moved model.
+- A transparent `DoubleSide` material takes two draw calls per mesh unless `forceSinglePass = true`. An InstancedMesh's triangles multiply by `count`. Dividing the vertex count by 3 on an indexed model undercounts triangles.
+- A `userData` reference to another object in the tree can make `clone()` throw; GLTFExporter writes `userData` back out as extras. Rigged characters need `SkeletonUtils.clone`.
+- `material.allowOverride = false` opts a material out of `scene.overrideMaterial`, which otherwise covers helpers too. Never dispose a saved original you'll put back.
+- When splitting a group, `attach` keeps each child where it is in the world.
+
 ## Page lengths
 
 Several pages run over the recipe's guide: most light pages are 72–90 lines against 50–70, and some core pages reach 130–145 against about 120 (the camera domain's, and Attributes, uniforms, varyings). The extra is mostly B's code blocks. Trim if Brad finds them long.

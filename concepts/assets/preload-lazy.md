@@ -14,8 +14,8 @@ contexts:
 
 ## Definition
 
-Preloading gets a model ready before it's asked for, so it appears at once but costs startup time and memory; lazy loading waits until it's asked for, which saves both but makes the user wait the first time.
+Preloading gets a model ready before it's asked for and lazy loading waits until it is, trading startup time and memory against a wait on first use.
 
 ## Cost lens
 
-Everything preloaded costs its download before or alongside the first view, and its memory for as long as it's kept. Everything lazy-loaded costs a wait, for download, decode, upload, and compile, the first time it's used.
+A preloaded model costs its download alongside the first view, and its memory for as long as it's kept. A lazy-loaded one costs a wait for download, decode, upload, and compile the first time it's used.

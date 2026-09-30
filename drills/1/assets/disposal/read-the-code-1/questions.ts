@@ -9,12 +9,12 @@ scene.add(newVariant);
 console.log(renderer.info.memory.geometries); // climbs with every swap`,
     ask: 'Why does the count keep climbing?',
     choices: [
-      'remove takes a model out of the scene, but its GPU copies stay',
-      "The garbage collector hasn't gotten to the old variants yet",
-      'renderer.info counts every geometry the page ever made',
+      "Garbage collection hasn't run yet",
+      'remove leaves the GPU copies in place',
+      'renderer.info counts every geometry ever made',
     ],
-    answer: 0,
-    why: "Removing a model only stops it being drawn. Its geometries, materials, and textures stay on the GPU, and the renderer keeps its records of them, which is what this count reads, until you call `dispose()` on each. Dispose the old variant's resources after removing it, and the count stays flat.",
+    answer: 1,
+    why: 'Removing a model only stops it being drawn. Its resources stay on the GPU until you `dispose()` each one, so dispose the old variant after removing it.',
   },
   {
     code: `// mesh.material.map is a 2048 × 2048 texture
@@ -23,12 +23,12 @@ mesh.geometry.dispose();
 mesh.material.dispose();`,
     ask: "What's still on the GPU?",
     choices: [
-      'The texture: material.dispose() leaves its maps',
-      'Nothing: disposing a material frees its maps too',
-      'The geometry: it stays until the next render',
+      'The texture, which material.dispose() leaves',
+      'Nothing, since materials free their maps',
+      'The geometry, until the next render',
     ],
     answer: 0,
-    why: "`material.dispose()` frees the material's own GPU state, its shader program, but not the textures it points to, which other materials might share. Call `mesh.material.map.dispose()` too, or collect every texture from the model and dispose each once.",
+    why: "`material.dispose()` frees its shader program, not the textures it points to, which others might share. Call `mesh.material.map.dispose()` too.",
   },
   {
     code: `const copyB = copyA.clone(); // both racks on screen
@@ -38,36 +38,36 @@ copyA.traverse((object) => {
 });`,
     ask: 'What happens to copyB on the next frame?',
     choices: [
-      'It still draws, and its geometry uploads all over again',
-      'It disappears, since its geometry was deleted',
-      'Nothing changes, since copyB has its own copies',
+      'It vanishes, since its geometry is gone',
+      'Nothing changes, since it has its own',
+      'It draws, after uploading it all again',
     ],
-    answer: 0,
-    why: "The clone shares copyA's geometries and materials, so those were disposed while copyB still draws them. three.js doesn't break: the next render uploads the geometry and compiles the shaders again, the same stall as the first time. Dispose only what nothing else still uses.",
+    answer: 2,
+    why: "copyB shares copyA's geometries and materials, so the next render uploads and compiles them again, a stall for nothing. Dispose only what nothing else uses.",
   },
   {
     code: `scene.remove(rack);
-rack.dispose(); // r186: every Object3D has a dispose() method`,
+rack.dispose(); // every Object3D has a dispose() method`,
     ask: 'What does `rack.dispose()` free?',
     choices: [
-      'None of its geometries, materials, or textures',
-      'Everything the rack and its children use on the GPU',
-      "Only the geometry of the rack's own mesh",
+      "Only its own mesh's geometry",
+      'None of its geometry, materials, or textures',
+      'Everything it and its children use',
     ],
-    answer: 0,
-    why: "`Object3D.dispose()` only announces that the object is being disposed. The three.js docs say geometries, materials, and textures may be shared, so they must be disposed separately. Dispose each one yourself.",
+    answer: 1,
+    why: '`Object3D.dispose()` only announces that the object is going away. Its geometries, materials, and textures may be shared, so dispose each one yourself.',
   },
   {
     code: `// this texture came from GLTFLoader, and another model still draws it
 texture.dispose();
-texture.source.data.close(); // free the decoded ImageBitmap too`,
-    ask: 'What happens the next time the other model is drawn?',
+texture.source.data.close(); // free the decoded image too`,
+    ask: 'What happens when the other model draws next?',
     choices: [
-      "Its texture can't upload again, so it draws without it",
-      'It uploads the texture again, the same as it does for geometry',
-      'Nothing, since dispose kept a copy on the GPU',
+      'It uploads the texture again, as before',
+      "It draws without the texture's image",
+      'Nothing, since dispose kept a GPU copy',
     ],
-    answer: 0,
-    why: '`dispose()` alone would only cost a re-upload. But `close()` threw away the decoded image, so there is nothing left to upload: the model draws without its image, and WebGL logs a warning. Close an ImageBitmap only when nothing will draw its texture again.',
+    answer: 1,
+    why: "`dispose()` alone would only cost a re-upload, but `close()` threw the decoded image away, so there's nothing to upload. Close it only when nothing will draw it again.",
   },
 ];

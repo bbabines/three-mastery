@@ -86,8 +86,8 @@ export const formats: SceneSetup = ({ scene, camera, controls, container, render
       readout.textContent = [
         `the sticker: ${width} × ${height}, a ${formatBytes(fileBytes)} PNG in the file`,
         first,
-        `getByteLength(${width}, ${height}, ${formatName}, UnsignedByteType) → ${formatBytes(top)}`,
-        `plus a third for mipmaps: ${formatBytes(total)} on the GPU, ${Math.round(total / fileBytes)} × the file`,
+        `getByteLength(${width}, ${height}, ${formatName}, UnsignedByteType) → ${formatBytes(top)}, ` +
+          `${formatBytes(total)} with mipmaps: ${Math.round(total / fileBytes)} × the file`,
         `this browser's GPU reads: ${here}`,
       ].join('\n');
     };

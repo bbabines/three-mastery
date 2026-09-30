@@ -15,8 +15,8 @@ contexts:
 
 ## Definition
 
-Taking an object out of the scene frees nothing on the GPU: its geometries, materials, and textures stay there until you call `dispose()` on each one, and only the code that owns a resource should do that, once nothing else still uses it.
+Taking an object out of the scene frees nothing on the GPU, and only disposing its geometries, materials, and textures does, which their owner should do once nothing else uses them.
 
 ## Cost lens
 
-Every model that's removed but not disposed keeps its full GPU memory, so memory climbs with each swap. Disposing something that's still in use frees nothing for long: the next render that draws it uploads or compiles it again, the same work as the first time.
+Every model that's removed but not disposed keeps its full GPU memory. Disposing something still in use only buys a second upload or compile on the next render that draws it.

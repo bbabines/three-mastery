@@ -13,15 +13,15 @@ misconceptions:
 
 # Disposal ownership
 
-> **In short:** Removing a model from the scene frees none of its GPU memory; `dispose()` on its geometries, materials, and textures does, but only on the ones nothing else still uses.
+> **In short:** A model taken out of the scene keeps its GPU memory until you dispose the parts of it nothing else still needs.
 >
-> **Used for:** A configurator that swaps product variants all day without running out of memory; leaving a page of a single-page app, one built with React, Vue, or Svelte, that had a 3D view on it; a kiosk or dashboard that runs for weeks; and tracking down memory that climbs a little with every click.
+> **Used for:** Swapping product variants, leaving a page with a 3D view, kiosks that run for weeks, and slow memory leaks.
 
 ## A · The basics
 
 ### Removing isn't freeing
 
-`scene.remove(model)` takes the model out of the scene, so it's no longer drawn. Its geometries, materials, and textures stay on the GPU. three.js can't tell whether you're done with them: you might add the model back in a moment, the way the variant cache on the reuse and caching page does.
+`scene.remove(model)` stops the model being drawn, but its geometries, materials, and textures stay on the GPU. three.js can't tell whether you're done with them, since you might add the model back in a moment.
 
 ### dispose() frees the GPU copy
 
@@ -33,17 +33,17 @@ texture.dispose();  // deletes the texture from GPU memory
 
 Each call frees one thing's GPU copy. The JavaScript object is still there, and if something draws it again, three.js uploads or compiles it again, the same work as the first time.
 
-**Analogy: a rental car.** Parking it in your own garage doesn't stop the rental charges; returning it does. That's remove versus dispose. And you only return the cars you rented, not the one a neighbor lent you, which is the ownership half of this page.
+**Analogy: a rental car.** Parking it in your own garage doesn't stop the charges; returning it does. And you only return the cars you rented, not the one a neighbor lent you.
 
-Swap variants both ways. Each swap loads a fresh copy of the next variant and removes the old one; the bar is the GPU memory the models hold.
+Pick a way, then swap variants a few times and watch the memory bar.
 
 <div data-scene="swaps"></div>
 
 ### Only dispose what nothing else uses
 
-Clones share their geometry, materials, and textures, as the reuse and caching page showed. Disposing them because one copy was removed pulls them out from under the copies still on screen. three.js doesn't crash: the next render just uploads and compiles them again, a stall you didn't need. The rule is ownership: the code that loaded a resource frees it, once nothing needs it anymore.
+Clones share their geometry, materials, and textures. Disposing them because one copy was removed pulls them out from under the copies still on screen: nothing breaks, but the next render uploads and compiles them all again. The code that loaded a resource frees it, once nothing needs it anymore.
 
-Remove copy A of a rack whose clone, copy B, stays on screen. The readout counts what's on the GPU right after each choice and after the next render.
+Remove copy A, whose clone B stays on screen, each of the three ways.
 
 <div data-scene="shared"></div>
 
@@ -52,63 +52,35 @@ Remove copy A of a rack whose clone, copy B, stays on screen. The readout counts
 ### Freeing a model nothing else shares
 
 ```js
-function disposeModel(model) {
-  const textures = new Set();
-  model.traverse((object) => {
-    if (!object.isMesh) return;
-    object.geometry.dispose();
-    for (const material of [object.material].flat()) {
-      for (const value of Object.values(material)) if (value?.isTexture) textures.add(value);
-      material.dispose();
-    }
-  });
-  for (const texture of textures) texture.dispose();
-}
-
 scene.remove(model);
-disposeModel(model);
+model.traverse((object) => {
+  if (object.isMesh) { object.geometry.dispose(); object.material.dispose(); }
+});
 ```
 
-- **Materials don't dispose their textures,** so collect the textures and dispose them yourself.
-- **Calling `dispose()` twice is harmless,** so meshes inside one model can share a geometry or material without extra bookkeeping.
-- **Use it only for a model nobody else shares:** loaded once for this spot and never cloned.
-- **`model.dispose()` isn't this.** r186 gives every Object3D a `dispose()` method, but it frees none of the object's geometries, materials, or textures; the three.js docs say to dispose those separately.
+Materials don't dispose their textures, so collect the textures from each material and call `texture.dispose()` on each. Calling `dispose()` twice is harmless, so meshes that share inside one model need no bookkeeping. `model.dispose()` isn't the same thing: it frees none of the model's geometries, materials, or textures.
 
 ### Shared resources: who owns what
 
-When clones share resources, free them when the last user goes:
-
 ```js
-const inScene = new Set();
-scene.traverse((object) => {
-  if (object.isMesh) inScene.add(object.geometry);
-});
-if (!inScene.has(geometry)) geometry.dispose(); // nothing on screen uses it anymore
+const inUse = new Set();
+scene.traverse((object) => { if (object.isMesh) inUse.add(object.geometry); });
+if (!inUse.has(geometry)) geometry.dispose(); // nothing on screen uses it
 ```
 
-- **Count every user,** not just what's in the scene: a variant cache from the reuse and caching page holds models that are off screen but still wanted.
-- **GLTFLoader's textures hold an `ImageBitmap`,** the decoded image. The GLTFLoader docs warn that image bitmaps aren't freed automatically when nothing references them and need special handling when disposing: `texture.source.data.close()` frees one. After that the texture can never upload again, so close it only when nothing will draw it; a copy still on screen would lose its image, and WebGL logs a warning.
+Count every user, including a cache of variants kept off screen. GLTFLoader's textures also hold a decoded image, which `texture.source.data.close()` frees. After that the texture can never upload again, so close it only when nothing will draw it.
 
 ### Leaving a page
 
-When a single-page app leaves a view that has a 3D canvas, free everything the view made:
+When a single-page app leaves a view with a 3D canvas, dispose each model as above, then the tools the view made:
 
 ```js
-disposeModel(model);    // for each model the view loaded
-controls.dispose();     // removes its pointer listeners
-dracoLoader.dispose();  // ends its decoder workers
-renderer.dispose();     // frees the renderer's own resources and stops its animation loop
+controls.dispose();    // removes its pointer listeners
+dracoLoader.dispose(); // ends its decoder workers
+renderer.dispose();    // frees the renderer and stops its animation loop
 ```
 
-Browsers limit how many WebGL canvases can be alive at once, as a rule of thumb about 16 in Chrome, so a view that creates a new renderer each time it opens and never disposes it eventually loses its oldest context.
-
-### Checking for leaks
-
-```js
-console.log(renderer.info.memory); // { geometries, textures }
-```
-
-Open and close the view, or swap variants a few times and back: the counts should return to where they started. The leak detection page in Domain 14 builds on this.
+Open and close the view a few times: the counts in `renderer.info.memory` should return to where they started.
 
 ## Drill · Read the code
 

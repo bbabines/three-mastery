@@ -12,27 +12,23 @@ misconceptions:
 
 # KTX2 and Basis textures
 
-> **In short:** A JPG or PNG is small only as a file, because the GPU gets every pixel unpacked at 4 bytes each, while a KTX2 texture stays compressed in GPU memory in a format the GPU reads directly.
+> **In short:** A JPG is small only as a file, while a KTX2 texture stays compressed on the GPU, in a format the GPU reads directly.
 >
-> **Used for:** Fitting a texture-heavy product into a phone's limited GPU memory; a fabric or finish library with hundreds of swatches; large terrain and environment textures in games; and cheaper texture uploads, so switching finishes doesn't stall.
+> **Used for:** Phone GPU memory budgets, large swatch libraries, texture-heavy products, and quicker texture uploads.
 
 ## A · The basics
 
 ### A JPG is small only as a file
 
-JPG and PNG are made for downloading. The GPU can't read either one, so the browser decodes the image to raw pixels first: red, green, blue, and alpha, 1 byte each, so 4 bytes a pixel. Then three.js usually adds **mipmaps**, the smaller copies a texture keeps for drawing at a distance, which add a third more.
-
-Brad's J-cups file has a sticker texture: a 512 × 512 PNG of 36.8 KB. On the GPU it's 512 × 512 × 4 bytes, 1 MB, plus mipmaps, 1.4 MB: 38 times the file.
+The GPU can't read JPG or PNG, so the browser decodes each image to raw pixels at 4 bytes each. three.js then usually adds **mipmaps**, smaller copies for drawing at a distance, which add a third. The J-cups model's sticker is a small PNG that takes 38 times its file size on the GPU.
 
 ### Formats the GPU reads directly
 
-GPUs can read a few compressed formats as they are, a small block of pixels at a time, without unpacking them in memory: BC7 on most desktop GPUs, and ASTC or ETC2 on most phones, as a rule. These cost 1 byte a pixel or less instead of 4.
+GPUs can read a few compressed formats as they are, at 1 byte a pixel or less, such as BC7 on most desktops and ASTC on most phones. No one format works everywhere, so a **KTX2** file holds an in-between format, **Basis Universal**. As it loads, KTX2Loader **transcodes** it, a quick conversion in a worker, into whichever format this GPU reads. If the GPU reads none of them, it falls back to raw 4-byte pixels and the saving is gone.
 
-No one of those works on every device, so a **KTX2** file holds **Basis Universal** data, an in-between format. When it loads, KTX2Loader **transcodes** it, a quick conversion in a worker, into whichever of those formats this device's GPU reads. If the GPU reads none of them, KTX2Loader falls back to raw 4-byte pixels and the saving is gone.
+**Analogy: a letter in shorthand.** A JPG is like a letter zipped for email: small to send, but unzipped to full length before anyone reads it. A GPU format is shorthand the reader reads as it is, and Basis is shorthand any reader can have rewritten into their own in a moment.
 
-**Analogy: a letter in shorthand.** A JPG is like a letter zipped up for email: small to send, but the reader unzips it back to full length before reading it. A GPU format is shorthand the reader can read as it is, so it stays short on the page. Basis is a shorthand made so that any reader can have it rewritten into their own shorthand in a moment.
-
-Compare the sticker as its PNG and as it would be from KTX2. The last line of the readout is what this browser's GPU can read.
+Compare the sticker as a PNG and as KTX2 on each kind of GPU.
 
 <div data-scene="formats"></div>
 
@@ -41,27 +37,20 @@ Compare the sticker as its PNG and as it would be from KTX2. The last line of th
 ### Loading KTX2
 
 ```js
-import { KTX2Loader } from 'three/addons/loaders/KTX2Loader.js';
-
 const ktx2 = new KTX2Loader().setTranscoderPath('/basis/').detectSupport(renderer);
-gltfLoader.setKTX2Loader(ktx2);                          // for models whose textures are KTX2
+gltfLoader.setKTX2Loader(ktx2);                            // for models with KTX2 textures
 const swatch = await ktx2.loadAsync('/textures/oak.ktx2'); // or a texture on its own
 ```
 
-- **`detectSupport(renderer)` is required.** It asks the renderer which compressed formats this GPU reads, and loading without it fails with "Missing initialization with `.detectSupport( renderer )`."
-- **Use one KTX2Loader.** Each one downloads the transcoder, about 585 KB, and starts its own workers; r186 warns in the console when several are active.
-- **The file brings its own mipmaps.** The GPU can't build mipmaps for a compressed texture, so they're made when the file is. A file without them loads with mipmap filtering turned off, so the texture can shimmer at a distance.
-- **The color space comes from the file.** KTX2Loader reads it from the KTX2 data, where a texture you load with TextureLoader needs `colorSpace` set by hand. Domain 11 covers color spaces.
+`detectSupport(renderer)` asks which formats this GPU reads, and a load without it fails. Use one KTX2Loader for the whole app, since each one downloads the transcoder and starts its own workers. The file brings its own color space, and its own mipmaps, since the GPU can't build them for a compressed texture. A file made without mipmaps can shimmer at a distance.
 
 ### Making KTX2 files
 
-KTX2 files are made in a build step, with tools such as KTX-Software's `toktx`, `gltf-transform`, or Basis's own `basisu`. Basis has two modes, and as a rule of thumb: ETC1S makes smaller files at lower quality, which suits color textures; UASTC makes bigger files at higher quality, which suits normal maps and fine detail.
+KTX2 files are made ahead of time in a build step, for example with `gltf-transform`. Basis has two modes: ETC1S makes smaller files that usually suit color textures, and UASTC keeps more detail for normal maps.
 
 ### Budgeting texture memory
 
-- **Count pixels, not file size.** A 2048 × 2048 texture is about 22 MB as raw pixels with mipmaps, whether its JPG is 200 KB or 2 MB. The runtime memory math page does these sums.
-- **Compressed formats cut that to a quarter or less,** and the GPU samples them directly, with less data to upload as well.
-- **Check the fallback.** On a device whose GPU reads none of the formats, KTX2 textures are as big as JPGs in memory.
+Count pixels, not file size: a 2048 × 2048 texture is about 22 MB with mipmaps, whether its JPG is 200 KB or 2 MB. GPU-compressed formats cut that to a quarter or less and upload less data too. On a device that reads none of them, KTX2 textures cost as much as JPGs.
 
 ## Drill · Read the code
 

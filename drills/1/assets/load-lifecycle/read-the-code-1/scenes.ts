@@ -82,7 +82,7 @@ export const lifecycle: SceneSetup = ({ scene, camera, controls, container, rend
         (error: Error) => {
           if (mine !== attempt) return;
           lines.push(`failed     ${error.name}: ${error.message}`);
-          if (error instanceof SyntaxError) lines.push('           the dev server sent back index.html for the missing file');
+          if (error instanceof SyntaxError) lines.push('           the server sent back index.html, not "not found"');
           show();
         },
       );
@@ -93,8 +93,7 @@ export const lifecycle: SceneSetup = ({ scene, camera, controls, container, rend
     framesUntilCount = -1;
     const after = gpu();
     lines.push(
-      `drawn      the first render sent ${after.geometries - before.geometries} geometries and ${after.textures - before.textures} textures to the GPU`,
-      `           and compiled ${after.programs - before.programs} shader programs`,
+      `drawn      first render: ${after.geometries - before.geometries} geometries and ${after.textures - before.textures} textures uploaded, ${after.programs - before.programs} programs compiled`,
     );
     show();
   });
