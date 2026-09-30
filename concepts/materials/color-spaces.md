@@ -14,8 +14,8 @@ contexts:
 
 ## Definition
 
-A color space says what a color's numbers mean: three.js does its lighting in linear numbers, where twice the number is twice the light, while pictures, color pickers, and screens use sRGB, so color textures are marked sRGB, data maps are left unmarked, and the renderer converts the result to sRGB for the screen.
+A color space says what a color's numbers mean: in linear, twice the number is twice the light, and in sRGB, the numbers follow the curve that images and screens use.
 
 ## Space lens
 
-Here "space" means color space, not a coordinate space. `material.color` is stored in linear numbers, but `set('#e4572e')` and `getHexString()` speak sRGB. `setRGB(r, g, b)` takes linear numbers unless you pass `SRGBColorSpace` as a fourth argument. A texture marked `SRGBColorSpace` is converted to linear as it's read; one left at `NoColorSpace` is read as is. `renderer.outputColorSpace` (sRGB by default) converts the finished picture for the screen.
+Here "space" means color space. `material.color` and the lighting math are linear, while hex codes, color pickers, color maps, and the screen speak sRGB.

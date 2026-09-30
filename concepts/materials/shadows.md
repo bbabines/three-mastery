@@ -14,8 +14,8 @@ contexts:
 
 ## Definition
 
-A shadow in three.js comes from a depth render seen from the light, the shadow map: each pixel then checks whether something nearer the light blocks it, and how much of the scene the light's shadow camera covers sets how sharp the shadow comes out.
+A shadow comes from a depth picture of the scene taken from the light, and how much of the scene that picture covers sets how sharp the shadow is.
 
 ## Cost lens
 
-Each shadow-casting light renders its casting meshes again every frame, into its shadow map; a point light renders them six times, once for each side of a cube. The map costs GPU memory that grows with the square of `mapSize`, and every pixel of a receiving surface reads it.
+Each shadow-casting light renders its casting meshes again every frame, six times for a point light. The map's GPU memory grows with the square of `mapSize`, and every pixel of a receiving surface reads it.

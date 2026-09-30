@@ -90,7 +90,7 @@ export const highlights: SceneSetup = ({ scene, camera, controls, container, ren
       },
     })),
   );
-  slider(controlsBar, 'Exposure', { min: 0.25, max: 2.5, step: 0.25, value: exposure }, (value) => {
+  slider(controlsBar, 'exposure', { min: 0.25, max: 2.5, step: 0.25, value: exposure }, (value) => {
     exposure = value;
     update();
   });

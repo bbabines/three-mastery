@@ -67,7 +67,7 @@ export const glint: SceneSetup = ({ scene, camera, controls, container }) => {
       },
     })),
   );
-  slider(controlsBar, 'Camera around', { min: -80, max: 80, step: 10, value: orbit }, (value) => {
+  slider(controlsBar, 'camera around', { min: -80, max: 80, step: 10, value: orbit }, (value) => {
     orbit = value;
     update();
   });

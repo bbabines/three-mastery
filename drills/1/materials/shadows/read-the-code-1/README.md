@@ -12,31 +12,31 @@ misconceptions:
 
 # Shadows
 
-> **In short:** A shadow in three.js comes from a depth render seen from the light, the shadow map: each pixel then checks whether something nearer the light blocks it, and how much of the scene the light's shadow camera covers sets how sharp the shadow comes out.
+> **In short:** three.js draws shadows by first rendering the scene from the light, and the area that render covers decides how sharp they are.
 >
-> **Used for:** The soft shadow under a product that keeps it from looking like it floats; sunlight through a warehouse's racks; checking at a glance which part sits on top of which; and the moving shadows of anything that animates, which baked lighting can't give.
+> **Used for:** Grounding a product on a page, sunlight through warehouse racks, showing what sits on what, and moving shadows.
 
 ## A · The basics
 
 ### A picture taken from the light
 
-To know what's in shadow, three.js first renders the scene from the light's point of view, keeping only how far away each surface is. That picture is the **shadow map**. Then, drawing the scene normally, each pixel asks: is something in the shadow map closer to the light than I am? If so, it's in shadow.
+To know what's in shadow, three.js first renders the scene from the light, keeping only how far away each surface is. That picture is the **shadow map**. Then, drawing the scene normally, each pixel asks whether something in the shadow map is closer to the light than it is.
 
-A DirectionalLight takes its picture with a **shadow camera**, an orthographic camera (the frustum page) whose box covers part of the scene. The shadow map's pixels are spread across that box, so the same 512 × 512 map is sharp over a small box and blocky over a big one. Fitting the box tightly around what casts and receives shadows is the cheapest way to sharpen a shadow.
+A DirectionalLight takes that picture with a **shadow camera**, an orthographic camera whose box covers part of the scene. The map's pixels are spread across the box, so the same map is sharp over a small box and blocky over a big one.
 
-**Analogy: a security camera.** Mounted where the light is, it sees everything the light hits; whatever it can't see is in shadow. Aim a low-resolution camera at a whole parking lot and each car is a few blocky pixels; aim the same camera at one car and it's sharp.
+**Analogy: a security camera.** Mounted where the light is, it sees everything the light hits. Aim a low-resolution camera at a whole parking lot and each car is a few blocky pixels; aim it at one car and it's sharp.
 
 ### Acne and peter-panning
 
-Comparing distances with a limited number of steps can make a surface shadow itself in stripes, called **shadow acne**. three.js avoids most of it by drawing the back faces of single-sided meshes into the shadow map, but a `DoubleSide` surface that casts shadows, like the floor here, or a sheet of fabric, gets it. The fix is a **bias**: a small nudge so a surface doesn't count itself as its own blocker. Too much bias and shadows start away from whatever casts them, so the stool looks like it floats: that's called **peter-panning**, after Peter Pan losing his shadow. A bigger map doesn't cure either one.
+Comparing distances with limited precision can make a surface shadow itself in stripes, called **shadow acne**. three.js avoids most of it, but a `DoubleSide` surface that casts shadows, like the floor here, still gets it. The fix is a **bias**, a small nudge so a surface doesn't block itself. Too much, and shadows start away from whatever casts them, so the stool seems to float: that's **peter-panning**. A bigger map cures neither.
 
-Resize the shadow camera's box (the gray lines), switch the map size, and try each bias.
+Resize the shadow camera's box, switch the map size, and try each bias.
 
 <div data-scene="shadowMap"></div>
 
 ## B · Working knowledge
 
-### The four lines, and one more
+### Turning shadows on
 
 ```js
 renderer.shadowMap.enabled = true;
@@ -45,32 +45,22 @@ model.traverse((child) => { if (child.isMesh) child.castShadow = true; });
 floor.receiveShadow = true;
 ```
 
-The renderer settings tour covers these. One more trap: turn `shadowMap.enabled` on before the first render. Materials already drawn keep a shader without shadows until you set `material.needsUpdate = true`.
+Turn `shadowMap.enabled` on before the first render: materials already drawn keep a shader without shadows until you set `material.needsUpdate = true`.
 
 ### Fitting a directional shadow
 
 ```js
-sun.shadow.camera.left = -3;
-sun.shadow.camera.right = 3;
-sun.shadow.camera.top = 3;
-sun.shadow.camera.bottom = -3;
-sun.shadow.camera.updateProjectionMatrix();
-sun.shadow.mapSize.set(1024, 1024);
-scene.add(new CameraHelper(sun.shadow.camera)); // see the box while you tune it
+const shadowCam = sun.shadow.camera;
+shadowCam.left = shadowCam.bottom = -3;
+shadowCam.right = shadowCam.top = 3;
+shadowCam.updateProjectionMatrix();
 ```
 
-- The default box is −5 to 5, 10 units wide, with a 512 × 512 map, and reaches from 0.5 to 500 units in depth; fit `near` and `far` too. The shadow camera sits at the light and looks at `sun.target`, so move both to move the box.
-- **Fit first, then raise `mapSize`.** Doubling `mapSize` costs four times the memory, and four times the pixels to fill in every shadow render; shrinking the box to half its width gives the same sharpness for free.
-- **Softer edges:** `sun.shadow.radius` widens the blur of the default `PCFShadowMap`. `PCFSoftShadowMap` was removed in r186: setting it logs a warning and falls back to `PCFShadowMap`.
+The default box is 10 units wide, with a 512 × 512 map. Fit the box first, then raise `sun.shadow.mapSize`: doubling it costs four times the memory, while halving the box's width gives the same sharpness for free. `new CameraHelper(sun.shadow.camera)` shows the box while you tune it.
 
-### Bias
+### Bias and soft edges
 
-```js
-sun.shadow.normalBias = 0.02; // a nudge along each surface's normal, in scene units
-sun.shadow.bias = -0.001;     // a nudge in depth, as a fraction of the shadow camera's near-to-far range
-```
-
-Start at 0, nudge until the acne goes, and stop there. Refitting `near` and `far` changes what a `bias` value does; `normalBias` is in scene units, which makes it easier to tune.
+`sun.shadow.normalBias` nudges along each surface's normal, in scene units, and `sun.shadow.bias` nudges in depth. Start both at 0, nudge one until the acne goes, and stop there. For softer edges, raise `sun.shadow.radius`; asking for `PCFSoftShadowMap` only logs a warning and falls back to `PCFShadowMap`.
 
 ### A contact shadow under a product
 
@@ -79,11 +69,7 @@ const catcher = new Mesh(new PlaneGeometry(4, 4), new ShadowMaterial({ opacity: 
 catcher.receiveShadow = true;
 ```
 
-`ShadowMaterial` draws only the shadow and is see-through everywhere else, so a product can sit on a page's white background with a soft shadow under it. For a shadow that never changes, a baked one is cheaper (the baked lighting page).
-
-### Custom vertex effects
-
-The shadow render draws meshes with a built-in depth material, not yours. A mesh whose shader moves its vertices, such as waving grass, casts the shadow of its unmoved shape unless you give it a matching `customDepthMaterial` (`customDistanceMaterial` for point lights). The extending materials page, in the shaders domain, covers writing one.
+`ShadowMaterial` draws only the shadow and is see-through everywhere else, so a product can sit on a white page with a soft shadow under it.
 
 ## Drill · Read the code
 

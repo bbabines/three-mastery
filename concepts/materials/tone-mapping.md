@@ -14,7 +14,7 @@ contexts:
 
 ## Definition
 
-Tone mapping squeezes the brightness of a lit scene, which can go far past what a screen can show, into the screen's range, and exposure brightens or darkens everything just before it; three.js leaves tone mapping off by default.
+Tone mapping squeezes a lit scene's brightness, which can go far past white, into what a screen can show, and exposure brightens or darkens everything just before it.
 
 ## Cost lens
 

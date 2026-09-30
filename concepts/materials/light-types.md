@@ -14,8 +14,8 @@ contexts:
 
 ## Definition
 
-Lights differ in where their light comes from and how it fades: directional, hemisphere, and ambient light reach everything equally at any distance, while point and spot light fade with the square of the distance, so how far away a light is, in the scene's own units, sets how bright it looks.
+Directional, hemisphere, and ambient light reach everything equally, while point and spot light fade with the square of the distance, measured in the scene's own units.
 
 ## Cost lens
 
-Every light adds GPU work for every pixel of every lit material, whatever its type, and adding or removing one rebuilds the shader programs. Turning a light's `intensity` down to 0 still costs its work; removing it or hiding it doesn't.
+Every light adds GPU work for every pixel of every lit material, and adding or removing one rebuilds the shader programs. A light turned down to `intensity` 0 still costs its work; removing it or hiding it doesn't.

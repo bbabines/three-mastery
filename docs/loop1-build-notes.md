@@ -137,6 +137,25 @@ The Sep 30 pass brought each domain to Domain 1's size and voice, which meant cu
 - An anchor exactly on a surface was hidden by that surface in about 1 view in 4. CSS2DRenderer also hides hidden objects, objects under a hidden parent, and objects on a layer the camera doesn't see.
 - A per-frame lerp closes 96% of the gap in a quarter second at 120 Hz vs 79% at 60 Hz; `lerp(x, target, 10 * delta)` is slightly off even at normal rates; cap delta with `Math.min(delta, 0.1)`. There's no `MathUtils.remap`; three.js calls it `mapLinear`. tween.js ships at `three/addons/libs/tween.module.js`.
 
+**GPU pipeline (Domain 10):**
+- Symptoms by stage: a mesh cut open near the camera is the near plane; a plane invisible from behind is culling; jagged edges are rasterization; a see-through object hiding what's behind it is the depth test; holes in a texture are `discard` from `alphaTest`. Clipping also trims triangles that cross the view's edge.
+- The WebGL commands behind one draw (`useProgram`, `uniform*`, `bindTexture`, state, `bindVertexArray`, `drawElements`), and when three.js skips each. A program switch re-sends the camera and light values.
+- A Group's `renderOrder` sorts everything inside it ahead of each object's own; `setOpaqueSort` and `setTransparentSort` replace the sort.
+- A see-through `DoubleSide` material draws twice, back faces then front. The transparent flag applies to PNG alpha too, with `alphaTest` as the hard-edged alternative.
+- Stencil: at least 8 bits; a render target needs `stencilBuffer: true`; a scaled copy gives an even outline only on rounded, roughly convex shapes, while pushing vertices along normals works on any shape.
+- A render target defaults to no stencil and no mipmaps; a canvas-sized target at DPR 2 on 1920×1080 is about 33 MB of color, and `HalfFloatType` doubles it. `UnrealBloomPass` works best on half-float targets; `setEffects` warns if you add an `OutputPass` and multisamples by itself.
+- The async readback still makes the GPU drain its queue; three.js logs an error for formats it can't read.
+- What each measurement tool can't see (Stats, `renderer.info`, the timer-query extension, Chrome's Performance panel, Spector.js); WebGLRenderer doesn't read timer queries for you. Phones often draw at pixel ratio 3.
+
+**Materials, lighting, and color (Domain 11):**
+- `side` also decides what a raycast can hit: a `FrontSide` mesh can't be clicked from behind. A decal lifted off the surface avoids z-fighting but shows a gap up close. Flag defaults: `FrontSide`, `transparent` false, `alphaTest` 0, `depthWrite` true, `polygonOffset` false.
+- A mesh whose shader moves its vertices casts its unmoved shadow unless it has `customDepthMaterial` (`customDistanceMaterial` for point lights). The shadow camera sits at the light and looks at `sun.target`; its default near and far are 0.5 and 500, and `bias` is a fraction of that range. A 4096 shadow map costs 64 times the memory of 512.
+- A render target stays linear; the sRGB conversion happens only when drawing to the canvas. A color set with `set('#e4572e')` shows exactly on screen only on an unlit material with no tone mapping.
+- Color-space and filter changes after a texture's first draw need `needsUpdate`. `flipY` has no effect on an `ImageBitmap`. Canvas text should be sized to its on-screen pixels times the pixel ratio.
+- A lightmap adds on top of live lights. `transmission` adds a whole extra render of the solid objects; GLTFLoader gives a `MeshPhysicalMaterial` when a file uses its extras. Toon with no `gradientMap` uses two bands.
+- `MeshBasicMaterial` ignores `scene.environment`. A plain `scene.background` color still leaves environment lighting. An HDR environment costs 8 bytes a pixel as half floats.
+- PBR scales the diffuse color by (1 − metalness); `specular` on Phong defaults to `0x111111`. RectAreaLight fades with distance, and its size sets how soft its reflections are.
+
 ## Page lengths
 
 Several pages run over the recipe's guide: most light pages are 72–90 lines against 50–70, and some core pages reach 130–145 against about 120 (the camera domain's, and Attributes, uniforms, varyings). The extra is mostly B's code blocks. Trim if Brad finds them long.

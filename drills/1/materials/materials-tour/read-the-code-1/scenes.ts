@@ -118,7 +118,7 @@ export const members: SceneSetup = ({ scene, camera, controls, container }) => {
       },
     })),
   );
-  slider(controlsBar, 'Light from', { min: 0, max: 360, step: 15, value: angle }, (value) => {
+  slider(controlsBar, 'light from', { min: 0, max: 360, step: 15, value: angle }, (value) => {
     angle = value;
     update();
   });

@@ -14,8 +14,8 @@ contexts:
 
 ## Definition
 
-Diffuse light is the light a matte surface scatters evenly in every direction, so its brightness depends only on how squarely the surface faces the light, the dot product of its normal and the direction to the light, cut off at 0, and not on where it's seen from.
+Diffuse light is the light a matte surface scatters evenly in every direction, so its brightness depends on how squarely the surface faces the light, not on where it's seen from.
 
 ## Space lens
 
-The normal and the direction to the light must be in the same space before the dot product means anything. three.js's built-in lighting puts both in view space, measured from the camera; the camera's position still never enters the diffuse result.
+The normal and the direction to the light must be in the same space; three.js's own lighting puts both in view space, measured from the camera. The camera's position still never enters the diffuse result.

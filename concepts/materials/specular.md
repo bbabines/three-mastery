@@ -14,8 +14,8 @@ contexts:
 
 ## Definition
 
-Specular light is the mirror-like part of a surface's light, the highlight, and it's brightest where the surface's normal lines up with the half vector, the direction halfway between the directions to the light and to the viewer, so a highlight moves when the viewer moves.
+Specular light is the mirror-like highlight on a surface, brightest where the normal lines up with the direction halfway between the light and the viewer.
 
 ## Space lens
 
-With a perspective camera, the direction to the viewer is different at every point: it runs from that point on the surface to the camera. (An orthographic camera uses one direction for every point.) three.js works it out in view space, measured from the camera, along with the normal and the direction to the light.
+The direction to the viewer runs from each point on the surface to the camera, so it differs at every point. three.js works it out in view space, measured from the camera, along with the normal and the direction to the light.

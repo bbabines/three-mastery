@@ -71,11 +71,11 @@ export const turnEnvironment: SceneSetup = ({ scene, camera, controls, container
       'reflections and lighting turn and dim together, on every material at once',
     ].join('\n');
   };
-  slider(controlsBar, 'Turn', { min: -180, max: 180, step: 15, value: turn }, (value) => {
+  slider(controlsBar, 'turn', { min: -180, max: 180, step: 15, value: turn }, (value) => {
     turn = value;
     update();
   });
-  slider(controlsBar, 'Intensity', { min: 0, max: 2, step: 0.25, value: 1 }, (value) => {
+  slider(controlsBar, 'intensity', { min: 0, max: 2, step: 0.25, value: 1 }, (value) => {
     scene.environmentIntensity = value;
     update();
   });

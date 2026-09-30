@@ -56,11 +56,11 @@ export const falloff: SceneSetup = (harness) => {
     { html: 'PointLight', select: () => ((point = true), update()) },
     { html: 'DirectionalLight', select: () => ((point = false), update()) },
   ]);
-  slider(controlsBar, 'Light height', { min: 0.5, max: 2.5, step: 0.25, value: height }, (value) => {
+  slider(controlsBar, 'light height', { min: 0.5, max: 2.5, step: 0.25, value: height }, (value) => {
     height = value;
     update();
   });
-  slider(controlsBar, 'Ambient', { min: 0, max: 1.5, step: 0.25, value: 0 }, (value) => {
+  slider(controlsBar, 'ambient', { min: 0, max: 1.5, step: 0.25, value: 0 }, (value) => {
     ambient.intensity = value;
     measure = true;
   });

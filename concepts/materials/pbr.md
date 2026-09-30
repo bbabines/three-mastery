@@ -14,7 +14,7 @@ contexts:
 
 ## Definition
 
-Physically based rendering (PBR) describes a surface with two numbers that follow how real materials behave: metalness says whether it's a metal, which has no diffuse color and tints its reflections, or a non-metal, which has its own diffuse color under faint, untinted reflections; roughness says how sharp or blurry the reflections and highlights are.
+Physically based rendering (PBR) describes a surface with two numbers that act like real materials: metalness, whether it's a metal, and roughness, how sharp or blurry its reflections are.
 
 ## Cost lens
 

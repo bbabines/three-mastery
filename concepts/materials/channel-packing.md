@@ -14,8 +14,8 @@ contexts:
 
 ## Definition
 
-Channel packing stores several grayscale maps in one texture, one in each of its red, green, and blue channels: glTF puts roughness in green and metalness in blue, ambient occlusion often shares the same texture in red, and three.js's materials read exactly those channels.
+Channel packing stores several grayscale maps in one texture, one per color channel, the way glTF stores roughness in green and metalness in blue.
 
 ## Cost lens
 
-One texture instead of three: one download, one upload, and one texture for the GPU to bind, at a third of the GPU memory of three separate RGBA textures of the same size.
+One texture instead of three: one download, one upload, and a third of the GPU memory of three separate textures of the same size.

@@ -14,8 +14,8 @@ contexts:
 
 ## Definition
 
-Baked lighting is light and shadow worked out ahead of time, usually in a 3D tool, and stored in a texture, a lightmap or an ambient occlusion (AO) map, so it costs almost nothing to draw but never changes when anything moves.
+Baked lighting is light and shadow worked out ahead of time and stored in a texture, so it costs almost nothing to draw but never changes when anything moves.
 
 ## Cost lens
 
-Drawing it is one texture read per pixel: no light math, no shadow render. The cost moves elsewhere: GPU memory for the textures, a second set of UVs in the geometry, and the time to bake it again whenever the scene changes.
+Drawing it is one texture read per pixel, with no light math and no shadow render. The cost moves to GPU memory for the textures, a second set of UVs, and baking again whenever the scene changes.

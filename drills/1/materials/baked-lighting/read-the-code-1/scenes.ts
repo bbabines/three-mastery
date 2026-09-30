@@ -86,7 +86,7 @@ export const bakedVsLive: SceneSetup = ({ scene, camera, controls, container, re
     { html: 'baked lightmap', select: () => ((baked = true), update()) },
     { html: 'live shadow', select: () => ((baked = false), update()) },
   ]);
-  slider(controlsBar, 'Move the crate', { min: -1.2, max: 1.2, step: 0.1, value: 0 }, (value) => {
+  slider(controlsBar, 'move the crate', { min: -1.2, max: 1.2, step: 0.1, value: 0 }, (value) => {
     offset = value;
     update();
   });

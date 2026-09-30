@@ -14,8 +14,8 @@ contexts:
 
 ## Definition
 
-An environment map is a picture of everything around the scene, in every direction; set as `scene.environment`, it lights physically based materials and gives them something to reflect, blurred to match each surface's roughness, which is called image-based lighting (IBL), while showing it behind the scene is a separate setting, `scene.background`.
+An environment map is a picture of everything around the scene that lights physically based materials and gives them something to reflect, whether or not it's shown as the background.
 
 ## Cost lens
 
-Prefiltering, the blurring for every roughness, is GPU work done once, when the environment is first used. After that, each pixel reads the environment a few times, which is cheaper than many lights. An HDR environment costs GPU memory: 8 bytes a pixel as half floats, plus the prefiltered copy.
+Blurring it for every roughness is GPU work done once, when the environment is first used; after that, each pixel reads it a few times, which is cheaper than many lights. An HDR environment also costs GPU memory, for the picture and its blurred copy.

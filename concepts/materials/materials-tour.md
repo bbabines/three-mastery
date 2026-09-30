@@ -14,7 +14,7 @@ contexts:
 
 ## Definition
 
-A material decides how a mesh's surface looks, and three.js's built-in materials range from flat color that ignores lights to physically based surfaces that react to every light and reflection in the scene.
+A material decides how a mesh's surface looks, from a flat color that ignores lights to a surface that reacts to every light and reflection.
 
 ## Cost lens
 

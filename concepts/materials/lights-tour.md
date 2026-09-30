@@ -15,8 +15,8 @@ contexts:
 
 ## Definition
 
-Lights are objects in the scene that lit materials read: ambient and hemisphere light fill in evenly, a directional light shines in parallel like the sun, point and spot lights shine from one spot, and a RectAreaLight shines from a glowing rectangle.
+Lights are objects in the scene that lit materials read, and each kind differs in where its light comes from: everywhere, far away, one spot, or a glowing panel.
 
 ## Cost lens
 
-Every light adds GPU work for every pixel of every lit material. Adding or removing a light rebuilds the shader program of every lit material in the scene. A light that casts shadows adds a render of the shadow-casting meshes, seen from the light, every frame; a point light adds six.
+Every light adds GPU work for every pixel of every lit material, and adding or removing one rebuilds their shader programs. A light that casts shadows renders the shadow-casting meshes again from the light every frame, six times for a point light.

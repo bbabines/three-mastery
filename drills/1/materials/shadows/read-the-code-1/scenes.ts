@@ -74,7 +74,7 @@ export const shadowMap: SceneSetup = ({ scene, camera, controls, container, rend
     ].join('\n');
   };
 
-  slider(controlsBar, 'Shadow camera half-width', { min: 1, max: 8, step: 0.5, value: state.half }, (value) => {
+  slider(controlsBar, 'shadow camera half-width', { min: 1, max: 8, step: 0.5, value: state.half }, (value) => {
     state.half = value;
     update();
   });

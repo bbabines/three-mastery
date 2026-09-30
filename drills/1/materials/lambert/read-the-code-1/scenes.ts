@@ -62,7 +62,7 @@ export const terminator: SceneSetup = ({ scene, camera, controls, container }) =
     { html: 'Lambert', select: () => ((toon = false), update()) },
     { html: 'Toon', select: () => ((toon = true), update()) },
   ]);
-  slider(controlsBar, 'Light from', { min: -180, max: 180, step: 10, value: angle }, (value) => {
+  slider(controlsBar, 'light from', { min: -180, max: 180, step: 10, value: angle }, (value) => {
     angle = value;
     update();
   });
@@ -96,7 +96,7 @@ export const viewer: SceneSetup = (harness) => {
     controls.update();
     measure = true;
   };
-  slider(overlay(container, 'controls'), 'Camera around', { min: -40, max: 80, step: 10, value: orbit }, (value) => {
+  slider(overlay(container, 'controls'), 'camera around', { min: -40, max: 80, step: 10, value: orbit }, (value) => {
     orbit = value;
     place();
   });
