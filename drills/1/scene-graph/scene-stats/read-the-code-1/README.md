@@ -12,70 +12,60 @@ misconceptions:
 
 # Scene statistics
 
-> **In short:** Scene statistics are counts you gather by walking a scene: how many meshes and triangles, and how many different geometries, materials, and textures, each counted once however many meshes share it.
+> **In short:** Numbers you get by walking a scene, like how many meshes and triangles it has, that say what it costs to draw.
 >
-> **Used for:** Checking an artist's model before it ships; proving an optimization helped, with numbers from before and after; picking the cheaper of two versions of a product; and a debug panel that shows what a page is drawing.
+> **Used for:** Checking a model before it ships, proving an optimization helped, comparing two versions, and debug panels.
 
 ## A · The basics
 
-### What to count, and what each count tells you
+### What to count
 
-| Count | What it tells you |
-| --- | --- |
-| Meshes | Each one the camera draws costs at least one **draw call**: one request from the CPU to the GPU to draw one thing. CPU work every frame. |
-| Triangles | How much shape the GPU processes on every draw |
-| Unique geometries | The vertex data held in GPU memory (the runtime memory math page) |
-| Unique materials | How many different surface setups the GPU switches between |
-| Unique textures | Often the biggest share of GPU memory |
+Walking a model tells you what it will cost. Count the meshes: each one the camera sees costs at least one **draw call**, one request from the CPU to the GPU to draw a geometry with a material, every frame. Count the triangles, the shape the GPU works through on every draw. And count the unique geometries, materials, and textures, which are what fill GPU memory.
 
 "Unique" means counted once, however many meshes share it. Every geometry, material, and texture gets a `uuid`, an ID made when it's created, so a `Set` of uuids counts each one once.
 
-**Analogy: a stack of flyers.** A hundred flyers printed from one design are still a hundred flyers to hand out, one at a time. The design was only stored once. Meshes are the flyers; a shared geometry and material are the design.
+**Analogy: a stack of flyers.** A hundred flyers printed from one design are still a hundred flyers to hand out, one at a time. The design was only stored once.
 
 ### Sharing a material doesn't share the draw
 
-Sharing a geometry and a material saves memory: the GPU holds them once. It doesn't save draw calls: three.js still draws every mesh on its own. Add bolts that all share the rack's own bolt geometry and material, and compare the counts with the draw calls the renderer reports.
+Sharing a geometry and a material saves memory, since the GPU holds them once. It doesn't save draw calls: three.js still draws every mesh on its own.
+
+Try both models, then add bolts that share the rack's own bolt geometry and material. Watch the draw calls the renderer reports.
 
 <div data-scene="audit"></div>
 
 ## B · Working knowledge
 
-### The counting code
+### Counting triangles
 
 ```js
-let meshes = 0;
-let triangles = 0;
-const geometries = new Set();
-const materials = new Set();
-const textures = new Set();
-model.traverse((object) => {
-  if (!object.isMesh) return;
-  meshes += 1;
-  const { index, attributes } = object.geometry;
-  triangles += (index ? index.count : attributes.position.count) / 3;
-  geometries.add(object.geometry.uuid);
-  for (const material of [object.material].flat()) {
-    materials.add(material.uuid);
-    for (const value of Object.values(material)) if (value?.isTexture) textures.add(value.uuid);
-  }
-});
+const { index, attributes } = mesh.geometry;
+triangles += (index ? index.count : attributes.position.count) / 3;
 ```
 
-- An indexed geometry reuses corners, so its triangle count comes from the index, as on the indexed vs non-indexed page. Dividing the vertex count by 3 comes out too low: about half, on the rack.
-- `[object.material].flat()` also handles an array of materials (the groups and multi-material page). An `InstancedMesh` is one draw call for all its copies, so multiply its triangles by `count` (the InstancedMesh page).
+An indexed geometry reuses corners, so its triangle count comes from the index, as on the indexed vs non-indexed page. Dividing the vertex count by 3 comes out too low.
+
+### Counting each material and texture once
+
+```js
+for (const material of [mesh.material].flat()) {
+  materials.add(material.uuid);
+  for (const value of Object.values(material)) if (value?.isTexture) textures.add(value.uuid);
+}
+```
+
+`[mesh.material].flat()` also handles a mesh with an array of materials. Geometries work the same way, with `geometries.add(mesh.geometry.uuid)`.
 
 ### What the renderer reports
 
 ```js
-renderer.info.render.calls;       // draw calls in the last render
-renderer.info.render.triangles;   // triangles drawn in the last render
-renderer.info.memory.geometries;  // geometries held on the GPU right now
-renderer.info.memory.textures;    // textures held on the GPU right now
+renderer.info.render.calls;      // draw calls in the last render
+renderer.info.render.triangles;  // triangles drawn in the last render
+renderer.info.memory.geometries; // geometries held on the GPU right now
+renderer.info.memory.textures;   // textures held on the GPU right now
 ```
 
-- They count what the last `render()` really drew, reset at the start of each one. Meshes outside the camera's view aren't drawn (the frustum page), so they don't count; helpers, labels, and the floor grid do. The scene above hides the grid and axes so the numbers match the model.
-- A transparent material with `side: DoubleSide` is drawn twice, back faces then front faces: two draw calls for one Mesh, unless you set `forceSinglePass = true`.
-- Cutting draw calls, by merging meshes or instancing, belongs to the optimization domain.
+These count what the last `render()` really drew. Meshes outside the camera's view aren't drawn, so they don't count, but helpers, labels, and the floor grid do.
 
 ## Drill · Read the code
 

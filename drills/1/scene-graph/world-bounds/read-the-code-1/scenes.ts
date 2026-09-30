@@ -126,7 +126,7 @@ export const tilt: SceneSetup = ({ scene, camera, controls, container }) => {
         `<span style="color:${COLORS.green}">new Box3().setFromObject(jcup, true)</span>  ${formatNumber(tightSize.y)} tall, ${formatNumber(tightSize.z)} deep`,
       ].join('\n');
     };
-    slider(bar, 'Turn the J-cup', { min: 0, max: 90, step: 15, value: 30 }, turn);
+    slider(bar, 'turn', { min: 0, max: 90, step: 15, value: 30 }, turn);
     turn(30);
   });
 };

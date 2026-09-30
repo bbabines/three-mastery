@@ -180,7 +180,7 @@ export const copies: SceneSetup = ({ scene, camera, controls, container }) => {
         },
       })),
     );
-    slider(bar, 'Copies', { min: 0, max: 8, step: 1, value: count }, (value) => {
+    slider(bar, 'copies', { min: 0, max: 8, step: 1, value: count }, (value) => {
       count = value;
       update();
     });

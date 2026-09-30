@@ -15,7 +15,7 @@ contexts:
 
 ## Definition
 
-`getObjectByName` and its relatives search an object and everything under it and return the first match, and type checks like `isMesh` pick out one kind of object.
+A search by name returns the first matching object under the one you search from, and a check on each object's kind picks out every mesh or light.
 
 ## Cost lens
 

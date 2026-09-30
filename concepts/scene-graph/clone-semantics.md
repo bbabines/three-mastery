@@ -14,8 +14,8 @@ contexts:
 
 ## Definition
 
-`clone()` makes new objects with their own position, rotation, scale, and children, but every cloned mesh shares the original's geometry and material, and through the material its textures.
+A clone is a new object with its own placement and its own copies of the children, but every cloned mesh shares the original's geometry, material, and textures.
 
 ## Cost lens
 
-A plain clone costs a few new objects on the CPU and one more draw call per mesh, and no new GPU memory. Cloning a copy's materials adds a small material object per mesh; cloning its geometry adds that geometry's vertex data to GPU memory.
+A plain clone costs a few new objects on the CPU and a draw call per mesh, but no new GPU memory. Cloning a copy's materials adds small material objects, and cloning its geometry adds that vertex data to GPU memory.

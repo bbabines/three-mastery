@@ -92,7 +92,7 @@ export const audit: SceneSetup = ({ scene, camera, controls, container, renderer
         },
       })),
     );
-    slider(bar, 'Extra bolts', { min: 0, max: 100, step: 10, value: 0 }, (value) => {
+    slider(bar, 'extra bolts', { min: 0, max: 100, step: 10, value: 0 }, (value) => {
       extra = value;
       update();
     });

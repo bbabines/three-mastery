@@ -14,8 +14,8 @@ contexts:
 
 ## Definition
 
-Scene statistics are counts gathered by walking a scene: meshes, triangles, and the unique geometries, materials, and textures, each counted once by its uuid however many meshes share it.
+Scene statistics are counts of a scene's meshes and triangles and of its unique geometries, materials, and textures, each counted once however many meshes share it.
 
 ## Cost lens
 
-Every mesh the camera draws is at least one draw call, CPU work to issue every frame, whether or not it shares a material with others. Unique geometries and textures are what take GPU memory; sharing saves memory, not draw calls.
+Every mesh the camera draws is at least one draw call, CPU work every frame, whether or not it shares a material. Unique geometries and textures are what take GPU memory, so sharing saves memory, not draw calls.

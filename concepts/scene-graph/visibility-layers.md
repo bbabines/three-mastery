@@ -14,8 +14,8 @@ contexts:
 
 ## Definition
 
-`visible = false` stops an object and everything under it from being drawn but leaves it in the scene, where raycasts still hit it; removing it takes it out of the scene; and layers let each camera and raycaster choose which objects it deals with, testing each object on its own.
+Hiding an object stops it and everything under it being drawn while raycasts still hit it, removing takes it out of the scene, and layers let each camera and raycaster pick which objects it deals with, one object at a time.
 
 ## Cost lens
 
-A hidden object isn't drawn, but it still costs CPU time: every render refreshes its matrices, and scene-wide raycasts still test it. A removed object costs neither, but its geometry, materials, and textures stay in memory until they're disposed.
+A hidden object isn't drawn, but it still costs CPU time, since every render refreshes its matrices and scene-wide raycasts still test it. A removed object costs neither, but its geometry, materials, and textures stay in memory until they're disposed.

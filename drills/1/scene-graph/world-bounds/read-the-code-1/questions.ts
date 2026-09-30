@@ -14,7 +14,7 @@ const height = tube.geometry.boundingBox.getSize(new Vector3()).y;`,
       'About 0.09: the scale gets applied twice',
     ],
     answer: 1,
-    why: "A geometry's box is measured from the Mesh itself, before anything above it moves, turns, or resizes it. 2.3 ÷ 0.038 is about 60. For the size in the world, measure the object: `new Box3().setFromObject(tube)`.",
+    why: "A geometry's box is measured from the Mesh itself, before the 0.038 scale above it. For the size in the world, measure the object: `new Box3().setFromObject(tube)`.",
   },
   {
     code: `// the model sits straight in the scene
@@ -23,16 +23,16 @@ model.position.y -= box.min.y;`,
     ask: 'Where does the model end up?',
     choices: ['With its origin at y = 0', 'Lifted up by the full height of the model', 'With its lowest point at y = 0'],
     answer: 2,
-    why: "`box.min.y` is the model's lowest point in the world. Moving the model down by that much puts the lowest point on y = 0, wherever its origin is. It works because the model's parent is the scene, so `position` and the box measure from the same place.",
+    why: "`box.min.y` is the model's lowest point in the world, so moving down by that much puts the lowest point on y = 0, wherever the model's origin is.",
   },
   {
     code: `pullUpBar.visible = false; // the widest part of the rack
 const box = new Box3().setFromObject(rack);`,
-    ask: 'How wide is `box`, compared with before the bar was hidden?',
+    ask: 'How does hiding the bar change `box`?',
     choices: [
       'Narrower: hidden parts are left out',
       'Narrower later: once the next render has run',
-      'Just as wide: hidden parts are measured too',
+      'Not at all: hidden parts are measured as well',
     ],
     answer: 2,
     why: "`setFromObject` never checks `visible`, so the hidden bar still counts. To measure only what's shown, build the box from the visible Meshes with `traverseVisible` and `expandByObject`.",
@@ -43,24 +43,20 @@ const loose = new Box3().setFromObject(jcup);
 const tight = new Box3().setFromObject(jcup, true);`,
     ask: 'How do the two boxes compare?',
     choices: [
-      '`loose` is as big as `tight` or bigger, never smaller',
-      '`tight` is bigger, because it counts every vertex',
-      'They match; `true` only makes it faster to compute',
+      '`loose` is as big as `tight`, or bigger',
+      '`tight` is bigger, since it counts every vertex',
+      'They match, and `true` only makes it faster',
     ],
     answer: 0,
-    why: "The default boxes each Mesh's own box, turned into the world, so it always holds the whole shape, often with room to spare once things are turned. `true` boxes every vertex: a tight fit that costs CPU time for every vertex in the model.",
+    why: "The default boxes each Mesh's own box turned into the world, so it holds the whole shape, often with room to spare. `true` boxes every vertex: tight, but CPU time for every vertex.",
   },
   {
     code: `// the rack stands on a cart
 cart.position.x += 2;
 const box = new Box3().setFromObject(rack);`,
     ask: 'Where is `box`?',
-    choices: [
-      "Around the rack's new spot, 2 units over",
-      'Around the rack where it was before the cart moved',
-      'Nowhere yet, since the box stays empty until the next render',
-    ],
+    choices: ["Around the rack's new spot, 2 units over", "Around the rack's old spot", 'Empty until the next render runs'],
     answer: 1,
-    why: '`setFromObject` refreshes the rack and everything under it, but not the cart above it, so it combines the rack with the cart\'s old saved transform. Measure the cart, or call `cart.updateMatrixWorld()` first.',
+    why: "`setFromObject` refreshes the rack and everything under it, but not the cart above it, so it uses the cart's old transform. Call `cart.updateMatrixWorld()` first.",
   },
 ];

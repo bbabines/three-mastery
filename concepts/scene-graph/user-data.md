@@ -14,4 +14,4 @@ contexts:
 
 ## Definition
 
-`userData` is a plain object on every Object3D for your own data; glTF `extras` arrive in it, and it travels with the object through `clone` and saving.
+Every object carries a plain object for your own data, which glTF extras fill in and which is copied along with the object when it's cloned or saved.

@@ -14,4 +14,4 @@ contexts:
 
 ## Definition
 
-Adding or removing objects while walking the tree makes the walk skip objects or throw, so collect what to change during the walk, then add, remove, or replace afterward.
+Adding or removing objects while walking the tree makes the walk skip objects or throw, so collect what to change during the walk and change it afterward.

@@ -13,9 +13,9 @@ misconceptions:
 
 # Finding objects
 
-> **In short:** `getObjectByName` searches an object and everything under it and hands back the first object with exactly that name, and checks like `isMesh` and `isLight` pick out one kind of object.
+> **In short:** Pulls one object out of a model by its name, or every object of one kind, like all the lights.
 >
-> **Used for:** Hiding one part of a product in a configurator; recoloring every part that uses one finish; finding the lights in a scene someone else lit; and wiring a UI button to a node an artist named in Blender.
+> **Used for:** Hiding one part of a product, recoloring every part with one finish, finding the lights, and wiring up UI buttons.
 
 ## A · The basics
 
@@ -25,32 +25,32 @@ misconceptions:
 const pin = model.getObjectByName('pin');
 ```
 
-It searches in the same order as `traverse` on the traverse variants page, starting with `model` itself, and stops at the first object whose `name` is exactly that string. If nothing matches, it returns `undefined` rather than throwing, so the error shows up on the next line that uses the result.
+It searches `model` and everything under it, in the same order as `traverse`, and stops at the first object whose `name` is exactly that string. If nothing matches, it returns `undefined` instead of throwing, so the error shows up on the next line that uses the result.
 
 ### Names aren't unique
 
-Nothing in three.js keeps names unique. Every object you create starts with the name `''`. GLTFLoader numbers repeated names within one file, but two loads of the same file, or two clones of one model, have the same names all the way down.
+Nothing in three.js keeps names unique. GLTFLoader numbers repeated names within one file, but two loads of the same file, or two clones of one model, have the same names all the way down.
 
-**Analogy: calling a name in a crowded room.** Call "Sam!" and the first Sam to hear you answers. There might be three Sams in the room; you get one, and not necessarily the one you meant.
+**Analogy: calling a name in a crowded room.** Call "Sam!" and the first Sam to hear you answers. There might be three Sams in the room, and you get one of them.
 
-Brad's rack is loaded twice here. Try each search.
+The rack model is loaded twice here. Try each search.
 
 <div data-scene="twoRacks"></div>
 
 ## B · Working knowledge
 
-### Searching for the right thing
+### Searching the right place
 
 ```js
-const pin = rackB.getObjectByName('pin');               // search one copy, not the scene
+const pin = rackB.getObjectByName('pin');               // one copy, not the whole scene
 const pins = scene.getObjectsByProperty('name', 'pin'); // every match, in an array
 ```
 
 Each search walks the tree until it finds a match, so search once after loading and keep the result.
 
-### Blender's names vs three.js's names
+### Searching by the Blender name
 
-As the glTF structure page showed, GLTFLoader cleans every node's name (spaces become `_`, and `.`, `:`, `/`, `[`, and `]` are removed), numbers repeats within one file `_1`, `_2`, and keeps the original in `userData.name`. In the J-cups file, `3X4 J-Cup Pin_MIR:1 [117110]` becomes `3X4_J-Cup_Pin_MIR1_117110`. To search by the name the artist typed, compare `userData.name`:
+GLTFLoader cleans every node's name, so `(export) flipdown safety 4` loads as `(export)_flipdown_safety_4`, and it keeps the Blender name in `userData.name`; the glTF structure page has the rules. To search by the Blender name, compare that:
 
 ```js
 let safety;
@@ -59,28 +59,21 @@ model.traverse((object) => {
 });
 ```
 
-Material names aren't cleaned: the rack's `Zinc.003` keeps its dot.
-
 ### Finding by kind
 
 ```js
 const lights = scene.getObjectsByProperty('isLight', true);
 ```
 
-Every object has flags for what it is: `isMesh`, `isLight`, `isCamera`, `isGroup`, `isSprite`, and so on, and every one has `isObject3D`. Prefer them to `type`, which is the exact class name: a `SkinnedMesh` has `type` `'SkinnedMesh'`, so `object.type === 'Mesh'` misses it, but its `isMesh` is `true`.
+Every object has flags for what it is, like `isMesh`, `isLight`, and `isCamera`. Prefer them to `type`, which is the exact class name: a `SkinnedMesh`'s `type` is `'SkinnedMesh'`, so `type === 'Mesh'` misses it, but its `isMesh` is `true`.
 
 ### Grouping by material
 
-```js
-const byMaterial = new Map();
-model.traverse((object) => {
-  if (!object.isMesh) return;
-  if (!byMaterial.has(object.material)) byMaterial.set(object.material, []);
-  byMaterial.get(object.material).push(object);
-});
-```
+Collect the Meshes with `traverse`, then group them by the material itself, not its name, so the Meshes that really share a material land in one list, ready to recolor together:
 
-Keyed by the material itself, not its name, the Meshes that really share a material land in one list, ready to recolor together.
+```js
+const byMaterial = Map.groupBy(meshes, (mesh) => mesh.material);
+```
 
 ## Drill · Read the code
 

@@ -8,31 +8,29 @@ export const questions: Question[] = [
 });
 // later, to turn x-ray off
 xray.dispose();`,
-    ask: 'What does the model look like after the next render?',
+    ask: 'How does the model look after the next render?',
     choices: [
       'Back to its own materials: dispose undoes the swap',
       'Still x-ray: every mesh still points at xray',
       "Invisible: a disposed material isn't drawn",
     ],
     answer: 1,
-    why: "Nothing remembered the old materials. `dispose()` only frees the x-ray material's resources on the GPU, and since the meshes still use it, the next render sets it up again. Save each mesh's material before swapping, and put them back to turn x-ray off.",
+    why: "Nothing remembered the old materials. `dispose()` only frees x-ray's GPU resources, and the meshes still use it, so the next render sets it up again. Save each original before swapping.",
   },
   {
     code: `function highlight(mesh) {
   originals.set(mesh, mesh.material);
   mesh.material = glow;
 }
-highlight(bolt);
-highlight(bolt); // the pointer moved, still over the bolt
-bolt.material = originals.get(bolt);`,
-    ask: 'Which material is the bolt wearing now?',
+highlight(bolt); highlight(bolt); // the pointer moved, still over the bolt`,
+    ask: 'What does `originals.get(bolt)` hold now?',
     choices: [
-      'Its own material: a Map keeps the first value set',
-      '`glow`: the second call saved `glow` as the original',
-      'No material: set() fails for a key already there',
+      "The bolt's own material: a Map keeps the first",
+      '`glow`: the second call saved `glow`',
+      'Both: a Map keeps a list for each key',
     ],
     answer: 1,
-    why: "`set` replaces the value for a key that's already in the Map, and by the second call the bolt was already wearing `glow`. So the \"original\" is `glow`, and restoring changes nothing. Only save when the Map doesn't have the mesh yet: `if (!originals.has(mesh))`.",
+    why: 'By the second call the bolt already wears `glow`, and `set` replaces the value, so restoring changes nothing. Only save when the Map lacks the mesh: `if (!originals.has(mesh))`.',
   },
   {
     code: `scene.overrideMaterial = new MeshNormalMaterial(); // debug view on
@@ -45,6 +43,6 @@ scene.overrideMaterial = null;                      // debug view off`,
       'Yes: null leaves every mesh with no material',
     ],
     answer: 0,
-    why: "`scene.overrideMaterial` never touches `mesh.material`; the renderer uses it in place of each material while drawing. Setting it back to `null` is all it takes. It's the one override that works that way, and it applies to everything the scene draws.",
+    why: "`scene.overrideMaterial` never touches `mesh.material`; the renderer draws with it in place of each material. Setting it back to `null` is all it takes.",
   },
 ];

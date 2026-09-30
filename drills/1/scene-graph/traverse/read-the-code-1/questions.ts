@@ -6,9 +6,7 @@ export const questions: Question[] = [
     code: `// safety holds a pin Group, and the pin holds two Meshes
 safety.visible = false;
 const found = [];
-model.traverseVisible((object) => {
-  if (object.isMesh) found.push(object);
-});`,
+model.traverseVisible((o) => { if (o.isMesh) found.push(o); });`,
     ask: "Are the pin's two Meshes in `found`?",
     choices: [
       'Yes: their own visible property is still true',
@@ -16,16 +14,15 @@ model.traverseVisible((object) => {
       'Yes: it skips safety itself, not its children',
     ],
     answer: 1,
-    why: "`traverseVisible` stops at `safety` and never goes below it, so nothing under it is visited, whatever its own `visible` says. The pin's Meshes do still say `visible = true`; the walk just never reaches them to ask. `traverse` would find them.",
+    why: "`traverseVisible` stops at `safety` and never goes below it. The pin's Meshes still say `visible = true`, but the walk never reaches them to ask. `traverse` would find them.",
   },
   {
     code: `// the rack: 20 Meshes, all inside its five parts
-const meshes = gltf.scene.children.filter((object) => object.isMesh);
-console.log(meshes.length);`,
-    ask: 'What does it log?',
+const meshes = gltf.scene.children.filter((object) => object.isMesh);`,
+    ask: 'What is `meshes.length`?',
     choices: ['20', '5', '0'],
     answer: 2,
-    why: "`children` is only the first level: the rack's five parts, and none of them is a Mesh. The Meshes are one or two levels further down. `gltf.scene.traverse` reaches them all.",
+    why: "`children` is only the first level: the rack's five parts, and none of them is a Mesh. `gltf.scene.traverse` reaches the Meshes further down.",
   },
   {
     code: `// tube is a Group holding two Meshes
@@ -36,32 +33,31 @@ tube.traverse(() => {
     ask: 'What is `count` afterwards?',
     choices: ['2', '3', '1'],
     answer: 1,
-    why: '`traverse` calls the function on `tube` itself first, then on each of its two Meshes. To leave out the object you started from, check `object !== tube` in the function.',
+    why: '`traverse` calls the function on `tube` itself first, then on each Mesh. To leave out the object you started from, check `object !== tube`.',
   },
   {
     code: `// knob is a Mesh in pin, pin is in safety, safety is in model,
-// and model was added straight to the scene, which has no name
+// and model is in the scene, which has no name
 const names = [];
 knob.traverseAncestors((object) => names.push(object.name));`,
     ask: 'What does `names` hold?',
     choices: ["`['knob', 'pin', 'safety', 'model', '']`", "`['', 'model', 'safety', 'pin']`", "`['pin', 'safety', 'model', '']`"],
     answer: 2,
-    why: "It starts at the parent, not at `knob` itself, and works up, nearest first, all the way to the scene, whose name is the empty string. If you need `knob` too, handle it before the walk.",
+    why: "It starts at the parent, not at `knob`, and works up, nearest first, to the scene, whose name is the empty string. Handle `knob` itself before the walk if you need it.",
   },
   {
-    code: `renderer.setAnimationLoop(() => {
-  scene.traverse((object) => {
-    if (object.userData.spins) object.rotation.y += 0.01;
-  });
+    code: `// the scene holds 20,000 objects, and 3 of them spin
+renderer.setAnimationLoop(() => {
+  scene.traverse((o) => { if (o.userData.spins) o.rotation.y += 0.01; });
   renderer.render(scene, camera);
 });`,
-    ask: "The scene holds 20,000 objects, and 3 of them spin. What's wrong?",
+    ask: "What's wrong with this loop?",
     choices: [
-      'It walks all 20,000 objects every frame to turn just 3 of them',
-      "Nothing, since traverse skips objects that haven't changed",
-      "It throws, because objects can't change inside traverse",
+      'Slow: it walks every object, every frame, for 3',
+      "Nothing: traverse skips objects that haven't changed",
+      "It throws: objects can't change inside traverse",
     ],
     answer: 0,
-    why: "It works, but it spends CPU time every frame on the whole scene to find the same three objects. Collect them once, after loading, and loop over that list in the frame loop. Changing an object's properties inside `traverse` is fine; adding or removing objects is what breaks it.",
+    why: 'It works, but it spends CPU time every frame walking the whole scene to find the same three objects. Collect them once, after loading, and loop over that list.',
   },
 ];

@@ -14,4 +14,4 @@ contexts:
 
 ## Definition
 
-To show meshes in a different material for a while, save each mesh's material, swap in the new one, and put the saved one back afterwards: nothing in three.js remembers what a mesh wore before.
+Showing meshes in a different material for a while means saving each mesh's material, swapping in the new one, and putting the saved one back afterward, because nothing in three.js remembers what a mesh wore before.
