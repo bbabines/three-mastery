@@ -92,7 +92,6 @@ export const pull: SceneSetup = ({ scene, camera, controls, container }) => {
       hit
         ? `scanner hits instanceId ${hit.instanceId}: bins.setColorAt(${hit.instanceId}, yellow)`
         : `scanner: no hit${outside ? ', since bin 4 is outside the bounding sphere' : ''}`,
-      `${count} bins, one draw call`,
     ].join('\n');
   };
 
@@ -106,7 +105,7 @@ export const pull: SceneSetup = ({ scene, camera, controls, container }) => {
       },
     })),
   );
-  slider(controlsBar, 'Pull bin 4 out', { min: 0, max: 2.6, step: 0.2, value: pulled }, (value) => {
+  slider(controlsBar, 'pull bin 4 out', { min: 0, max: 2.6, step: 0.2, value: pulled }, (value) => {
     pulled = value;
     update();
   });

@@ -10,7 +10,7 @@ const tri = new Mesh(geometry, new MeshStandardMaterial()); // side: FrontSide`,
     ask: 'Does the camera see the triangle?',
     choices: ['Yes: its normals face the camera', 'Yes: a lone triangle draws both sides', 'No: the camera sees its back side'],
     answer: 2,
-    why: "The front is the side where the corners run counter-clockwise, and the GPU decides that from where the corners land on screen. The normals only affect lighting. Swap two corners, `setIndex([0, 2, 1])`, to turn the front toward the camera.",
+    why: 'The front is where the corners run counter-clockwise on screen, and the normals only affect lighting. Swap two corners, `setIndex([0, 2, 1])`, to turn the front toward the camera.',
   },
   {
     code: `// the model imports inside out
@@ -21,16 +21,15 @@ normal.needsUpdate = true;`,
     choices: [
       'Everything: the model turns right side out',
       'Only the lighting: the same faces are skipped',
-      'The culling: the drawn faces and the skipped ones swap',
+      'The culling: drawn and skipped faces swap',
     ],
     answer: 1,
-    why: "Culling reads the corner order, never the normals, so the same faces are drawn and skipped as before, now lit as if they faced the other way. Reverse the winding instead: swap two corners of every triangle in the index.",
+    why: 'Culling reads the corner order, never the normals, so the same faces are drawn and skipped, now lit backward. Reverse the winding instead: swap two corners of every triangle.',
   },
   {
     code: `for (let i = 0; i < index.count; i += 3) {
   const b = index.getX(i + 1);
-  index.setX(i + 1, index.getX(i + 2));
-  index.setX(i + 2, b);
+  index.setX(i + 1, index.getX(i + 2)).setX(i + 2, b);
 }
 index.needsUpdate = true;`,
     ask: 'What does the loop change?',
@@ -40,21 +39,21 @@ index.needsUpdate = true;`,
       'Nothing, since the corners still draw',
     ],
     answer: 0,
-    why: "Swapping two corners reverses the triangle's winding, so its front and back trade places. The `normal` attribute isn't touched; call `computeVertexNormals()` afterward if the normals need to follow.",
+    why: "Swapping two corners reverses each triangle's winding, so front and back trade places. The normals aren't touched; call `computeVertexNormals()` if they need to follow.",
   },
   {
     code: `// the camera is inside a room built from a BoxGeometry
 const room = new Mesh(new BoxGeometry(8, 3, 6), new MeshStandardMaterial());
 raycaster.setFromCamera(pointer, camera);
 const hits = raycaster.intersectObject(room);`,
-    ask: 'What does the ray hit, and what does the camera see?',
+    ask: 'What does the camera see and hit?',
     choices: [
       'The wall ahead: drawn and hit from inside',
       'Every wall: the ray passes through them all',
       'None: every wall shows the camera its back',
     ],
     answer: 2,
-    why: "From inside, every wall shows the camera its back, and with the default `FrontSide` both drawing and raycasting skip backs. For a room you stand in, use `side: BackSide`, which draws and hits the insides.",
+    why: 'From inside, every wall shows its back, and with the default `FrontSide`, drawing and raycasting both skip backs. For a room you stand in, use `side: BackSide`.',
   },
   {
     code: `const glass = new MeshPhysicalMaterial({
@@ -68,6 +67,6 @@ const vase = new Mesh(vaseGeometry, glass);`,
       'Once: the front faces only, as usual',
     ],
     answer: 1,
-    why: "A transparent `DoubleSide` material is drawn in two passes, backs then fronts, so the near side blends over the far side. That's two draw calls. `forceSinglePass: true` draws it once, and the sides may then blend in the wrong order.",
+    why: 'A transparent `DoubleSide` material is drawn as two draw calls, backs then fronts, so the near side blends over the far side. `forceSinglePass: true` draws it once, possibly blending in the wrong order.',
   },
 ];

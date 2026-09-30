@@ -14,8 +14,8 @@ contexts:
 
 ## Definition
 
-A triangle's face normal is the direction of length 1 pointing straight out of its front, which three.js works out from its three corners and their order.
+A triangle's face normal is the direction of length 1 pointing straight out of its front, worked out from its three corners and their order.
 
 ## Space lens
 
-`Triangle.getNormal` on corners read from a geometry, and a raycast's `hit.face.normal`, are measured from the object itself. `n.applyNormalMatrix(new Matrix3().getNormalMatrix(mesh.matrixWorld))` turns one into the world. `mesh.normalMatrix` turns it into camera space instead.
+Face normals from a geometry or a raycast are measured from the object itself, and `new Matrix3().getNormalMatrix(mesh.matrixWorld)` turns one into the world. `mesh.normalMatrix` turns it into camera space instead.

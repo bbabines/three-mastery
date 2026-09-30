@@ -15,8 +15,8 @@ contexts:
 
 ## Definition
 
-Tangent space is a set of three directions at each point of a surface, the tangent along the texture's u, the bitangent along its v, and the normal straight out, and a tangent-space normal map stores, in its colors, directions measured in that space to tilt the lighting pixel by pixel.
+Tangent space is three directions at each point of a surface, one along the texture's u, one along its v, and one straight out, and a normal map stores its tilts in that space.
 
 ## Space lens
 
-Tangent space is a fourth space, alongside the object's own space, the world, and camera space. A normal map's colors are directions in tangent space; `geometry.attributes.tangent` and `normal` are measured from the object itself; three.js turns the map's directions into camera space for lighting. With `normalMapType = ObjectSpaceNormalMap`, a map's colors are measured from the object itself instead.
+Tangent space is a fourth space, measured from the surface at that point, and a normal map's colors are directions in it. The `normal` and `tangent` attributes are measured from the object itself, and three.js turns the map's directions into camera space for lighting.

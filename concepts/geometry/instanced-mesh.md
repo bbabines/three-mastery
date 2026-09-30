@@ -22,4 +22,4 @@ Each copy's matrix, set with `setMatrixAt`, is measured from the InstancedMesh i
 
 ## Cost lens
 
-One draw call for every copy, instead of one per mesh. The GPU still processes every copy's vertices. After the first draw, changed matrices or colors re-upload their whole buffer when marked with `needsUpdate`.
+One draw call for every copy, though the GPU still processes every copy's vertices. After the first draw, changed matrices or colors re-upload their whole buffer when marked with `needsUpdate`.

@@ -14,8 +14,8 @@ contexts:
 
 ## Definition
 
-UVs are 2D coordinates stored at each vertex that say which spot of a texture lands there, usually from 0 to 1 across the image, with a second set (`uv1`) that a map reads only when its `texture.channel` is 1.
+UVs are two numbers stored at each vertex that say which spot of a texture lands there, usually from 0 to 1 across the image.
 
 ## Space lens
 
-UVs live in the texture's own flat space: u across the image and v up it, from 0 to 1, with no link to where the vertex sits in 3D. What happens past 0 or 1 is up to the texture's wrap setting.
+UVs live in the texture's own flat space, u across the image and v up it, with no link to where the vertex sits in 3D. What happens past 0 or 1 is up to the texture's wrap setting.

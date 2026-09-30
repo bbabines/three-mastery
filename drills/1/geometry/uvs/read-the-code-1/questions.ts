@@ -14,7 +14,7 @@ uv.needsUpdate = true;
       'An error, since UVs must stay 0 to 1',
     ],
     answer: 1,
-    why: 'UVs can go anywhere; the texture\'s wrap setting decides what shows past 1. The default, `ClampToEdgeWrapping`, stretches the edge pixels. For tiling, set `wrapS` and `wrapT` to `RepeatWrapping`.',
+    why: "UVs can go anywhere; the texture's wrap setting decides what shows past 1. The default, `ClampToEdgeWrapping`, stretches the edge pixels. For tiling, use `RepeatWrapping`.",
   },
   {
     code: `floorTexture.wrapS = floorTexture.wrapT = RepeatWrapping;
@@ -22,7 +22,7 @@ floorTexture.repeat.set(8, 8);`,
     ask: 'What does the floor show?',
     choices: ['One tile, 8 times as big', 'The tile 8 times each way', 'One tile, smeared at its edges'],
     answer: 1,
-    why: '`repeat` scales the UVs as the texture is read, so they run from 0 to 8, and `RepeatWrapping` tiles the image in every whole number. The geometry is unchanged. If the texture was already drawn before `wrapS` changed, set `needsUpdate = true`.',
+    why: '`repeat` scales the UVs as the texture is read, so they run from 0 to 8, and `RepeatWrapping` tiles the image. The geometry is unchanged.',
   },
   {
     code: `geometry.setAttribute('uv1', bakedUVs);
@@ -30,6 +30,6 @@ material.lightMap = bakedLight; // bakedLight.channel left as it was made`,
     ask: 'Which UVs does the light map read?',
     choices: ['`uv`, the first set', '`uv1`, the second set', '`uv2`, as light maps need'],
     answer: 0,
-    why: "Every map reads the UV set its texture's `channel` names, and a new texture's `channel` is 0, which means `uv`. Set `bakedLight.channel = 1` to read `uv1`. `GLTFLoader` sets `channel` for you from the file.",
+    why: "Every map reads the UV set its texture's `channel` names, and a new texture's `channel` is 0, meaning `uv`. Set `bakedLight.channel = 1` to read `uv1`.",
   },
 ];

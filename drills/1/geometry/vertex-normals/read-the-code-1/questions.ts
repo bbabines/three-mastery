@@ -13,7 +13,7 @@ const ball = new Mesh(faceted, new MeshStandardMaterial());`,
       'Faceted: each triangle is lit evenly',
     ],
     answer: 2,
-    why: "Without an index, every vertex belongs to one triangle only, so the average of its faces is just that triangle's face normal. All three corners of each triangle get the same normal, and the ball looks cut from flat facets.",
+    why: "Without an index, every vertex belongs to one triangle, so its average is just that triangle's face normal. Each triangle's corners share one normal, and the ball looks faceted.",
   },
   {
     code: `// vertex 0 is shared by a big triangle facing up and a tiny one facing sideways
@@ -26,7 +26,7 @@ const n = new Vector3().fromBufferAttribute(geometry.attributes.normal, 0);`,
       'Sideways, since the last face listed wins',
     ],
     answer: 1,
-    why: '`computeVertexNormals` adds up the faces around each vertex with bigger triangles counting more, then sets the length to 1. A tiny triangle barely moves the result, so `n` is nearly the big face\'s normal.',
+    why: "`computeVertexNormals` adds up the faces around each vertex, with bigger triangles counting more. A tiny triangle barely moves the result, so `n` is nearly the big face's normal.",
   },
   {
     code: `const gltf = await loader.loadAsync('bracket.glb');
@@ -39,7 +39,7 @@ gltf.scene.traverse((o) => { if (o.isMesh) helpers.add(new VertexNormalsHelper(o
       'Nothing, since lighting skips stored normals',
     ],
     answer: 0,
-    why: "Normals in a file are whatever the exporting tool wrote, and they can be flipped, smeared, or missing. Lighting reads them, so flipped ones light dark. If the corner order is right, `computeVertexNormals()` rebuilds them; otherwise fix the export.",
+    why: 'Normals in a file are whatever the exporting tool wrote, and flipped ones light dark. If the corner order is right, `computeVertexNormals()` rebuilds them; otherwise fix the export.',
   },
   {
     code: `const creased = toCreasedNormals(geometry, MathUtils.degToRad(30));`,
@@ -50,7 +50,7 @@ gltf.scene.traverse((o) => { if (o.isMesh) helpers.add(new VertexNormalsHelper(o
       'Edges where the faces meet at over 30°',
     ],
     answer: 2,
-    why: '`toCreasedNormals` smooths the normals everywhere except across edges where the two faces meet at more than the angle you pass, and those keep split normals. It returns a geometry with no index, so it uses more memory.',
+    why: '`toCreasedNormals` smooths everywhere except across edges whose faces meet at more than the angle you pass. It returns a geometry with no index, so it uses more memory.',
   },
   {
     code: `// this glTF mesh has no normal attribute
@@ -59,6 +59,6 @@ console.log(panel.material.flatShading);`,
     ask: 'What does it log?',
     choices: ['`true`', '`false`', '`undefined`'],
     answer: 0,
-    why: 'The glTF spec gives a mesh with no normals "implicit flat normals," so `GLTFLoader` turns `flatShading` on for it and the shader works out each triangle\'s face normal as it draws.',
+    why: "A glTF mesh with no normals is meant to look flat, so `GLTFLoader` turns `flatShading` on, and the shader works out each triangle's face normal as it draws.",
   },
 ];

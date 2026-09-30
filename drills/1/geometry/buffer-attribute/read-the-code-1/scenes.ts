@@ -82,7 +82,7 @@ export const readVertex: SceneSetup = ({ scene, camera, controls, container }) =
       },
     },
   ]);
-  slider(controlsBar, 'Vertex i', { min: 0, max: 7, step: 1, value: vertex }, (value) => {
+  slider(controlsBar, 'vertex i', { min: 0, max: 7, step: 1, value: vertex }, (value) => {
     vertex = value;
     update();
   });
@@ -162,7 +162,7 @@ export const paint: SceneSetup = ({ scene, camera, controls, container }) => {
       },
     },
   ]);
-  slider(controlsBar, 'Vertex i', { min: 0, max: position.count - 1, step: 1, value: vertex }, (value) => {
+  slider(controlsBar, 'vertex i', { min: 0, max: position.count - 1, step: 1, value: vertex }, (value) => {
     vertex = value;
     update();
   });

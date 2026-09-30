@@ -104,7 +104,7 @@ export const lift: SceneSetup = ({ scene, camera, controls, container }) => {
       },
     },
   ]);
-  slider(controlsBar, 'Lift vertex i', { min: 0, max: position.count - 1, step: 1, value: vertex }, (value) => {
+  slider(controlsBar, 'lift vertex i', { min: 0, max: position.count - 1, step: 1, value: vertex }, (value) => {
     vertex = value;
     update();
   });

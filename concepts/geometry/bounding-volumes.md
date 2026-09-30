@@ -14,7 +14,7 @@ contexts:
 
 ## Definition
 
-A geometry's bounding box and bounding sphere are the smallest axis-aligned box and the ball that fit around its vertices, measured from the object itself, stored on the geometry, and `null` until something computes them.
+A geometry's bounding box and bounding sphere are a box lined up with the axes and a ball that fit around its vertices, measured from the object itself.
 
 ## Space lens
 

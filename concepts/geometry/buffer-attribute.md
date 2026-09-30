@@ -14,7 +14,7 @@ contexts:
 
 ## Definition
 
-A BufferAttribute is one flat typed array holding one kind of per-vertex data, and its itemSize says how many numbers belong to each vertex, so the number of vertices is the array's length divided by itemSize.
+A BufferAttribute holds one kind of per-vertex data in a single flat typed array, and its item size says how many of those numbers belong to each vertex.
 
 ## Space lens
 

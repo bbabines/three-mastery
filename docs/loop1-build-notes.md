@@ -79,6 +79,27 @@ The Sep 30 pass brought each domain to Domain 1's size and voice, which meant cu
 - `setFromUnitVectors` with an input that isn't length 1 still returns a length-1 quaternion, just the wrong lean. Quaternion rounding drift is negligible: after a million multiplies the length is still 1 to ten places. Slerp falls back to a plain blend when two turns are nearly the same.
 - Conversion methods not on the page: `makeRotationFromEuler`, `makeRotationFromQuaternion`, `makeRotationAxis`, `Vector4.setAxisAngleFromQuaternion`, and `Matrix4.extractRotation`.
 
+**Camera (Domain 4):**
+- `project` uses the view matrix, which drops the camera's scale, but `unproject` uses `matrixWorld`, which keeps it, so on a scaled camera they don't undo each other. After changing `fov`, `aspect`, `near`, or `far`, call `updateProjectionMatrix()` before projecting.
+- Fitting with tan instead of sin puts the camera slightly too close and clips the model's edges (a good Loop 3 bug). `setFromObject` refreshes the model and its children but not its parents. A common choice is `near = distance / 100`, `far = distance * 100`.
+- Measuring world size per pixel with `distanceTo` instead of view depth gives about 28 pixels instead of 24 at the edge of a wide view; `getViewSize` includes `zoom`, which hand formulas forget; an orthographic camera's pixel size is `(top − bottom) / zoom / clientHeight` at every depth.
+- For a Group, test `intersectsBox(new Box3().setFromObject(group))` instead of `intersectsObject`. The frustum test reads the saved `matrixWorld`, so refresh after a move. A shadow camera's box starts 10 units wide.
+- `setSize` without `false` writes the size into the canvas's style. A thumbnail camera's aspect has to be set back after the render.
+- WebGL only promises a 16-bit depth buffer; `reversedDepthBuffer: true` needs `EXT_clip_control` and falls back with a warning.
+- Forward × up without `normalize()` shrinks as the camera tilts, so strafing slows. Zeroing forward's y and normalizing fails looking straight down. Normalize the matrix column if the camera might be scaled.
+- Each mesh gets a `modelViewMatrix`, and shaders get `viewMatrix`; view space is also called camera or eye space. An orthographic camera's w is always 1. Many games measure FOV side to side.
+- `PointsMaterial` with `sizeAttenuation: false` draws a fixed size in CSS pixels; `SpriteMaterial` with it keeps a fixed share of the view's height instead. TransformControls scales its handles by straight-line distance.
+
+**Geometry (Domain 5):**
+- Without `WEBGL_multi_draw`, a BatchedMesh draws one call per copy. `wireframe: true` draws triangle diagonals; `EdgesGeometry` doesn't. Thick lines need `LineMaterial` from `three/addons/lines/`.
+- `normalized: true` attributes store whole numbers that stand for 0–1. glTF can use 1-byte indices. `hit.faceIndex` is the triangle's number.
+- `triangle.isFrontFacing(dir)` does the facing test for a triangle whose corners are in the world. To smooth everything, merge vertices first, then `computeVertexNormals()`.
+- GLTFLoader sets `flipY = false` and sets `channel` from the file; a texture you load yourself for a glTF model needs `flipY = false` too. `offset` shifts UVs the way `repeat` scales them.
+- Raycasting honors the draw range, so hidden parts can't be clicked. A group whose material slot is empty, or whose material has `visible = false`, is skipped.
+- InstancedMesh copies mirrored by a negative scale in their matrix draw inside out.
+- `computeTangents` may not match other tools' tangents; `computeMikkTSpaceTangents` needs `mikktspace.module.js` and `await MikkTSpace.ready`. The tangent's `w` records a mirrored UV. Object-space normal maps can't be reused on other shapes and break when the mesh deforms.
+- three.js centers the bounding sphere on the bounding box's center, so it isn't the smallest ball around the geometry.
+
 **Assets (Domain 6):**
 - A `.gltf` file's progress covers only its JSON, not the `.bin` or textures, so the bar reaches 100% early; a LoadingManager counts files, not bytes, and its total grows, so a percentage built on it can jump backward. A real 404 is in `error.response.status`.
 - A file that marks KTX2 or Meshopt optional falls back silently to its uncompressed copy when the decoder is missing. `TextureLoader` never calls `onProgress`. `RGBELoader` still works but warns.

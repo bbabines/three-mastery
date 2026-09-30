@@ -15,8 +15,8 @@ contexts:
 
 ## Definition
 
-The object type decides how three.js draws a geometry, as solid triangles, dots, lines, or a picture that faces the camera, and how many draw calls it takes; a Group draws nothing and only holds other objects.
+An object type decides what three.js draws from a geometry and a material, whether triangles, dots, lines, or a picture that faces the camera, and how many draw calls that takes.
 
 ## Cost lens
 
-Every Mesh, Points, Line, and Sprite is at least one draw call, CPU time every frame, even when it shares its geometry and material with others. An InstancedMesh draws all its copies in one draw call, and a BatchedMesh draws all its shapes in one where the browser supports WebGL's multi-draw extension. A Group costs no draw call, but everything inside it still does.
+Every Mesh, Points, Line, and Sprite is at least one draw call, CPU time every frame, even when it shares its geometry and material. An InstancedMesh draws all its copies in one draw call, and a Group costs none, though everything inside it still does.

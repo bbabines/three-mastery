@@ -60,11 +60,11 @@ export const worldBox: SceneSetup = ({ scene, camera, controls, container }) => 
       },
     })),
   );
-  slider(controlsBar, 'Move nut', { min: -1, max: 2, step: 0.5, value: values.x }, (value) => {
+  slider(controlsBar, 'move nut', { min: -1, max: 2, step: 0.5, value: values.x }, (value) => {
     values.x = value;
     update();
   });
-  slider(controlsBar, 'Turn nut', { min: 0, max: 90, step: 10, value: values.turn }, (value) => {
+  slider(controlsBar, 'turn nut', { min: 0, max: 90, step: 10, value: values.turn }, (value) => {
     values.turn = value;
     update();
   });

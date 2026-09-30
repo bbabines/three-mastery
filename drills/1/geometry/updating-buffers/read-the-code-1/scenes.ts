@@ -47,7 +47,7 @@ export const wave: SceneSetup = ({ scene, camera, controls, container, onFrame }
       },
     })),
   );
-  slider(controlsBar, 'Draw range', { min: 0, max: 1, step: 0.1, value: share }, (value) => {
+  slider(controlsBar, 'draw range', { min: 0, max: 1, step: 0.1, value: share }, (value) => {
     share = value;
   });
 

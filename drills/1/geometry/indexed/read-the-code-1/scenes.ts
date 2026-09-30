@@ -74,7 +74,7 @@ export const shareCorners: SceneSetup = ({ scene, camera, controls, container })
       },
     },
   ]);
-  slider(controlsBar, 'Grid size', { min: 1, max: 4, step: 1, value: segments }, (value) => {
+  slider(controlsBar, 'grid size', { min: 1, max: 4, step: 1, value: segments }, (value) => {
     segments = value;
     update();
   });

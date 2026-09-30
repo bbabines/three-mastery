@@ -9,7 +9,7 @@ scene.add(crate);`,
     ask: 'How many draw calls does the crate take?',
     choices: ['1', '7', '6'],
     answer: 2,
-    why: 'With a material array, every group is drawn on its own, so the six sides are six draw calls. It\'s still one mesh. With a single material, the groups would be ignored and it would be one draw call.',
+    why: "With a material array, every group is drawn on its own, so the six sides are six draw calls. It's still one mesh; with a single material it would be one draw call.",
   },
   {
     code: `const crate = new Mesh(new BoxGeometry(1, 1, 1), new MeshStandardMaterial());
@@ -18,7 +18,7 @@ console.log(hit.face.materialIndex);`,
     ask: 'What does it log?',
     choices: ['2', '0', '`undefined`'],
     answer: 1,
-    why: "`face.materialIndex` is only filled in when the mesh has a material array. With one material, three.js ignores the groups, so it's always 0. With six materials, the top side would give 2.",
+    why: "`face.materialIndex` is only filled in when the mesh has a material array. With one material, three.js ignores the groups, so it's always 0.",
   },
   {
     code: `const geometry = mergeGeometries([bodyGeometry, trimGeometry]);
@@ -30,6 +30,6 @@ const car = new Mesh(geometry, [paint, chrome]);`,
       'Nothing is drawn at all',
     ],
     answer: 2,
-    why: "`mergeGeometries` makes no groups unless you pass `true` as its second argument, and a mesh with a material array draws only its groups. With no groups, nothing is drawn. `mergeGeometries([bodyGeometry, trimGeometry], true)` gives one group per input, with material indices 0 and 1.",
+    why: '`mergeGeometries` makes no groups unless its second argument is `true`, and a mesh with a material array draws only its groups. Pass `true` to get one group per input.',
   },
 ];

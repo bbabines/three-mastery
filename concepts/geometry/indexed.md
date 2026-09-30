@@ -14,8 +14,8 @@ contexts:
 
 ## Definition
 
-An index is a list of vertex numbers, three per triangle, that lets triangles share vertices; without one, every triangle carries its own three vertices.
+An index lists three vertex numbers for each triangle so that triangles can share vertices, while a geometry without one gives every triangle its own three.
 
 ## Cost lens
 
-Position, normal, and UV as 32-bit floats cost 32 bytes per vertex, and each index number costs 2 bytes (Uint16) or 4 (Uint32); a loaded glTF can also use 1-byte indices. Sharing vertices usually makes a smooth mesh several times smaller, and means fewer vertices for the GPU's vertex stage to process. A shared vertex has only one normal, one UV, and one color, so hard edges, seams, and per-face colors need their vertices split.
+An index number costs 2 or 4 bytes, far less than the 32 bytes of a vertex with position, normal, and UV, so sharing usually makes a smooth mesh several times smaller. A shared vertex has one normal, one UV, and one color, so hard edges, seams, and per-face colors need split vertices, which cost memory.

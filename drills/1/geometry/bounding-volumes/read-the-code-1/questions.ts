@@ -10,7 +10,7 @@ console.log(shelf.geometry.boundingBox.min.x);`,
     ask: 'What does it log?',
     choices: ['4', '−1', '5'],
     answer: 1,
-    why: "The geometry's box is worked out from its vertices, which are measured from the shelf itself, so the shelf's position never enters into it: 2 wide, centered, gives −1. The box in the world, `geometry.boundingBox.clone().applyMatrix4(shelf.matrixWorld)`, would start at 4.",
+    why: "The geometry's box is measured from the shelf itself, so its position never enters into it: 2 wide and centered gives −1. The box in the world would start at 4.",
   },
   {
     code: `// the mesh has already been drawn, so its bounds exist
@@ -23,7 +23,7 @@ position.needsUpdate = true;`,
       'Nothing, since the bounds follow along',
     ],
     answer: 1,
-    why: '`needsUpdate` sends the new positions to the GPU, but editing an attribute directly never touches the stored bounds. Culling and raycasting still test the old ones, so the mesh can vanish at the screen edge or a click can miss the moved part. Call `computeBoundingBox()` and `computeBoundingSphere()`.',
+    why: '`needsUpdate` sends the new positions to the GPU, but a direct edit never touches the stored bounds. Call `computeBoundingBox()` and `computeBoundingSphere()`, or culling and raycasts use the old shape.',
   },
   {
     code: `// the mesh is turned 45° around Y
@@ -36,6 +36,6 @@ const box = mesh.geometry.boundingBox.clone().applyMatrix4(mesh.matrixWorld);`,
       'Loosely, as a level box around it',
     ],
     answer: 2,
-    why: "A `Box3` is always lined up with the axes. `applyMatrix4` moves the eight corners of the geometry's box and fits a level box around them, which is bigger than the turned shape. `new Box3().setFromObject(mesh, true)` fits tighter by using every vertex.",
+    why: 'A `Box3` is always lined up with the axes, so `applyMatrix4` fits a level box around the turned corners, bigger than the shape. `setFromObject(mesh, true)` fits tighter.',
   },
 ];

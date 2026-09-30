@@ -45,7 +45,7 @@ export const corners: SceneSetup = ({ scene, camera, controls, container, onFram
     { html: '<code>setIndex([0, 1, 2])</code>', select: () => geometry.setIndex((order = [0, 1, 2])) },
     { html: '<code>setIndex([0, 2, 1])</code>', select: () => geometry.setIndex((order = [0, 2, 1])) },
   ]);
-  slider(controlsBar, 'Turn', { min: 0, max: 360, step: 15, value: 0 }, (value) => {
+  slider(controlsBar, 'turn', { min: 0, max: 360, step: 15, value: 0 }, (value) => {
     holder.rotation.y = THREE.MathUtils.degToRad(value);
   });
 

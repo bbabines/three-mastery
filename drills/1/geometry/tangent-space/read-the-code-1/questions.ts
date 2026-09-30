@@ -12,7 +12,7 @@ crate.material.normalMap = flatNormalMap;`,
       'The same as with no normal map',
     ],
     answer: 2,
-    why: "(0.5, 0.5, 1) stands for (0, 0, 1) in tangent space: straight along each point's own normal, whichever way that side faces. So nothing tilts. If the colors were world directions, every side would light as if it faced +Z.",
+    why: "(0.5, 0.5, 1) means straight along each point's own normal, whichever way that side faces, so nothing tilts. Read as world directions, every side would light as if it faced +Z.",
   },
   {
     code: `// a normal map baked in a DirectX-style tool: green means down (−Y)
@@ -25,7 +25,7 @@ material.normalScale.set(1, 1);`,
       'Lit backward top to bottom, like dents',
     ],
     answer: 2,
-    why: 'three.js reads green as up (+Y), the OpenGL convention glTF also uses. A −Y map read that way has its up-and-down tilts reversed, while red, left to right, is fine. Flip green on the material with `material.normalScale.y *= -1`, or in the image.',
+    why: 'three.js reads green as up (+Y), so a −Y map has its up-and-down tilts reversed, while red is fine. Flip green with `material.normalScale.y *= -1`, or in the image.',
   },
   {
     code: `// a glTF model whose file stores no tangents
@@ -34,7 +34,7 @@ console.log(model.getObjectByName('Panel').material.normalScale.y);`,
     ask: 'What does it log?',
     choices: ['1', '−1', '0'],
     answer: 1,
-    why: "`GLTFLoader` flips `normalScale.y` to −1 on meshes with no stored tangents, its own correction for how glTF lays out textures, not a sign of a DirectX map. That's why a fix for a DirectX map should multiply, `normalScale.y *= -1`, rather than set −1, which would undo the loader's correction.",
+    why: '`GLTFLoader` sets `normalScale.y` to −1 on meshes with no stored tangents, as its own correction, not a sign of a DirectX map. So fix a DirectX map with `*= -1`, never by setting −1.',
   },
   {
     code: `const bricksNormal = await new TextureLoader().loadAsync('bricks_normal.png');
@@ -47,7 +47,7 @@ material.normalMap = bricksNormal;`,
       'three.js ignores sRGB normal maps',
     ],
     answer: 0,
-    why: "`SRGBColorSpace` tells three.js to convert the colors as they're read, which is right for a color texture and wrong for data. The directions come out bent, and the bumps light wrong. Leave a normal map at its default, `NoColorSpace`.",
+    why: '`SRGBColorSpace` converts the colors as they are read, which is right for a color texture and wrong for directions, so the bumps light wrong. Leave a normal map at `NoColorSpace`.',
   },
   {
     code: `const geometry = new BufferGeometry();
@@ -61,6 +61,6 @@ geometry.computeTangents();`,
       'Adds tangents that all point along +X',
     ],
     answer: 1,
-    why: 'Tangents follow the texture\'s u direction, so `computeTangents` needs UVs, and it also needs an index. Without them it logs an error and returns. With no `tangent` attribute, three.js works out the tangent frame per pixel from the UVs instead, which still needs UVs.',
+    why: "Tangents follow the texture's u direction, so `computeTangents` needs UVs, and an index too. Without them it logs an error and returns.",
   },
 ];

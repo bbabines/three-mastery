@@ -150,7 +150,7 @@ export const members: SceneSetup = ({ scene, camera, controls, container, render
       draws: 'the edges, and a height line: 1 pixel wide anyway',
     },
     { name: 'Sprite', object: sprites, code: "new Sprite(new SpriteMaterial({ map: tagTexture }))", draws: '3 tags that turn to face you' },
-    { name: 'Group', object: group, code: 'rack.add(part) for each part', draws: `nothing itself; holds ${partCount} separate meshes` },
+    { name: 'Group', object: group, code: 'rack.add(part) for each part', draws: `nothing itself; ${partCount} meshes, each drawn if in view` },
   ];
   for (const type of types) {
     type.object.visible = false;

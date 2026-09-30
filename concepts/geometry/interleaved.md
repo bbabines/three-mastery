@@ -14,8 +14,8 @@ contexts:
 
 ## Definition
 
-Interleaved attributes share one buffer that holds each vertex's data together, and each attribute finds its own numbers with the buffer's stride, the count of numbers per vertex, and its own offset, where its numbers start within each vertex.
+Interleaved attributes share one buffer that keeps each vertex's data together, so each attribute needs a stride and an offset to find its own numbers.
 
 ## Cost lens
 
-The same numbers take the same memory either way. Interleaving changes the layout: one buffer to upload instead of several, and changing any one attribute re-uploads the whole shared buffer unless you mark an update range.
+The same numbers take the same memory either way. Changing any one attribute re-uploads the whole shared buffer, unless you mark an update range.

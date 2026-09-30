@@ -9,28 +9,28 @@ geometry.setIndex([0, 2, 1, 2, 3, 1]);`,
     ask: 'What does the GPU get to draw?',
     choices: ['6 vertices, 2 triangles', '4 vertices, 2 triangles', '4 vertices, 6 triangles'],
     answer: 1,
-    why: 'The index holds vertex numbers, three per triangle, so 6 numbers make 2 triangles. They share vertices 1 and 2, so only 4 vertices are stored. Without the index, the same square would need 6.',
+    why: 'The index holds vertex numbers, three per triangle, so 6 numbers make 2 triangles. They share vertices 1 and 2, so only 4 are stored.',
   },
   {
     code: `const box = mergeVertices(new BoxGeometry().deleteAttribute('normal').deleteAttribute('uv'));
 box.computeVertexNormals();
 console.log(box.attributes.position.count);`,
-    ask: 'What does it log, and how does the box light?',
+    ask: 'What does it log, and how does it light?',
     choices: ['8, and its edges stay sharp', '24, and its edges stay sharp', '8, and its edges look rounded'],
     answer: 2,
-    why: "With normals and UVs gone, the 3 vertices at each corner match and merge into 1. A vertex has only one normal, so each corner's normal leans out diagonally and the lighting blends across the edges. Sharp edges need a separate vertex per face at each corner, which is why `BoxGeometry` has 24.",
+    why: "With normals and UVs gone, each corner's 3 vertices match and merge into 1. One vertex has one normal, leaning out diagonally, so the lighting blends across the edges.",
   },
   {
     code: `const sphere = new SphereGeometry(1, 64, 32);
 const flat = sphere.toNonIndexed();`,
-    ask: 'How does the memory of `flat` compare with `sphere`?',
+    ask: "How does `flat`'s memory compare with `sphere`'s?",
     choices: [
       'Several times more: each triangle copies them',
       'The same: the same triangles hold the same data',
       'Less: dropping the index list saves its bytes',
     ],
     answer: 0,
-    why: 'Inside a smooth sphere, each vertex is shared by up to six triangles. Non-indexed, each of those triangles carries its own copy, at 32 bytes each for position, normal, and UV. The index costs only 2 bytes per number, so dropping it saves far less than the copies cost: about 4 times more memory here.',
+    why: 'Inside a smooth sphere, up to six triangles share each vertex, and non-indexed, each carries its own copy. Dropping the small index saves far less: this one needs about 4 times the memory.',
   },
   {
     code: `// sphere is indexed; paint the triangle the ray hit
@@ -44,7 +44,7 @@ colors.needsUpdate = true;`,
       'Nothing, since indexed meshes skip colors',
     ],
     answer: 1,
-    why: "Those three vertices are shared with every neighboring triangle, and each vertex has only one color, so the red fades across all of them. For a sharp single-triangle color, use `toNonIndexed()` so every triangle has vertices of its own.",
+    why: 'Those three vertices are shared with the neighboring triangles, and each has one color, so the red fades across them. Use `toNonIndexed()` so every triangle has vertices of its own.',
   },
   {
     code: `const geometry = new BufferGeometry();
@@ -53,6 +53,6 @@ console.log(geometry.index.array.constructor.name);`,
     ask: 'What does it log?',
     choices: ['Uint16Array', 'Float32Array', 'Uint32Array'],
     answer: 2,
-    why: '`setIndex` with a plain array picks the smallest type that fits: `Uint16Array`, 2 bytes per number, while every vertex number is below 65,535, and `Uint32Array`, 4 bytes, above that. 70,000 needs 4 bytes.',
+    why: '`setIndex` picks the smallest type that fits: `Uint16Array`, 2 bytes a number, below 65,535, and `Uint32Array`, 4 bytes, from there up. 70,000 needs 4 bytes.',
   },
 ];

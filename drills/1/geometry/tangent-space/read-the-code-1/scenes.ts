@@ -85,7 +85,7 @@ export const tbn: SceneSetup = ({ scene, camera, controls, container }) => {
       },
     },
   ]);
-  slider(controlsBar, 'Turn panel', { min: -90, max: 90, step: 15, value: turn }, (value) => {
+  slider(controlsBar, 'turn panel', { min: -90, max: 90, step: 15, value: turn }, (value) => {
     turn = value;
     update();
   });
@@ -176,7 +176,7 @@ export const greenChannel: SceneSetup = ({ scene, camera, controls, container })
       },
     })),
   );
-  slider(controlsBar, 'Light from', { min: 0, max: 360, step: 45, value: angle }, (value) => {
+  slider(controlsBar, 'light from', { min: 0, max: 360, step: 45, value: angle }, (value) => {
     angle = value;
     update();
   });

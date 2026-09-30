@@ -89,7 +89,7 @@ export const wrap: SceneSetup = ({ scene, camera, controls, container }) => {
       },
     })),
   );
-  slider(controlsBar, 'UV range', { min: 1, max: 3, step: 0.5, value: range }, (value) => {
+  slider(controlsBar, 'uv range', { min: 1, max: 3, step: 0.5, value: range }, (value) => {
     range = value;
     update();
   });

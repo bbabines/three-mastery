@@ -87,7 +87,7 @@ export const faceVsVertex: SceneSetup = ({ scene, camera, controls, container })
       },
     },
   ]);
-  slider(controlsBar, 'Bend vertex normals', { min: 0, max: 60, step: 5, value: bend }, (value) => {
+  slider(controlsBar, 'bend vertex normals', { min: 0, max: 60, step: 5, value: bend }, (value) => {
     bend = value;
     update();
   });
@@ -136,7 +136,7 @@ export const decal: SceneSetup = ({ scene, camera, controls, container, onFrame 
     controlsBar,
     choices.map((item, i) => ({ html: item.html, select: () => (choice = i) })),
   );
-  slider(controlsBar, 'Turn rock', { min: 0, max: 360, step: 15, value: 30 }, (value) => {
+  slider(controlsBar, 'turn rock', { min: 0, max: 360, step: 15, value: 30 }, (value) => {
     rock.rotation.y = THREE.MathUtils.degToRad(value);
   });
   rock.rotation.y = THREE.MathUtils.degToRad(30);

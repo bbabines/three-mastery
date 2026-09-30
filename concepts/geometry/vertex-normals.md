@@ -14,11 +14,11 @@ contexts:
 
 ## Definition
 
-Vertex normals are the directions stored at each vertex for lighting, usually the average of the face normals of the triangles that share the vertex, so a hard edge needs separate vertices, each with its own normal.
+Vertex normals are the directions stored at each vertex for lighting, usually the average of the faces around it, so a hard edge needs separate vertices, each with its own normal.
 
 ## Space lens
 
-The `normal` attribute is measured from the object itself. `computeVertexNormals` works them out from the positions and the corner order, so an inside-out mesh gets normals pointing inward.
+The `normal` attribute is measured from the object itself. `computeVertexNormals` works it out from the positions and the corner order, so an inside-out mesh gets normals pointing inward.
 
 ## Cost lens
 

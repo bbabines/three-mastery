@@ -12,7 +12,7 @@ const seats = new InstancedMesh(seatGeometry, [fabric, leather], 500);`,
       'Only seats picked with setColorAt',
     ],
     answer: 1,
-    why: "All the copies share the same material, and a material array works through the geometry's groups, so every seat gets a fabric cushion and a leather frame. For some seats in leather and some in fabric, use two InstancedMeshes, or tint copies with `setColorAt`.",
+    why: "Every copy shares the materials, and an array works through the geometry's groups, so every seat has a leather frame. For some seats in leather, use a second InstancedMesh.",
   },
   {
     code: `// after the first render: pull bin 4 far out of the rack
@@ -26,7 +26,7 @@ const hits = raycaster.intersectObject(bins); // aimed right at bin 4's new spot
       "The InstancedMesh's own bounds are stale",
     ],
     answer: 2,
-    why: "A raycast tests the InstancedMesh's bounding sphere first, and that sphere was worked out with bin 4 still in the rack. Moving a copy doesn't update it, so the ray misses the sphere and never checks the copies. Call `bins.computeBoundingSphere()` after moving copies.",
+    why: "A raycast tests the InstancedMesh's bounding sphere first, and moving a copy doesn't update it, so the ray misses. Call `bins.computeBoundingSphere()` after moving copies.",
   },
   {
     code: `const hit = raycaster.intersectObject(seats)[0];
@@ -39,6 +39,6 @@ seats.instanceColor.needsUpdate = true;`,
       'The one seat the ray hit',
     ],
     answer: 2,
-    why: "`hit.instanceId` says which copy the ray hit, and `setColorAt` tints just that copy. The material stays shared; the copy's color multiplies the material's color.",
+    why: "`hit.instanceId` says which copy the ray hit, and `setColorAt` tints just that copy. The material stays shared; the copy's color multiplies its color.",
   },
 ];

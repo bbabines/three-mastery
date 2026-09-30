@@ -14,7 +14,7 @@ contexts:
 
 ## Definition
 
-Groups split a geometry's index into ranges (vertex ranges when there's no index), each pointing at a slot in an array of materials, and each group is then drawn as its own draw call; with a single material, groups are ignored.
+Groups split a geometry's triangles into ranges, each drawn with its own slot of a material array as a separate draw call.
 
 ## Cost lens
 
