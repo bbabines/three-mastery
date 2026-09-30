@@ -14,8 +14,8 @@ contexts:
 
 ## Definition
 
-A draw call is one request to the GPU to draw one geometry with one material; before each one, three.js switches to the material's shader program if it changed, uploads the settings that changed, binds the vertex buffers and textures, and only then asks the GPU to draw.
+A draw call is one request to the GPU to draw one geometry with one material, and before each one three.js sets up whatever changed since the last.
 
 ## Cost lens
 
-CPU time for every draw call, every frame: three.js's own JavaScript, then the browser's and the graphics driver's checks on each WebGL call. That share hardly depends on the mesh's size. The GPU's share depends on the vertices and pixels drawn, as on the pipeline stages page.
+CPU time for every draw call, every frame, spent by three.js, the browser, and the graphics driver, and hardly affected by the mesh's size. The GPU's share depends on the vertices and pixels drawn.

@@ -8,36 +8,36 @@ scene.add(glass); // added first
 scene.add(floor); // an ordinary opaque floor`,
     ask: 'Which one does three.js draw first?',
     choices: [
-      'The glass: it was added to the scene first',
-      'The floor: opaque ones come first',
-      'The nearer one: they go front to back',
+      'The glass, since it was added first',
+      'The floor, since solid objects come first',
+      'The nearer one, since they go front to back',
     ],
     answer: 1,
-    why: 'Scene order doesn\'t decide it. three.js draws every opaque object first, then every transparent one, so the glass has something to blend over. Within each list it sorts again: opaque by `renderOrder`, material, then front to back; transparent by `renderOrder`, then back to front.',
+    why: "Scene order doesn't decide it. three.js draws every solid object first, then every see-through one, so the glass has something to blend over.",
   },
   {
-    code: `// two opaque meshes; the sign is farther from the camera
-// than the wall, and their materials differ
+    code: `// two opaque meshes with different materials;
+// the sign is farther from the camera than the wall
 sign.renderOrder = -1;`,
     ask: 'Which is drawn first?',
     choices: [
-      'The wall, because opaque objects go front to back',
-      'The sign, because renderOrder comes before distance',
-      'The wall, because it was added to the scene first',
+      'The wall, since solid objects go front to back',
+      'The sign, since renderOrder beats distance',
+      'The wall, since it was added to the scene first',
     ],
     answer: 1,
-    why: 'Within the opaque list, three.js compares `renderOrder` first, then material, then distance. The sign\'s -1 is lower than the wall\'s default 0, so it draws first wherever it is. Sorting front to back only decides between objects with the same `renderOrder` and material.',
+    why: "In the solid list, three.js compares `renderOrder` first, then material, then distance. The sign's −1 is below the wall's default 0, so it draws first wherever it is.",
   },
   {
     code: `label.renderOrder = 999; // drawn after everything else
 // from where the camera is, the label is behind a wall`,
     ask: 'Does the label show through the wall?',
     choices: [
-      'No: the depth test still hides it',
-      'Yes: whatever is drawn last ends up on top',
-      'Only when transparent: it blends through',
+      'No, since the depth test still hides it',
+      'Yes, since the last draw ends up on top',
+      'Only if it is see-through enough',
     ],
     answer: 0,
-    why: 'The wall was drawn earlier and wrote its depth, so the label\'s fragments behind it fail the depth test however late they come. To draw over everything, set `label.material.depthTest = false` as well, which is what the labels on these pages do.',
+    why: "The wall was drawn earlier and wrote its depth, so the label's fragments behind it fail the depth test. Set `label.material.depthTest = false` too.",
   },
 ];

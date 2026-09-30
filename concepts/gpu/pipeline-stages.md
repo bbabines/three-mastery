@@ -14,12 +14,12 @@ contexts:
 
 ## Definition
 
-Every draw call sends its triangles through the same fixed order of stages on the GPU: the vertex shader places each vertex, clipping and culling drop what can't be seen, rasterization turns each triangle into fragments, one per pixel it covers, the fragment shader colors each fragment, and the depth and stencil tests and blending decide what reaches the picture.
+Every draw call sends its triangles through the same fixed stages on the GPU, from placing each vertex to coloring each fragment to deciding what reaches the picture.
 
 ## Space lens
 
-The vertex shader outputs clip space; rasterization works in device pixels; a fragment's depth is NDC z squeezed into 0 to 1.
+The vertex shader outputs clip space, rasterization works in device pixels, and a fragment's depth is NDC z squeezed into 0 to 1.
 
 ## Cost lens
 
-GPU vertex work runs about once per vertex per draw. GPU work for every pixel runs once per fragment, so it grows with the pixels an object covers, including fragments that are later thrown away or overwritten.
+GPU vertex work runs once per vertex for each draw. GPU work for every pixel runs once per fragment, including fragments that are later thrown away or covered.

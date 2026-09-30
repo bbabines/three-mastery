@@ -99,13 +99,13 @@ export const raster: SceneSetup = ({ scene, camera, controls, container }) => {
     texture.needsUpdate = true;
     const fragments = farFragments + nearFragments;
     readout.textContent = [
-      `vertices         6    (the vertex shader runs 6 times)`,
-      `fragments made   ${String(fragments).padEnd(4)} (orange ${farFragments} + blue ${nearFragments}: the fragment shader runs ${fragments} times)`,
-      `pixels colored   ${pixels}`,
-      `fragments lost   ${String(fragments - pixels).padEnd(4)} (light blue: an orange fragment lost to a nearer blue one)`,
+      `vertex shader runs     6`,
+      `fragment shader runs   ${String(fragments).padEnd(4)} (orange ${farFragments} + blue ${nearFragments})`,
+      `pixels colored         ${pixels}`,
+      `fragments lost         ${String(fragments - pixels).padEnd(4)} (light blue: orange ones covered)`,
     ].join('\n');
   };
-  slider(overlay(container, 'controls'), 'Move the near triangle', { min: 0, max: 13, step: 0.5, value: 7 }, update);
+  slider(overlay(container, 'controls'), 'move near triangle', { min: 0, max: 13, step: 0.5, value: 7 }, update);
   update(7);
 };
 
@@ -149,11 +149,11 @@ export const work: SceneSetup = ({ scene, camera, controls, container, renderer,
   };
 
   const sliders = overlay(container, 'controls');
-  slider(sliders, 'Detail', { min: 0, max: DETAIL.length - 1, step: 1, value: DETAIL.indexOf(detail) }, (value) => {
+  slider(sliders, 'detail', { min: 0, max: DETAIL.length - 1, step: 1, value: DETAIL.indexOf(detail) }, (value) => {
     detail = DETAIL[value];
     rebuild();
   });
-  slider(sliders, 'Size on screen', { min: 0, max: SIZES.length - 1, step: 1, value: SIZES.indexOf(scale) }, (value) => {
+  slider(sliders, 'size on screen', { min: 0, max: SIZES.length - 1, step: 1, value: SIZES.indexOf(scale) }, (value) => {
     scale = SIZES[value];
     rebuild();
   });
@@ -188,8 +188,8 @@ export const work: SceneSetup = ({ scene, camera, controls, container, renderer,
     readout.textContent = [
       `new SphereGeometry(1, ${detail}, ${detail / 2})   ball.scale.setScalar(${scale})`,
       `vertex shader:    about ${vertices.toLocaleString('en-US')} runs, one per vertex`,
-      `fragment shader:  about ${covered.toLocaleString('en-US')} runs, one per pixel the ball covers`,
-      `canvas:           ${size.x} × ${size.y} = ${(size.x * size.y).toLocaleString('en-US')} device pixels (${formatNumber((covered / (size.x * size.y)) * 100, 2)}% covered)`,
+      `fragment shader:  about ${covered.toLocaleString('en-US')} runs, one per pixel covered`,
+      `canvas:           ${size.x} × ${size.y} device pixels, ${formatNumber((covered / (size.x * size.y)) * 100, 2)}% covered`,
     ].join('\n');
   });
 };

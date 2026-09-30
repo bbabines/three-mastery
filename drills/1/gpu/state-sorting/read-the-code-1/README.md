@@ -12,44 +12,40 @@ misconceptions:
 
 # State changes and sorting
 
-> **In short:** three.js doesn't draw things in the order you added them: every frame it sorts solid objects to keep same-material draws together and go front to back, and see-through objects to go back to front, and `renderOrder` overrides both.
+> **In short:** three.js reorders what it draws every frame: solid things first, grouped by material and nearest first, then see-through things farthest first.
 >
-> **Used for:** Keeping a scene with many materials cheap to submit; forcing labels and outlines to draw last; making see-through parts blend over what's behind them; and saving pixel work by drawing near things first.
+> **Used for:** Scenes with many materials, labels that must draw last, see-through parts that blend right, and saving pixel work.
 
 ## A · The basics
 
 ### Why three.js sorts
 
-The draw call anatomy page showed that three.js skips any command that matches the last one sent. Everything set up before a draw, the program, the material's settings, blending, the depth test, is called **state**, and changing it is what costs. Two draws in a row with the same material need almost no new state. So before drawing, three.js sorts everything in view into three lists and draws them in this order:
+Everything set up before a draw, like the shader program, the material's values, and blending, is called **state**, and changing it costs CPU time. So before drawing, three.js puts everything in view into three lists, draws them in this order, and sorts each one:
 
-| List | What goes in it | Sorted by |
-| --- | --- | --- |
-| Opaque | Everything else: `transparent: false` and no transmission | `renderOrder`, then material, then front to back |
-| Transmission | Materials with `transmission` above 0 | `renderOrder`, then back to front |
-| Transparent | Everything with `transparent: true` | `renderOrder`, then back to front |
+| List | Sorted by |
+| --- | --- |
+| Solid | `renderOrder`, then material, then front to back |
+| Transmission (`transmission` above 0) | `renderOrder`, then back to front |
+| See-through (`transparent: true`) | `renderOrder`, then back to front |
 
-"Front to back" is measured from each object's center (the center of its bounding sphere), along the way the camera faces. Opaque objects go front to back so the depth test can throw away fragments hidden behind them before they're shaded, which the depth buffer and early-z page covers. See-through objects go back to front so each one blends over what's already behind it, which the blending page covers.
+Grouping by material keeps state changes down. Front to back lets the depth test skip hidden fragments, and back to front lets each see-through object blend over what's behind it. Distance is measured to each object's center.
 
-**Analogy: a delivery driver's route.** Orders come in all day, but the driver doesn't deliver them in that order. The van is loaded by neighborhood, so one stop follows the next without backtracking (grouping by material), and within a neighborhood the nearest house comes first (front to back). `renderOrder` is the customer who paid for a delivery slot: they're served at that slot whatever the route says.
+**Analogy: a delivery route.** The driver doesn't deliver in the order the orders came in. The van is loaded by neighborhood, and within each one the nearest house comes first.
 
-The objects were added to the scene in this order: glass, A, B, C, D. A and C share the red material; B and D share the blue one. The readout lists the order three.js actually drew them last frame. Orbit around to watch the front-to-back order change, then try turning sorting off and giving D a `renderOrder`.
+Orbit around and watch the draw order change. Then turn sorting off, and give D a `renderOrder`.
 
 <div data-scene="order"></div>
 
 ## B · Working knowledge
 
-### renderOrder
+### Forcing an order
 
 ```js
-badge.renderOrder = 1;    // after everything at the default 0, in its list
-label.renderOrder = 999;
+label.renderOrder = 999;          // after everything at the default 0, in its list
 label.material.depthTest = false; // and drawn over anything nearer
 ```
 
-- **It beats distance and material,** within its list: a farther object with a higher `renderOrder` still draws later.
-- **It doesn't cross lists.** An opaque object with `renderOrder = 999` still draws before every transparent one.
-- **Drawing last isn't drawing on top.** A later draw still fails the depth test behind a nearer surface. To draw over everything, like the labels on these pages, also set `depthTest: false`.
-- **A Group's `renderOrder` sorts everything inside it,** ahead of each object's own: the whole group moves together in the order.
+`renderOrder` beats distance and material, but only within its list: a solid object at 999 still draws before every see-through one. Drawing last isn't drawing on top, since a later draw still fails the depth test behind a nearer surface. That's what `depthTest: false` is for.
 
 ### Turning sorting off
 
@@ -57,11 +53,11 @@ label.material.depthTest = false; // and drawn over anything nearer
 renderer.sortObjects = false; // each list keeps scene order
 ```
 
-Use it when you control the order yourself, like a 2D overlay drawn in a fixed order. Even then, opaque still draws before transparent. `renderer.setOpaqueSort(fn)` and `setTransparentSort(fn)` replace the sorting rules instead of turning them off.
+Use it when you control the order yourself, like a 2D overlay. Solid objects still draw before see-through ones.
 
-### Material count
+### Keeping material switches down
 
-Every switch to a different material makes three.js go through that material's settings and upload the ones that changed; a switch to a different shader program adds the program switch and the camera's and lights' settings. Sorting keeps the switches down, but each distinct material still costs at least one. Parts that look the same should share one material, which the draw call reduction page covers along with the other ways of cutting draw calls.
+Each switch to a different material means sending its values again, and a switch to a different shader program costs more. Sorting keeps the switches down, but each distinct material still costs at least one, so parts that look the same should share a material.
 
 ## Drill · Read the code
 

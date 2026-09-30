@@ -6,14 +6,14 @@ export const questions: Question[] = [
     code: `const t0 = performance.now();
 renderer.render(scene, camera);
 console.log(performance.now() - t0); // 2 ms`,
-    ask: "What do the 2 ms say about the GPU's share of the frame?",
+    ask: 'What do the 2 ms say about the GPU?',
     choices: [
       'The GPU took about 2 ms as well',
-      'Nothing, since render() returns once the work is sent',
-      'The GPU took less, since it started earlier',
+      "Nothing, since render() doesn't wait for it",
+      'The GPU took less, starting earlier',
     ],
     answer: 1,
-    why: '`render()` sends WebGL commands and returns; the GPU carries them out afterwards. The 2 ms is the CPU\'s side: three.js\'s JavaScript and handing the commands over. The GPU could take 2 ms or 20. Its time needs a GPU timer query or Chrome\'s Performance panel.',
+    why: "`render()` sends the commands and returns, so the 2 ms is the CPU's side. The GPU could take 2 ms or 20; time it with a GPU timer query or Chrome's Performance panel.",
   },
   {
     code: `// a composer: RenderPass, UnrealBloomPass, OutputPass
@@ -26,7 +26,7 @@ console.log(renderer.info.render.calls); // 1`,
       'It resets on every render() call',
     ],
     answer: 2,
-    why: 'Every `renderer.render()` call clears `info.render` first, and the composer calls it many times: the last one is OutputPass drawing a single full-screen triangle. Set `renderer.info.autoReset = false` and call `renderer.info.reset()` once at the start of each frame to count them all.',
+    why: "Every `render()` call clears `info.render`, and the composer's last one draws a single full-screen triangle. Set `autoReset = false` and call `info.reset()` once per frame.",
   },
   {
     code: `stats.begin();
@@ -36,10 +36,10 @@ stats.end(); // the MS panel reads 3`,
     choices: [
       'CPU time between begin() and end()',
       "The GPU's time to draw the frame",
-      'The whole frame, CPU and GPU added up',
+      'The whole frame, CPU and GPU together',
     ],
     answer: 0,
-    why: '`Stats` reads `performance.now()` at `begin()` and `end()`, so its milliseconds are CPU time for whatever ran between them: here, preparing and sending the frame. Its FPS panel counts frames, which stop at the refresh rate. Neither sees the GPU.',
+    why: '`Stats` reads `performance.now()` at `begin()` and `end()`, so its milliseconds are CPU time for what ran between them. It never sees the GPU.',
   },
   {
     code: `console.log(renderer.info.memory);
@@ -51,6 +51,6 @@ stats.end(); // the MS panel reads 3`,
       'Objects created in JavaScript so far',
     ],
     answer: 1,
-    why: 'three.js counts a geometry or texture when it first uploads it and uncounts it on `dispose()`. They are counts, not bytes: one 4K texture and one 64-pixel icon both count as 1. A count that keeps climbing as the user browses products is a leak, which the leak detection page covers.',
+    why: 'three.js counts a geometry or texture when it uploads it and uncounts it on `dispose()`. A 4K texture and a tiny icon both count as 1.',
   },
 ];

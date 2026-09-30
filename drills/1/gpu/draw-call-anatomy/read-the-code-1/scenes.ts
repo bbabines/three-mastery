@@ -122,7 +122,7 @@ export const count: SceneSetup = ({ scene, camera, controls, container, renderer
   };
 
   const bar = overlay(container, 'controls');
-  slider(bar, 'Parts', { min: 0, max: PART_COUNTS.length - 1, step: 1, value: PART_COUNTS.indexOf(partCount) }, (value) => {
+  slider(bar, 'parts', { min: 0, max: PART_COUNTS.length - 1, step: 1, value: PART_COUNTS.indexOf(partCount) }, (value) => {
     partCount = PART_COUNTS[value];
     rebuild();
   });
@@ -147,7 +147,7 @@ export const count: SceneSetup = ({ scene, camera, controls, container, renderer
       `${partCount} parts × ${materialArray ? 'a material array' : 'one material'}, shadows ${shadows ? 'on' : 'off'}`,
       `renderer.info.render.calls      ${n(render.calls)}`,
       `renderer.info.render.triangles  ${n(render.triangles)}`,
-      `WebGL commands last frame       ${n(total)}  (uniforms ${n(counts.uniforms)} · buffer binds ${n(counts.buffers)} · draws ${n(counts.draws)} · other ${n(others)})`,
+      `WebGL commands last frame       ${n(total)}  (${n(counts.uniforms)} of them uniforms)`,
     ].join('\n');
     calls.reset();
   });

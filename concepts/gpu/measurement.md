@@ -14,8 +14,8 @@ contexts:
 
 ## Definition
 
-Each tool sees one part of a frame: `performance.now()` around `renderer.render` times the CPU's work to submit it; the GPU's time needs a GPU timer query (where the browser offers one) or Chrome's Performance panel; `renderer.info` counts draw calls, triangles, and objects on the GPU without timing anything; and Spector.js captures every WebGL command in one frame.
+Each performance tool sees one part of a frame: a stopwatch times the CPU's work to send it, GPU timers and the browser's profiler see the GPU's work, and three.js's counters count work without timing it.
 
 ## Cost lens
 
-Measuring has costs of its own: a frame capture slows the page while it records, and stats panels, helpers, and debug views add work of their own, so they come out before the numbers are taken.
+Measuring has costs of its own: a frame capture slows the page while it records, and stats panels, helpers, and debug views add work, so they come out before the numbers are taken.

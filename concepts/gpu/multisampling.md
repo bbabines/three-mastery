@@ -14,8 +14,8 @@ contexts:
 
 ## Definition
 
-Multisampling (MSAA) tests several points inside each pixel along triangle edges and blends the result, which smooths jagged edges; the canvas gets it from `antialias: true`, but a render target has `samples: 0` unless you set it, so an `EffectComposer`'s picture has none.
+Multisampling smooths jagged edges by testing several points inside each pixel along a triangle's edge, and a render target has none unless you ask for it.
 
 ## Cost lens
 
-GPU memory: a multisampled buffer stores a color and a depth for every sample, so 4 samples take about 4 times the memory of one. As a rule of thumb, the fragment shader still runs about once per pixel per triangle; the extra work is at the edges.
+GPU memory: a multisampled buffer keeps a color and a depth for every sample, so 4 samples take about 4 times the memory. The fragment shader usually still runs about once per pixel for each triangle.

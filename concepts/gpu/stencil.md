@@ -14,8 +14,8 @@ contexts:
 
 ## Definition
 
-The stencil buffer holds a small number for every pixel that one draw can write and later draws can test against, so a draw can mark pixels and another can draw only inside or outside the mark; three.js leaves it off until the renderer is created with `{ stencil: true }`, and each material sets it up with `stencilWrite`, `stencilFunc`, `stencilRef`, and `stencilZPass`.
+The stencil buffer holds a small number at every pixel that one draw can write and later draws can test, so a draw can stay inside or outside another draw's mark.
 
 ## Cost lens
 
-The stencil test itself is almost free: it runs alongside the depth test for every fragment. An outline made with it costs one more draw call per outlined mesh, where a post-processing outline costs several full-screen passes.
+The stencil test itself is almost free, since it runs alongside the depth test. An outline made with it costs one more draw call per outlined mesh, where a post-processing outline costs several full-screen passes.

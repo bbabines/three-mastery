@@ -14,8 +14,8 @@ contexts:
 
 ## Definition
 
-Every frame, with `sortObjects` on (the default), three.js sorts what it draws: opaque objects by `renderOrder`, then material, then front to back; transparent objects by `renderOrder`, then back to front; objects with transmission get their own list, drawn between the two. `renderOrder` always beats distance.
+Every frame, three.js draws solid objects first, grouped by material and nearest first, then see-through objects farthest first, and an object's render order beats both.
 
 ## Cost lens
 
-Drawing same-material objects back to back skips state changes: less CPU time for every draw call. Drawing opaque objects front to back lets the depth test throw away hidden fragments before they're shaded: less GPU work for every pixel. The sort itself is a little CPU time every frame.
+Drawing same-material objects back to back saves CPU time on every draw call, and drawing solid ones front to back saves GPU work for every pixel. The sort itself is a little CPU time every frame.

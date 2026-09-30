@@ -14,8 +14,8 @@ contexts:
 
 ## Definition
 
-The depth buffer keeps the nearest depth drawn so far at every pixel, and the depth test throws away fragments behind it; GPUs can often run that test before the fragment shader ("early-z") and skip shading hidden fragments, but a shader that discards (as `alphaTest` does) or writes its own depth can stop that.
+The depth buffer keeps the nearest depth drawn so far at every pixel, and GPUs can often test fragments against it before shading them, which a shader that discards can stop.
 
 ## Cost lens
 
-An object hidden behind another still costs CPU time for its draw call and GPU vertex work for its vertices. Its fragments cost GPU work for every pixel too, unless something nearer was drawn first and the GPU rejects them before shading.
+A hidden object still costs CPU time for its draw call and GPU vertex work for its vertices. Its fragments cost GPU work for every pixel too, unless something nearer was drawn first and the GPU rejects them early.

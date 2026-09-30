@@ -15,8 +15,8 @@ contexts:
 
 ## Definition
 
-The WebGLRenderer settings you choose once, when you set up a scene: `antialias` and `powerPreference` in the constructor, then `setPixelRatio`, `setSize`, `outputColorSpace`, `toneMapping` with `toneMappingExposure`, and `shadowMap.enabled`.
+The renderer settings you choose once when a scene is set up: edge smoothing, which GPU to ask for, pixel ratio and size, color output, tone mapping, and shadows.
 
 ## Cost lens
 
-The pixel ratio sets how many pixels every frame draws: GPU work for every pixel and GPU memory both grow with its square. Antialiasing costs GPU memory for the extra samples. Shadows add a render of the casting meshes from each shadow light, every frame.
+The pixel ratio sets how many pixels every frame draws, so GPU work for every pixel and GPU memory grow with its square. Shadows add a render of the casting meshes from each shadow light, every frame.

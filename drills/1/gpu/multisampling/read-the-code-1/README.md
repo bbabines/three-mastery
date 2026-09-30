@@ -12,25 +12,23 @@ misconceptions:
 
 # Multisampling
 
-> **In short:** Multisampling smooths jagged edges by checking several points inside each pixel along a triangle's edge; the canvas gets it from `antialias: true`, but render targets, and so every post-processing chain, have none unless you ask.
+> **In short:** Multisampling smooths jagged edges by testing several points in each pixel, and the canvas gets it from `antialias` but render targets don't.
 >
-> **Used for:** Keeping edges smooth after adding post-processing; thin lines like cables and wires that break into dashes; knowing what an antialiasing setting costs in GPU memory; and clean thumbnails and screenshots rendered offscreen.
+> **Used for:** Smooth edges after adding post-processing, thin cables and wires, the memory antialiasing costs, and clean offscreen thumbnails.
 
 ## A · The basics
 
 ### Why edges are jagged
 
-The pipeline stages page showed rasterization covering a pixel when its center is inside a triangle. So each pixel along an edge is either fully in or fully out, and a slanted edge becomes a staircase. Those steps are called **jaggies** (the technical name is aliasing), and they crawl when the camera moves.
+Rasterization counts a pixel as covered when its center is inside a triangle, so each pixel along an edge is fully in or fully out. A slanted edge becomes a staircase, called **jaggies** (or aliasing), and it crawls when the camera moves. **Multisampling**, or **MSAA**, tests several points in each pixel instead, usually 4. A pixel with 2 of its 4 points inside gets half the triangle's color, so the staircase softens. The fragment shader usually still runs about once per pixel for each triangle; only coverage and depth are tested at every point.
 
-**Multisampling**, or **MSAA**, tests several points in each pixel instead of one, commonly 4. A pixel on an edge with 2 of its 4 points inside gets half the triangle's color and half the background, so the staircase softens into a gradient. As a rule of thumb, the fragment shader still runs about once per pixel for each triangle; only the coverage and the depth are tested at every point.
-
-**Analogy: deciding whether a floor tile is under a rug.** Look only at each tile's center and every tile is either rug or floor, so the rug's diagonal edge becomes a staircase of whole tiles. Look at four spots per tile and a tile half under the rug counts as half.
+**Analogy: a rug on a tiled floor.** Look only at each tile's center, and every tile is either rug or floor, so the rug's diagonal edge becomes a staircase of whole tiles. Look at four spots per tile, and a tile half under the rug counts as half.
 
 ### Render targets start with none
 
-`new WebGLRenderer({ antialias: true })` multisamples the canvas. A render target is separate, with its own `samples` setting, and it defaults to 0. An `EffectComposer` draws the scene into targets like that, so adding post-processing quietly brings the jaggies back.
+`antialias: true` multisamples only the canvas. A render target has its own `samples` setting, and it defaults to 0. An `EffectComposer` draws the scene into targets like that, so adding post-processing quietly brings the jaggies back.
 
-Compare the canvas, a composer with its default targets, and a composer with a 4-sample target. Watch the thin cables and the rack's slanted edges; the readout shows the samples and the memory the composer's pictures take.
+Try the three buttons, and watch the thin cables and the shelf edges.
 
 <div data-scene="edges"></div>
 
@@ -45,17 +43,15 @@ const composer = new EffectComposer(renderer, target);
 composer.setSize(innerWidth, innerHeight); // the composer's own sizes are in CSS pixels
 ```
 
-- **Other options:** an `FXAAPass` or `SMAAPass` at the end smooths the finished picture instead, with less memory but slightly softer detail; r186's `outputBufferType: HalfFloatType` with `renderer.setEffects` multisamples by itself when `antialias` is on (the multi-pass page).
-- **`samples` is capped by the GPU** at `renderer.capabilities.maxSamples`.
-- The same goes for any render target: a thumbnail or a mirror rendered offscreen is jagged unless its target has `samples`.
+An `FXAAPass` or `SMAAPass` at the end smooths the finished picture instead, with less memory but softer detail. `samples` is capped by the GPU at `renderer.capabilities.maxSamples`, and any other target, like a mirror or a thumbnail, needs `samples` too.
 
 ### Thin lines
 
-`Line` and `LineSegments` are always drawn one pixel wide in WebGL: three.js's docs say `linewidth` is ignored. One-pixel lines are the worst case for jaggies, so they show MSAA's absence first. For lines of real thickness, `Line2` and `LineMaterial` from `three/addons/lines/` build them from triangles.
+WebGL draws `Line` and `LineSegments` one pixel wide on almost every platform, whatever `linewidth` says. That makes them the first thing to look jagged without MSAA. For real thickness, `Line2` and `LineMaterial` from `three/addons/lines/` build lines from triangles.
 
 ### What it costs
 
-Each sample keeps its own color and depth, so a 4-sample target's multisampled buffers take about 4 times the memory of a plain one, plus the plain picture the samples are averaged into. At a pixel ratio of 2 on a large screen that's tens of megabytes per target, and a composer has two. The texture budget page and the resolution and DPR page, in the optimization domain, weigh it against the rest of GPU memory.
+Each sample keeps its own color and depth, so a 4-sample target takes about 4 times the memory of a plain one, plus the plain picture the samples are averaged into. At a pixel ratio of 2 on a large screen, that's tens of megabytes per target, and a composer has two.
 
 ## Drill · Read the code
 

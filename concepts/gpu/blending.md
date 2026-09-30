@@ -14,8 +14,8 @@ contexts:
 
 ## Definition
 
-Blending mixes a fragment's color with the color already in the framebuffer, so a see-through surface only looks right when what's behind it was drawn first; three.js draws transparent objects after opaque ones, sorted back to front per object by the center of each one's bounding sphere, not per triangle, and leaves `depthWrite` on for them until you set it to false.
+Blending mixes a see-through fragment's color with the color already drawn, so what's behind must be drawn first, and three.js sorts see-through objects by their centers, not their triangles.
 
 ## Cost lens
 
-Every see-through layer is shaded and blended where it covers the screen, and nothing behind it can be skipped: GPU work for every pixel, for every layer. Sorting the transparent list is a little CPU time every frame.
+Every see-through layer is shaded and blended where it covers the screen, and nothing behind it can be skipped: GPU work for every pixel, for every layer. Sorting the see-through list is a little CPU time every frame.

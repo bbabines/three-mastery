@@ -39,7 +39,7 @@ export const monitor: SceneSetup = ({ scene, camera, controls, container, render
   screen.add(stand);
   scene.add(product, security, screen);
 
-  slider(overlay(container, 'controls'), 'Target width', { min: 0, max: WIDTHS.length - 1, step: 1, value: WIDTHS.indexOf(width) }, (value) => {
+  slider(overlay(container, 'controls'), 'target width', { min: 0, max: WIDTHS.length - 1, step: 1, value: WIDTHS.indexOf(width) }, (value) => {
     width = WIDTHS[value];
     target.setSize(width, (width * 3) / 4);
   });

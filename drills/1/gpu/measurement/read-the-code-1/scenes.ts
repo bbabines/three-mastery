@@ -40,7 +40,7 @@ export const queue: SceneSetup = (harness) => {
   world.add(product, backdrop);
 
   let steps = 0;
-  slider(overlay(container, 'controls'), 'GPU work per pixel', { min: 0, max: STEPS.length - 1, step: 1, value: 0 }, (value) => {
+  slider(overlay(container, 'controls'), 'work per pixel', { min: 0, max: STEPS.length - 1, step: 1, value: 0 }, (value) => {
     steps = STEPS[value];
     (backdrop.material as THREE.ShaderMaterial).uniforms.steps.value = steps;
   });
