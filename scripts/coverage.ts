@@ -111,6 +111,61 @@ function answerTells() {
   return { total: all.length, longest, mixedStyle };
 }
 
+// Domain 1 is the standard for a Loop 1 page's size and voice (writing-pages.md, "Size and voice").
+// These are the limits a script can measure, set just above Domain 1's own largest values. Tours
+// map a family of classes, so they may run longer and link to more pages.
+const LIMITS = {
+  inShortWords: 30,
+  usedForWords: 22,
+  codeLines: 5,
+  bLines: 45,
+  whyWords: 45,
+  pageLines: { light: 85, core: 110, tour: 115 },
+  links: 3,
+};
+const OFF_VOICE: [RegExp, string][] = [
+  [/\bBrad\b/, 'names Brad'],
+  [/\bLoop [1-4]\b/, 'names a loop'],
+  [/\bDomain \d+\b/, 'names a domain by number'],
+  [/\br1\d\d\b/, 'names a version'],
+  [/\bthis repo\b/i, 'says "this repo"'],
+  [/rule of thumb/i, 'says "rule of thumb"'],
+  [/\bMDN\b/, 'cites MDN'],
+];
+
+const wordCount = (text: string) => text.trim().split(/\s+/).filter(Boolean).length;
+
+function styleProblems(drill: Drill, questions: Question[]): string[] {
+  const body = drill.body;
+  const tour = /^# Tour:/m.test(body);
+  const problems: string[] = [];
+  const inShort = body.match(/\*\*In short:\*\* (.*)/)?.[1] ?? '';
+  const usedFor = body.match(/\*\*Used for:\*\* (.*)/)?.[1] ?? '';
+  if (wordCount(inShort) > LIMITS.inShortWords) problems.push(`In short is ${wordCount(inShort)} words`);
+  if (wordCount(usedFor) > LIMITS.usedForWords) problems.push(`Used for is ${wordCount(usedFor)} words`);
+  if (usedFor.includes(';')) problems.push('Used for has semicolons');
+  // The frontmatter isn't in drill.body; add its lines back to compare with whole-file counts.
+  const lines = body.split('\n').length + 10 + drill.misconceptions.length;
+  const lineLimit = tour ? LIMITS.pageLines.tour : LIMITS.pageLines[drill.tier];
+  if (lines > lineLimit) problems.push(`${lines} lines`);
+  const b = body.split('## B · ')[1]?.split('## Drill')[0] ?? '';
+  if (b.split('\n').length > LIMITS.bLines) problems.push(`B is ${b.split('\n').length} lines`);
+  const longestCode = Math.max(0, ...[...body.matchAll(/```[a-z]*\n([\s\S]*?)```/g)].map((m) => m[1].trimEnd().split('\n').length));
+  if (longestCode > LIMITS.codeLines) problems.push(`longest code block ${longestCode} lines`);
+  const links = (body.match(/\bthe [^.\n]{2,40}? page\b/gi) ?? []).length;
+  if (!tour && links > LIMITS.links) problems.push(`${links} links to other pages`);
+  for (const [pattern, label] of OFF_VOICE) if (pattern.test(body)) problems.push(label);
+  const longWhys = questions.filter((question) => wordCount(question.why) > LIMITS.whyWords).length;
+  if (longWhys) problems.push(`${longWhys} long ${longWhys === 1 ? 'explanation' : 'explanations'}`);
+  return problems;
+}
+
+function styleReport() {
+  return questionFiles
+    .filter(({ drill }) => drill.loop === 1)
+    .map(({ drill, questions }) => ({ drill, problems: styleProblems(drill, questions) }));
+}
+
 function checks(): Check[] {
   const coreDone = cards.filter((card) => card.tier === 'core' && missingModes(card).length === 0).length;
   const lightDone = cards.filter((card) => card.tier === 'light' && missingModes(card).length === 0).length;
@@ -129,6 +184,11 @@ function checks(): Check[] {
   const problems = frontmatterProblems();
   const threeVersion = JSON.parse(readFileSync(path.join(ROOT, 'package.json'), 'utf8')).dependencies.three as string;
   const tells = answerTells();
+  const style = styleReport();
+  const offStyle = style.filter((item) => item.problems.length > 0);
+  const offByDomain = [...new Set(offStyle.map((item) => item.drill.domain))].map(
+    (domain) => `${domain} ${offStyle.filter((item) => item.drill.domain === domain).length}`,
+  );
 
   return [
     { name: 'Every core concept has a drill in each of the four modes', ok: coreDone === TOTAL_CORE, detail: `${coreDone}/${TOTAL_CORE}` },
@@ -158,7 +218,21 @@ function checks(): Check[] {
         `${tells.longest}/${tells.total} right answers are the longest choice (chance is about 1 in 3)` +
         (tells.mixedStyle.length ? `; choices in mixed styles: ${list(tells.mixedStyle)}` : ''),
     },
+    {
+      name: "Loop 1 pages keep Domain 1's size and voice",
+      ok: offStyle.length === 0,
+      detail: offStyle.length
+        ? `${offStyle.length}/${style.length} pages over a limit (${offByDomain.join(', ')}); see "Size and voice" below`
+        : `all ${style.length} pages`,
+    },
   ];
+}
+
+function styleTable() {
+  const rows = styleReport()
+    .filter((item) => item.problems.length > 0)
+    .map((item) => [item.drill.id, item.problems.join(', ')]);
+  return rows.length ? table(['Page', 'Over the limit'], rows) : 'Every Loop 1 page is within the limits.';
 }
 
 // ---- Tables ----
@@ -283,6 +357,12 @@ ${contextTable()}
 ## Misconception → drill
 
 ${misconceptionTable()}
+
+## Size and voice
+
+Loop 1 pages measured against Domain 1's limits (docs/writing-pages.md, "Size and voice"): In short ≤ ${LIMITS.inShortWords} words, Used for ≤ ${LIMITS.usedForWords} words with no semicolons, pages ≤ ${LIMITS.pageLines.light} lines (light), ${LIMITS.pageLines.core} (core) or ${LIMITS.pageLines.tour} (tour), B ≤ ${LIMITS.bLines} lines, code blocks ≤ ${LIMITS.codeLines} lines, ≤ ${LIMITS.links} links to other pages (tours exempt), quiz explanations ≤ ${LIMITS.whyWords} words, and no off-voice phrases (Brad, loop or domain numbers, versions, "this repo", "rule of thumb", MDN).
+
+${styleTable()}
 `;
 
 writeFileSync(path.join(ROOT, 'COVERAGE.md'), markdown);

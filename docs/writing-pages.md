@@ -155,6 +155,22 @@ Pick an answer for each snippet. You'll see right away whether it's right and wh
 - **Exact syntax in B.** Show the line a developer actually types, not a description of it. The inventory's "Blank-file drills go last" table lists the setup lines that must appear on the pages that teach them, such as `renderer.setPixelRatio(Math.min(devicePixelRatio, 2))`, because no drill has Brad type them from an empty file until after Loop 4.
 - **Use three.js, don't re-implement it.** When three.js has a method for something (`Triangle.getNormal`, `ray.intersectBox`, `closestPointToPoint`), B teaches what the method returns, which space the result is in, and when to reach for it. How it works inside is at most a collapsed note.
 
+## Size and voice
+
+Domain 1 is the standard for every Loop 1 page, and Point vs direction is its approved example. Brad chose this on Sep 30, 2026, after a blind review found the later domains running about twice as long and dense. The numbers below are Domain 1's own, and `npm run coverage` checks the ones it can measure.
+
+- **In short:** one plain sentence, 25 words or fewer (30 at most). Say it in new words; don't copy the card's definition.
+- **Used for:** three or four short uses as a comma list ending "and …", about 15–20 words. No semicolons, no full clauses, and no reasons ("Knowing why…").
+- **A:** one to three `###` subsections. Bold a new term where it's defined. One analogy of two or three sentences. Before each scene, a sentence or two saying what to try ("Drag the sliders."), never how the scene is built.
+- **The math note:** optional. One formula and the one technical term it names; not a glossary.
+- **B:** two to four `###` subsections named for a job. Each is a sentence or two around a code block of four lines or fewer (five at most), about 40 lines in all. Tables have two columns and short cells. Prefer sentences to bullet lists, and don't write bold-lead rule bullets.
+- **Page length:** a light page about 65–80 lines and a core page about 75–105, frontmatter included. A tour may run longer for its table.
+- **Links to other pages:** one or two, named by subject ("the angle page builds on this"). A tour names the page for each member it maps.
+- **Never on a page:** the reader's name, loop or domain numbers, version numbers, "this repo", citations (MDN, the spec, the docs, the source), "as a rule of thumb" (say "usually"), or notes about how the course or the scene was built. Verify every claim as the checklist below says; the page then states the behavior plainly.
+- **Questions:** a snippet of one to five lines, with the setup in a code comment; an ask of about eight words ("What does `move` hold?"); three parallel choices of about 50 characters or fewer; a `why` of one to three sentences, about 25 words and never over 45, giving the reason and then the fix.
+- **Cards:** the definition is one plain sentence with no code. A lens is one or two sentences.
+- **Scenes:** slider labels are lowercase ('turn b'). The readout is two to four lines: the code, its live value, and a short verdict.
+
 ## Tour pages
 
 A tour covers a family of classes or an API surface, like the materials or the Object3D API, instead of one idea. It's a light concept, it's the first page in its domain, and its title starts with "Tour:" to match `domains.ts`. It uses the same files, frontmatter, and opening block as any page. What changes is the body:
