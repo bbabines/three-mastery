@@ -8,12 +8,12 @@ toTarget.divideScalar(toTarget.length());
 ship.position.addScaledVector(toTarget, speed * delta);`,
     ask: 'What happens to the ship?',
     choices: [
-      'divideScalar throws an error about dividing by zero',
+      'divideScalar throws a divide-by-zero error',
       'It stays put, the same as with normalize()',
       'Its position becomes NaN, and it vanishes for good',
     ],
     answer: 2,
-    why: "`divideScalar(0)` on (0, 0, 0) is 0 / 0 in each part, which is NaN, and JavaScript doesn't throw for it. Adding NaN to the position makes the position NaN, and every later frame adds to NaN, so the ship never comes back. `toTarget.normalize()` returns (0, 0, 0) instead, and the ship stays put.",
+    why: "0 / 0 is NaN, and JavaScript doesn't throw, so the position becomes NaN and stays NaN every frame after. `toTarget.normalize()` returns (0, 0, 0) instead.",
   },
   {
     code: `part.position.y = Math.acos(dot) * radius; // dot came out 1.0000000000000002
@@ -25,7 +25,7 @@ const hits = raycaster.intersectObject(part);`,
       'A hit for every triangle, each at distance NaN',
     ],
     answer: 2,
-    why: "`Math.acos` of anything over 1 is NaN, so the part's `matrixWorld` is NaN. Every test inside the raycast compares with NaN, and every comparison with NaN is false, so none of them rules a triangle out: each one comes back as a hit with a NaN `distance` and `point`. `a.angleTo(b)` clamps and would have avoided it.",
+    why: "`Math.acos` of anything over 1 is NaN, so the part's `matrixWorld` is NaN. Every comparison with NaN is false, so no test rules a triangle out. `a.angleTo(b)` clamps.",
   },
   {
     code: `// ship.position.x really is NaN here

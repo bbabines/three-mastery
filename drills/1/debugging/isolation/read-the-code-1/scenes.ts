@@ -62,7 +62,7 @@ export const zFight: SceneSetup = ({ scene, camera, controls, container, onFrame
   let to = CRATES;
   let colorEach = false;
   const bar = overlay(container, 'controls');
-  slider(bar, 'Show from', { min: 1, max: CRATES, step: 1, value: from }, (value) => (from = value));
+  slider(bar, 'show from', { min: 1, max: CRATES, step: 1, value: from }, (value) => (from = value));
   slider(bar, 'to', { min: 1, max: CRATES, step: 1, value: to }, (value) => (to = value));
   toggle(bar, 'one color per mesh', colorEach, (on) => (colorEach = on));
 

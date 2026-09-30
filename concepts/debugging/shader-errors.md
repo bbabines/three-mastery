@@ -14,4 +14,4 @@ contexts:
 
 ## Definition
 
-When a shader fails to compile, three.js logs the driver's message with the lines around the error, and the line numbers count the whole shader three.js built, with its own code in front of yours.
+When a shader fails to compile, three.js logs the driver's message, whose line numbers count the whole shader three.js built, with its own code in front of yours.

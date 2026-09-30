@@ -34,22 +34,25 @@ export const columns: SceneSetup = ({ scene, camera, controls, container }) => {
     for (let i = 0; i < 3; i++) setArrow(axes[i], part.position, column.setFromMatrixColumn(part.matrix, i));
     setLine(move, origin, part.position);
 
+    const determinant = part.matrix.determinant();
+    const mirror = determinant < 0 ? 'mirrored' : determinant === 0 ? 'flat, no volume' : 'not mirrored';
     const lines = [0, 1, 2, 3].map((c) => {
       const numbers = [e[c * 4], e[c * 4 + 1], e[c * 4 + 2], e[c * 4 + 3]].map(f).join(', ');
       const range = `elements[${c * 4}–${c * 4 + 3}]`.padEnd(17);
       const color = c < 3 ? axisColors[c] : COLORS.yellow;
-      const meaning = c < 3 ? `own +${'XYZ'[c]}, ${f(column.setFromMatrixColumn(part.matrix, c).length())} long` : 'the move';
+      const meaning =
+        c < 3
+          ? `own +${'XYZ'[c]}, ${f(column.setFromMatrixColumn(part.matrix, c).length())} long`
+          : `the move · determinant ${f(determinant)}: ${mirror}`;
       return `<span style="color:${color}">${range}(${numbers})</span>  ${meaning}`;
     });
-    const determinant = part.matrix.determinant();
-    lines.push(`determinant ${f(determinant)}: ${determinant < 0 ? 'mirrored' : determinant === 0 ? 'flat, no volume' : 'not mirrored'}`);
     readout.innerHTML = lines.join('\n');
   };
 
   const sliders = overlay(container, 'controls');
-  slider(sliders, 'Move x', { min: -1.5, max: 1.5, step: 0.5, value: values.x }, (value) => ((values.x = value), update()));
-  slider(sliders, 'Turn', { min: -180, max: 180, step: 15, value: values.turn }, (value) => ((values.turn = value), update()));
-  slider(sliders, 'Scale x', { min: -2, max: 2, step: 0.5, value: values.scale }, (value) => ((values.scale = value), update()));
+  slider(sliders, 'move x', { min: -1.5, max: 1.5, step: 0.5, value: values.x }, (value) => ((values.x = value), update()));
+  slider(sliders, 'turn', { min: -180, max: 180, step: 15, value: values.turn }, (value) => ((values.turn = value), update()));
+  slider(sliders, 'scale x', { min: -2, max: 2, step: 0.5, value: values.scale }, (value) => ((values.scale = value), update()));
   update();
 };
 

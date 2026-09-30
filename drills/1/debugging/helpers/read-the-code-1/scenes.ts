@@ -103,7 +103,7 @@ export const helperTour: SceneSetup = ({ scene, camera, controls, container, ren
       },
     })),
   );
-  slider(bar, 'Shadow box', { min: 0.3, max: 2, step: 0.1, value: half }, (value) => {
+  slider(bar, 'shadow box', { min: 0.3, max: 2, step: 0.1, value: half }, (value) => {
     half = value;
     setShadowBox();
   });

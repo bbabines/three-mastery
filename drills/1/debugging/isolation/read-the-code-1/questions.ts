@@ -10,10 +10,10 @@ parts.forEach((part, i) => (part.visible = i < 150));
     choices: [
       'Read the code for parts 0 to 149, one by one',
       'Show only parts 0 to 74 and look again',
-      'Show all 300 again and hide one part at a time',
+      'Show all 300 and hide one part at a time',
     ],
     answer: 1,
-    why: "The flicker is in the first 150, so halve them again: 75, then about 38, and so on, nine checks for all 300. Reading 150 parts' code may never find it, and hiding one part at a time takes up to 300 checks.",
+    why: 'The flicker is in the first 150, so halve them again: nine checks cover all 300. Hiding one part at a time can take 300 checks.',
   },
   {
     code: `scene.overrideMaterial = new MeshNormalMaterial();
@@ -22,11 +22,11 @@ parts.forEach((part, i) => (part.visible = i < 150));
     ask: 'Where is the bug?',
     choices: [
       "In the tank's material, like a bad texture",
-      'In the lighting, which is too dim on that side',
+      'In the lighting, too dim on that side',
       "In the tank's shape, in its normals there",
     ],
     answer: 2,
-    why: "`overrideMaterial` draws every mesh with one material that ignores lights and textures, so neither can cause what's left. A patch that survives it, in the wrong color, comes from the shape's own data: its normals. The debug views page reads those colors.",
+    why: "`overrideMaterial` ignores lights and textures, so a patch that survives it comes from the shape's own data: its normals.",
   },
   {
     code: `const test = new Scene();
@@ -37,10 +37,10 @@ renderer.render(test, camera);
     choices: [
       'The cause is in the scene around the valve',
       "The valve's own material is what's broken",
-      "Cloning the valve repaired its geometry",
+      'Cloning the valve repaired its geometry',
     ],
     answer: 0,
-    why: "The valve, with its real geometry and material, looks right on its own, so the bug comes from something the full scene adds: its lights, its environment, its post-processing, or another object. `clone()` shares the geometry and material, so nothing was repaired.",
+    why: 'The valve looks right on its own, so the bug comes from something the full scene adds: its lights, environment, post-processing, or another object. `clone()` repaired nothing.',
   },
   {
     code: `cable.visible = false;
@@ -53,7 +53,7 @@ console.log(renderer.info.render.triangles); // 401,500 before, 1,500 now`,
       'The cable holds nearly every triangle drawn',
     ],
     answer: 2,
-    why: "`renderer.info` counts what the last render drew, so the cable is 400,000 of the 401,500 triangles. That's where the work is, but whether it's what slows the frame takes measuring (the measurement tools page). A hidden mesh keeps its GPU memory; freeing it is the disposal ownership page's job.",
+    why: "The cable is 400,000 of the 401,500 triangles, so that's where the work is. Whether it slows the frame takes measuring, and a hidden mesh keeps its GPU memory.",
   },
   {
     code: `scene.overrideMaterial = new MeshBasicMaterial({ color: 'white' });
@@ -67,6 +67,6 @@ bin.visible = false;
       'The near plane: raising it fixed the depth',
     ],
     answer: 0,
-    why: "Any one of the three could have stopped it. Undo all three, then change one at a time, putting each back before the next, so a single change turns the flicker on or off.",
+    why: 'Any one of the three could have stopped it. Undo all three, then change one at a time, putting each back before the next.',
   },
 ];

@@ -14,4 +14,4 @@ contexts:
 
 ## Definition
 
-Triage is sorting a rendering bug into one of five buckets, transform, geometry, material, camera, or pipeline, with a first check that takes a line or two, before changing any code.
+Triage is sorting a rendering bug into one of five buckets, transform, geometry, material (lights included), camera, or pipeline, before changing any code.

@@ -14,8 +14,8 @@ contexts:
 
 ## Definition
 
-A frame capture records every WebGL command one frame sends to the GPU, in order, with the state, textures, and shaders behind each draw call, so you can see what was really drawn rather than what the scene graph says should be.
+A frame capture records every command one frame sends to the GPU, in order, with the state and textures behind each draw call.
 
 ## Cost lens
 
-A capture tool wraps every WebGL call while it's on, which slows the page; as a rule of thumb, never time frames with one running. Capture to see what a frame does; measure, with the tools in the GPU pipeline domain, to see how long it takes.
+A capture tool wraps every WebGL call while it's on, which slows the page, so never time frames with one running. Capture to see what a frame does, and measure to see how long it takes.

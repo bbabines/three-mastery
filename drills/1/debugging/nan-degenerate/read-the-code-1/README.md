@@ -12,34 +12,30 @@ misconceptions:
 
 # NaN and degenerate cases
 
-> **In short:** Some inputs have no sensible answer, like the direction of a zero-length vector or the inverse of a zero scale; three.js's own math quietly hands back a fallback, but your own math can make NaN, "not a number", which then spreads to everything computed from it without a single error.
+> **In short:** When the math has no sensible answer, three.js returns a fallback and carries on, but a NaN from your own math spreads silently.
 >
-> **Used for:** An object that vanishes for no visible reason; a model that explodes into spikes after a vertex edit; a click that misses something plainly on screen; and a follower, camera, or aim that breaks the moment two things line up.
+> **Used for:** Objects that vanish, models that explode into spikes, clicks that miss, and aims that break when two things line up.
 
 ## A · The basics
 
 ### Questions with no answer
 
-Which way does a vector of length 0 point? What undoes a scale of 0, which squashes everything flat? These are **degenerate cases**: inputs where the math has no sensible answer. three.js's own methods pick a fallback and carry on:
+Which way does a vector of length 0 point? What undoes a scale of 0, which squashes everything flat? These are **degenerate cases**: inputs with no sensible answer. three.js's own methods return a fallback and carry on, with no error:
 
-| Case | three.js gives back | What you see |
-| --- | --- | --- |
-| `new Vector3(0, 0, 0).normalize()` | (0, 0, 0) | Whatever uses it moves nowhere (the normalize page) |
-| `lookAt` a point straight above or below | A nudged direction, with a roll it had to pick | A sudden spin (the lookAt page) |
-| `invert()` a matrix with a scale of 0 | All zeros | Raycasts miss it, and `worldToLocal` gives NaN |
-| `ray.intersectPlane` with a ray running along the plane | `null` | A drag on that plane stops |
-
-None of them throws an error.
+| Case | What three.js does |
+| --- | --- |
+| `new Vector3(0, 0, 0).normalize()` | Returns (0, 0, 0), so whatever uses it stays put |
+| `lookAt` a point straight above | Picks a roll, so it can suddenly spin |
+| `invert()` a matrix with a scale of 0 | Returns all zeros, so raycasts miss the object |
+| `ray.intersectPlane` along the plane | Returns `null`, so a drag stops |
 
 ### NaN spreads
 
-Your own math can do what three.js avoids. `0 / 0`, `Math.acos(1.0000000000000002)`, and `Math.sqrt(-1)` all give **NaN**, "not a number", and JavaScript doesn't throw for any of them. The dot product page showed how rounding can push a dot product of two unit vectors a hair over 1, which is exactly what makes `Math.acos` return NaN; the float tolerance page explains the rounding.
-
-Worse, NaN spreads. Any math with NaN in it gives NaN: a NaN position makes a NaN `matrixWorld`, which makes every child NaN, which makes their bounds and every raycast against them NaN. Nothing fails loudly; things just vanish.
+Your own math can do what three.js avoids. `0 / 0`, `Math.acos(1.0000000000000002)`, and `Math.sqrt(-1)` all give **NaN**, "not a number", and JavaScript throws for none of them. Worse, any math with NaN in it gives NaN: a NaN position makes a NaN `matrixWorld`, then NaN children, then NaN raycast hits. Nothing fails loudly; things just vanish.
 
 **Analogy: a drop of ink in a glass of water.** One drop, and the whole glass is ink. Pouring in more clean water never brings it back.
 
-The yellow ball follows the red one, slowing on its last step so it lands right on it. The first button works out the direction with its own division, `toTarget.divideScalar(toTarget.length())`; the second uses `normalize()`. Let the ball arrive with each. Once it's there, the distance is 0, and 0 / 0 is NaN; multiplying by a speed of 0 doesn't help, because NaN times anything is NaN.
+A follower that divides by its own distance makes NaN the moment it arrives, since the distance is then 0. Let the yellow ball catch the red one with each button, and watch the readout.
 
 <div data-scene="follower"></div>
 
@@ -48,28 +44,25 @@ The yellow ball follows the red one, slowing on its last step so it lands right 
 ### Finding where NaN starts
 
 ```js
-Number.isNaN(ship.position.x);                  // true when it's NaN
-ship.matrixWorld.elements.some(Number.isNaN);   // any NaN in the transform
+Number.isNaN(ship.position.x);                // true when it's NaN
+ship.matrixWorld.elements.some(Number.isNaN); // any NaN in the transform
 ```
 
-`ship.position.x === NaN` is always `false`: NaN isn't equal to anything, itself included. Once you find a NaN, log the inputs of the line that made it, and walk back until the inputs are all numbers. Saved data can carry it too: `JSON.stringify` writes NaN as `null`.
+`ship.position.x === NaN` is always `false`: NaN isn't equal to anything, itself included. Once you find a NaN, log the inputs of the line that made it, and walk back until they're all numbers.
 
 ### Guarding your own math
 
 ```js
-const angle = a.angleTo(b);                         // clamps first: never NaN
-const risky = Math.acos(a.dot(b));                  // NaN when the dot is a hair over 1
+const angle = a.angleTo(b);                            // clamps first: never NaN
+const risky = Math.acos(a.dot(b));                     // NaN when the dot is a hair over 1
 if (toTarget.lengthSq() > 1e-12) toTarget.normalize(); // skip the degenerate case
 ```
 
-Reach for three.js's methods where it has one, since they already handle the degenerate case. In your own formulas, clamp before `Math.acos` and `Math.asin` (`MathUtils.clamp(x, -1, 1)`), and check before dividing by a length.
+Use three.js's method where there is one. In your own formulas, clamp before `Math.acos` and `Math.asin` (`MathUtils.clamp(x, -1, 1)`), and check before dividing by a length.
 
-### What NaN breaks downstream
+### What NaN breaks
 
-- **Vanishing objects:** a mesh with NaN in its transform still passes the frustum check, since every comparison with NaN is false, and then draws nothing, as a rule of thumb, because its corners are NaN on the GPU.
-- **Failed raycasts:** `raycaster.intersectObject` against it returns a hit for every triangle, each with a NaN `distance` and `point`, and the hits can sort first. A click lands on nothing, or on NaN.
-- **Exploded geometry:** NaN in vertex positions is the one case three.js reports, with `computeBoundingSphere(): Computed radius is NaN` in the console (the nothing-renders checklist page).
-- **In a shader,** `normalize(vec3(0.0))` is undefined in GLSL, and in practice it often gives NaN pixels, black or garbage. The shaders domain covers guarding against it.
+A mesh with NaN in its transform still passes the frustum check, since every comparison with NaN is false, and then usually draws nothing. A raycast against it returns a hit for every triangle, each at a NaN distance. NaN in vertex positions is the one case three.js reports, with `Computed radius is NaN` in the console.
 
 ## Drill · Read the code
 

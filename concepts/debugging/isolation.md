@@ -14,7 +14,7 @@ contexts:
 
 ## Definition
 
-Isolation is narrowing a bug down by changing what the scene draws, one thing at a time: hiding parts, swapping materials, cutting the scene in half, or moving a part into an empty scene, until a single change turns the bug on or off.
+Isolation is narrowing a bug down by changing what the scene draws, one thing at a time, until a single change turns the bug on or off.
 
 ## Cost lens
 

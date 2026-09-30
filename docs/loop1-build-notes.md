@@ -156,6 +156,15 @@ The Sep 30 pass brought each domain to Domain 1's size and voice, which meant cu
 - `MeshBasicMaterial` ignores `scene.environment`. A plain `scene.background` color still leaves environment lighting. An HDR environment costs 8 bytes a pixel as half floats.
 - PBR scales the diffuse color by (1 − metalness); `specular` on Phong defaults to `0x111111`. RectAreaLight fades with distance, and its size sets how soft its reflections are.
 
+**Debugging (Domain 13):**
+- Near and far set in the wrong units (`camera.near = 20`, meant as 20 cm) hides a whole model; the nothing-renders scene still shows it.
+- `VertexNormalsHelper` is an addon and needs `update()` after the mesh moves; `CameraHelper` needs `update()` after a lens change; `Box3Helper` redraws from its `Box3` every frame, but the `Box3` doesn't follow the object; `PlaneHelper` reads its plane every frame. Every light type has a helper. Keep helpers out of raycasts with a target list.
+- glTF stores matrices column by column, which is why GLTFLoader reads them with `fromArray`.
+- `JSON.stringify` writes NaN as `null`, so saved data can carry it. `invert()` of a zero-scale matrix makes `worldToLocal` return NaN. In GLSL, `normalize(vec3(0.0))` is undefined and often shows as black or garbage pixels.
+- Isolation with layers (`o.layers.set(1)`, one camera at a time), and switching a material's maps off one at a time with `needsUpdate` after each.
+- Double rendering also comes from a resize handler, or from `render()` after `composer.render()`. Remove helpers before timing; they're draw calls too.
+- A shader compile log shows twelve lines around the error, and the driver's wording depends on the browser. The docs suggest turning `checkShaderErrors` off in production for speed.
+
 ## Page lengths
 
 Several pages run over the recipe's guide: most light pages are 72–90 lines against 50–70, and some core pages reach 130–145 against about 120 (the camera domain's, and Attributes, uniforms, varyings). The extra is mostly B's code blocks. Trim if Brad finds them long.

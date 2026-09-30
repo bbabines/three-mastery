@@ -14,4 +14,4 @@ contexts:
 
 ## Definition
 
-A degenerate case is an input with no sensible answer, like the direction of a zero-length vector or the inverse of a zero scale: three.js's own math quietly returns a fallback, while your own math can make NaN, which spreads to everything computed from it without an error.
+A degenerate case is an input with no sensible answer, like the direction of a zero-length vector, where three.js returns a fallback but your own math can make NaN.

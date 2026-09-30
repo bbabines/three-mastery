@@ -69,7 +69,7 @@ export const normalArrow: SceneSetup = ({ scene, camera, controls, container, on
     bar,
     ways.map((item) => ({ html: item.html, select: () => (way = item) })),
   );
-  slider(bar, 'Turn table', { min: -180, max: 180, step: 15, value: turn }, (value) => (turn = value));
+  slider(bar, 'turn table', { min: -180, max: 180, step: 15, value: turn }, (value) => (turn = value));
 
   const readout = overlay(container, 'readout');
   onFrame(() => {

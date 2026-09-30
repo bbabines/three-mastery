@@ -12,9 +12,9 @@ misconceptions:
 
 # Debug views
 
-> **In short:** A debug view draws data you normally can't see as the picture itself: wireframe shows the triangles, `MeshNormalMaterial` colors each surface by the way it faces the camera, a depth material shades by distance, and a checker texture shows how the UVs stretch a picture over the shape.
+> **In short:** Draw one hidden ingredient of the picture at a time, like triangles, normals, depth, or UVs, to see which one is wrong.
 >
-> **Used for:** Spotting a flipped normal before it gets blamed on the lights; finding where a texture stretches or breaks at a seam; checking how a model's triangles are spread; and seeing whether a camera's near and far planes suit the scene.
+> **Used for:** Spotting flipped normals, finding stretched textures and seams, checking triangle layout, and tuning near and far.
 
 ## A · The basics
 
@@ -22,20 +22,20 @@ misconceptions:
 
 A lit, textured surface mixes many things into one color: the light, the normals, the texture, the UVs. When it looks wrong, you can't tell which from the final picture. A **debug view** draws just one of them:
 
-| View | Code | Shows | Wrong looks like |
-| --- | --- | --- | --- |
-| Wireframe | `material.wireframe = true` | Every triangle's edges | Long thin slivers, or triangles far too dense or sparse |
-| Normals | `new MeshNormalMaterial()` | Which way each point faces, as a color | A patch in the wrong color, or a hard edge blurred into a gradient |
-| Depth | `new MeshDepthMaterial()` | Distance from the camera: white near, black far | All black or all white: near and far don't suit the scene |
-| UV checker | `material.map = checker` | How the texture is laid over the surface | Stretched squares, or a jump in the pattern at a seam |
+| Code | Shows |
+| --- | --- |
+| `material.wireframe = true` | Every triangle's edges |
+| `new MeshNormalMaterial()` | Which way each point faces, as a color |
+| `new MeshDepthMaterial()` | Distance from the camera: white near, black far |
+| `material.map = checker` | How the texture is laid over the surface |
 
-**Analogy: a doctor's scans.** An X-ray shows the bones and an ultrasound the soft tissue: one body, and each picture answers one question. Nobody diagnoses a broken bone from a photo.
+**Analogy: a doctor's scans.** An X-ray shows the bones and an ultrasound the soft tissue: one body, and each picture answers one question.
 
 ### Bad normals show as color, not just as lighting
 
-A normal problem under the lights looks like a shading problem: a dark patch that could pass for a shadow. `MeshNormalMaterial` ignores lights and turns each normal into a color: X into red, Y into green, Z into blue. Those directions are measured from the camera, so a surface facing you is blue-violet, whatever way it faces in the world, and the colors change as you orbit. A normal pointing the wrong way shows in the wrong color, however it's lit.
+A normal problem under the lights looks like a shading problem: a dark patch that could pass for a shadow. `MeshNormalMaterial` ignores lights and turns each normal into a color, X into red, Y into green, Z into blue. Those directions are measured from the camera, so a surface facing you is blue-violet and the colors change as you orbit. A normal pointing the wrong way shows in the wrong color, however it's lit.
 
-The tank has a patch of flipped normals. Compare the lit view with the normal view, orbit the camera, then try the others.
+The tank has a patch of flipped normals. Compare the lit view with the normal view, orbit, then try the others.
 
 <div data-scene="views"></div>
 
@@ -48,39 +48,27 @@ scene.overrideMaterial = new MeshNormalMaterial(); // every mesh at once
 scene.overrideMaterial = null;                     // and back
 ```
 
-The material override and restore page covers `overrideMaterial` and swapping one mesh's material. `wireframe` is a setting on the material, so every mesh that shares the material shows it.
+`wireframe` is a setting on the material, so every mesh that shares the material shows it.
 
 ### Normal problems
 
-- **Flipped normals** show as a patch in the colors of a surface facing away.
-- **A hard edge smoothed over** shows as a gradient across a corner that should change color sharply (the vertex normals page).
-- **Lines instead of colors:** the helpers page's `VertexNormalsHelper` draws each normal.
-
-For normals as colors in the world rather than from the camera, the shaders domain's debug output page writes a small shader.
+Flipped normals show as a patch in the colors of a surface facing away. A hard edge smoothed over shows as a gradient across a corner that should change color sharply. To see each normal as a line instead, use `VertexNormalsHelper`.
 
 ### UV stretching
 
-A checker made in code, with no image file:
+A checker drawn in code needs no image file:
 
 ```js
-const canvas = document.createElement('canvas');
-canvas.width = canvas.height = 256;
-const context = canvas.getContext('2d');
-for (let y = 0; y < 8; y++) {
-  for (let x = 0; x < 8; x++) {
-    context.fillStyle = (x + y) % 2 ? '#ffffff' : '#f97316';
-    context.fillRect(x * 32, y * 32, 32, 32);
-  }
-}
-const checker = new CanvasTexture(canvas);
+const checker = new CanvasTexture(canvas); // canvas: squares drawn with a 2D context
 checker.colorSpace = SRGBColorSpace;
+material.map = checker;
 ```
 
-The squares should come out square and the same size everywhere. Wide or tall rectangles mean the UVs stretch the texture there; a jump in the pattern is a seam (the UVs page).
+The squares should come out square and the same size everywhere. Wide or tall rectangles mean the UVs stretch the texture there; a jump in the pattern is a seam.
 
 ### Depth issues
 
-`MeshDepthMaterial` shades by the same depth the depth buffer stores, and most of that range is used up close to the camera, as the depth precision page showed. With `near` at 0.1, anything a few units away comes out nearly black. Raising `near` spreads the shades out; a view that's still all black or all white says `near` and `far` don't suit the scene.
+`MeshDepthMaterial` shades by the same depth the depth buffer stores, and most of that range is used up close to the camera. With `near` at 0.1, anything a few units away comes out nearly black. Raise `near` and the shades spread out; a view that's still all black or all white says `near` and `far` don't suit the scene.
 
 ## Drill · Read the code
 

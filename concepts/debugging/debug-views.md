@@ -14,7 +14,7 @@ contexts:
 
 ## Definition
 
-A debug view draws hidden data as the picture itself: wireframe shows the triangles, MeshNormalMaterial colors each surface by the way it faces the camera, a depth material shades by distance from the camera, and a checker texture shows how the UVs lay a picture over the shape.
+A debug view is a way of drawing that shows hidden data, like the triangles, the normals, the depth, or the UVs, as the picture itself.
 
 ## Space lens
 

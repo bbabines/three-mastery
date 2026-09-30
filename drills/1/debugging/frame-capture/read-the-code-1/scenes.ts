@@ -139,7 +139,7 @@ export const stepThrough: SceneSetup = ({ scene, camera, controls, container, re
     object.onBeforeRender = (_renderer, _scene, _camera, _geometry, material) => void (state.what = `${object.name} · ${material.type}`);
   }
 
-  slider(overlay(container, 'controls'), 'Stop after draw', { min: 1, max: objects.length, step: 1, value: stopAfter }, (value) => (stopAfter = value));
+  slider(overlay(container, 'controls'), 'stop after draw', { min: 1, max: objects.length, step: 1, value: stopAfter }, (value) => (stopAfter = value));
 
   const readout = overlay(container, 'readout');
   onFrame(() => {

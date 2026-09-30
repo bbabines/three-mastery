@@ -12,31 +12,29 @@ misconceptions:
 
 # Shader errors
 
-> **In short:** When a shader doesn't compile, three.js logs the GPU driver's message along with the lines around the error, and its line numbers count the whole shader three.js built, with dozens or thousands of lines of its own around yours, so find the error by the code shown, not by counting lines in your file.
+> **In short:** A shader error's line number counts the whole shader three.js built, so find the mistake by the code shown, not the number.
 >
-> **Used for:** A typo in a `ShaderMaterial`; a mistake in an `onBeforeCompile` patch to a built-in material; a whole number where GLSL wants a decimal; and catching compile errors in your own error reporting instead of the console.
+> **Used for:** Typos in a `ShaderMaterial`, broken `onBeforeCompile` patches, whole numbers where GLSL wants decimals, and your own error reports.
 
 ## A · The basics
 
 ### What three.js prints
 
-A shader is compiled by the GPU driver, the software that runs the graphics card, the first time a material is used. When it fails, that material doesn't draw, everything else carries on, and three.js logs `THREE.WebGLProgram: Shader Error` with three things in it:
+A shader is compiled by **the driver**, the software that runs the graphics card, the first time a material is used. When it fails, that material doesn't draw and everything else carries on. three.js logs `THREE.WebGLProgram: Shader Error` with the material's name, the driver's message, and the lines around the error, the failing one marked `>`:
 
-- the material's `name` and type;
-- the driver's message, like `ERROR: 0:58: 'colr' : undeclared identifier`, where 58 is the line;
-- twelve lines of the shader around the error, with the failing line marked `>`.
-
-The wording of the driver's message depends on the browser; the examples here are Chrome's.
+```
+ERROR: 0:58: 'colr' : undeclared identifier
+```
 
 ### The line number counts three.js's code too
 
-three.js doesn't compile your shader as you wrote it. It puts its own code in front: a version line, precision settings, `#define`s, and the uniforms and attributes every shader gets, like `modelMatrix` and `position`. In the scene below, that's more than 50 lines in front of a `ShaderMaterial`'s fragment shader. An `onBeforeCompile` patch lands inside a built-in material's shader, whose `#include` lines three.js expands first, so its errors report line numbers in the thousands.
+three.js doesn't compile your shader as you wrote it. It puts its own code in front: a version line, precision settings, `#define`s, and the uniforms and attributes every shader gets, like `modelMatrix` and `position`. An `onBeforeCompile` patch lands inside a built-in material's whole shader, so its errors report line numbers in the thousands.
 
 So "line 58" isn't line 58 of your code. Read the line the log marks with `>`, and search your code for it.
 
-**Analogy: a letter printed below a long letterhead.** "The typo is on line 30" counts from the top of the page, letterhead included. Find the sentence by its words, not by counting down your draft.
+**Analogy: a letter printed below a long letterhead.** "The typo is on line 30" counts from the top of the page, letterhead included. Find the sentence by its words instead.
 
-The broken versions only compile when you press their buttons, and the scene catches each log with `renderer.debug.onShaderError`, so it shows in the readout instead of the console.
+Press each broken version, and compare the line number in its log with where the line sits in your code.
 
 <div data-scene="compileLog"></div>
 
@@ -47,30 +45,28 @@ The broken versions only compile when you press their buttons, and the scene cat
 ```js
 renderer.debug.onShaderError = (gl, program, vertexShader, fragmentShader) => {
   const message = gl.getShaderInfoLog(fragmentShader); // the driver's message
-  const source = gl.getShaderSource(fragmentShader);   // the whole shader, three.js's lines included
-  report(message, source);
+  report(message, gl.getShaderSource(fragmentShader)); // with the whole shader
 };
 ```
 
-Setting `onShaderError` replaces three.js's own report: nothing reaches the console unless your function logs it. `renderer.debug.checkShaderErrors`, on by default, turns the checking on or off; the docs suggest turning it off in production for speed, and keeping it on while developing, because with it off a broken shader fails without a word from three.js.
+Setting `onShaderError` replaces three.js's own report, so nothing reaches the console unless your function logs it. Keep `renderer.debug.checkShaderErrors` on while developing: with it off, a broken shader fails without a word from three.js.
 
 ### onBeforeCompile mistakes
 
+Inside `material.onBeforeCompile = (shader) => { … }`, a patch declares its uniform and then uses it:
+
 ```js
-material.onBeforeCompile = (shader) => {
-  shader.uniforms.tint = { value: new Color('orange') };
-  shader.fragmentShader = shader.fragmentShader
-    .replace('#include <common>', '#include <common>\nuniform vec3 tint;')
-    .replace('#include <color_fragment>', '#include <color_fragment>\ndiffuseColor.rgb *= tint;');
-};
+shader.uniforms.tint = { value: new Color('orange') };
+shader.fragmentShader = shader.fragmentShader
+  .replace('#include <common>', '#include <common>\nuniform vec3 tint;')
+  .replace('#include <color_fragment>', '#include <color_fragment>\ndiffuseColor.rgb *= tint;');
 ```
 
-- **A value used but never declared,** like `tint` without its `uniform vec3 tint;` line, is a compile error, reported deep inside the built-in shader.
-- **A `replace` that finds nothing** fails silently: a chunk name spelled wrong leaves the shader unchanged, so the patch never runs and nothing is logged. The extending materials page covers where to hook in.
+Leave out the `uniform vec3 tint;` line and it's a compile error, reported deep inside the built-in shader. A `replace` that finds nothing fails silently: a misspelled chunk name leaves the shader unchanged, and nothing is logged.
 
 ### Whole numbers and decimals
 
-GLSL doesn't turn a whole number into a decimal for you: `float glow = 1;` fails with "cannot convert from 'const int' to 'highp float'". Write `1.0`. The types and precision page covers it; the shaders domain's debug output page covers the next step, seeing a shader's values once it compiles.
+GLSL doesn't turn a whole number into a decimal for you: `float glow = 1;` fails with "cannot convert from 'const int' to 'highp float'". Write `1.0`.
 
 ## Drill · Read the code
 

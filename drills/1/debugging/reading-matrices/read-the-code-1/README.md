@@ -12,42 +12,32 @@ misconceptions:
 
 # Reading matrices
 
-> **In short:** Printed out, a matrix is 16 numbers stored column by column: the first three columns say where the object's own X, Y, and Z axes point and how long they are, numbers 12 to 14 say where it sits, and the determinant's sign says whether it's mirrored.
+> **In short:** Printed out, a matrix is 16 numbers stored column by column, and they tell you an object's axes, its move, and whether it's mirrored.
 >
-> **Used for:** Checking a transform in the console when something lands in the wrong place; spotting a hidden scale in an imported model; catching a mirrored part before it draws inside out; and taking in matrices from a file, a server, or another program.
+> **Used for:** Checking a transform in the console, spotting a hidden scale, catching a mirrored part, and loading matrices from other programs.
 
 ## A · The basics
 
 ### Sixteen numbers in four columns
 
-The matrix vs matrixWorld page called a matrix a saved transform: a move, a turn, and a resize packed into one value that three.js can apply to any point in one step. Until now, pages have only said what a matrix holds. This page reads its numbers.
+A matrix is a saved transform: a move, a turn, and a resize packed into one value. A `Matrix4` keeps it as 16 numbers in `matrix.elements`, a plain array. Written as a 4 × 4 grid it has four columns, and three.js stores them **column by column**: `elements[0]` to `[3]` are the first column, top to bottom, `[4]` to `[7]` the second, and so on.
 
-A `Matrix4` keeps 16 numbers in `matrix.elements`, a plain array. Written out as a 4 × 4 grid, it has four columns, and three.js stores them **column by column**: `elements[0]` to `[3]` are the first column, top to bottom, `[4]` to `[7]` the second, and so on. The docs call this **column-major** order.
+The first three columns are the object's own +X, +Y, and +Z, each as long as its scale on that axis. The fourth column is **the move**: a matrix made by `makeTranslation(7, 8, 9)` has 7, 8, and 9 at indices 12, 13, and 14. For an object's matrix, the bottom row, indices 3, 7, 11, and 15, is always 0, 0, 0, 1.
 
-| Indices | Column | What it holds |
-| --- | --- | --- |
-| 0, 1, 2 | First | Where the object's own +X points, as long as its X scale |
-| 4, 5, 6 | Second | Its own +Y, as long as its Y scale |
-| 8, 9, 10 | Third | Its own +Z, as long as its Z scale |
-| 12, 13, 14 | Fourth | The move: where it sits |
-| 3, 7, 11, 15 | The bottom row | Always 0, 0, 0, 1 for an object's matrix |
+**Analogy: theater seats numbered down the columns.** Four seats to a column, counted from 0, down each column before starting the next. Seat 12 is at the top of the fourth column, not the start of the fourth row.
 
-The rotation basis page already read the first three columns as the object's own axes. The fourth is new: a matrix made by `makeTranslation(7, 8, 9)` has 7, 8, and 9 at indices 12, 13, and 14.
-
-**Analogy: seats numbered down the columns.** A small theater numbers its seats from 0, four to a column, going down each column before starting the next. Seat 12 isn't where counting along the rows would put it, at the start of the fourth row: it's at the top of the fourth column. Once you know which way the numbering runs, you can find any seat without counting.
-
-Move, turn, and stretch the ship. The arrows are the first three columns, drawn from where the fourth puts it, in the same colors as the readout.
+Move, turn, and stretch the ship. The arrows are the first three columns, drawn from where the fourth puts it.
 
 <div data-scene="columns"></div>
 
 ### The determinant: mirrored or not
 
-The negative scale and determinant page introduced the **determinant**, one number worked out from all 16. Its sign is the check: negative means the matrix mirrors. Drag the X scale below zero and watch it flip, along with the red arrow. The column lengths never show a mirror, since a length is never negative; the determinant does.
+The **determinant** is one number worked out from all 16, and its sign is the mirror check: negative means the matrix mirrors. Drag scale x below zero and watch it flip, along with the red arrow. Column lengths never show a mirror, since a length is never negative.
 
 <details>
 <summary>The math, if you're curious</summary>
 
-Written as a grid, an object's matrix is the three axes and the move standing side by side as columns, over a bottom row of 0, 0, 0, 1:
+Written as a grid, the three axes and the move stand side by side as columns:
 
 ```
 X.x  Y.x  Z.x  move.x
@@ -56,7 +46,7 @@ X.z  Y.z  Z.z  move.z
 0    0    0    1
 ```
 
-A matrix with that bottom row is an **affine** matrix, which is why r186's own mirror check is called `determinantAffine()`.
+Storing a grid column by column is called **column-major** order.
 
 </details>
 
@@ -65,12 +55,12 @@ A matrix with that bottom row is an **affine** matrix, which is why r186's own m
 ### Reading a transform in the console
 
 ```js
-mesh.updateWorldMatrix(true, false); // refresh it first, as on the update timing page
+mesh.updateWorldMatrix(true, false); // refresh it first
 console.log(mesh.matrixWorld.elements);
-// [2, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  5, 0.5, -3, 1]: stretched 2 times along X, sitting at (5, 0.5, -3)
+// [2, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  5, 0.5, -3, 1]: stretched 2 times along X, at (5, 0.5, -3)
 ```
 
-To pull values out, let three.js do the indexing: `new Vector3().setFromMatrixPosition(m)` for the move, `setFromMatrixScale(m)` for the column lengths, `setFromMatrixColumn(m, 0)` for one axis, and `m.decompose(position, quaternion, scale)` for all three (the compose and decompose page).
+`matrixWorld` is in the world; `matrix` is measured from the parent. To pull values out, let three.js do the indexing: `setFromMatrixPosition(m)` for the move, `setFromMatrixScale(m)` for the column lengths, or `m.decompose(position, quaternion, scale)` for all three.
 
 ### set is row by row
 
@@ -80,37 +70,26 @@ To pull values out, let three.js do the indexing: `new Vector3().setFromMatrixPo
 m.set(1, 0, 0, 5,
       0, 1, 0, 0.5,
       0, 0, 1, -3,
-      0, 0, 0, 1);  // m.elements[12] is 5
+      0, 0, 0, 1); // m.elements[12] is 5
 ```
+
+### Copying 16 numbers
 
 The two orders only matter when you move 16 numbers from one form to the other:
 
 ```js
 copy.matrix.copy(source.matrix);               // right
-copy.matrix.fromArray(source.matrix.elements); // right: fromArray reads column by column, like elements
+copy.matrix.fromArray(source.matrix.elements); // right: column by column, like elements
 copy.matrix.set(...source.matrix.elements);    // wrong: rows and columns swapped
 ```
 
-Swapped, the move lands in the bottom row, where it warps the shape instead of moving it, and the turn runs backwards. glTF files store matrices column by column too, which is why `GLTFLoader` reads them with `fromArray`. Numbers from anywhere else, like a server or a CAD export, say in their docs which order they use.
-
-Try the three ways of typing the same move. The outline marks where the box should be.
+Swapped, the move lands in the bottom row, where it warps the shape instead of moving it, and the turn runs backwards. Try the three ways of typing the same move; the outline marks where the box should be.
 
 <div data-scene="setOrder"></div>
 
 ### Spotting scale and mirroring
 
-- **Hidden scale:** a model that imports too big or too small often has a scale on a node; the column lengths show it. `setFromMatrixScale(mesh.matrixWorld)` gives all three.
-- **Mirroring:** `mesh.matrixWorld.determinant() < 0` finds mirrored meshes, parents' mirrors included. Count the minus signs in the scales on the way down: an odd number mirrors.
-- **A determinant of 0** means a scale of 0 somewhere: the shape is flat, and the matrix can't be inverted. The NaN and degenerate cases page covers what that breaks.
-
-### Which space is it in?
-
-| Value | Space |
-| --- | --- |
-| `object.matrix.elements` | Measured from its parent |
-| `object.matrixWorld.elements` | The world, as of the last refresh |
-| The first three columns of `matrixWorld` | The object's own axes, in the world |
-| `matrixWorld.elements[12]` to `[14]` | Its position in the world |
+A model that imports too big or too small often has a scale on a node, and `setFromMatrixScale(mesh.matrixWorld)` shows it. `mesh.matrixWorld.determinant() < 0` finds mirrored meshes, parents' mirrors included: an odd number of minus signs in the scales on the way down mirrors. A determinant of 0 means a scale of 0 somewhere, and the matrix can't be inverted.
 
 ## Drill · Read the code
 

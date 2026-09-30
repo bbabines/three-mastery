@@ -14,7 +14,7 @@ contexts:
 
 ## Definition
 
-A Matrix4 keeps its 16 numbers in `elements` column by column: the first three columns are the object's own axes, turned and as long as its scale, indices 12 to 14 hold the move, and the determinant's sign says whether it mirrors.
+A Matrix4 stores its 16 numbers column by column: the first three columns are the object's own axes, the fourth is the move, and the determinant's sign says whether it mirrors.
 
 ## Space lens
 
