@@ -22,8 +22,8 @@ export function pointView(
     const readout = overlay(container, 'readout');
     const bar = overlay(container, 'controls');
     const update = (value: number) => {
-      source.position.copy(typeof start === 'function' ? start(value) : start);
       decorate?.(scene, value);
+      source.position.copy(typeof start === 'function' ? start(value) : start);
       target.position.copy(expected(value));
       const result = attempt(name, () => run(value));
       answer.visible = result.ok;
