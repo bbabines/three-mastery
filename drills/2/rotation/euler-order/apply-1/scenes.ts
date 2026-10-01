@@ -1,18 +1,9 @@
-import { attempt, ball, COLORS, overlay } from '@harness/lesson';
-import type { SceneSetup } from '@harness/scene';
+// Imported angles use ZXY order; the blue pose should meet the yellow imported pose.
 import * as THREE from 'three';
+import { poseView } from '../../scene-view';
 import { importTurn } from './drill';
 
-export const demo: SceneSetup = ({ scene, camera, controls, container }) => {
-  camera.position.set(3.5, 3, 5);
-  controls.target.set(0, 0.5, 0);
-  const subject = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.8, 0.8), new THREE.MeshStandardMaterial({ color: COLORS.blue }));
-  const marker = ball(COLORS.yellow);
-  subject.position.y = 0.5;
-  marker.position.set(1.5, 0.5, 0);
-  scene.add(subject, marker);
-  const readout = overlay(container, 'readout');
-
-  const result = attempt('importTurn', () => importTurn(new THREE.Vector3(0.3,0.6,0.2), 'YXZ'));
-  readout.textContent = result.ok ? `importTurn: ${JSON.stringify(result.value)?.slice(0, 160)}` : result.note;
-};
+const angles = (degrees: number) => new THREE.Vector3(0.6, THREE.MathUtils.degToRad(degrees), -0.5);
+export const demo = poseView('importTurn ZXY', { label: 'middle angle', min: -150, max: 150, step: 5, value: 50 },
+  (degrees) => importTurn(angles(degrees), 'ZXY'),
+  (degrees) => new THREE.Quaternion().setFromEuler(new THREE.Euler(...angles(degrees).toArray().slice(0, 3) as [number, number, number], 'ZXY')));

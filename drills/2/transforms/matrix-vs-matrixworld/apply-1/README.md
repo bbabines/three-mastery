@@ -9,15 +9,15 @@ lenses: [space]
 misconceptions: [transforms.matrix-vs-matrixworld/always-current]
 ---
 
-# matrix vs matrixWorld: find where the origin of a part inside a moving rack ends up in the world by reading its current world matrix
+# matrixWorld: find a nested origin
 
-> **The job:** Find where the origin of a part inside a moving rack ends up in the world by reading its current world matrix.
+> **The job:** Find the world position of a part’s origin inside a moving rack.
 
 ## Task
 
-Find where the origin of a part inside a moving rack ends up in the world by reading its current world matrix.
+`part.matrix` describes its pose under its immediate parent; `part.matrixWorld` includes the ancestors. `worldOrigin(part)` returns the origin in world space immediately after any parent movement.
 
-Write `worldOrigin(part)` for the behavior above. Save the starter to update the scene.
+Move the rack. The blue origin marker should meet the yellow world spot.
 
 <div data-scene="demo"></div>
 
@@ -25,8 +25,9 @@ Write `worldOrigin(part)` for the behavior above. Save the starter to update the
 
 | Value | Space or units |
 | --- | --- |
-| `part` | Its local frame is relative to its parent |
-| Answer | Scalar or object described in the Task |
+| `part` | Local frame under a parent |
+| Answer | World point for the part origin |
+
 
 ## Your code
 
@@ -36,20 +37,20 @@ Write it in `drills/2/transforms/matrix-vs-matrixworld/apply-1/drill.ts`. Check 
 
 ## The check
 
-It passes when `worldOrigin` does the stated job for the scene and the other cases in the test. The test exercises the values and spaces named above.
+The check changes the parent after an earlier matrix update, then checks the new world origin. A stale or local matrix gives the wrong spot.
 
 <details><summary>Hint</summary>
 
-Use the method from the matrix vs matrixworld page, and check which space the result belongs to.
+Refresh the world matrix through the parent chain before reading its position. The local `matrix` omits the rack’s pose.
 
 </details>
 
 ## Where else?
 
-Where else would the same operation help when a part moves or turns?
+Where else does a nested origin matter?
 
 <details><summary>A few answers</summary>
 
-Reparenting. World-space bounds.
+Following a robot tool. Placing a sensor marker. Measuring between child parts.
 
 </details>

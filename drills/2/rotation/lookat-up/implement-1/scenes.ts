@@ -1,18 +1,17 @@
-import { attempt, ball, COLORS, overlay } from '@harness/lesson';
-import type { SceneSetup } from '@harness/scene';
+// A regular part aims +Z at the target; green marks its returned up axis.
 import * as THREE from 'three';
+import { poseView } from '../../scene-view';
 import { aimWithUp } from './drill';
 
-export const demo: SceneSetup = ({ scene, camera, controls, container }) => {
-  camera.position.set(3.5, 3, 5);
-  controls.target.set(0, 0.5, 0);
-  const subject = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.8, 0.8), new THREE.MeshStandardMaterial({ color: COLORS.blue }));
-  const marker = ball(COLORS.yellow);
-  subject.position.y = 0.5;
-  marker.position.set(1.5, 0.5, 0);
-  scene.add(subject, marker);
-  const readout = overlay(container, 'readout');
-
-  const result = attempt('aimWithUp', () => aimWithUp(new THREE.Vector3(0,0,0), new THREE.Vector3(1,1,0), new THREE.Vector3(0,1,0)));
-  readout.textContent = result.ok ? `aimWithUp: ${JSON.stringify(result.value)?.slice(0, 160)}` : result.note;
+const from = new THREE.Vector3(0, 1, 0);
+const target = new THREE.Vector3(1.5, 1.8, -1.5);
+const up = (degrees: number) => new THREE.Vector3(Math.sin(THREE.MathUtils.degToRad(degrees)), Math.cos(THREE.MathUtils.degToRad(degrees)), 0);
+const wanted = (degrees: number) => {
+  const part = new THREE.Object3D();
+  part.position.copy(from);
+  part.up.copy(up(degrees));
+  part.lookAt(target);
+  return part.quaternion;
 };
+export const demo = poseView('aimWithUp', { label: 'up tilt', min: -80, max: 80, step: 5, value: 40 },
+  (degrees) => aimWithUp(from.clone(), target.clone(), up(degrees)), wanted);

@@ -4,11 +4,15 @@ import { describe, expect, it } from 'vitest';
 import { cameraAim } from './drill';
 
 describe('rotation.lookat-up', () => {
-  it('aim a camera’s −z at a target, respecting the chosen up vector and keeping the input positions intact', () => {
-    const from=new THREE.Vector3(1,4,5), target=new THREE.Vector3(-2,0,1), up=new THREE.Vector3(0,1,0); const before=target.clone();
-    const q=answered(cameraAim(from,target,up));
-    expect(new THREE.Vector3(0,0,-1).applyQuaternion(q).angleTo(target.clone().sub(from))).toBeLessThan(1e-6);
-    expect(target.equals(before)).toBe(true);
-    const object=answered(cameraAim(from,target,new THREE.Vector3(1,1,0).normalize())); expect(object.angleTo(q)).toBeGreaterThan(0.01);
+  it('aims camera −Z and honors a tilted up without changing inputs', () => {
+    const from = new THREE.Vector3(1, 4, 5);
+    const target = new THREE.Vector3(-2, 0, 1);
+    const up = new THREE.Vector3(1, 2, -0.5);
+    const before = [from.clone(), target.clone(), up.clone()];
+    const expected = new THREE.PerspectiveCamera();
+    expected.position.copy(from); expected.up.copy(up); expected.lookAt(target);
+    const actual = answered(cameraAim(from, target, up));
+    expect(actual.angleTo(expected.quaternion)).toBeLessThan(1e-6);
+    expect(from.equals(before[0]) && target.equals(before[1]) && up.equals(before[2])).toBe(true);
   });
 });

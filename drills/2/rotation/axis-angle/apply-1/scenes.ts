@@ -1,18 +1,11 @@
-import { attempt, ball, COLORS, overlay } from '@harness/lesson';
-import type { SceneSetup } from '@harness/scene';
+// The orange line is the tilted hinge; the blue point should meet the yellow target.
 import * as THREE from 'three';
+import { pointView } from '../../scene-view';
 import { orbitOnAxis } from './drill';
 
-export const demo: SceneSetup = ({ scene, camera, controls, container }) => {
-  camera.position.set(3.5, 3, 5);
-  controls.target.set(0, 0.5, 0);
-  const subject = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.8, 0.8), new THREE.MeshStandardMaterial({ color: COLORS.blue }));
-  const marker = ball(COLORS.yellow);
-  subject.position.y = 0.5;
-  marker.position.set(1.5, 0.5, 0);
-  scene.add(subject, marker);
-  const readout = overlay(container, 'readout');
-
-  const result = attempt('orbitOnAxis', () => orbitOnAxis(new THREE.Vector3(1,0,0), new THREE.Vector3(0,0,0), new THREE.Vector3(0,1,1).normalize(), 0.5));
-  readout.textContent = result.ok ? `orbitOnAxis: ${JSON.stringify(result.value)?.slice(0, 160)}` : result.note;
-};
+const point = new THREE.Vector3(1.8, 1, 0.5);
+const center = new THREE.Vector3(-0.6, 0.8, -0.4);
+const axis = new THREE.Vector3(1, 2, 1);
+export const demo = pointView('orbitOnAxis', point, center, axis,
+  (angle) => orbitOnAxis(point.clone(), center.clone(), axis.clone(), angle),
+  (angle) => point.clone().sub(center).applyAxisAngle(axis.clone().normalize(), angle).add(center));

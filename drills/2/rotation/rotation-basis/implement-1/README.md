@@ -9,15 +9,15 @@ lenses: []
 misconceptions: [rotation.rotation-basis/opaque-box]
 ---
 
-# Rotation basis: read an ordinary object’s forward direction from a rotated and scaled basis matrix, returning a unit world direction
+# Rotation basis: read forward
 
-> **The job:** Read an ordinary object’s forward direction from a rotated and scaled basis matrix, returning a unit world direction.
+> **The job:** Read a part’s forward axis from a scaled basis matrix.
 
 ## Task
 
-Read an ordinary object’s forward direction from a rotated and scaled basis matrix, returning a unit world direction.
+An ordinary part faces along its own +Z. `forwardFromBasis(rotationMatrix)` returns that axis as a unit world direction, even when the matrix includes unequal scale. Leave the matrix unchanged.
 
-Write `forwardFromBasis(rotationMatrix)` for the behavior above. Save the starter to update the scene.
+The blue +Z arrow should meet the yellow basis arrow at unit length, even with uneven scale.
 
 <div data-scene="demo"></div>
 
@@ -29,20 +29,20 @@ Write it in `drills/2/rotation/rotation-basis/implement-1/drill.ts`. Check it wi
 
 ## The check
 
-It passes when `forwardFromBasis` does the stated job for the scene and the other cases in the test. The test exercises the values and spaces named above.
+The check uses a rotated matrix with unequal scale. It checks direction, unit length, and that the matrix is unchanged.
 
 <details><summary>Hint</summary>
 
-Use the method from the rotation basis page, and check which space the result belongs to.
+A basis matrix stores each transformed local axis in a column. Choose the +Z column and normalize away its scale.
 
 </details>
 
 ## Where else?
 
-Where else would the same operation help when a part moves or turns?
+Where else do you read direction from a scaled transform?
 
 <details><summary>A few answers</summary>
 
-Reading forward from a matrix. Extracting local axes.
+A vehicle nose. A spotlight mount. A sensor’s facing direction.
 
 </details>

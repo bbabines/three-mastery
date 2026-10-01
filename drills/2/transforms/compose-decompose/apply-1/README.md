@@ -9,15 +9,15 @@ lenses: [space]
 misconceptions: [transforms.compose-decompose/clean-decompose]
 ---
 
-# Compose, decompose, and mirror: inspect a saved transform from an imported part and report whether its scale mirrors the part
+# Compose and decompose: spot a mirror
 
-> **The job:** Inspect a saved transform from an imported part and report whether its scale mirrors the part.
+> **The job:** Flag an imported part whose saved pose reverses its handedness.
 
 ## Task
 
-Inspect a saved transform from an imported part: decompose it into position, turn, and scale, then report whether the resulting pose mirrors the part. The matrix has no shear. A negative value on one axis mirrors; two negative axes do not.
+An imported part has a saved `Matrix4`. `isMirroredPose(matrix)` returns true when its scale flips one side of the part. Translation and rotation alone do not mirror it. Leave the matrix unchanged.
 
-Write `isMirroredPose(matrix)` for the behavior above. Save the starter to update the scene.
+Switch the sign of one scale axis. The white tip crosses the part; the readout should flag negative handedness.
 
 <div data-scene="demo"></div>
 
@@ -25,8 +25,9 @@ Write `isMirroredPose(matrix)` for the behavior above. Save the starter to updat
 
 | Value | Space or units |
 | --- | --- |
-| `matrix` | Saved transform between named spaces |
-| Answer | Scalar or object described in the Task |
+| `matrix` | Part local to world transform |
+| Answer | Boolean: mirrored or not |
+
 
 ## Your code
 
@@ -36,20 +37,20 @@ Write it in `drills/2/transforms/compose-decompose/apply-1/drill.ts`. Check it w
 
 ## The check
 
-It passes when `isMirroredPose` does the stated job for the scene and the other cases in the test. The test exercises the values and spaces named above.
+The check uses rotated and translated matrices with both even and odd numbers of negative scale axes. It checks the matrix remains unchanged.
 
 <details><summary>Hint</summary>
 
-Use the method from the compose, decompose, and mirror page, and check which space the result belongs to.
+Decompose the saved matrix to inspect its scale. A negative product of the three scale components means the pose changes handedness.
 
 </details>
 
 ## Where else?
 
-Where else would the same operation help when a part moves or turns?
+Where else does a mirrored transform matter?
 
 <details><summary>A few answers</summary>
 
-Baking transforms. Copying a world transform.
+Correcting face winding. Importing left and right parts. Picking a matching normal direction.
 
 </details>

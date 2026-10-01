@@ -9,15 +9,15 @@ lenses: [space]
 misconceptions: [transforms.inverse-matrices/inverse-transpose]
 ---
 
-# Inverse matrices: map a hit point in world space back into a nested part’s local space without moving the part or point
+# Inverse matrices: hit a nested part
 
-> **The job:** Map a hit point in world space back into a nested part’s local space without moving the part or point.
+> **The job:** Find the local hit point on a part inside a moved assembly.
 
 ## Task
 
-Map a hit point in world space back into a nested part’s local space without moving the part or point.
+A hit arrives in world space, but a nested part defines its geometry locally. `pointInPart(part, worldPoint)` returns that hit in the part’s local frame. The part and its ancestors may have moved since the last frame. Leave the hit and object transforms unchanged.
 
-Write `pointInPart(part, worldPoint)` for the behavior above. Save the starter to update the scene.
+The blue local hit should meet the yellow spot on the gray local ghost.
 
 <div data-scene="demo"></div>
 
@@ -25,9 +25,10 @@ Write `pointInPart(part, worldPoint)` for the behavior above. Save the starter t
 
 | Value | Space or units |
 | --- | --- |
-| `part` | Its local frame is relative to its parent |
-| `worldPoint` | World space |
-| Answer | World space |
+| `part` | Local frame under its parent |
+| `worldPoint` | World point |
+| Answer | Part local point |
+
 
 ## Your code
 
@@ -37,20 +38,20 @@ Write it in `drills/2/transforms/inverse-matrices/implement-1/drill.ts`. Check i
 
 ## The check
 
-It passes when `pointInPart` does the stated job for the scene and the other cases in the test. The test exercises the values and spaces named above.
+The check moves a parent and part, then checks the local hit without relying on a render. It also checks the world point and object transforms are intact.
 
 <details><summary>Hint</summary>
 
-Use the method from the inverse matrices page, and check which space the result belongs to.
+`worldToLocal` uses the part’s full ancestry. Pass it a copy of the point so the original world hit remains available.
 
 </details>
 
 ## Where else?
 
-Where else would the same operation help when a part moves or turns?
+Where else must a world hit become local?
 
 <details><summary>A few answers</summary>
 
-A hit point in object space. Building a view matrix.
+A decal on a moving part. A local bounding-box test. A drag handle attached to a child.
 
 </details>

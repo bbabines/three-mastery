@@ -4,10 +4,17 @@ import { describe, expect, it } from 'vitest';
 import { orbitOnAxis } from './drill';
 
 describe('rotation.axis-angle', () => {
-  it('rotate a point around a tilted axis through a chosen center, preserving the point and center', () => {
-    const point=new THREE.Vector3(4,0,2), center=new THREE.Vector3(1,1,-2), axis=new THREE.Vector3(1,2,1).normalize(), before=point.clone();
-    const expected=point.clone().sub(center).applyQuaternion(new THREE.Quaternion().setFromAxisAngle(axis,0.7)).add(center);
-    expect(answered(orbitOnAxis(point,center,axis,0.7)).distanceTo(expected)).toBeLessThan(1e-6);
-    expect(point.equals(before)).toBe(true);
+  it('turns around an off-center, tilted hinge without changing any input', () => {
+    const point = new THREE.Vector3(4, 0, 2);
+    const center = new THREE.Vector3(1, 1, -2);
+    const axis = new THREE.Vector3(1, 2, 1);
+    const before = [point.clone(), center.clone(), axis.clone()];
+    for (const angle of [0.7, -0.4]) {
+      const expected = point.clone().sub(center).applyQuaternion(
+        new THREE.Quaternion().setFromAxisAngle(axis.clone().normalize(), angle),
+      ).add(center);
+      expect(answered(orbitOnAxis(point, center, axis, angle)).distanceTo(expected)).toBeLessThan(1e-6);
+    }
+    expect(point.equals(before[0]) && center.equals(before[1]) && axis.equals(before[2])).toBe(true);
   });
 });

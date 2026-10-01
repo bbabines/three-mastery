@@ -1,18 +1,17 @@
-import { attempt, ball, COLORS, overlay } from '@harness/lesson';
-import type { SceneSetup } from '@harness/scene';
+// Camera −Z aims at the yellow direction; green shows the returned up axis.
 import * as THREE from 'three';
+import { poseView } from '../../scene-view';
 import { cameraAim } from './drill';
 
-export const demo: SceneSetup = ({ scene, camera, controls, container }) => {
-  camera.position.set(3.5, 3, 5);
-  controls.target.set(0, 0.5, 0);
-  const subject = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.8, 0.8), new THREE.MeshStandardMaterial({ color: COLORS.blue }));
-  const marker = ball(COLORS.yellow);
-  subject.position.y = 0.5;
-  marker.position.set(1.5, 0.5, 0);
-  scene.add(subject, marker);
-  const readout = overlay(container, 'readout');
-
-  const result = attempt('cameraAim', () => cameraAim(new THREE.Vector3(0,2,3), new THREE.Vector3(0,1,0), new THREE.Vector3(0,1,0)));
-  readout.textContent = result.ok ? `cameraAim: ${JSON.stringify(result.value)?.slice(0, 160)}` : result.note;
+const from = new THREE.Vector3(0, 1, 0);
+const target = new THREE.Vector3(1.5, 1.8, -1.5);
+const up = (degrees: number) => new THREE.Vector3(Math.sin(THREE.MathUtils.degToRad(degrees)), Math.cos(THREE.MathUtils.degToRad(degrees)), 0);
+const wanted = (degrees: number) => {
+  const camera = new THREE.PerspectiveCamera();
+  camera.position.copy(from);
+  camera.up.copy(up(degrees));
+  camera.lookAt(target);
+  return camera.quaternion;
 };
+export const demo = poseView('cameraAim', { label: 'up tilt', min: -80, max: 80, step: 5, value: 40 },
+  (degrees) => cameraAim(from.clone(), target.clone(), up(degrees)), wanted, new THREE.Vector3(0, 0, -1));

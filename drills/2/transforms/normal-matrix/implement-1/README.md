@@ -9,15 +9,15 @@ lenses: [space]
 misconceptions: [transforms.normal-matrix/normals-like-directions]
 ---
 
-# Normal matrix: turn a face normal from model space into world space on a part with uneven scale, without changing the given normal
+# Normal matrix: carry a face normal
 
-> **The job:** Turn a face normal from model space into world space on a part with uneven scale, without changing the given normal.
+> **The job:** Return a world normal for a part with unequal scale.
 
 ## Task
 
-Turn a face normal from model space into world space on a part with uneven scale, without changing the given normal.
+`normalInWorld(part, localNormal)` returns a unit face normal in world space. The part and its parent may rotate and scale unevenly. Leave the given local normal unchanged.
 
-Write `normalInWorld(part, localNormal)` for the behavior above. Save the starter to update the scene.
+The blue normal should meet the yellow world normal after the orange panel stretches.
 
 <div data-scene="demo"></div>
 
@@ -25,9 +25,10 @@ Write `normalInWorld(part, localNormal)` for the behavior above. Save the starte
 
 | Value | Space or units |
 | --- | --- |
-| `part` | Its local frame is relative to its parent |
-| `localNormal` | Part local space |
-| Answer | World space |
+| `part` | Local frame under a parent |
+| `localNormal` | Part local direction |
+| Answer | Unit world direction |
+
 
 ## Your code
 
@@ -37,20 +38,20 @@ Write it in `drills/2/transforms/normal-matrix/implement-1/drill.ts`. Check it w
 
 ## The check
 
-It passes when `normalInWorld` does the stated job for the scene and the other cases in the test. The test exercises the values and spaces named above.
+The check builds two tangents along the transformed face. The returned normal must stay perpendicular to both, and the local normal must remain unchanged.
 
 <details><summary>Hint</summary>
 
-Use the method from the normal matrix page, and check which space the result belongs to.
+Build a normal matrix from the part’s current world matrix. Apply it to a copy of the normal and normalize the result.
 
 </details>
 
 ## Where else?
 
-Where else would the same operation help when a part moves or turns?
+Where else is a world normal used?
 
 <details><summary>A few answers</summary>
 
-Lighting a squashed object. Rim effects.
+Lighting a deformed part. Positioning a decal. Testing which side of a surface faces a sensor.
 
 </details>

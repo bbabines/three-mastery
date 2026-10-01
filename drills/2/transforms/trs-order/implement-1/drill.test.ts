@@ -7,9 +7,11 @@ describe('transforms.trs-order', () => {
   it('place a model vertex after scale, then rotation, then translation; return its world position without changing inputs', () => {
     const vertex = new THREE.Vector3(1, 2, -1), position = new THREE.Vector3(3, 0, 2), scale = new THREE.Vector3(2, 1, 3);
     const rotation = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), 0.7);
+    const beforeVertex = vertex.clone(), beforePosition = position.clone();
+    const beforeScale = scale.clone(), beforeRotation = rotation.clone();
     const actual = answered(placeVertex(vertex, position, rotation, scale));
     const expected = vertex.clone().multiply(scale).applyQuaternion(rotation).add(position);
     expect(actual.distanceTo(expected)).toBeLessThan(1e-6);
-    expect(vertex.equals(new THREE.Vector3(1, 2, -1))).toBe(true);
+    expect(vertex.equals(beforeVertex) && position.equals(beforePosition) && scale.equals(beforeScale) && rotation.equals(beforeRotation)).toBe(true);
   });
 });

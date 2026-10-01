@@ -9,15 +9,15 @@ lenses: [space]
 misconceptions: [transforms.trs-order/order-irrelevant]
 ---
 
-# TRS order: scale and turn a point around a pivot, then put it back in the world at that pivot
+# TRS order: orbit with scale
 
-> **The job:** Scale and turn a point around a pivot, then put it back in the world at that pivot.
+> **The job:** Scale and turn a point around a chosen pivot.
 
 ## Task
 
-Scale and turn a point around a pivot, then put it back in the world at that pivot.
+`orbitWithScale(point, pivot, rotation, scale)` returns the point after moving into the pivot frame, scaling, turning, and moving back. Scale acts before rotation. Leave the point, pivot, quaternion, and scale untouched.
 
-Write `orbitWithScale(point, pivot, rotation, scale)` for the behavior above. Save the starter to update the scene.
+Change the turn. The blue point should meet the yellow target, even with unequal scale.
 
 <div data-scene="demo"></div>
 
@@ -25,11 +25,12 @@ Write `orbitWithScale(point, pivot, rotation, scale)` for the behavior above. Sa
 
 | Value | Space or units |
 | --- | --- |
-| `point` | World space unless named local |
-| `pivot` | World space unless named local |
-| `rotation` | Value in the units named in the Task |
-| `scale` | Value in the units named in the Task |
-| Answer | Scalar or object described in the Task |
+| `point` | World point |
+| `pivot` | World point |
+| `rotation` | Turn around pivot |
+| `scale` | Multipliers in pivot frame |
+| Answer | World point |
+
 
 ## Your code
 
@@ -39,20 +40,20 @@ Write it in `drills/2/transforms/trs-order/apply-1/drill.ts`. Check it with:
 
 ## The check
 
-It passes when `orbitWithScale` does the stated job for the scene and the other cases in the test. The test exercises the values and spaces named above.
+The check uses an offset pivot and unequal scale, so swapping scale and turn misses the target. It checks the inputs remain unchanged.
 
 <details><summary>Hint</summary>
 
-Use the method from the trs order page, and check which space the result belongs to.
+Work with the point relative to the pivot. A composed transform applies scale, then rotation, then translation.
 
 </details>
 
 ## Where else?
 
-Where else would the same operation help when a part moves or turns?
+Where else does transform order change a result?
 
 <details><summary>A few answers</summary>
 
-Rotating around a pivot. Orbiting a point.
+A stretched orbit arm. A model vertex. A scaled camera rig.
 
 </details>

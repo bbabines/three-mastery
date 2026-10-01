@@ -9,15 +9,15 @@ lenses: []
 misconceptions: [rotation.rotation-basis/opaque-box]
 ---
 
-# Rotation basis: read a camera’s right direction from its current world basis, including when the camera looks straight up
+# Rotation basis: camera right
 
-> **The job:** Read a camera’s right direction from its current world basis, including when the camera looks straight up.
+> **The job:** Read a camera’s right direction even when it looks nearly straight up.
 
 ## Task
 
-Read a camera’s right direction from its current world basis, including when the camera looks straight up.
+A camera may sit inside a rotated parent. `cameraRight(camera)` returns the unit world direction of its own +X axis from the current world basis. The camera may have moved since the last render.
 
-Write `cameraRight(camera)` for the behavior above. Save the starter to update the scene.
+The blue right-axis arrow should meet the yellow world-basis arrow, even at a steep pitch.
 
 <div data-scene="demo"></div>
 
@@ -29,20 +29,20 @@ Write it in `drills/2/rotation/rotation-basis/apply-1/drill.ts`. Check it with:
 
 ## The check
 
-It passes when `cameraRight` does the stated job for the scene and the other cases in the test. The test exercises the values and spaces named above.
+The check uses a rotated parent and steep camera pitches. It expects a unit world direction from the current basis, including when a cross with world up becomes unreliable.
 
 <details><summary>Hint</summary>
 
-Use the method from the rotation basis page, and check which space the result belongs to.
+The first column of `matrixWorld` carries the camera’s right axis. Refresh the world matrix before reading it.
 
 </details>
 
 ## Where else?
 
-Where else would the same operation help when a part moves or turns?
+Where else is a world basis useful near vertical aim?
 
 <details><summary>A few answers</summary>
 
-Reading forward from a matrix. makeBasis from three axes.
+Moving sideways in a flying camera. Placing a shoulder offset. Drawing camera-facing controls.
 
 </details>

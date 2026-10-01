@@ -1,18 +1,16 @@
-import { attempt, ball, COLORS, overlay } from '@harness/lesson';
-import type { SceneSetup } from '@harness/scene';
+// Gray marks the world hit on the moved child; yellow marks its local ghost spot.
+import { COLORS } from '@harness/lesson';
 import * as THREE from 'three';
+import { pointView } from '../../scene-view';
 import { pointInPart } from './drill';
 
-export const demo: SceneSetup = ({ scene, camera, controls, container }) => {
-  camera.position.set(3.5, 3, 5);
-  controls.target.set(0, 0.5, 0);
-  const subject = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.8, 0.8), new THREE.MeshStandardMaterial({ color: COLORS.blue }));
-  const marker = ball(COLORS.yellow);
-  subject.position.y = 0.5;
-  marker.position.set(1.5, 0.5, 0);
-  scene.add(subject, marker);
-  const readout = overlay(container, 'readout');
-  scene.add(subject);
-  const result = attempt('pointInPart', () => pointInPart(subject, new THREE.Vector3(2, 0.5, 0)));
-  readout.textContent = result.ok ? `pointInPart: ${JSON.stringify(result.value)?.slice(0, 160)}` : result.note;
-};
+const local = new THREE.Vector3(0.35, 0.2, 0.2);
+const parent = new THREE.Group();
+const part = new THREE.Mesh(new THREE.BoxGeometry(1, 0.6, 0.6), new THREE.MeshStandardMaterial({ color: COLORS.orange, wireframe: true }));
+parent.add(part);
+const ghost = new THREE.Mesh(part.geometry, new THREE.MeshStandardMaterial({ color: COLORS.gray, wireframe: true }));
+const move = (degrees: number) => { parent.position.set(1.3, 0.8, -0.6); parent.rotation.y = THREE.MathUtils.degToRad(degrees); part.position.set(0.4, 0.2, 0.3); };
+const worldHit = (degrees: number) => { move(degrees); return local.clone().applyMatrix4(part.matrix).applyMatrix4(parent.matrix); };
+export const demo = pointView('pointInPart', { label: 'rack turn', min: -150, max: 150, step: 5, value: 50 },
+  worldHit, (degrees) => { const hit = worldHit(degrees); return pointInPart(part, hit); }, () => local.clone(),
+  (scene, degrees) => { if (!parent.parent) scene.add(parent, ghost); move(degrees); parent.updateMatrix(); part.updateMatrix(); });
