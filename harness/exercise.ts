@@ -11,6 +11,7 @@ import type { Node } from 'three/webgpu';
 import * as THREE from 'three/webgpu';
 import { COLORS, fitModel, label, overlay, pointerToNdc, slider } from './lesson';
 import { loadModel, MODELS } from './models';
+import { onLeave } from './teardown';
 import { createTslHarness, createTslRenderer, type Backend } from './tsl';
 
 const message = (error: unknown) => (error instanceof Error ? error.message : String(error));
@@ -133,7 +134,8 @@ export async function mountMaskExercise<Drill>(
     const width = pictures.clientWidth;
     if (width > 0) renderer.setSize(width, width / 3);
   };
-  new ResizeObserver(resize).observe(pictures);
+  const observer = new ResizeObserver(resize);
+  observer.observe(pictures);
   resize();
 
   for (const param of exercise.params) {
@@ -199,6 +201,11 @@ export async function mountMaskExercise<Drill>(
   }
 
   renderer.setAnimationLoop(() => renderer.render(scene, camera));
+  onLeave(container, () => {
+    renderer.setAnimationLoop(null);
+    observer.disconnect();
+    renderer.dispose();
+  });
   return backend;
 }
 
