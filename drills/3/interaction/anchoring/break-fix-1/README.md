@@ -9,15 +9,15 @@ lenses: [space]
 misconceptions: [interaction.anchoring/labels-hide]
 ---
 
-# Anchoring: find the faulty result
+# Anchoring: show a price label only while its point is in view
 
-> **The job:** A price label appears on top of the canvas for a part behind the camera.
+> **The job:** Show a price label only while its point is in view.
 
 ## Task
 
-A price label appears on top of the canvas for a part behind the camera. Return CSS pixel coordinates and a visibility flag based on all three projected NDC axes.
+A price label appears on the canvas even when its part is behind the camera.
 
-Fix `labelState` in `drill.ts`. The scene shows the current result alongside a reference; they should agree after the repair.
+Fix the function in `drill.ts`. Compare the rear hotspot with the label visibility shown in the scene.
 
 <div data-scene="demo"></div>
 
@@ -36,7 +36,7 @@ Fix `drill.ts`, write one sentence in `cause.md`, and replace the placeholder in
 
 ## The check
 
-The acceptance test covers more than the scene pose. Your check must fail on the original bug and pass after the fix, using behavior instead of looking for a particular line of code.
+A point behind the camera must hide its label; a point in front must remain eligible to show. Write a short assertion in `check.ts` with a different input. It must reject the starter and accept the repair.
 
 <details><summary>Hint</summary>
 
@@ -46,7 +46,7 @@ Can a projected point have screen X and Y inside the canvas while behind the cam
 
 ## Where else?
 
-Where else would the same wrong assumption cause an error?
+How would this change for a hotspot on an occluded moving part?
 
 <details><summary>A few answers</summary>
 

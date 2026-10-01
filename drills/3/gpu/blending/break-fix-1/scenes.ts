@@ -1,4 +1,4 @@
-import { attempt, ball, COLORS, overlay } from '@harness/lesson';
+import { attempt, COLORS, overlay } from '@harness/lesson';
 import { frameMeter } from '../../frame-meter';
 import type { SceneSetup } from '@harness/scene';
 import * as THREE from 'three';
@@ -6,13 +6,22 @@ import { prepareGlass } from './drill';
 
 export const demo: SceneSetup = (harness) => {
   const { scene, camera, controls, container } = harness;
-  camera.position.set(3,3,5); controls.target.set(0,0.5,0);
-  const subject = new THREE.Mesh(new THREE.BoxGeometry(),new THREE.MeshStandardMaterial({color:COLORS.blue}));
-  const marker = ball(COLORS.yellow); subject.position.y=0.5; marker.position.x=1.5; marker.position.y=0.5; scene.add(subject,marker);
-  const readout=overlay(container,'readout');
-
-  const glass=new THREE.MeshBasicMaterial({color:COLORS.yellow});
-  const got=attempt('prepareGlass',()=>prepareGlass(glass,0.4));
-  readout.textContent=got.ok?`your glass: opacity ${glass.opacity}, depth test ${glass.depthTest}, depth write ${glass.depthWrite}\nreference: opacity 0.4, depth test true, depth write false`:got.note;
+  camera.position.set(0, 1, 5);
+  controls.target.set(0, 0.5, 0);
+  const glass = new THREE.MeshBasicMaterial({ color: COLORS.yellow });
+  const result = attempt('prepareGlass', () => prepareGlass(glass, 0.4));
+  const pane = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), glass);
+  pane.position.set(0, 0.8, 0.2);
+  pane.renderOrder = 1;
+  const behind = new THREE.Mesh(new THREE.PlaneGeometry(1.4, 1.4), new THREE.MeshBasicMaterial({ color: COLORS.blue, transparent: true, opacity: 0.95 }));
+  behind.position.set(0, 0.8, -0.2);
+  behind.renderOrder = 2; // Show why a depth-writing glass pane can hide later transparent work.
+  scene.add(pane, behind);
+  const readout = overlay(container, 'readout');
+  readout.textContent = result.ok
+    ? `yellow glass draws first; blue part draws second
+blue should remain visible through the glass
+transparent ${glass.transparent}; depth write ${glass.depthWrite}`
+    : result.note;
   frameMeter(harness, readout);
 };

@@ -9,15 +9,15 @@ lenses: [space]
 misconceptions: []
 ---
 
-# Axis drag: find the faulty result
+# Axis drag: keep a dragged part on its tilted rail
 
-> **The job:** A part slides off its rotated rail when the pointer moves diagonally.
+> **The job:** Keep a dragged part on its tilted rail.
 
 ## Task
 
-A part slides off its rotated rail when the pointer moves diagonally. Apply only the part of world motion along the rail axis.
+A part leaves its tilted rail when the pointer moves diagonally.
 
-Fix `railPosition` in `drill.ts`. The scene shows the current result alongside a reference; they should agree after the repair.
+Fix the function in `drill.ts`. The blue part should meet the yellow rail marker as the red pointer moves.
 
 <div data-scene="demo"></div>
 
@@ -36,7 +36,7 @@ Fix `drill.ts`, write one sentence in `cause.md`, and replace the placeholder in
 
 ## The check
 
-The acceptance test covers more than the scene pose. Your check must fail on the original bug and pass after the fix, using behavior instead of looking for a particular line of code.
+The returned motion must be parallel to a tilted rail and retain exactly the along-rail component of pointer motion. Write a short assertion in `check.ts` with a different input. It must reject the starter and accept the repair.
 
 <details><summary>Hint</summary>
 
@@ -46,7 +46,7 @@ Which component of pointer motion lies along the rotated rail?
 
 ## Where else?
 
-Where else would the same wrong assumption cause an error?
+Where would a rail-constrained drag help besides a translation gizmo?
 
 <details><summary>A few answers</summary>
 

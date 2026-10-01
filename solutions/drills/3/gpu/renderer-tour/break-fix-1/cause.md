@@ -1,1 +1,1 @@
-The code enabled renderer shadows but omitted light and mesh shadow participation. It also assumed scene order controlled the overlay; explicit renderOrder wins during sorting.
+The code enabled renderer shadows but omitted light and mesh shadow participation. Drawing the label later still leaves depth testing active, so a label above parts needs both render order and disabled depth testing.

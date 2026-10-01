@@ -9,15 +9,15 @@ lenses: [cost]
 misconceptions: [gpu.pipeline-stages/fragment-is-pixel]
 ---
 
-# Pipeline stages: find the faulty result
+# Pipeline stages: separate fragment candidates from pixels written
 
-> **The job:** A capture reports fewer fragment runs than the overdraw visible in a layered scene.
+> **The job:** Separate fragment candidates from pixels written.
 
 ## Task
 
-A capture reports fewer fragment runs than the overdraw visible in a layered scene. Count fragment candidates separately from pixels surviving depth.
+A frame capture shows more fragment work than the dashboard reports in a layered scene.
 
-Fix `frameWork` in `drill.ts`. The scene shows the current result alongside a reference; they should agree after the repair.
+Fix the function in `drill.ts`. The blue vertex, fragment, and write bars should meet the yellow outlines.
 
 <div data-scene="demo"></div>
 
@@ -33,7 +33,7 @@ Fix `drill.ts`, write one sentence in `cause.md`, and replace the placeholder in
 
 ## The check
 
-The acceptance test covers more than the scene pose. Your check must fail on the original bug and pass after the fix, using behavior instead of looking for a particular line of code.
+Count all fragment candidates even when depth rejects every final write. Write a short assertion in `check.ts` with a different input. It must reject the starter and accept the repair.
 
 <details><summary>Hint</summary>
 
@@ -43,7 +43,7 @@ Does every rasterized fragment become a written pixel?
 
 ## Where else?
 
-Where else would the same wrong assumption cause an error?
+Where can a fragment do work yet never become a visible pixel?
 
 <details><summary>A few answers</summary>
 

@@ -1,18 +1,16 @@
-import { attempt, ball, COLORS, overlay } from '@harness/lesson';
-import { frameMeter } from '../../frame-meter';
+import { attempt, overlay } from '@harness/lesson';
 import type { SceneSetup } from '@harness/scene';
-import * as THREE from 'three';
+import { measureBars } from '../../measure-bars';
 import { headroomMs } from './drill';
 
 export const demo: SceneSetup = (harness) => {
-  const { scene, camera, controls, container } = harness;
-  camera.position.set(3,3,5); controls.target.set(0,0.5,0);
-  const subject = new THREE.Mesh(new THREE.BoxGeometry(),new THREE.MeshStandardMaterial({color:COLORS.blue}));
-  const marker = ball(COLORS.yellow); subject.position.y=0.5; marker.position.x=1.5; marker.position.y=0.5; scene.add(subject,marker);
-  const readout=overlay(container,'readout');
-
-  const got=attempt('headroomMs',()=>headroomMs(9,11,60));
-  const want=1000/60-11;
-  readout.textContent=got.ok?`your result: ${JSON.stringify(got.value)?.slice(0,100)}\nreference: ${JSON.stringify(want)?.slice(0,100)}`:got.note;
-  frameMeter(harness, readout);
+  const result = attempt('headroomMs', () => headroomMs(9, 11, 60));
+  if (!result.ok) {
+    const readout = overlay(harness.container, 'readout');
+    readout.textContent = result.note;
+    return;
+  }
+  measureBars(harness, 'CPU and GPU overlap; the 11 ms side sets frame time', [
+      { name: 'headroom ms', yours: Number(result.value), expected: 1000 / 60 - 11 },
+  ]);
 };

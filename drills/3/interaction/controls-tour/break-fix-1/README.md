@@ -9,15 +9,15 @@ lenses: []
 misconceptions: []
 ---
 
-# Controls tour: find the faulty result
+# Controls tour: keep a gizmo drag from moving the orbit camera
 
-> **The job:** A gizmo drag also orbits the camera.
+> **The job:** Keep a gizmo drag from moving the orbit camera.
 
 ## Task
 
-A gizmo drag also orbits the camera. Set the orbit control state for the drag; when the drag ends, update it so damping resumes.
+Dragging a gizmo also swings the camera; after release, camera damping stalls.
 
-Fix `gizmoMode` in `drill.ts`. The scene shows the current result alongside a reference; they should agree after the repair.
+Fix the function in `drill.ts`. Use the drag and release buttons. Red camera motion should vanish during a gizmo drag.
 
 <div data-scene="demo"></div>
 
@@ -29,7 +29,7 @@ Fix `drill.ts`, write one sentence in `cause.md`, and replace the placeholder in
 
 ## The check
 
-The acceptance test covers more than the scene pose. Your check must fail on the original bug and pass after the fix, using behavior instead of looking for a particular line of code.
+Orbit must be disabled during a gizmo drag and receive an update after release so damping resumes. Write a short assertion in `check.ts` with a different input. It must reject the starter and accept the repair.
 
 <details><summary>Hint</summary>
 
@@ -39,7 +39,7 @@ Which control receives the pointer while the gizmo is active?
 
 ## Where else?
 
-Where else would the same wrong assumption cause an error?
+When would you choose a gizmo or walkthrough control instead of orbit?
 
 <details><summary>A few answers</summary>
 

@@ -9,15 +9,15 @@ lenses: []
 misconceptions: []
 ---
 
-# Pointer events: find the faulty result
+# Pointer events: keep a small touch movement classified as a tap
 
-> **The job:** A touch tap becomes a drag on a high-DPR phone even though the finger moved only a few CSS pixels.
+> **The job:** Keep a small touch movement classified as a tap.
 
 ## Task
 
-A touch tap becomes a drag on a high-DPR phone even though the finger moved only a few CSS pixels. Compare pointer movement with the click threshold in CSS pixels.
+A touch tap becomes a drag on a high-DPR phone after only a few CSS pixels of movement.
 
-Fix `isClick` in `drill.ts`. The scene shows the current result alongside a reference; they should agree after the repair.
+Fix the function in `drill.ts`. The scene shows the finger motion and the CSS-pixel threshold. It should report a click.
 
 <div data-scene="demo"></div>
 
@@ -29,7 +29,7 @@ Fix `drill.ts`, write one sentence in `cause.md`, and replace the placeholder in
 
 ## The check
 
-The acceptance test covers more than the scene pose. Your check must fail on the original bug and pass after the fix, using behavior instead of looking for a particular line of code.
+The tap decision must use CSS-pixel distance even when DPR changes. Write a short assertion in `check.ts` with a different input. It must reject the starter and accept the repair.
 
 <details><summary>Hint</summary>
 
@@ -39,7 +39,7 @@ What unit do PointerEvent client coordinates use on a high-DPR display?
 
 ## Where else?
 
-Where else would the same wrong assumption cause an error?
+How would this handle a pen event on a canvas offset within the page?
 
 <details><summary>A few answers</summary>
 

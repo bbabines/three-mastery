@@ -5,16 +5,36 @@ import * as THREE from 'three';
 import { pickPixel } from './drill';
 
 export const demo: SceneSetup = (harness) => {
-  const { scene, camera, controls, container } = harness;
-  camera.position.set(3,3,5); controls.target.set(0,0.5,0);
-  const subject = new THREE.Mesh(new THREE.BoxGeometry(),new THREE.MeshStandardMaterial({color:COLORS.blue}));
-  const marker = ball(COLORS.yellow); subject.position.y=0.5; marker.position.x=1.5; marker.position.y=0.5; scene.add(subject,marker);
-  const readout=overlay(container,'readout');
-
-  let sync=0, asyncReads=0;
-  const got=attempt('pickPixel',()=>pickPixel({readRenderTargetPixels:()=>{sync++;},readRenderTargetPixelsAsync:async(_target,_x,_y,_w,_h,buffer)=>{asyncReads++; buffer.set([4,5,6,255]); return buffer;}},new THREE.WebGLRenderTarget(8,8),1,1));
-  readout.textContent='Waiting for one ID pixel…';
-  if(got.ok) void got.value.then((pixel)=>{readout.dataset.base=`your reads: sync ${sync}, async ${asyncReads}\nID pixel: ${Array.from(pixel).join(', ')}\nreference: sync 0, async 1`;});
-  else readout.dataset.base=got.note;
+  const { scene, camera, controls, container, renderer } = harness;
+  camera.position.set(2, 2, 5);
+  controls.target.set(0, 0.5, 0);
+  const idScene = new THREE.Scene();
+  idScene.background = new THREE.Color(0xff0000);
+  const target = new THREE.WebGLRenderTarget(8, 8);
+  renderer.setRenderTarget(target);
+  renderer.render(idScene, camera);
+  renderer.setRenderTarget(null);
+  const color = ball(COLORS.yellow, 1, 0.5);
+  color.position.y = 0.8;
+  scene.add(color);
+  const readout = overlay(container, 'readout');
+  let sync = 0;
+  let asyncReads = 0;
+  const adapter = {
+    readRenderTargetPixels: (t: THREE.WebGLRenderTarget, x: number, y: number, w: number, h: number, data: Uint8Array) => {
+      sync++;
+      renderer.readRenderTargetPixels(t, x, y, w, h, data);
+    },
+    readRenderTargetPixelsAsync: async (t: THREE.WebGLRenderTarget, x: number, y: number, w: number, h: number, data: Uint8Array) => {
+      asyncReads++;
+      return new Uint8Array(await renderer.readRenderTargetPixelsAsync(t, x, y, w, h, data) as Uint8Array);
+    },
+  };
+  const result = attempt('pickPixel', () => pickPixel(adapter, target, 3, 4));
+  readout.dataset.base = result.ok ? 'Reading a red ID pixel…' : result.note;
+  if (result.ok) void result.value.then(pixel => {
+    (color.material as THREE.MeshStandardMaterial).color.setRGB(pixel[0] / 255, pixel[1] / 255, pixel[2] / 255);
+    readout.dataset.base = `ID color on the ball: ${Array.from(pixel).join(', ')}\nsync reads: ${sync}; async reads: ${asyncReads}`;
+  });
   frameMeter(harness, readout);
 };

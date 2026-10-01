@@ -9,15 +9,15 @@ lenses: [cost]
 misconceptions: [gpu.multi-pass/cheap-filters]
 ---
 
-# Multi pass: find the faulty result
+# Multi pass: count the work of every post effect
 
-> **The job:** A bloom estimate treats three full-screen passes as one and omits the final output conversion.
+> **The job:** Count the work of every post effect.
 
 ## Task
 
-A bloom estimate treats three full-screen passes as one and omits the final output conversion. Count every full-resolution pass and require an output pass for a classic composer.
+A bloom cost estimate stays the same as more full-screen effects are added.
 
-Fix `passCost` in `drill.ts`. The scene shows the current result alongside a reference; they should agree after the repair.
+Fix the function in `drill.ts`. The blue fragment and output bars should meet the yellow outlines.
 
 <div data-scene="demo"></div>
 
@@ -33,7 +33,7 @@ Fix `drill.ts`, write one sentence in `cause.md`, and replace the placeholder in
 
 ## The check
 
-The acceptance test covers more than the scene pose. Your check must fail on the original bug and pass after the fix, using behavior instead of looking for a particular line of code.
+Full-screen work must scale with resolution and pass count, and a classic composer still needs output conversion. Write a short assertion in `check.ts` with a different input. It must reject the starter and accept the repair.
 
 <details><summary>Hint</summary>
 
@@ -43,7 +43,7 @@ How many screens of pixels does each full-screen pass cover?
 
 ## Where else?
 
-Where else would the same wrong assumption cause an error?
+What does a second full-screen effect add at twice the canvas width and height?
 
 <details><summary>A few answers</summary>
 

@@ -1,18 +1,17 @@
-import { attempt, ball, COLORS, overlay } from '@harness/lesson';
-import { frameMeter } from '../../frame-meter';
+import { attempt, overlay } from '@harness/lesson';
 import type { SceneSetup } from '@harness/scene';
-import * as THREE from 'three';
+import { measureBars } from '../../measure-bars';
 import { passCost } from './drill';
 
 export const demo: SceneSetup = (harness) => {
-  const { scene, camera, controls, container } = harness;
-  camera.position.set(3,3,5); controls.target.set(0,0.5,0);
-  const subject = new THREE.Mesh(new THREE.BoxGeometry(),new THREE.MeshStandardMaterial({color:COLORS.blue}));
-  const marker = ball(COLORS.yellow); subject.position.y=0.5; marker.position.x=1.5; marker.position.y=0.5; scene.add(subject,marker);
-  const readout=overlay(container,'readout');
-
-  const got=attempt('passCost',()=>passCost(800,600,3));
-  const want=({fullScreenFragments:1440000,needsOutputPass:true});
-  readout.textContent=got.ok?`your result: ${JSON.stringify(got.value)?.slice(0,100)}\nreference: ${JSON.stringify(want)?.slice(0,100)}`:got.note;
-  frameMeter(harness, readout);
+  const result = attempt('passCost', () => passCost(320, 180, 3));
+  if (!result.ok) {
+    const readout = overlay(harness.container, 'readout');
+    readout.textContent = result.note;
+    return;
+  }
+  measureBars(harness, 'three full-screen effect passes plus output conversion', [
+      { name: 'fragment candidates', yours: Number(result.value.fullScreenFragments), expected: 172800 },
+      { name: 'output required', yours: Number(result.value.needsOutputPass), expected: 1 },
+  ]);
 };

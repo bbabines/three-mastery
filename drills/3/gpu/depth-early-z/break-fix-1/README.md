@@ -9,15 +9,15 @@ lenses: [cost]
 misconceptions: [gpu.depth-early-z/hidden-free]
 ---
 
-# Depth early z: find the faulty result
+# Depth early z: account for fragment work behind opaque and cutout surfaces
 
-> **The job:** A profiler estimate counts covered fragments behind an opaque wall as free, even though alpha-tested panels still shade before discard.
+> **The job:** Account for fragment work behind opaque and cutout surfaces.
 
 ## Task
 
-A profiler estimate counts covered fragments behind an opaque wall as free, even though alpha-tested panels still shade before discard. Separate opaque early rejection from alpha-tested shading.
+A profiler estimate reports almost no fragment work behind an alpha-cutout panel, while the GPU trace shows shading cost.
 
-Fix `depthWork` in `drill.ts`. The scene shows the current result alongside a reference; they should agree after the repair.
+Fix the function in `drill.ts`. The blue work bars should meet the yellow expected counts.
 
 <div data-scene="demo"></div>
 
@@ -33,7 +33,7 @@ Fix `drill.ts`, write one sentence in `cause.md`, and replace the placeholder in
 
 ## The check
 
-The acceptance test covers more than the scene pose. Your check must fail on the original bug and pass after the fix, using behavior instead of looking for a particular line of code.
+Opaque hidden fragments can be rejected early, while alpha-tested fragments still contribute to shaded work. Write a short assertion in `check.ts` with a different input. It must reject the starter and accept the repair.
 
 <details><summary>Hint</summary>
 
@@ -43,7 +43,7 @@ Which fragments can depth reject before expensive shading, and which need discar
 
 ## Where else?
 
-Where else would the same wrong assumption cause an error?
+What changes when the foreground surface is alpha cut out rather than opaque?
 
 <details><summary>A few answers</summary>
 

@@ -9,15 +9,15 @@ lenses: []
 misconceptions: [interaction.frame-rate-independence/lerp-per-frame]
 ---
 
-# Frame rate independence: find the faulty result
+# Frame rate independence: smooth a camera move consistently across refresh rates
 
-> **The job:** A camera catch-up feels faster on a 120 Hz screen than a 60 Hz screen.
+> **The job:** Smooth a camera move consistently across refresh rates.
 
 ## Task
 
-A camera catch-up feels faster on a 120 Hz screen than a 60 Hz screen. Move the value toward its target by the same amount for the same elapsed time.
+A camera catch-up feels faster on a 120 Hz screen than on a 60 Hz screen.
 
-Fix `smoothMove` in `drill.ts`. The scene shows the current result alongside a reference; they should agree after the repair.
+Fix the function in `drill.ts`. The blue one-step marker should meet the yellow two-half-step marker.
 
 <div data-scene="demo"></div>
 
@@ -29,7 +29,7 @@ Fix `drill.ts`, write one sentence in `cause.md`, and replace the placeholder in
 
 ## The check
 
-The acceptance test covers more than the scene pose. Your check must fail on the original bug and pass after the fix, using behavior instead of looking for a particular line of code.
+One elapsed-time step and two shorter steps with the same total time must end at the same value. Write a short assertion in `check.ts` with a different input. It must reject the starter and accept the repair.
 
 <details><summary>Hint</summary>
 
@@ -39,7 +39,7 @@ Should two half-length updates equal one full-length update?
 
 ## Where else?
 
-Where else would the same wrong assumption cause an error?
+Where else must a transition behave the same at 60 Hz and 120 Hz?
 
 <details><summary>A few answers</summary>
 

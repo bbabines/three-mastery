@@ -9,15 +9,15 @@ lenses: [cost]
 misconceptions: [gpu.measurement/render-time-gpu]
 ---
 
-# Measurement: find the faulty result
+# Measurement: report what a CPU render-call timer actually measures
 
-> **The job:** A dashboard mistakes CPU render submission time for GPU execution time.
+> **The job:** Report what a CPU render-call timer actually measures.
 
 ## Task
 
-A dashboard labels time spent inside renderer.render as GPU time. Report CPU submission time and draw calls, leaving GPU time unknown until a GPU timer or trace measures it.
+A dashboard calls the duration of `renderer.render()` GPU time, but a GPU trace disagrees.
 
-Fix `measureSubmission` in `drill.ts`. The scene shows the current result alongside a reference; they should agree after the repair.
+Fix the function in `drill.ts`. Change one scene switch at a time, compare frame interval and draw count, then inspect the timing label.
 
 <div data-scene="demo"></div>
 
@@ -33,7 +33,7 @@ Fix `drill.ts`, write one sentence in `cause.md`, and replace the placeholder in
 
 ## The check
 
-The acceptance test covers more than the scene pose. Your check must fail on the original bug and pass after the fix, using behavior instead of looking for a particular line of code.
+Time only the CPU submission span; leave GPU time unknown and report the renderer draw count. Write a short assertion in `check.ts` with a different input. It must reject the starter and accept the repair.
 
 <details><summary>Hint</summary>
 
@@ -43,7 +43,7 @@ What did performance.now measure around render(), and when does queued GPU work 
 
 ## Where else?
 
-Where else would the same wrong assumption cause an error?
+Which experiment would separate fill cost from draw submission cost?
 
 <details><summary>A few answers</summary>
 

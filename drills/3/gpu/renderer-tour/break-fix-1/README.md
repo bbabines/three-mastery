@@ -9,15 +9,15 @@ lenses: [cost]
 misconceptions: []
 ---
 
-# Renderer tour: find the faulty result
+# Renderer tour: show a product shadow and its overlaid label
 
-> **The job:** A studio shot has no shadows and its label disappears behind parts despite a high render order.
+> **The job:** Show a product shadow and its overlaid label.
 
 ## Task
 
-A studio shot has no shadows and its label disappears behind parts despite a high render order. Configure the renderer and each shadow participant, then place the label above normal geometry.
+A studio shot has no shadow and its label stays hidden behind the product.
 
-Fix `prepareStudio` in `drill.ts`. The scene shows the current result alongside a reference; they should agree after the repair.
+Fix the function in `drill.ts`. The product should cast a floor shadow, and the yellow label should remain visible over it.
 
 <div data-scene="demo"></div>
 
@@ -33,7 +33,7 @@ Fix `drill.ts`, write one sentence in `cause.md`, and replace the placeholder in
 
 ## The check
 
-The acceptance test covers more than the scene pose. Your check must fail on the original bug and pass after the fix, using behavior instead of looking for a particular line of code.
+The renderer, light, and surfaces must all participate in shadows; an overlaid label must also bypass depth testing. Write a short assertion in `check.ts` with a different input. It must reject the starter and accept the repair.
 
 <details><summary>Hint</summary>
 
@@ -43,7 +43,7 @@ Which light and mesh flags must accompany renderer shadow settings?
 
 ## Where else?
 
-Where else would the same wrong assumption cause an error?
+Which renderer settings belong at creation, and which can change later?
 
 <details><summary>A few answers</summary>
 

@@ -4,4 +4,5 @@ import type { drawSubmissions } from './drill';
 
 export function checkDrawCallAnatomy(subject: typeof drawSubmissions): void {
   expect(subject([{groups:2,visible:true},{groups:4,visible:true},{groups:8,visible:false}],1)).toBe(12);
+  expect(subject([{groups:3,visible:false},{groups:2,visible:true}],0)).toBe(2);
 }
