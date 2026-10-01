@@ -3,7 +3,7 @@ import type { SceneSetup } from '@harness/scene';
 import * as THREE from 'three';
 import { needsControlsUpdate, dollyChanges } from './drill';
 
-export const practice: SceneSetup = ({ scene, camera, controls, container, onFrame, renderer }) => {
+export const practice: SceneSetup = ({ scene, camera, controls, container, renderer }) => {
   camera.position.set(3, 3, 5);
   controls.target.set(0, 0.5, 0);
   const marker = ball(COLORS.yellow, 1, 0.22);
@@ -11,9 +11,8 @@ export const practice: SceneSetup = ({ scene, camera, controls, container, onFra
   scene.add(marker);
   const readout = overlay(container, 'readout');
   const activeCamera = new THREE.PerspectiveCamera();
-  onFrame((_, elapsed) => {
-    marker.position.x = Math.sin(elapsed * 0.8);
+  {
     const update = attempt('needsControlsUpdate', () => needsControlsUpdate(true,false)); const dolly = attempt('dollyChanges', () => dollyChanges(activeCamera));
     readout.textContent = [update.ok ? `update controls: ${update.value}` : update.note, dolly.ok ? `dolly changes: ${dolly.value}` : dolly.note].join('\n');
-  });
+  }
 };

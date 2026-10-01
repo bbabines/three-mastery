@@ -3,7 +3,7 @@ import type { SceneSetup } from '@harness/scene';
 import * as THREE from 'three';
 import { postFragments } from './drill';
 
-export const practice: SceneSetup = ({ scene, camera, controls, container, onFrame, renderer }) => {
+export const practice: SceneSetup = ({ scene, camera, controls, container, renderer }) => {
   camera.position.set(3, 3, 5);
   controls.target.set(0, 0.5, 0);
   const marker = ball(COLORS.yellow, 1, 0.22);
@@ -11,9 +11,9 @@ export const practice: SceneSetup = ({ scene, camera, controls, container, onFra
   scene.add(marker);
   const readout = overlay(container, 'readout');
   const width = 640, height = 360;
-  onFrame((_, elapsed) => {
-    marker.position.x = Math.sin(elapsed * 0.8);
+  {
     const result = attempt('postFragments', () => postFragments(width,height,3));
+    if (result.ok) marker.scale.y = result.value / (width * height);
     readout.textContent = result.ok ? `full-screen fragment candidates: ${result.value}` : result.note;
-  });
+  }
 };

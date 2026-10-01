@@ -22,7 +22,7 @@ Set the renderer pixel ratio to the lesser of device DPR and a cap. Put an overl
 | `capRendererDpr(renderer: Pick<THREE.WebGLRenderer, "setPixelRatio">, deviceDpr: number, cap: number)` | The pixel ratio passed to WebGLRenderer. |
 | `putOverlayLast(overlay: THREE.Object3D, order: number)` | The overlay renderOrder after setting it. |
 
-Try the scene. The readout changes when your function gives an answer.
+Raise device DPR above the cap, then lower it. The overlay should remain last in drawing order.
 
 <div data-scene="practice"></div>
 
@@ -40,7 +40,7 @@ npm run drill -- drills/2/gpu/renderer-tour/apply-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The check verifies that the code caps a high DPR but keeps a lower DPR; sets explicit order independently of scene insertion order. It also rejects an unanswered function.
 
 <details><summary>Hint</summary>
 
@@ -50,4 +50,4 @@ Antialias is chosen in the renderer constructor; setPixelRatio is a later settin
 
 ## Where else?
 
-Where else would the same code help? The concept card lists A product viewer's first setup, A studio shot with a soft shadow.
+Which renderer settings belong at creation, and which can change later?

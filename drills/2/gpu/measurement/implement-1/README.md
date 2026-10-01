@@ -21,7 +21,7 @@ Call `renderer.render(scene,camera)` between two readings of a supplied clock fu
 | --- | --- |
 | `cpuRenderMs(renderer: Pick<THREE.WebGLRenderer, "render">, scene: THREE.Scene, camera: THREE.Camera, now: () => number)` | Milliseconds spent in the CPU render call. |
 
-Try the scene. The readout changes when your function gives an answer.
+The CPU submission readout surrounds one render call; it does not report GPU execution time.
 
 <div data-scene="practice"></div>
 
@@ -39,7 +39,7 @@ npm run drill -- drills/2/gpu/measurement/implement-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The check verifies that the code times around the render call in the right order. It also rejects an unanswered function.
 
 <details><summary>Hint</summary>
 
@@ -49,4 +49,4 @@ performance.now around render does not measure the GPU finishing the frame.
 
 ## Where else?
 
-Where else would the same code help? The concept card lists Spector.js capture, renderer.info counts.
+Which experiment would separate fill cost from draw submission cost?

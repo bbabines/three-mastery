@@ -21,7 +21,7 @@ For `world`, return the given axis unchanged. For `local`, turn it by the object
 | --- | --- |
 | `gizmoWorldAxis(object: THREE.Object3D, axis: THREE.Vector3, mode: "local" | "world")` | The chosen local or world axis as a world direction. |
 
-Try the scene. The readout changes when your function gives an answer.
+The part and its parent are turned. The local X arrow should turn with both; the world X arrow should remain fixed.
 
 <div data-scene="practice"></div>
 
@@ -41,7 +41,7 @@ npm run drill -- drills/2/interaction/local-world-manipulation/implement-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The check verifies that the code changes local axes with a rotated parent but keeps world axes fixed. It also rejects an unanswered function.
 
 <details><summary>Hint</summary>
 
@@ -51,4 +51,4 @@ The local axis follows the object's world quaternion; the world axis does not.
 
 ## Where else?
 
-Where else would the same code help? The concept card lists Moving along a rotated rail, Gizmo space toggle.
+When would a part follow its own turned axis rather than a fixed world axis?

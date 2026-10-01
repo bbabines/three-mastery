@@ -22,7 +22,7 @@ Return the world center of an object's full bounds for a focus target. Return a 
 | `focusCenter(root: THREE.Object3D)` | The world center of the full object bounds. |
 | `focusEase(elapsed: number, duration: number)` | The clamped smoothstep fraction of the focus move. |
 
-Try the scene. The readout changes when your function gives an answer.
+The blue assembly is offset from its root. The yellow focus marker should land at the assembly’s world bounds center.
 
 <div data-scene="practice"></div>
 
@@ -42,7 +42,7 @@ npm run drill -- drills/2/interaction/focus-on-object/apply-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The check verifies that the code uses the world box rather than the object origin; clamps outside the interval and eases within it. It also rejects an unanswered function.
 
 <details><summary>Hint</summary>
 
@@ -52,4 +52,4 @@ A focus animation moves both camera and target; smoothstep slows at both ends.
 
 ## Where else?
 
-Where else would the same code help? The concept card lists Double-click focus, Guided views.
+What should move with the camera when a product viewer focuses on one part?

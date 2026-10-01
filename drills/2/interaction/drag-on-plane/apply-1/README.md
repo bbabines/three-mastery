@@ -21,7 +21,7 @@ A wall drag uses a world Plane and an initial grab point. Return the movement fr
 | --- | --- |
 | `wallDragDelta(startRay: THREE.Ray, moveRay: THREE.Ray, wall: THREE.Plane)` | The world-space delta along the drag plane. |
 
-Try the scene. The readout changes when your function gives an answer.
+Move the pointer across the wall: the blue part should travel by the difference between hits, without jumping to a hit point.
 
 <div data-scene="practice"></div>
 
@@ -41,7 +41,7 @@ npm run drill -- drills/2/interaction/drag-on-plane/apply-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The check verifies that the code returns wall-plane motion, not the absolute hit point. It also rejects an unanswered function.
 
 <details><summary>Hint</summary>
 
@@ -51,4 +51,4 @@ Subtract the initial hit from the new hit so the object keeps its grab offset.
 
 ## Where else?
 
-Where else would the same code help? The concept card lists Floor drag, Wall drag.
+How would the same grab-offset rule work for a floor drag?

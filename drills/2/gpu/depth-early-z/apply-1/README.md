@@ -21,7 +21,7 @@ Configure an alpha-tested material with a cutoff. Keep it depth-tested and depth
 | --- | --- |
 | `alphaCutout(material: THREE.MeshBasicMaterial, cutoff: number)` | The alpha-tested, depth-writing material. |
 
-Try the scene. The readout changes when your function gives an answer.
+The cutout panel should show the yellow surface through holes while solid pixels still write depth.
 
 <div data-scene="practice"></div>
 
@@ -39,7 +39,7 @@ npm run drill -- drills/2/gpu/depth-early-z/apply-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The check verifies that the code uses an alpha threshold while solid pixels still write depth. It also rejects an unanswered function.
 
 <details><summary>Hint</summary>
 
@@ -49,4 +49,4 @@ Alpha test discards below a threshold; it does not require transparent blending.
 
 ## Where else?
 
-Where else would the same code help? The concept card lists Overdraw, Alpha-tested mesh panels.
+What changes when the foreground surface is alpha cut out rather than opaque?

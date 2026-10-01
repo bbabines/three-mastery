@@ -22,7 +22,7 @@ Return whether OrbitControls needs an update after a pointer event. Return the c
 | `needsControlsUpdate(dampingEnabled: boolean, moved: boolean)` | Whether to call controls.update on the next frame. |
 | `dollyChanges(camera: THREE.Camera)` | Which camera value the dolly gesture changes. |
 
-Try the scene. The readout changes when your function gives an answer.
+Toggle damping and compare the orbit update and dolly readouts for perspective and orthographic cameras.
 
 <div data-scene="practice"></div>
 
@@ -36,7 +36,7 @@ npm run drill -- drills/2/interaction/controls-tour/apply-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The check verifies that the code keeps updating for damping after input stops; uses zoom only for an orthographic camera. It also rejects an unanswered function.
 
 <details><summary>Hint</summary>
 
@@ -46,4 +46,4 @@ Damping continues after input ends; orthographic dolly changes zoom rather than 
 
 ## Where else?
 
-Where else would the same code help? The concept card lists Product viewer orbit, A walkthrough of a showroom.
+When would you choose a gizmo or walkthrough control instead of orbit?

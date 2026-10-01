@@ -21,7 +21,7 @@ For a full-screen effect repeated across passes, return vertex and fragment work
 | --- | --- |
 | `stageWork(vertices: number, coveredSamples: number, passes: number)` | Counts of vertex invocations and fragment candidates. |
 
-Try the scene. The readout changes when your function gives an answer.
+Compare vertex submissions with covered fragment candidates across several passes; neither is a final pixel count.
 
 <div data-scene="practice"></div>
 
@@ -39,7 +39,7 @@ npm run drill -- drills/2/gpu/pipeline-stages/implement-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The check verifies that the code separates vertices from covered fragments over multiple passes. It also rejects an unanswered function.
 
 <details><summary>Hint</summary>
 
@@ -49,4 +49,4 @@ An overdrawn fragment still ran part of the pipeline even if it never becomes th
 
 ## Where else?
 
-Where else would the same code help? The concept card lists Vertex vs pixel cost, Where discard happens.
+Where can a fragment do work yet never become a visible pixel?

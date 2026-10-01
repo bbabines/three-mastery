@@ -3,7 +3,7 @@ import type { SceneSetup } from '@harness/scene';
 import * as THREE from 'three';
 import { renderCallCount } from './drill';
 
-export const practice: SceneSetup = ({ scene, camera, controls, container, onFrame, renderer }) => {
+export const practice: SceneSetup = ({ scene, camera, controls, container, renderer }) => {
   camera.position.set(3, 3, 5);
   controls.target.set(0, 0.5, 0);
   const marker = ball(COLORS.yellow, 1, 0.22);
@@ -11,9 +11,8 @@ export const practice: SceneSetup = ({ scene, camera, controls, container, onFra
   scene.add(marker);
   const readout = overlay(container, 'readout');
   const testScene = new THREE.Scene(); testScene.add(new THREE.Mesh(new THREE.BoxGeometry(),new THREE.MeshBasicMaterial()));
-  onFrame((_, elapsed) => {
-    marker.position.x = Math.sin(elapsed * 0.8);
+  {
     const result = attempt('renderCallCount', () => renderCallCount(renderer,testScene,camera));
     readout.textContent = result.ok ? `actual draw calls: ${result.value}` : result.note;
-  });
+  }
 };

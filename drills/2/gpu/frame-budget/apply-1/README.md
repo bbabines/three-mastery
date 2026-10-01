@@ -21,7 +21,7 @@ Return the slower of CPU work and GPU work as the frame duration. Include the mi
 | --- | --- |
 | `framePressure(cpuMs: number, gpuMs: number, refreshHz: number)` | The limiting frame duration and milliseconds over budget. |
 
-Try the scene. The readout changes when your function gives an answer.
+Compare CPU submission and GPU execution estimates. The slower side sets the frame duration when they overlap.
 
 <div data-scene="practice"></div>
 
@@ -39,7 +39,7 @@ npm run drill -- drills/2/gpu/frame-budget/apply-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The check verifies that the code uses the slower overlapping side and reports budget pressure. It also rejects an unanswered function.
 
 <details><summary>Hint</summary>
 
@@ -49,4 +49,4 @@ CPU and GPU overlap, so the longer side usually sets frame time.
 
 ## Where else?
 
-Where else would the same code help? The concept card lists Setting targets, Comparing devices.
+Why can two individually short CPU and GPU spans still fill the frame?

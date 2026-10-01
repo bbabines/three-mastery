@@ -21,7 +21,7 @@ For GPU picking, create a WebGLRenderTarget with nearest texture filtering and n
 | --- | --- |
 | `pickingTarget(width: number, height: number)` | A nearest-filtered, unsampled GPU picking target. |
 
-Try the scene. The readout changes when your function gives an answer.
+A picking target should retain exact ID colors at pixel edges: nearest filtering and no MSAA.
 
 <div data-scene="practice"></div>
 
@@ -39,7 +39,7 @@ npm run drill -- drills/2/gpu/render-targets/apply-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The check verifies that the code keeps ID colors exact at pixel edges. It also rejects an unanswered function.
 
 <details><summary>Hint</summary>
 
@@ -49,4 +49,4 @@ Linear filtering and MSAA mix neighboring ID colors, corrupting a picking readba
 
 ## Where else?
 
-Where else would the same code help? The concept card lists Thumbnails, Mirrors.
+Where else would drawing offscreen avoid changing the main canvas?

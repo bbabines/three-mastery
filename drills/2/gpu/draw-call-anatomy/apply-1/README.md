@@ -21,7 +21,7 @@ Render a configured scene with the supplied camera. Return `renderer.info.render
 | --- | --- |
 | `renderCallCount(renderer: Pick<THREE.WebGLRenderer, "render" | "info">, scene: THREE.Scene, camera: THREE.Camera)` | The renderer.info draw call count after a render. |
 
-Try the scene. The readout changes when your function gives an answer.
+Compare the actual draw count after rendering with the separate and instanced versions of the same parts.
 
 <div data-scene="practice"></div>
 
@@ -39,7 +39,7 @@ npm run drill -- drills/2/gpu/draw-call-anatomy/apply-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The check verifies that the code reads renderer.info after the render it measures. It also rejects an unanswered function.
 
 <details><summary>Hint</summary>
 
@@ -49,4 +49,4 @@ Read renderer.info after rendering. A shadow pass can add draws.
 
 ## Where else?
 
-Where else would the same code help? The concept card lists Many small parts, Shadow passes doubling calls.
+How would a shadow pass change a scene with many small parts?

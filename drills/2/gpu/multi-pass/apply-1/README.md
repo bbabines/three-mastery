@@ -21,7 +21,7 @@ Given a list of effect pass names, return a new list with one `output` pass last
 | --- | --- |
 | `outputLast(passes: string[])` | Effect passes followed by exactly one final output pass. |
 
-Try the scene. The readout changes when your function gives an answer.
+The effect chain should end with exactly one output pass, even when the starting list includes one too early.
 
 <div data-scene="practice"></div>
 
@@ -39,7 +39,7 @@ npm run drill -- drills/2/gpu/multi-pass/apply-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The check verifies that the code moves a premature output pass to the end without mutating the list. It also rejects an unanswered function.
 
 <details><summary>Hint</summary>
 
@@ -49,4 +49,4 @@ EffectComposer needs OutputPass last for tone mapping and sRGB output.
 
 ## Where else?
 
-Where else would the same code help? The concept card lists Selection outline, Bloom.
+What does a second full-screen effect add at twice the canvas width and height?

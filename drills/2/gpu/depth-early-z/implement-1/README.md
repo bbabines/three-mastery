@@ -21,7 +21,7 @@ A panel should hide surfaces behind it. Set `transparent` false, `depthTest` tru
 | --- | --- |
 | `opaqueOccluder(material: THREE.MeshBasicMaterial)` | The material configured for opaque depth testing and writing. |
 
-Try the scene. The readout changes when your function gives an answer.
+The blue opaque panel should hide the yellow surface behind it through normal depth testing.
 
 <div data-scene="practice"></div>
 
@@ -39,7 +39,7 @@ npm run drill -- drills/2/gpu/depth-early-z/implement-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The check verifies that the code restores depth testing and writes after a transparent variant. It also rejects an unanswered function.
 
 <details><summary>Hint</summary>
 
@@ -49,4 +49,4 @@ Depth testing rejects hidden fragments; turning depth writes off makes later dra
 
 ## Where else?
 
-Where else would the same code help? The concept card lists Overdraw, Depth prepass.
+What changes when the foreground surface is alpha cut out rather than opaque?

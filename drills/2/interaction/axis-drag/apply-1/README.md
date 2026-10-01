@@ -21,7 +21,7 @@ A rail belongs to a translated and rotated parent. Project the world drag onto t
 | --- | --- |
 | `childRailPosition(child: THREE.Object3D, worldDrag: THREE.Vector3, worldAxis: THREE.Vector3)` | The new child position in its parent's space. |
 
-Try the scene. The readout changes when your function gives an answer.
+The rail sits under a turned parent. The blue part should stay on the yellow rail after a world-space drag.
 
 <div data-scene="practice"></div>
 
@@ -41,7 +41,7 @@ npm run drill -- drills/2/interaction/axis-drag/apply-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The check verifies that the code converts a tilted world rail into parent-local position. It also rejects an unanswered function.
 
 <details><summary>Hint</summary>
 
@@ -51,4 +51,4 @@ Project in world space first, then convert the target to the parent's space.
 
 ## Where else?
 
-Where else would the same code help? The concept card lists Gizmo axis, Sliding along a rail.
+Where would a rail-constrained drag help besides a translation gizmo?

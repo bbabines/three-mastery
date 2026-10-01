@@ -21,7 +21,7 @@ Return a WebGLRenderTarget with the supplied width and height, a depth buffer, a
 | --- | --- |
 | `thumbnailTarget(width: number, height: number)` | A thumbnail-sized offscreen render target. |
 
-Try the scene. The readout changes when your function gives an answer.
+The blue part renders to a thumbnail-sized offscreen target; changing target dimensions should not resize the canvas.
 
 <div data-scene="practice"></div>
 
@@ -39,7 +39,7 @@ npm run drill -- drills/2/gpu/render-targets/implement-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The check verifies that the code creates an offscreen target with its own depth attachment. It also rejects an unanswered function.
 
 <details><summary>Hint</summary>
 
@@ -49,4 +49,4 @@ WebGLRenderTarget owns offscreen attachments until disposed.
 
 ## Where else?
 
-Where else would the same code help? The concept card lists GPU picking, Mirrors.
+Where else would drawing offscreen avoid changing the main canvas?
