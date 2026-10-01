@@ -4,10 +4,13 @@ import * as THREE from 'three';
 import { flagView } from '../../scene-view';
 import { faceToward } from './drill';
 
-const panel = new THREE.Mesh(new THREE.PlaneGeometry(1.7, 1.3), new THREE.MeshStandardMaterial({ color: COLORS.orange, side: THREE.DoubleSide }));
+const normal = new THREE.Vector3(0.5, 0, 1).normalize();
+const face = new THREE.PlaneGeometry(1.7, 1.3).applyQuaternion(
+  new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 0, 1), normal),
+);
+const panel = new THREE.Mesh(face, new THREE.MeshStandardMaterial({ color: COLORS.orange, side: THREE.DoubleSide }));
 panel.position.y = 1;
 panel.scale.set(2, 0.7, 1);
-const normal = new THREE.Vector3(0.5, 0, 1).normalize();
 const view = new THREE.Vector3(1, 0.2, 0.5).normalize();
 const viewer = arrow(COLORS.yellow);
 setArrow(viewer, new THREE.Vector3(0, 1, 0), view.clone().multiplyScalar(1.7));

@@ -4,10 +4,13 @@ import * as THREE from 'three';
 import { vectorView } from '../../scene-view';
 import { normalInWorld } from './drill';
 
-const panel = new THREE.Mesh(new THREE.PlaneGeometry(1.5, 1.1), new THREE.MeshStandardMaterial({ color: COLORS.orange, side: THREE.DoubleSide }));
+const local = new THREE.Vector3(0.4, 0.3, 1).normalize();
+const face = new THREE.PlaneGeometry(1.5, 1.1).applyQuaternion(
+  new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 0, 1), local),
+);
+const panel = new THREE.Mesh(face, new THREE.MeshStandardMaterial({ color: COLORS.orange, side: THREE.DoubleSide }));
 panel.position.y = 1;
 panel.scale.set(2.2, 0.65, 1.1);
-const local = new THREE.Vector3(0.4, 0.3, 1).normalize();
 const expected = (degrees: number) => {
   const world = new THREE.Matrix4().compose(panel.position,
     new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), THREE.MathUtils.degToRad(degrees)), panel.scale);
