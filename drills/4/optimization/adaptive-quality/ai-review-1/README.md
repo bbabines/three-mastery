@@ -36,6 +36,6 @@ A series of frame times near 16.7 ms must leave DPR steady; clear slow and fast 
 
 ## Where else?
 
-Where else could this flaw appear when the scene grows beyond one simple example?
+What happens when a warm phone alternates just above and below the frame target?
 
-<details><summary>A few answers</summary> A second product variant, a mobile viewport, or a scene with nested parts can expose a hidden assumption. </details>
+<details><summary>A few answers</summary> Without a dead band or sustained-frame rule, DPR oscillates; measured thermal slowdown should lower quality gradually. </details>

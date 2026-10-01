@@ -9,7 +9,7 @@ lenses: []
 misconceptions: []
 ---
 
-# queries.ray plane: explain the decision
+# Ray and plane: explain the decision
 
 > **The job:** explain a real 3D decision in five plain sentences.
 
@@ -29,4 +29,4 @@ A pointer ray is used to place a part on an endless floor. Explain when it gives
 
 ## Where else?
 
-Where else would you need to explain this choice to someone reviewing code?
+What happens when the pointer ray runs parallel to a placement wall?

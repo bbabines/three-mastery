@@ -21,7 +21,7 @@ A dense model can make a CPU triangle raycast costly. Write `readPickId(renderer
 
 ## Measure
 
-Record the CPU raycast time and the asynchronous readback wait shown in the scene, then inspect a frame in Chrome's performance panel. The two numbers measure different work; repeat before choosing a strategy.
+Record the CPU raycast time, ID-pass submission time, and asynchronous readback wait shown in the scene. Submission time is CPU wall time, not GPU execution time; inspect the pass in Chrome's performance tools and repeat before choosing a strategy.
 
 ## Your code
 

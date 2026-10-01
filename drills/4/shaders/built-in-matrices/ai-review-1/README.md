@@ -32,6 +32,6 @@ Change the view rotation without changing the model; the transformed world norma
 
 ## Where else?
 
-Where else could this flaw appear when the scene grows beyond one simple example?
+Which lighting symptom reveals a view-space normal used as a world normal?
 
-<details><summary>A few answers</summary> A second product variant, a mobile viewport, or a scene with nested parts can expose a hidden assumption. </details>
+<details><summary>A few answers</summary> A fixed world light appears to move across the surface as the camera orbits; build the normal matrix from `modelMatrix`. </details>

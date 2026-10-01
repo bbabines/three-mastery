@@ -9,7 +9,7 @@ lenses: []
 misconceptions: []
 ---
 
-# materials.environment maps: explain the decision
+# Environment maps: explain the decision
 
 > **The job:** explain a real 3D decision in five plain sentences.
 
@@ -29,4 +29,4 @@ A chrome part looks black while the background image looks fine. Explain what th
 
 ## Where else?
 
-Where else would you need to explain this choice to someone reviewing code?
+How would you explain chrome that turns black only on a device lacking the preferred texture format?

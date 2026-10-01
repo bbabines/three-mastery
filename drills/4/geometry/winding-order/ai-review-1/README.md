@@ -32,6 +32,6 @@ Compare the transformed face direction with the geometry’s transformed normal 
 
 ## Where else?
 
-Where else could this flaw appear when the scene grows beyond one simple example?
+What else must follow a mirrored triangle when geometry is baked?
 
-<details><summary>A few answers</summary> A second product variant, a mobile viewport, or a scene with nested parts can expose a hidden assumption. </details>
+<details><summary>A few answers</summary> Keep each corner’s UV and normal with its vertex when reversing winding, then verify the front face by raycasting. </details>

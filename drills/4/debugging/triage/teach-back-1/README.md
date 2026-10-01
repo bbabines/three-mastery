@@ -9,7 +9,7 @@ lenses: []
 misconceptions: []
 ---
 
-# debugging.triage: explain the decision
+# Debugging triage: explain the decision
 
 > **The job:** explain a real 3D decision in five plain sentences.
 
@@ -29,4 +29,4 @@ A product suddenly looks washed out. Explain how to narrow the cause before rewr
 
 ## Where else?
 
-Where else would you need to explain this choice to someone reviewing code?
+How would you narrow a black material before changing its shader?

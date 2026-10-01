@@ -9,7 +9,7 @@ lenses: []
 misconceptions: []
 ---
 
-# rotation.quaternions: explain the decision
+# Quaternions: explain the decision
 
 > **The job:** explain a real 3D decision in five plain sentences.
 
@@ -29,4 +29,4 @@ A model needs an extra turn around the world's up axis. Explain what the quatern
 
 ## Where else?
 
-Where else would you need to explain this choice to someone reviewing code?
+How would you explain a local pitch added after a world yaw?

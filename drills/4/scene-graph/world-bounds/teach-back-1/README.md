@@ -9,7 +9,7 @@ lenses: []
 misconceptions: []
 ---
 
-# scene graph.world bounds: explain the decision
+# World bounds: explain the decision
 
 > **The job:** explain a real 3D decision in five plain sentences.
 
@@ -29,4 +29,4 @@ A camera should frame a product made of nested meshes. Explain which bounds to u
 
 ## Where else?
 
-Where else would you need to explain this choice to someone reviewing code?
+When could a cached bound miss a child moved by its parent?

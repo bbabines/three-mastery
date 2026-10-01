@@ -9,7 +9,7 @@ lenses: []
 misconceptions: []
 ---
 
-# camera.project unproject: explain the decision
+# Project and unproject: explain the decision
 
 > **The job:** explain a real 3D decision in five plain sentences.
 
@@ -29,4 +29,4 @@ A click should place a part under the cursor on a floor. Explain how screen coor
 
 ## Where else?
 
-Where else would you need to explain this choice to someone reviewing code?
+How would you explain placing a hotspot on a wall rather than on the floor?

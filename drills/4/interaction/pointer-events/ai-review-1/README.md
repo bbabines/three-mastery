@@ -32,6 +32,6 @@ Use a canvas offset from the window edge and a device ratio above 1. The accepta
 
 ## Where else?
 
-Where else could this flaw appear when the scene grows beyond one simple example?
+Would multiplying touch coordinates by DPR fix a picker on an offset canvas?
 
-<details><summary>A few answers</summary> A second product variant, a mobile viewport, or a scene with nested parts can expose a hidden assumption. </details>
+<details><summary>A few answers</summary> No. Client coordinates and `getBoundingClientRect()` are both CSS pixels; subtract the rectangle before mapping to NDC. </details>

@@ -21,7 +21,7 @@ A finish switch hitches the first time because its texture uploads and shader co
 
 ## Measure
 
-Measure the first and later switch on the same device. Use Chrome's performance tools to see whether upload or compile dominates. A pre-rendered variant can still cost memory, so record `renderer.info.memory.textures` too.
+Compare the cold first switch with a different variant's first switch after warm-up, then its later switch. Reload before repeating a cold run. Use Chrome's performance tools to see whether upload or compile dominates. A pre-rendered variant can still cost memory, so record `renderer.info.memory.textures` too.
 
 ## Your code
 

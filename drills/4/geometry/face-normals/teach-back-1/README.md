@@ -9,7 +9,7 @@ lenses: []
 misconceptions: []
 ---
 
-# geometry.face normals: explain the decision
+# Face normals: explain the decision
 
 > **The job:** explain a real 3D decision in five plain sentences.
 
@@ -29,4 +29,4 @@ A click gives a face normal for a sloped triangle. Explain where that normal com
 
 ## Where else?
 
-Where else would you need to explain this choice to someone reviewing code?
+How would you explain a marker that tilts away from a smooth surface?

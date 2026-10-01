@@ -9,7 +9,7 @@ lenses: []
 misconceptions: []
 ---
 
-# shaders.debug output: explain the decision
+# Shader debug output: explain the decision
 
 > **The job:** explain a real 3D decision in five plain sentences.
 
@@ -29,4 +29,4 @@ A texture breaks at a seam. Explain how to use a temporary shader color output t
 
 ## Where else?
 
-Where else would you need to explain this choice to someone reviewing code?
+How would a temporary normal-as-color output help distinguish a UV seam from a lighting seam?

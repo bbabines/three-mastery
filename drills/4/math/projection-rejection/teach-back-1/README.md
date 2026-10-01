@@ -9,7 +9,7 @@ lenses: []
 misconceptions: []
 ---
 
-# math.projection rejection: explain the decision
+# Projection and rejection: explain the decision
 
 > **The job:** explain a real 3D decision in five plain sentences.
 
@@ -29,4 +29,4 @@ A moving part hits a wall at an angle. Explain how to keep the motion along the 
 
 ## Where else?
 
-Where else would you need to explain this choice to someone reviewing code?
+How would you keep only motion up a sloping rail instead of along a wall?

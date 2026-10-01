@@ -32,6 +32,6 @@ Use separate textures and assert each colorSpace after configuration. The accept
 
 ## Where else?
 
-Where else could this flaw appear when the scene grows beyond one simple example?
+Which other maps should stay as data rather than display color?
 
-<details><summary>A few answers</summary> A second product variant, a mobile viewport, or a scene with nested parts can expose a hidden assumption. </details>
+<details><summary>A few answers</summary> Normal, roughness, and metalness maps stay in `NoColorSpace`; base color and emissive color maps use sRGB. </details>

@@ -32,6 +32,6 @@ Watch dispose events for both a shared map and an old-only map after a swap. The
 
 ## Where else?
 
-Where else could this flaw appear when the scene grows beyond one simple example?
+What if an old material and the next finish share more than one texture?
 
-<details><summary>A few answers</summary> A second product variant, a mobile viewport, or a scene with nested parts can expose a hidden assumption. </details>
+<details><summary>A few answers</summary> Check every map slot for reuse, and dispose only textures owned by the retiring variant that the next finish does not use. </details>

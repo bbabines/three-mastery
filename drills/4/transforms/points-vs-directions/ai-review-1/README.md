@@ -32,6 +32,6 @@ A translated and rotated parent must give the same direction as its rotation and
 
 ## Where else?
 
-Where else could this flaw appear when the scene grows beyond one simple example?
+When should a world conversion include the parent’s translation?
 
-<details><summary>A few answers</summary> A second product variant, a mobile viewport, or a scene with nested parts can expose a hidden assumption. </details>
+<details><summary>A few answers</summary> A local point needs translation, but velocity and forward directions do not; normals under uneven scale also need the normal matrix. </details>

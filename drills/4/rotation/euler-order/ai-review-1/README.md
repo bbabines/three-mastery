@@ -32,6 +32,6 @@ Compare a combined yaw and pitch with the order three.js applies for yaw then lo
 
 ## Where else?
 
-Where else could this flaw appear when the scene grows beyond one simple example?
+Where else can swapping turn order change the result?
 
-<details><summary>A few answers</summary> A second product variant, a mobile viewport, or a scene with nested parts can expose a hidden assumption. </details>
+<details><summary>A few answers</summary> A camera rig that yaws around world up but pitches around its own side axis will roll or drift if those turns are composed in the wrong order. </details>

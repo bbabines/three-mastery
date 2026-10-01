@@ -32,6 +32,6 @@ A hierarchy with a match under each of two groups must return both. The acceptan
 
 ## Where else?
 
-Where else could this flaw appear when the scene grows beyond one simple example?
+How does the bug appear in a duplicated product branch?
 
-<details><summary>A few answers</summary> A second product variant, a mobile viewport, or a scene with nested parts can expose a hidden assumption. </details>
+<details><summary>A few answers</summary> Each branch may contain a fastener with the same name; traversal must collect both rather than stop at the first match. </details>

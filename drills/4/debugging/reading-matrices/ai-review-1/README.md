@@ -32,6 +32,6 @@ Compose transforms with nonzero translation, turn, and scale, then compare with 
 
 ## Where else?
 
-Where else could this flaw appear when the scene grows beyond one simple example?
+Which transform should an inspector read for a nested part?
 
-<details><summary>A few answers</summary> A second product variant, a mobile viewport, or a scene with nested parts can expose a hidden assumption. </details>
+<details><summary>A few answers</summary> Use `matrixWorld` for its world position after updating ancestors; `matrix` only describes the part relative to its parent. </details>

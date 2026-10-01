@@ -9,7 +9,7 @@ lenses: []
 misconceptions: []
 ---
 
-# assets.disposal: explain the decision
+# Disposal ownership: explain the decision
 
 > **The job:** explain a real 3D decision in five plain sentences.
 
@@ -29,4 +29,4 @@ A product viewer swaps finishes repeatedly. Explain what gets freed, what stays 
 
 ## Where else?
 
-Where else would you need to explain this choice to someone reviewing code?
+How would you explain cleanup when two finish variants share one map?

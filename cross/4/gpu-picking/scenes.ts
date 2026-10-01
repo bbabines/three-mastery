@@ -25,11 +25,17 @@ export const compare: SceneSetup = ({ camera, renderer, container }) => {
     const startCpu = performance.now();
     const hits = ray.intersectObject(dense, false).length;
     const cpu = performance.now() - startCpu;
-    renderer.setRenderTarget(target);
-    renderer.render(pickScene, camera);
-    renderer.setRenderTarget(null);
+    const previousTarget = renderer.getRenderTarget();
+    const startPass = performance.now();
+    try {
+      renderer.setRenderTarget(target);
+      renderer.render(pickScene, camera);
+    } finally {
+      renderer.setRenderTarget(previousTarget);
+    }
+    const passSubmit = performance.now() - startPass;
     const startGpu = performance.now();
     const id = await readPickId(renderer, target, 16, 16);
-    readout.textContent = `CPU raycast: ${cpu.toFixed(1)} ms, ${hits} hit(s)\nAsync pixel wait: ${(performance.now()-startGpu).toFixed(1)} ms\nID: ${id ?? 'not answered yet'}`;
+    readout.textContent = `CPU raycast: ${cpu.toFixed(1)} ms, ${hits} hit(s)\nID pass submission: ${passSubmit.toFixed(1)} ms\nAsync pixel wait: ${(performance.now()-startGpu).toFixed(1)} ms\nID: ${id ?? 'not answered yet'}`;
   });
 };

@@ -9,7 +9,7 @@ lenses: []
 misconceptions: []
 ---
 
-# gpu.measurement: explain the decision
+# GPU measurement: explain the decision
 
 > **The job:** explain a real 3D decision in five plain sentences.
 
@@ -29,4 +29,4 @@ A scene stutters on one device. Explain what draw counts, JavaScript timing, and
 
 ## Where else?
 
-Where else would you need to explain this choice to someone reviewing code?
+How would you compare a draw-call bottleneck with a fill-rate bottleneck?

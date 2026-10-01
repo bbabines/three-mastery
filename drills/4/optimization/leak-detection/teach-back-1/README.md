@@ -9,7 +9,7 @@ lenses: []
 misconceptions: []
 ---
 
-# optimization.leak detection: explain the decision
+# Leak detection: explain the decision
 
 > **The job:** explain a real 3D decision in five plain sentences.
 
@@ -29,4 +29,4 @@ A viewer slows after many finish swaps. Explain a repeatable check for a resourc
 
 ## Where else?
 
-Where else would you need to explain this choice to someone reviewing code?
+How would you test whether a route change leaves old textures resident?

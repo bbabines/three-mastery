@@ -9,7 +9,7 @@ lenses: []
 misconceptions: []
 ---
 
-# interaction.drag on plane: explain the decision
+# Drag on a plane: explain the decision
 
 > **The job:** explain a real 3D decision in five plain sentences.
 
@@ -29,4 +29,4 @@ A grabbed handle should follow the cursor across a wall without snapping its ori
 
 ## Where else?
 
-Where else would you need to explain this choice to someone reviewing code?
+What changes if the handle must slide on a wall instead of a floor?

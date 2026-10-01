@@ -32,6 +32,6 @@ A fake renderer should see the old target restored after success and after an er
 
 ## Where else?
 
-Where else could this flaw appear when the scene grows beyond one simple example?
+What if the thumbnail is drawn while another off-screen pass is active?
 
-<details><summary>A few answers</summary> A second product variant, a mobile viewport, or a scene with nested parts can expose a hidden assumption. </details>
+<details><summary>A few answers</summary> Restore that pass’s target, not always `null`; a `finally` block also restores it after a render error. </details>
