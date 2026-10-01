@@ -15,7 +15,7 @@ misconceptions: []
 
 ## Task
 
-Pass a barycentric vertex attribute to fragments and show pixels near a triangle edge as white. Return a working `ShaderMaterial`. The scene renders the material on a plane; the tests inspect its inputs and compile it in Chromium.
+Pass a barycentric vertex attribute to fragments and show pixels near a triangle edge as white. Write `barycentricWire()` so the vertex shader passes barycentric values to the fragment shader and only pixels near an edge are white.
 
 <div data-scene="preview"></div>
 
@@ -38,7 +38,7 @@ npm run drill -- drills/2/shaders/attributes-uniforms-varyings/apply-1
 
 ## The check
 
-The Node check verifies the shader's data path. The browser check compiles and draws it on a WebGL canvas.
+The Node test checks the attribute and varying path. The browser test gives the plane barycentric corner values and checks that triangle edges are bright while the face stays dark.
 
 <details><summary>Hint</summary> Every triangle corner carries one coordinate of (1,0,0), (0,1,0), or (0,0,1). </details>
 
@@ -46,4 +46,4 @@ The Node check verifies the shader's data path. The browser check compiles and d
 
 Why do barycentric values change across a triangle instead of being copied from one corner?
 
-<details><summary>A starting point</summary> Visualize one intermediate value before restoring the finished fragment color. </details>
+<details><summary>A few answers</summary> The rasterizer interpolates each corner's values across the triangle, making edge distance available at every fragment. </details>

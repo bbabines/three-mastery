@@ -9,15 +9,15 @@ lenses: [space]
 misconceptions: []
 ---
 
-# Camera relative: find the faulty result
+# Camera relative: a drag that freezes
 
-> **The job:** A horizontal drag freezes when the camera looks nearly straight up.
+> **The job:** Find the world direction that moves an object to the camera's right.
 
 ## Task
 
-A horizontal drag freezes when the camera looks nearly straight up. Return the world direction of screen right at any camera tilt.
+A horizontal drag stops moving the object when the camera looks almost straight up. Fix `cameraRight(camera)` to return a unit world-space direction for the camera's own right side, even at that tilt. Leave the camera unchanged.
 
-Fix `cameraRight` in `drill.ts`. The scene shows the current result alongside a reference; they should agree after the repair.
+Compare the arrow from your function with the camera's right axis in the scene. They should line up at every tilt.
 
 <div data-scene="demo"></div>
 
@@ -25,8 +25,8 @@ Fix `cameraRight` in `drill.ts`. The scene shows the current result alongside a 
 
 | Value | Space |
 | --- | --- |
-| Inputs | The named camera, world, or screen space in the task |
-| Answer | The space stated in the task |
+| `camera` | Its pose places its local right axis in the world |
+| Answer | A unit direction in world space |
 
 ## Your code
 
@@ -36,20 +36,20 @@ Fix `drill.ts`, write one sentence in `cause.md`, and replace the placeholder in
 
 ## The check
 
-The acceptance test covers more than the scene pose. Your check must fail on the original bug and pass after the fix, using behavior instead of looking for a particular line of code.
+The acceptance test looks straight up and at a tilted heading. Your check should prove that screen right still has unit length and matches the camera's world right axis.
 
 <details><summary>Hint</summary>
 
-Compare the named spaces and the operation from the camera relative page.
+The camera-relative page shows how to read an axis from `matrixWorld`. A cross product with `camera.up` loses a direction when the two inputs become parallel.
 
 </details>
 
 ## Where else?
 
-Where else would the same wrong assumption cause an error?
+What other camera-relative control could fail near a straight-up view?
 
 <details><summary>A few answers</summary>
 
-A model editor, an interactive viewer, or a check before export.
+Moving a selection sideways, placing a screen-space label, or steering a free camera.
 
 </details>

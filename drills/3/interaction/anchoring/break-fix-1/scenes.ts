@@ -3,13 +3,25 @@ import type { SceneSetup } from '@harness/scene';
 import * as THREE from 'three';
 import { labelState } from './drill';
 
-export const demo: SceneSetup = ({ scene, camera, controls, container }) => {
-  camera.position.set(3,3,5); controls.target.set(0,0.5,0);
-  const subject = new THREE.Mesh(new THREE.BoxGeometry(),new THREE.MeshStandardMaterial({color:COLORS.blue}));
-  const marker = ball(COLORS.yellow); subject.position.y=0.5; marker.position.x=1.5; marker.position.y=0.5; scene.add(subject,marker);
-  const readout=overlay(container,'readout');
-  const c=new THREE.PerspectiveCamera(60,1,0.1,100); c.position.z=5; scene.add(c);
-  const got=attempt('labelState',()=>labelState(c,new THREE.Vector3(0,0,10),800,800));
-  const want=({x:400,y:400,visible:false});
-  readout.textContent=got.ok?`your result: ${JSON.stringify(got.value)?.slice(0,100)}\nreference: ${JSON.stringify(want)?.slice(0,100)}`:got.note;
+export const demo: SceneSetup = ({ scene, camera, controls, container, onFrame }) => {
+  camera.position.set(3, 3, 6);
+  controls.target.set(0, 0, 0);
+  const probe = new THREE.PerspectiveCamera(60, 1, 0.1, 20);
+  probe.position.set(-1, 0.5, 1);
+  probe.lookAt(-1, 0.5, -2);
+  scene.add(probe);
+  const front = ball(COLORS.yellow, 1, 0.18);
+  const behind = ball(COLORS.blue, 1, 0.18);
+  front.position.set(-1, 0.5, -2);
+  behind.position.set(-1, 0.5, 3);
+  scene.add(front, behind);
+  const tag = overlay(container, 'controls');
+  const readout = overlay(container, 'readout');
+  onFrame(() => {
+    const result = attempt('labelState', () => labelState(probe, behind.position.clone(), 400, 400));
+    if (!result.ok) { tag.textContent = ''; readout.textContent = result.note; return; }
+    tag.textContent = result.value.visible ? 'WRONG: rear price tag is visible' : 'Rear price tag hidden';
+    readout.textContent = `yellow: in front of the label camera; blue: behind it
+your rear label: ${result.value.visible ? 'visible' : 'hidden'}; reference: hidden`;
+  });
 };

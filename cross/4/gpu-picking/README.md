@@ -11,7 +11,7 @@ misconceptions: []
 
 # GPU picking vs raycasting on a million-triangle model
 
-> **The job:** combine ideas from several domains in one small piece of code.
+> **The job:** Read a GPU pick ID without blocking pointer interaction.
 
 ## Task
 
@@ -37,10 +37,16 @@ The check verifies the read is asynchronous, asks for exactly one pixel, and dec
 
 <details><summary>Hint</summary>
 
-Use the relevant three.js methods shown on the concept pages. Make the result observable before trying to optimize it.
+An ID render pass and its pixel readback have different costs. Measure both when comparing against a raycast.
 
 </details>
 
 ## Where else?
 
-Where else would this choice appear in an interactive 3D tool?
+When should GPU picking be measured against a raycast?
+
+<details><summary>A few answers</summary>
+
+Dense CAD selection, instanced bolt picking, or hover over a complex assembly.
+
+</details>

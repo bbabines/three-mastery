@@ -21,7 +21,7 @@ Given candidate fragments, shader discards, and depth test failures, return the 
 | --- | --- |
 | `fragmentOutcome(candidates: number, discarded: number, depthFailed: number)` | Candidate and surviving fragment counts. |
 
-Try the scene. The readout changes when your function gives an answer.
+Discarded and depth-failed candidates should not appear in the framebuffer write count.
 
 <div data-scene="practice"></div>
 
@@ -39,7 +39,7 @@ npm run drill -- drills/2/gpu/pipeline-stages/apply-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The check verifies that the code does not call every fragment a final pixel. It also rejects an unanswered function.
 
 <details><summary>Hint</summary>
 
@@ -49,4 +49,4 @@ Discard and depth testing can prevent a fragment from reaching the framebuffer.
 
 ## Where else?
 
-Where else would the same code help? The concept card lists Transparency order, Vertex vs pixel cost.
+Where can a fragment do work yet never become a visible pixel?

@@ -9,7 +9,7 @@ lenses: []
 misconceptions: [materials.channel-packing/separate-textures]
 ---
 
-# Channel packing: repair the preview
+# Channel packing: the wrong finish
 
 > **The job:** Read roughness and metalness from one packed ORM texel.
 

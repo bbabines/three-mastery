@@ -1,19 +1,21 @@
-import { attempt, ball, COLORS, overlay } from '@harness/lesson';
+import { attempt, COLORS, overlay } from '@harness/lesson';
 import type { SceneSetup } from '@harness/scene';
 import * as THREE from 'three';
 import { variant } from './drill';
 
 export const demo: SceneSetup = ({ scene, camera, controls, container }) => {
-  camera.position.set(3,3,5); controls.target.set(0,0.5,0);
-  const subject = new THREE.Mesh(new THREE.BoxGeometry(),new THREE.MeshStandardMaterial({color:COLORS.blue}));
-  const marker = ball(COLORS.yellow); subject.position.y=0.5; marker.position.x=1.5; marker.position.y=0.5; scene.add(subject,marker);
-  const readout=overlay(container,'readout');
-
-  const got=attempt('variant',()=>variant(subject));
-  if(got.ok){
-    got.value.position.x=1.5;
-    scene.add(got.value);
-    (got.value.material as THREE.MeshStandardMaterial).color.set(COLORS.red);
-    readout.textContent=`original after recoloring copy: #${(subject.material as THREE.MeshStandardMaterial).color.getHexString()}\nreference: original stays blue`;
-  } else readout.textContent=got.note;
+  camera.position.set(4, 3, 6);
+  controls.target.set(0, 0.6, 0);
+  const source = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshStandardMaterial({ color: COLORS.blue }));
+  source.position.set(-1.2, 0.6, 0);
+  scene.add(source);
+  const got = attempt('variant', () => variant(source));
+  const readout = overlay(container, 'readout');
+  if (!got.ok) { readout.textContent = got.note; return; }
+  const copy = got.value;
+  copy.position.x = 1.2;
+  scene.add(copy);
+  (copy.material as THREE.MeshStandardMaterial).color.set(COLORS.yellow);
+  const sourceColor = (source.material as THREE.MeshStandardMaterial).color.getHexString();
+  readout.textContent = `left: original | right: recolored copy\noriginal stayed blue: ${sourceColor === new THREE.Color(COLORS.blue).getHexString()}`;
 };

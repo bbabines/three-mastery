@@ -31,7 +31,7 @@ A no-docs check of the decisions in this domain. Write every function in `placem
 | `exposureChoice` | Apply an exposure change measured in stops. |
 | `diffuseFactor` | Compute clamped diffuse response for normalized directions. |
 | `halfDirection` | Find the half direction between light and view. |
-| `metalNeedsEnvironment` | Judge whether a metal finish lacks reflections. |
+| `metalNeedsEnvironment` | Whether a metallic material has neither its own map nor a scene environment. |
 | `shadowCapable` | Judge whether a light type can cast shadows. |
 | `applyEnvironment` | Set an environment map independently of the background. |
 | `castShadow` | Enable a light to cast shadows. |

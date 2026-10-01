@@ -9,15 +9,15 @@ lenses: []
 misconceptions: []
 ---
 
-# Bvh: find the faulty result
+# BVH: skip boxes the ray misses
 
 > **The job:** A bounds hierarchy visits every triangle leaf even when the pointer ray misses most branches.
 
 ## Task
 
-A bounds hierarchy visits every triangle leaf even when the pointer ray misses most branches. Collect only leaf nodes whose stored local Box3 the ray intersects.
+A bounds tree has a world-space `Box3` in each node's `userData.box`. Visit a child only when the ray crosses its box. Return the leaf nodes reached; a missed branch can be skipped with all its descendants.
 
-Fix `candidateLeaves` in `drill.ts`. The scene shows the current result alongside a reference; they should agree after the repair.
+Fix `candidateLeaves` in `drill.ts`. The yellow ray crosses only the left box. A selected candidate gets a red outline.
 
 <div data-scene="demo"></div>
 
@@ -29,7 +29,7 @@ Fix `drill.ts`, write one sentence in `cause.md`, and replace the placeholder in
 
 ## The check
 
-The acceptance test covers more than the scene pose. Your check must fail on the original bug and pass after the fix, using behavior instead of looking for a particular line of code.
+The test gives the tree a branch the ray misses. Your check should reject a candidate list that includes leaves under that branch.
 
 <details><summary>Hint</summary>
 
@@ -39,10 +39,10 @@ At which branch can a ray miss be used to skip all descendants?
 
 ## Where else?
 
-Where else would the same wrong assumption cause an error?
+Where else can a missed parent box save work below it?
 
 <details><summary>A few answers</summary>
 
-Shape casts; Collision queries.
+Picking a dense model, a broad collision search, or querying nearby terrain tiles.
 
 </details>

@@ -4,14 +4,16 @@ import { describe, expect, it } from 'vitest';
 import { smoothOrientation } from './drill';
 
 describe('rotation.gimbal-lock', () => {
-  it('blend a camera between two orientations on the shortest arc, including when its view passes near straight down', () => {
-    const a=new THREE.Quaternion().setFromEuler(new THREE.Euler(0.2,2.9,0,'YXZ'));
-    const b=new THREE.Quaternion().setFromEuler(new THREE.Euler(1.4,-2.9,0,'YXZ'));
-    const before=a.clone();
-    for (const t of [0,0.25,0.5,0.75,1]) {
-      const actual=answered(smoothOrientation(a,b,t));
-      expect(actual.angleTo(a)).toBeCloseTo(a.angleTo(b) * t, 5);
+  it('takes the shortest quaternion arc through a steep camera turn', () => {
+    const start = new THREE.Quaternion().setFromEuler(new THREE.Euler(1.4, 2.9, 0.2, 'YXZ'));
+    const end = new THREE.Quaternion().setFromEuler(new THREE.Euler(1.5, -2.8, -0.2, 'YXZ'));
+    const beforeStart = start.clone(), beforeEnd = end.clone();
+    for (const fraction of [0, 0.25, 0.5, 0.75, 1]) {
+      const actual = answered(smoothOrientation(start, end, fraction));
+      const expected = start.clone().slerp(end, fraction);
+      expect(actual.angleTo(expected)).toBeLessThan(1e-6);
     }
-    expect(a.angleTo(before)).toBeLessThan(1e-6);
+    expect(start.equals(beforeStart)).toBe(true);
+    expect(end.equals(beforeEnd)).toBe(true);
   });
 });

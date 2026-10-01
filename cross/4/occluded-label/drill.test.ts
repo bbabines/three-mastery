@@ -28,6 +28,11 @@ describe('label projection and occlusion', () => {
     const nested = new PerspectiveCamera(60,2,0.1,100);
     nested.position.z = 2;
     parent.add(nested);
+    const clear = answered(labelState(new Vector3(),nested,800,400,24,[]));
+    expect(clear.visible).toBe(true);
+    expect(clear.x).toBeCloseTo(400);
+    expect(clear.y).toBeCloseTo(200);
+    expect(clear.worldHeight).toBeCloseTo(2*5*Math.tan(MathUtils.degToRad(nested.fov)/2)*24/400);
     const blocker = new Mesh(new BoxGeometry(1,1,1), new MeshBasicMaterial());
     blocker.position.z = 4;
     expect(answered(labelState(new Vector3(),nested,800,400,24,[blocker])).visible).toBe(false);

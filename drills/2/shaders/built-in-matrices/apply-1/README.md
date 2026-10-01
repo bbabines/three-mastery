@@ -15,7 +15,7 @@ misconceptions: []
 
 ## Task
 
-Transform local vertices through model-view and projection matrices, then color by device-pixel X over supplied resolution. Return a working `ShaderMaterial`. The scene renders the material on a plane; the tests inspect its inputs and compile it in Chromium.
+Transform local vertices through model-view and projection matrices, then color by device-pixel X over supplied resolution. Write `screenGradient(resolution)`. Use the model-view and projection matrices for position, then divide device-pixel X by the supplied resolution.
 
 <div data-scene="preview"></div>
 
@@ -38,7 +38,7 @@ npm run drill -- drills/2/shaders/built-in-matrices/apply-1
 
 ## The check
 
-The Node check verifies the shader's data path. The browser check compiles and draws it on a WebGL canvas.
+The Node test checks the resolution uniform and matrix path. The browser test compares left and right pixels of the screen gradient.
 
 <details><summary>Hint</summary> `gl_Position` is clip space; `gl_FragCoord` is device pixels after rasterization. </details>
 
@@ -46,4 +46,4 @@ The Node check verifies the shader's data path. The browser check compiles and d
 
 How would a view-space rim mask change if you accidentally used world normals?
 
-<details><summary>A starting point</summary> Visualize one intermediate value before restoring the finished fragment color. </details>
+<details><summary>A few answers</summary> A rim mask compares the view direction with a normal transformed into view space; a world normal would shift the effect as the camera moves. </details>

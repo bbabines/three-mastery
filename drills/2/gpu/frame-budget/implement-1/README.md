@@ -21,7 +21,7 @@ Return the milliseconds available for one frame at a target refresh rate. Compar
 | --- | --- |
 | `budgetForHz(refreshHz: number)` | Milliseconds available for one frame. |
 
-Try the scene. The readout changes when your function gives an answer.
+Compare the frame budgets for 60 Hz and 120 Hz. A faster display gives each frame less time.
 
 <div data-scene="practice"></div>
 
@@ -39,7 +39,7 @@ npm run drill -- drills/2/gpu/frame-budget/implement-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The check verifies that the code shows that higher refresh rates leave less time per frame. It also rejects an unanswered function.
 
 <details><summary>Hint</summary>
 
@@ -49,4 +49,4 @@ At 60 Hz the budget is about 16.67 ms; a 120 Hz display halves it.
 
 ## Where else?
 
-Where else would the same code help? The concept card lists Setting targets, Judging a fix.
+Why can two individually short CPU and GPU spans still fill the frame?

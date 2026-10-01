@@ -9,15 +9,15 @@ lenses: [space]
 misconceptions: [queries.intersection-anatomy/face-normal-world]
 ---
 
-# Intersection anatomy: find the faulty result
+# Hit normal: a marker tilts on scaled geometry
 
 > **The job:** A marker follows a raycast hit but tilts on a scaled part.
 
 ## Task
 
-A marker follows a raycast hit but tilts on a scaled part. Turn the hit face normal from the object’s local space into world space.
+A marker should point away from a stretched, turned panel. A hit's `face.normal` is in the object's local space. Return its world-space direction, without changing the stored normal.
 
-Fix `hitNormalWorld` in `drill.ts`. The scene shows the current result alongside a reference; they should agree after the repair.
+Fix `hitNormalWorld` in `drill.ts`. The yellow arrow is perpendicular to the panel; your arrow is red.
 
 <div data-scene="demo"></div>
 
@@ -25,8 +25,9 @@ Fix `hitNormalWorld` in `drill.ts`. The scene shows the current result alongside
 
 | Value | Space |
 | --- | --- |
-| Inputs | The named camera, world, or screen space in the task |
-| Answer | The space stated in the task |
+| Hit face normal | The part's own space |
+| Part transform | Maps the part into world space |
+| Returned normal | World direction |
 
 ## Your code
 
@@ -36,7 +37,7 @@ Fix `drill.ts`, write one sentence in `cause.md`, and replace the placeholder in
 
 ## The check
 
-The acceptance test covers more than the scene pose. Your check must fail on the original bug and pass after the fix, using behavior instead of looking for a particular line of code.
+The test uses uneven scale and a sloped face normal. Your check should reject a direction transformed like an ordinary vector.
 
 <details><summary>Hint</summary>
 
@@ -46,10 +47,10 @@ Where is a face normal stored, and what does uneven scale do to it?
 
 ## Where else?
 
-Where else would the same wrong assumption cause an error?
+Where else does a local surface normal need to face the world correctly?
 
 <details><summary>A few answers</summary>
 
-Painting at a UV; Picking an instance.
+Surface markers, decals on scaled parts, or a light aligned with a hit face.
 
 </details>

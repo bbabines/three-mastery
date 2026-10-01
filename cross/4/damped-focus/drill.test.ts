@@ -1,5 +1,5 @@
 import { answered, expectUnchanged, expectVector } from '@harness/check';
-import { BoxGeometry, Mesh, MeshBasicMaterial, Object3D, PerspectiveCamera, Vector3 } from 'three';
+import { Box3, BoxGeometry, Mesh, MeshBasicMaterial, Object3D, PerspectiveCamera, Sphere, Vector3 } from 'three';
 import { describe, expect, it } from 'vitest';
 import { focusStep } from './drill';
 
@@ -7,7 +7,9 @@ describe('damped clicked-part focus', () => {
   const makePart = (size: number) => {
     const parent = new Object3D();
     parent.position.set(4,1,-2);
+    parent.rotation.y = 0.35;
     const child = new Mesh(new BoxGeometry(size,1,1),new MeshBasicMaterial());
+    child.position.set(0.8, 0.5, -0.3);
     parent.add(child);
     return parent;
   };
@@ -15,9 +17,12 @@ describe('damped clicked-part focus', () => {
     const camera = new PerspectiveCamera(50,1,0.1,100);
     camera.position.set(0,2,8);
     const current = new Vector3();
-    const result = answered(focusStep(camera,current,makePart(2),0.4));
-    expect(result.target.x).toBeGreaterThan(0);
-    expect(result.target.x).toBeLessThan(4);
+    const part = makePart(2);
+    const result = answered(focusStep(camera,current,part,0.4));
+    const center = new Box3().setFromObject(part, true).getBoundingSphere(new Sphere()).center;
+    expect(result.target.length()).toBeGreaterThan(0);
+    expect(result.target.length()).toBeLessThan(center.length());
+    expect(result.target.clone().normalize().distanceTo(center.normalize())).toBeLessThan(1e-6);
     expectUnchanged(current,new Vector3(),'target');
     expectVector(camera.position,new Vector3(0,2,8));
   });

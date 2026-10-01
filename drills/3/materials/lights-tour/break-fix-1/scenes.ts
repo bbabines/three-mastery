@@ -2,13 +2,26 @@ import { attempt, overlay } from '@harness/lesson';
 import type { SceneSetup } from '@harness/scene';
 import * as THREE from 'three';
 import { ceilingPanel } from './drill';
-export const preview: SceneSetup = ({ scene, camera, controls, container, renderer }) => {
- camera.position.set(0, 1.5, 3); controls.target.set(0, .6, 0);
- const sample = new THREE.MeshStandardMaterial({color:'#b5824c'});
- const mesh = new THREE.Mesh<THREE.SphereGeometry, THREE.Material>(new THREE.SphereGeometry(.6,32,16),sample);
- mesh.position.y=.65; scene.add(mesh);
- scene.add(new THREE.Mesh(new THREE.PlaneGeometry(2,2),new THREE.MeshStandardMaterial({color:'#555555'})));
- const result=attempt('ceilingPanel',()=>ceilingPanel(1.5,1.5));
- const readout=overlay(container,'readout');
- readout.textContent=result.ok ? (mesh.material=result.value.surface,scene.add(result.value.light), `surface: ${result.value.surface.type}\nsoftbox: ${result.value.light.width} × ${result.value.light.height}`) : result.note;
+export const preview: SceneSetup = ({ scene, camera, controls, container }) => {
+  camera.position.set(2.3, 2.8, 3.5);
+  controls.target.set(0, 1, 0);
+  for (const child of [...scene.children]) if (child instanceof THREE.HemisphereLight) scene.remove(child);
+  const table = new THREE.Mesh<THREE.PlaneGeometry, THREE.Material>(
+    new THREE.PlaneGeometry(2.5, 1.8), new THREE.MeshStandardMaterial({ color: '#553923' }),
+  );
+  table.rotation.x = -Math.PI / 2;
+  table.position.y = 0.2;
+  scene.add(table);
+  const panel = new THREE.Mesh(
+    new THREE.PlaneGeometry(1.5, 1.5),
+    new THREE.MeshBasicMaterial({ color: '#e8efff', side: THREE.DoubleSide }),
+  );
+  panel.rotation.x = -Math.PI / 2;
+  panel.position.y = 2;
+  scene.add(panel);
+  const result = attempt('ceilingPanel', () => ceilingPanel(1.5, 1.5));
+  if (result.ok) { table.material = result.value.surface; scene.add(result.value.light); }
+  overlay(container, 'readout').textContent = result.ok
+    ? `Ceiling panel: visible\nTable surface: ${result.value.surface.type}\nThe tabletop should receive its area light.`
+    : result.note;
 };

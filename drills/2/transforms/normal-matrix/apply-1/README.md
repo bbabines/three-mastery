@@ -9,15 +9,15 @@ lenses: [space]
 misconceptions: [transforms.normal-matrix/normals-like-directions]
 ---
 
-# Normal matrix: decide whether an unevenly scaled face points toward a world-space viewer, using its correct world normal
+# Normal matrix: face the viewer
 
-> **The job:** Decide whether an unevenly scaled face points toward a world-space viewer, using its correct world normal.
+> **The job:** Decide if a stretched face points toward a viewer.
 
 ## Task
 
-Decide whether an unevenly scaled face points toward a world-space viewer, using its correct world normal.
+A part has unequal scale, so its face normal cannot be transformed like an ordinary direction. `faceToward(part, localNormal, worldView)` returns true when the corrected world normal points toward the viewer direction; zero dot counts as not facing. Leave both vectors unchanged.
 
-Write `faceToward(part, localNormal, worldView)` for the behavior above. Save the starter to update the scene.
+Turn the stretched panel. The readout should say front when its corrected normal points toward the yellow viewer arrow.
 
 <div data-scene="demo"></div>
 
@@ -25,10 +25,11 @@ Write `faceToward(part, localNormal, worldView)` for the behavior above. Save th
 
 | Value | Space or units |
 | --- | --- |
-| `part` | Its local frame is relative to its parent |
-| `localNormal` | Part local space |
-| `worldView` | World space |
-| Answer | Scalar or object described in the Task |
+| `part` | Local frame under a parent |
+| `localNormal` | Part local direction |
+| `worldView` | World direction toward viewer |
+| Answer | Boolean: front-facing or not |
+
 
 ## Your code
 
@@ -38,20 +39,20 @@ Write it in `drills/2/transforms/normal-matrix/apply-1/drill.ts`. Check it with:
 
 ## The check
 
-It passes when `faceToward` does the stated job for the scene and the other cases in the test. The test exercises the values and spaces named above.
+The check uses a tilted, unequally scaled part and viewer directions on both sides. It checks input vectors are unchanged.
 
 <details><summary>Hint</summary>
 
-Use the method from the normal matrix page, and check which space the result belongs to.
+Use a normal matrix from the current world transform. The ordinary upper-left matrix bends a face normal incorrectly under uneven scale.
 
 </details>
 
 ## Where else?
 
-Where else would the same operation help when a part moves or turns?
+Where else do corrected face normals matter?
 
 <details><summary>A few answers</summary>
 
-Lighting a squashed object. Face normal to world.
+Back-face picking. Lighting a stretched mesh. Rim effects.
 
 </details>

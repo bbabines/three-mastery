@@ -9,15 +9,15 @@ lenses: []
 misconceptions: [geometry.buffer-attribute/array-index]
 ---
 
-# Buffer attribute: find the faulty result
+# Buffer attribute: the wrong vertex
 
-> **The job:** A marker placed on vertex 2 lands near vertex 0.
+> **The job:** Read the XYZ position of a named vertex.
 
 ## Task
 
-A marker placed on vertex 2 lands near vertex 0. Read XYZ by vertex number from an attribute whose flat array stores three numbers per vertex.
+`vertexAt(positions, vertexIndex)` returns a new `Vector3` for one vertex in a position attribute with three numbers per vertex. The starter treats a vertex index as an offset into the flat number array, so a marker aimed at vertex 2 lands near vertex 0. Do not change the attribute.
 
-Fix `vertexAt` in `drill.ts`. The scene shows the current result alongside a reference; they should agree after the repair.
+The scene marks the chosen vertex. Your blue marker should land on its yellow reference.
 
 <div data-scene="demo"></div>
 
@@ -29,20 +29,20 @@ Fix `drill.ts`, write one sentence in `cause.md`, and replace the placeholder in
 
 ## The check
 
-The acceptance test covers more than the scene pose. Your check must fail on the original bug and pass after the fix, using behavior instead of looking for a particular line of code.
+The acceptance test reads several vertices with distinct coordinates and checks the input stays unchanged. Your check should reject flat-array indexing by vertex number.
 
 <details><summary>Hint</summary>
 
-Compare the named spaces and the operation from the buffer attribute page.
+The buffer-attribute page shows that an attribute's `getX`, `getY`, and `getZ` accept vertex numbers, while its underlying array stores components.
 
 </details>
 
 ## Where else?
 
-Where else would the same wrong assumption cause an error?
+Where else would confusing vertex number with array offset move a result?
 
 <details><summary>A few answers</summary>
 
-A model editor, an interactive viewer, or a check before export.
+Mesh inspection, placing a joint on a vertex, or labeling a picked corner.
 
 </details>

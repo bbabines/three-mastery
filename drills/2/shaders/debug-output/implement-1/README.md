@@ -15,7 +15,7 @@ misconceptions: [shaders.debug-output/final-color-only]
 
 ## Task
 
-Output repeating UV values directly as red and green so seams and mirrored islands become visible. Return a working `ShaderMaterial`. The scene renders the material on a plane; the tests inspect its inputs and compile it in Chromium.
+Output repeating UV values directly as red and green so seams and mirrored islands become visible. Write `uvDebug()` so repeating UV values appear as red and green without lighting or color conversion.
 
 <div data-scene="preview"></div>
 
@@ -38,7 +38,7 @@ npm run drill -- drills/2/shaders/debug-output/implement-1
 
 ## The check
 
-The Node check verifies the shader's data path. The browser check compiles and draws it on a WebGL canvas.
+The Node test checks the UV output path. The browser test reads red and green bands at different horizontal and vertical pixels.
 
 <details><summary>Hint</summary> Intermediate UVs are valid visible output; they do not need final lighting. </details>
 
@@ -46,4 +46,4 @@ The Node check verifies the shader's data path. The browser check compiles and d
 
 How could a UV color reveal the seam on a mirrored texture island?
 
-<details><summary>A starting point</summary> Visualize one intermediate value before restoring the finished fragment color. </details>
+<details><summary>A few answers</summary> A mirrored island reverses the direction of its color ramp, exposing the boundary even when the texture appears continuous. </details>

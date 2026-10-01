@@ -29,7 +29,9 @@ Try the scene. The readout changes when your function gives an answer.
 
 | Value | Space |
 | --- | --- |
-| Inputs and answer | World space unless named otherwise in the task. |
+| Pointer | Canvas NDC, from −1 to +1 |
+| Camera and objects | World transforms |
+| Ray and hit point | World space |
 
 ## Your code
 
@@ -41,7 +43,7 @@ npm run drill -- drills/2/queries/ray-from-pointer/apply-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The test picks the nearer nested mesh at canvas center and returns no name for a miss.
 
 <details><summary>Hint</summary>
 
@@ -51,4 +53,6 @@ Raycaster.setFromCamera needs NDC and current camera matrices.
 
 ## Where else?
 
-Where else would the same code help? The concept card lists Click, Hover.
+Where else should a pointer ray search nested objects?
+
+<details><summary>A few answers</summary> Hover selection, drag start, or a click on an assembly. </details>

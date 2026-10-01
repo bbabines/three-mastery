@@ -1,18 +1,14 @@
-import { attempt, ball, COLORS, overlay } from '@harness/lesson';
-import type { SceneSetup } from '@harness/scene';
+// The rack moves the child origin; blue must meet the yellow world marker.
+import { COLORS } from '@harness/lesson';
 import * as THREE from 'three';
+import { pointView } from '../../scene-view';
 import { worldOrigin } from './drill';
 
-export const demo: SceneSetup = ({ scene, camera, controls, container }) => {
-  camera.position.set(3.5, 3, 5);
-  controls.target.set(0, 0.5, 0);
-  const subject = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.8, 0.8), new THREE.MeshStandardMaterial({ color: COLORS.blue }));
-  const marker = ball(COLORS.yellow);
-  subject.position.y = 0.5;
-  marker.position.set(1.5, 0.5, 0);
-  scene.add(subject, marker);
-  const readout = overlay(container, 'readout');
-  const parent = new THREE.Group(); parent.position.x = 2; parent.add(subject); scene.add(parent);
-  const result = attempt('worldOrigin', () => worldOrigin(subject));
-  readout.textContent = result.ok ? `worldOrigin: ${JSON.stringify(result.value)?.slice(0, 160)}` : result.note;
-};
+const rack = new THREE.Group();
+const part = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.5, 0.7), new THREE.MeshStandardMaterial({ color: COLORS.orange }));
+rack.add(part); part.position.set(0.8, 0.3, -0.4);
+const move = (degrees: number) => { rack.position.set(0.5, 0.7, 0.2); rack.rotation.y = THREE.MathUtils.degToRad(degrees); };
+const world = (degrees: number) => { move(degrees); return part.position.clone().applyAxisAngle(new THREE.Vector3(0, 1, 0), rack.rotation.y).add(rack.position); };
+export const demo = pointView('worldOrigin', { label: 'rack turn', min: -150, max: 150, step: 5, value: 50 },
+  part.position, (degrees) => { move(degrees); return worldOrigin(part); }, world,
+  (scene, degrees) => { if (!rack.parent) scene.add(rack); move(degrees); });

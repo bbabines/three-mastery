@@ -15,7 +15,7 @@ misconceptions: [shaders.branching-discard/if-free]
 
 ## Task
 
-Cut a circular hole with a fragment-dependent mask, using `discard` only outside the kept area. Return a material that draws the effect on the preview plane. Use readable GLSL and keep the variable spaces explicit.
+Cut a circular hole with a fragment-dependent mask, using `discard` only outside the kept area. Write `circleMask()` to keep pixels inside a UV-centered circle and discard the rest.
 
 <div data-scene="preview"></div>
 
@@ -42,10 +42,12 @@ npm run drill -- drills/2/shaders/branching-discard/apply-1
 
 ## The check
 
-The Node test inspects the data path. The browser test compiles and draws it in WebGL.
+The Node test checks the discard path. The browser test sees an opaque colored center and a discarded transparent corner.
 
 <details><summary>Hint</summary> `discard` removes the fragment but can cost early-depth rejection. </details>
 
 ## Where else?
 
 How would a translucent mask differ from this hard fragment discard?
+
+<details><summary>A few answers</summary> A translucent mask keeps and blends edge pixels; `discard` removes fragments entirely. </details>

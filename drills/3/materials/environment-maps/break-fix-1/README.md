@@ -9,7 +9,7 @@ lenses: []
 misconceptions: [materials.environment-maps/just-background]
 ---
 
-# Environment maps: repair the preview
+# Environment maps: black chrome
 
 > **The job:** Give chrome reflections independent of the visible backdrop.
 

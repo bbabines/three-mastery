@@ -1,18 +1,25 @@
-import { attempt, ball, COLORS, overlay } from '@harness/lesson';
+import { attempt, overlay, showCamera, slider } from '@harness/lesson';
 import type { SceneSetup } from '@harness/scene';
 import * as THREE from 'three';
+import { comparison } from '../../compare';
 import { lensForViewport } from './drill';
 
 export const demo: SceneSetup = ({ scene, camera, controls, container }) => {
-  camera.position.set(3.5, 3, 5);
-  controls.target.set(0, 0.5, 0);
-  const subject = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.8, 0.8), new THREE.MeshStandardMaterial({ color: COLORS.blue }));
-  const marker = ball(COLORS.yellow);
-  subject.position.y = 0.5;
-  marker.position.set(1.5, 0.5, 0);
-  scene.add(subject, marker);
-  const readout = overlay(container, 'readout');
-
-  const result = attempt('lensForViewport', () => lensForViewport(60, 800, 400, 0.1, 100));
-  readout.textContent = result.ok ? `lensForViewport: ${JSON.stringify(result.value)?.slice(0, 160)}` : result.note;
+  camera.position.set(5, 4, 7); controls.target.set(0, 0.5, 0);
+  const lens = new THREE.PerspectiveCamera(60, 1, 0.1, 20);
+  lens.position.set(0, 1, 4); lens.lookAt(0, 1, 0);
+  const helper = showCamera(lens);
+  scene.add(lens, helper);
+  const controlsBar = overlay(container, 'controls');
+  const show = comparison(container, 'Perspective lens: width changes scale');
+  let width = 600;
+  const update = () => {
+    lens.aspect = width / 600; lens.updateProjectionMatrix(); helper.update();
+    const result = attempt('lensForViewport', () => lensForViewport(60, width, 600, 0.1, 20));
+    show(`viewport ${width} × 600 CSS px · vertical FOV 60°`,
+      result.ok ? `projection horizontal scale ${result.value.elements[0].toFixed(2)}` : result.note,
+      `projection horizontal scale ${lens.projectionMatrix.elements[0].toFixed(2)}`);
+  };
+  slider(controlsBar, 'width', { min: 300, max: 1200, step: 100, value: width }, value => { width = value; update(); });
+  update();
 };

@@ -9,7 +9,7 @@ lenses: []
 misconceptions: [materials.lambert/depends-on-viewer]
 ---
 
-# Lambert: the matte surface darkens as the camera walks around even though the light and surface do not move.
+# Lambert: a moving matte shade
 
 > **The job:** Keep diffuse brightness tied to the surface and light, not the viewer.
 

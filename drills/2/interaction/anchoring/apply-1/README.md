@@ -21,7 +21,7 @@ Return true when a world point is in front of the camera and no listed blocker l
 | --- | --- |
 | `labelUnoccluded(world: THREE.Vector3, camera: THREE.Camera, blockers: THREE.Object3D[])` | Whether the label can be seen from the camera. |
 
-Try the scene. The readout changes when your function gives an answer.
+The yellow blocker sits between the camera and the blue price tag. Your answer should hide that tag, but a blocker beyond the tag should leave it visible.
 
 <div data-scene="practice"></div>
 
@@ -41,7 +41,7 @@ npm run drill -- drills/2/interaction/anchoring/apply-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The check verifies that the code hides a tag behind a blocker but not one in front of it. It also rejects an unanswered function.
 
 <details><summary>Hint</summary>
 
@@ -51,4 +51,4 @@ A label can be in front of the camera but behind another mesh.
 
 ## Where else?
 
-Where else would the same code help? The concept card lists Hotspots, Price tags.
+How would this change for a hotspot on an occluded moving part?

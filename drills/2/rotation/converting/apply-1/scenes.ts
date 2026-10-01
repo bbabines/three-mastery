@@ -1,18 +1,9 @@
-import { attempt, ball, COLORS, overlay } from '@harness/lesson';
-import type { SceneSetup } from '@harness/scene';
+// Yellow marks the saved Euler pose; blue shows the quaternion returned by the drill.
 import * as THREE from 'three';
+import { poseView } from '../../scene-view';
 import { orientationFromEuler } from './drill';
 
-export const demo: SceneSetup = ({ scene, camera, controls, container }) => {
-  camera.position.set(3.5, 3, 5);
-  controls.target.set(0, 0.5, 0);
-  const subject = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.8, 0.8), new THREE.MeshStandardMaterial({ color: COLORS.blue }));
-  const marker = ball(COLORS.yellow);
-  subject.position.y = 0.5;
-  marker.position.set(1.5, 0.5, 0);
-  scene.add(subject, marker);
-  const readout = overlay(container, 'readout');
-
-  const result = attempt('orientationFromEuler', () => orientationFromEuler(new THREE.Euler(0.3,0.5,0.2,'ZYX')));
-  readout.textContent = result.ok ? `orientationFromEuler: ${JSON.stringify(result.value)?.slice(0, 160)}` : result.note;
-};
+const angles = (degrees: number) => new THREE.Euler(0.45, THREE.MathUtils.degToRad(degrees), -0.3, 'ZXY');
+export const demo = poseView('orientationFromEuler', { label: 'middle angle', min: -150, max: 150, step: 5, value: 55 },
+  (degrees) => orientationFromEuler(angles(degrees)),
+  (degrees) => new THREE.Quaternion().setFromEuler(angles(degrees)));

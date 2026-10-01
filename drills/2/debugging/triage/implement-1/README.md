@@ -21,7 +21,7 @@ A render probe reports which stages have evidence. Return the earliest failing a
 | --- | --- |
 | `firstFailure(probe: { inScene: boolean; inView: boolean; hasVertices: boolean; hasMaterial: boolean; shaderLinked: boolean })` | The first area to inspect from the probe evidence. |
 
-Try the scene. The readout changes when your function gives an answer.
+The preview reports the first missing stage in one probe.
 
 <div data-scene="practice"></div>
 
@@ -35,7 +35,7 @@ npm run drill -- drills/2/debugging/triage/implement-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The test checks each stage in order and returns ready only when all five are present.
 
 <details><summary>Hint</summary>
 
@@ -45,4 +45,6 @@ Check that the object entered the scene and camera before opening shader logs.
 
 ## Where else?
 
-Where else would the same code help? The concept card lists Black screen, Wrong color.
+What comes before shader debugging for a black screen?
+
+<details><summary>A few answers</summary> Confirm the scene has an object in view with vertices and a material before checking the pipeline. </details>

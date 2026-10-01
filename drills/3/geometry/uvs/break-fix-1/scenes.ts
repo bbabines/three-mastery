@@ -16,5 +16,5 @@ export const demo: SceneSetup = ({ scene, camera, controls, container }) => {
   const mesh = new THREE.Mesh(result.value, materials);
   mesh.position.y = 1;
   scene.add(mesh);
-  readout.textContent = `first face index count: ${result.value.groups[0]?.count ?? 0} (goal: 3)\nfirst face uses green material slot 1`;
+  readout.textContent = `first face group count: ${result.value.groups[0]?.count ?? 0} (goal: 3)\ngreen: decal face; red: remaining face`;
 };

@@ -9,15 +9,15 @@ lenses: [space]
 misconceptions: [transforms.points-vs-directions/apply-matrix-directions]
 ---
 
-# Points vs directions: convert a velocity into world space, keeping the effect of scale on its speed but ignoring translation
+# Points vs directions: carry velocity
 
-> **The job:** Convert a velocity into world space, keeping the effect of scale on its speed but ignoring translation.
+> **The job:** Turn and scale a velocity without adding a position offset.
 
 ## Task
 
-Convert a velocity into world space, keeping the effect of scale on its speed but ignoring translation.
+`worldVelocity(localVelocity, transform)` returns the velocity after the matrix’s turn and scale. Velocity has no location, so translation must not affect it. Keep its speed change from scale, and leave both inputs unchanged.
 
-Write `worldVelocity(localVelocity, transform)` for the behavior above. Save the starter to update the scene.
+The blue velocity arrow should match yellow after the part turns and stretches.
 
 <div data-scene="demo"></div>
 
@@ -25,9 +25,10 @@ Write `worldVelocity(localVelocity, transform)` for the behavior above. Save the
 
 | Value | Space or units |
 | --- | --- |
-| `localVelocity` | Part local units per second |
-| `transform` | Saved transform between named spaces |
-| Answer | World space |
+| `localVelocity` | Model local displacement per time |
+| `transform` | Model local to world transform |
+| Answer | World displacement per time |
+
 
 ## Your code
 
@@ -37,20 +38,20 @@ Write it in `drills/2/transforms/points-vs-directions/apply-1/drill.ts`. Check i
 
 ## The check
 
-It passes when `worldVelocity` does the stated job for the scene and the other cases in the test. The test exercises the values and spaces named above.
+The check uses a large translation and unequal scale. It compares the full vector, including speed, and checks the inputs are unchanged.
 
 <details><summary>Hint</summary>
 
-Use the method from the points vs directions page, and check which space the result belongs to.
+Use only the linear part of the matrix for velocity. `transformDirection` removes scale by normalizing, so it loses speed.
 
 </details>
 
 ## Where else?
 
-Where else would the same operation help when a part moves or turns?
+Where else do transformed displacements keep scale?
 
 <details><summary>A few answers</summary>
 
-Transforming a hit point. Transforming a velocity.
+Conveyor motion. Particle velocity. A stretchable rig’s movement.
 
 </details>

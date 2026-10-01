@@ -17,11 +17,13 @@ misconceptions: []
 
 Set a material opacity for a fade, enable blending only when alpha is below one, and disable depth writes during the fade. Return the material.
 
+When the `transparent` flag changes after the material has drawn, set `needsUpdate` so three.js uses the new blend program.
+
 | Function | Return |
 | --- | --- |
 | `fadeMaterial(material: THREE.MeshBasicMaterial, alpha: number)` | The material configured for the current fade alpha. |
 
-Try the scene. The readout changes when your function gives an answer.
+Fade the blue panel out and back in. Transparent frames should stop writing depth; the opaque endpoint should restore it.
 
 <div data-scene="practice"></div>
 
@@ -39,7 +41,7 @@ npm run drill -- drills/2/gpu/blending/apply-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The check verifies that the code clamps alpha and restores opaque depth writes at the end. It also rejects an unanswered function.
 
 <details><summary>Hint</summary>
 
@@ -49,4 +51,4 @@ Transparent objects sort per object, so depth-writing glass often hides another 
 
 ## Where else?
 
-Where else would the same code help? The concept card lists Glass, Fades.
+Where would a fading overlay need depth testing without writing depth?

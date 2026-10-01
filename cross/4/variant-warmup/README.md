@@ -11,7 +11,7 @@ misconceptions: []
 
 # Hitch on the first variant switch
 
-> **The job:** combine ideas from several domains in one small piece of code.
+> **The job:** Prepare each finish for its first draw, then put the original finish back.
 
 ## Task
 
@@ -37,10 +37,16 @@ The check records which material was drawn at each render call and verifies the 
 
 <details><summary>Hint</summary>
 
-Use the relevant three.js methods shown on the concept pages. Check the behavior rather than only the code shape.
+A completed download can still leave first-draw GPU work. What happens when each finish is drawn once?
 
 </details>
 
 ## Where else?
 
-Where else would this choice appear in a product viewer or tool?
+What else can hitch the first time it appears?
+
+<details><summary>A few answers</summary>
+
+Opening a material picker, enabling a new light setup, or showing a hidden high-resolution variant.
+
+</details>

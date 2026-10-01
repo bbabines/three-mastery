@@ -9,15 +9,15 @@ lenses: [cost]
 misconceptions: []
 ---
 
-# Render targets: find the faulty result
+# Render targets: draw a thumbnail and keep the main canvas active
 
-> **The job:** After drawing a product thumbnail offscreen, the main canvas stays blank.
+> **The job:** Draw a thumbnail and keep the main canvas active.
 
 ## Task
 
-After drawing a product thumbnail offscreen, the main canvas stays blank. Restore the default framebuffer after rendering to the target.
+After an offscreen product thumbnail is drawn, the main canvas stays blank.
 
-Fix `captureThumbnail` in `drill.ts`. The scene shows the current result alongside a reference; they should agree after the repair.
+Fix the function in `drill.ts`. The blue product should appear on the main canvas after the thumbnail draw.
 
 <div data-scene="demo"></div>
 
@@ -33,7 +33,7 @@ Fix `drill.ts`, write one sentence in `cause.md`, and replace the placeholder in
 
 ## The check
 
-The acceptance test covers more than the scene pose. Your check must fail on the original bug and pass after the fix, using behavior instead of looking for a particular line of code.
+After the offscreen render, the default framebuffer must be active for the next canvas draw. Write a short assertion in `check.ts` with a different input. It must reject the starter and accept the repair.
 
 <details><summary>Hint</summary>
 
@@ -43,7 +43,7 @@ Which framebuffer remains bound after the thumbnail draw?
 
 ## Where else?
 
-Where else would the same wrong assumption cause an error?
+Where else would drawing offscreen avoid changing the main canvas?
 
 <details><summary>A few answers</summary>
 

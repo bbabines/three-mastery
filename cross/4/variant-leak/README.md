@@ -11,7 +11,7 @@ misconceptions: []
 
 # Memory climbs after 20 variant swaps
 
-> **The job:** combine ideas from several domains in one small piece of code.
+> **The job:** Release old finish resources that the viewer owns while keeping shared maps alive.
 
 ## Task
 
@@ -37,10 +37,16 @@ The check makes 20 swaps and counts disposal events, including an owned old map 
 
 <details><summary>Hint</summary>
 
-Use the relevant three.js methods shown on the concept pages. Check the behavior rather than only the code shape.
+Owning a resource and currently using it are separate facts. Check both before disposing a map.
 
 </details>
 
 ## Where else?
 
-Where else would this choice appear in a product viewer or tool?
+What other repeated change can leak GPU resources?
+
+<details><summary>A few answers</summary>
+
+Replacing CAD layers, remounting a product route, or cycling through swatches.
+
+</details>

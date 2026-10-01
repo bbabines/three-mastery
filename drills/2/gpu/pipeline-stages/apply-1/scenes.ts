@@ -3,7 +3,7 @@ import type { SceneSetup } from '@harness/scene';
 import * as THREE from 'three';
 import { fragmentOutcome } from './drill';
 
-export const practice: SceneSetup = ({ scene, camera, controls, container, onFrame, renderer }) => {
+export const practice: SceneSetup = ({ scene, camera, controls, container, renderer }) => {
   camera.position.set(3, 3, 5);
   controls.target.set(0, 0.5, 0);
   const marker = ball(COLORS.yellow, 1, 0.22);
@@ -11,9 +11,9 @@ export const practice: SceneSetup = ({ scene, camera, controls, container, onFra
   scene.add(marker);
   const readout = overlay(container, 'readout');
   const candidates = 100;
-  onFrame((_, elapsed) => {
-    marker.position.x = Math.sin(elapsed * 0.8);
+  {
     const result = attempt('fragmentOutcome', () => fragmentOutcome(candidates,18,27));
+    if (result.ok) marker.scale.y = result.value.written / candidates;
     readout.textContent = result.ok ? `candidates: ${result.value.candidates}; writes: ${result.value.written}` : result.note;
-  });
+  }
 };

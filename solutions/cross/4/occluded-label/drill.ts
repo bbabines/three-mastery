@@ -3,7 +3,7 @@ import { Object3D, PerspectiveCamera, Raycaster, Vector3, MathUtils } from 'thre
 
 export interface LabelState { x: number; y: number; worldHeight: number; visible: boolean }
 export function labelState(point: Vector3, camera: PerspectiveCamera, width: number, height: number, pixelsTall: number, blockers: Object3D[]): Answer<LabelState> {
-  camera.updateMatrixWorld(true);
+  camera.updateWorldMatrix(true, false);
   for (const blocker of blockers) blocker.updateWorldMatrix(true, true);
   const view = point.clone().applyMatrix4(camera.matrixWorldInverse);
   const ndc = point.clone().project(camera);

@@ -1,18 +1,28 @@
-import { attempt, ball, COLORS, overlay } from '@harness/lesson';
+import { attempt, COLORS, hideFloorHelpers, overlay, screenTag, slider } from '@harness/lesson';
 import type { SceneSetup } from '@harness/scene';
 import * as THREE from 'three';
+import { comparison } from '../../compare';
 import { ndcToPixel } from './drill';
 
-export const demo: SceneSetup = ({ scene, camera, controls, container }) => {
-  camera.position.set(3.5, 3, 5);
-  controls.target.set(0, 0.5, 0);
-  const subject = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.8, 0.8), new THREE.MeshStandardMaterial({ color: COLORS.blue }));
-  const marker = ball(COLORS.yellow);
-  subject.position.y = 0.5;
-  marker.position.set(1.5, 0.5, 0);
-  scene.add(subject, marker);
-  const readout = overlay(container, 'readout');
-
-  const result = attempt('ndcToPixel', () => ndcToPixel(new THREE.Vector3(0.25,-0.5,0), 800, 600));
-  readout.textContent = result.ok ? `ndcToPixel: ${JSON.stringify(result.value)?.slice(0, 160)}` : result.note;
+export const demo: SceneSetup = ({ scene, container }) => {
+  hideFloorHelpers(scene);
+  const controlsBar = overlay(container, 'controls');
+  const show = comparison(container, 'NDC → CSS label position');
+  const yours = screenTag(container, 'your label', COLORS.blue);
+  const reference = screenTag(container, 'reference', COLORS.green);
+  let ndcY = 0.4;
+  const update = () => {
+    const width = container.clientWidth, height = container.clientHeight;
+    const ndc = new THREE.Vector3(-0.45, ndcY, 0.2);
+    const expectedX = (ndc.x + 1) * width / 2, expectedY = (1 - ndc.y) * height / 2;
+    const result = attempt('ndcToPixel', () => ndcToPixel(ndc.clone(), width, height));
+    reference.style.left = `${expectedX}px`; reference.style.top = `${expectedY}px`;
+    yours.style.display = result.ok ? '' : 'none';
+    if (result.ok) { yours.style.left = `${result.value.x}px`; yours.style.top = `${result.value.y}px`; }
+    show(`NDC y ${ndcY.toFixed(2)}, depth 0.2`,
+      result.ok ? `(${result.value.x.toFixed(0)}, ${result.value.y.toFixed(0)}) CSS px · z ${result.value.z.toFixed(1)}` : result.note,
+      `(${expectedX.toFixed(0)}, ${expectedY.toFixed(0)}) CSS px · z 0.2`);
+  };
+  slider(controlsBar, 'ndc y', { min: -0.8, max: 0.8, step: 0.1, value: ndcY }, value => { ndcY = value; update(); });
+  update();
 };

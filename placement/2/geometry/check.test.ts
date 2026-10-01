@@ -68,10 +68,22 @@ describe('geometry.vertex-normals', () => {
 
 describe('geometry.uvs', () => {
   it('checks uvs', () => {
-    const g=new THREE.PlaneGeometry(); const before=g.getAttribute('uv').getX(0);
-    const shifted=answered(checkUvs(g,new THREE.Vector2(1,0.5)));
-    expect(shifted.getAttribute('uv').getX(0)).toBeCloseTo(before+1);
-    expect(g.getAttribute('uv').getX(0)).toBe(before);
+    const g = new THREE.PlaneGeometry();
+    const source = g.getAttribute('uv');
+    const sourceValues = Array.from({ length: g.index!.count }, (_, i) => {
+      const vertex = g.index!.getX(i);
+      return new THREE.Vector2(source.getX(vertex), source.getY(vertex));
+    });
+    const offset = new THREE.Vector2(1, 0.5);
+    const shifted = answered(checkUvs(g, offset));
+    const output = shifted.getAttribute('uv');
+    expect(shifted.index).toBeNull();
+    for (let i = 0; i < sourceValues.length; i++) {
+      const expected = sourceValues[i].clone().add(i < 3 ? offset : new THREE.Vector2());
+      expect(new THREE.Vector2(output.getX(i), output.getY(i)).distanceTo(expected)).toBeLessThan(1e-6);
+    }
+    expect(g.index!.count).toBe(6);
+    expect(source.getX(g.index!.getX(0))).toBe(sourceValues[0].x);
   });
 });
 

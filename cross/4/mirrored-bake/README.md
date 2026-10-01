@@ -11,7 +11,7 @@ misconceptions: []
 
 # Mirrored variant renders inside-out after baking
 
-> **The job:** combine ideas from several domains in one small piece of code.
+> **The job:** Bake a mirrored part without turning its front faces inward.
 
 ## Task
 
@@ -33,10 +33,16 @@ The check raycasts the front of both indexed and non-indexed triangles after a m
 
 <details><summary>Hint</summary>
 
-Use the relevant three.js methods shown on the concept pages. Check the behavior rather than only the code shape.
+A negative determinant reverses handedness. Inspect what that does to each triangle and all attributes at its corners.
 
 </details>
 
 ## Where else?
 
-Where else would this choice appear in a product viewer or tool?
+Where else can a baked mirror invert front faces?
+
+<details><summary>A few answers</summary>
+
+A left-hand part variant, an imported mirrored axis system, or a reflected prop.
+
+</details>

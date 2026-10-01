@@ -2,7 +2,7 @@ import { answered } from '@harness/check';
 import * as THREE from 'three';
 import { expect, it, vi } from 'vitest';
 import { screenGradient } from './drill';
-it('compiles and draws the shader in WebGL', () => {
+it('uses fragment coordinates to make a left-to-right gradient', () => {
  const errors = vi.spyOn(console, 'error');
  const renderer = new THREE.WebGLRenderer({ antialias: false });
  renderer.setSize(16,16);
@@ -12,8 +12,13 @@ it('compiles and draws the shader in WebGL', () => {
  const camera = new THREE.PerspectiveCamera(60,1,.1,10); camera.position.z = 2;
  const target = new THREE.WebGLRenderTarget(16,16);
  renderer.setRenderTarget(target); renderer.render(scene,camera);
- const pixel = new Uint8Array(4); renderer.readRenderTargetPixels(target,8,8,1,1,pixel);
- expect(pixel[3]).toBe(255);
+ const left = new Uint8Array(4), right = new Uint8Array(4);
+ renderer.readRenderTargetPixels(target,4,8,1,1,left);
+ renderer.readRenderTargetPixels(target,12,8,1,1,right);
+ expect(left[3]).toBe(255);
+ expect(right[3]).toBe(255);
+ expect(right[0]).toBeGreaterThan(left[0] + 60);
+ expect(right[1]).toBeLessThan(10);
  expect(errors.mock.calls.flat().join(' ')).not.toMatch(/THREE.WebGLProgram: Shader Error|VALIDATE_STATUS false/);
  errors.mockRestore(); target.dispose(); geometry.dispose(); material.dispose(); renderer.dispose();
 });

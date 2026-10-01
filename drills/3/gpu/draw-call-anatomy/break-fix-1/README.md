@@ -9,15 +9,15 @@ lenses: [cost]
 misconceptions: []
 ---
 
-# Draw call anatomy: find the faulty result
+# Draw call anatomy: estimate main and shadow draw submissions
 
-> **The job:** A performance estimate says ten submissions although the material groups and shadow pass multiply them.
+> **The job:** Estimate main and shadow draw submissions.
 
 ## Task
 
-A performance estimate says ten submissions although the material groups and shadow pass multiply them. Count each visible group in the main pass and each shadow-light pass.
+The estimated draw count is much lower than a capture of grouped, shadow-casting parts.
 
-Fix `drawSubmissions` in `drill.ts`. The scene shows the current result alongside a reference; they should agree after the repair.
+Fix the function in `drill.ts`. The blue submission bar should reach the yellow outline.
 
 <div data-scene="demo"></div>
 
@@ -33,7 +33,7 @@ Fix `drill.ts`, write one sentence in `cause.md`, and replace the placeholder in
 
 ## The check
 
-The acceptance test covers more than the scene pose. Your check must fail on the original bug and pass after the fix, using behavior instead of looking for a particular line of code.
+Count visible material groups in the main pass and each shadow pass; hidden groups add nothing. Write a short assertion in `check.ts` with a different input. It must reject the starter and accept the repair.
 
 <details><summary>Hint</summary>
 
@@ -43,7 +43,7 @@ How many material groups and eligible passes submit draws for one visible mesh?
 
 ## Where else?
 
-Where else would the same wrong assumption cause an error?
+How would a shadow pass change a scene with many small parts?
 
 <details><summary>A few answers</summary>
 

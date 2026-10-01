@@ -15,34 +15,45 @@ describe('rotation.euler-order', () => {
 });
 
 describe('rotation.gimbal-lock', () => {
-  it('checks gimbal lock', () => {
-    const a=new THREE.Quaternion().setFromEuler(new THREE.Euler(0.2,2.9,0,'YXZ'));
-    const b=new THREE.Quaternion().setFromEuler(new THREE.Euler(1.4,-2.9,0,'YXZ'));
-    const before=a.clone();
-    for (const t of [0,0.25,0.5,0.75,1]) {
-      const actual=answered(checkGimbalLock(a,b,t)); const expected=a.clone().slerp(b,t);
+  it('takes the shortest quaternion arc through a steep camera turn', () => {
+    const start = new THREE.Quaternion().setFromEuler(new THREE.Euler(1.4, 2.9, 0.2, 'YXZ'));
+    const end = new THREE.Quaternion().setFromEuler(new THREE.Euler(1.5, -2.8, -0.2, 'YXZ'));
+    const beforeStart = start.clone(), beforeEnd = end.clone();
+    for (const fraction of [0, 0.25, 0.5, 0.75, 1]) {
+      const actual = answered(checkGimbalLock(start, end, fraction));
+      const expected = start.clone().slerp(end, fraction);
       expect(actual.angleTo(expected)).toBeLessThan(1e-6);
     }
-    expect(a.angleTo(before)).toBeLessThan(1e-6);
+    expect(start.equals(beforeStart)).toBe(true);
+    expect(end.equals(beforeEnd)).toBe(true);
   });
 });
 
 describe('rotation.axis-angle', () => {
-  it('checks axis angle', () => {
-    const point=new THREE.Vector3(4,0,2), center=new THREE.Vector3(1,1,-2), axis=new THREE.Vector3(1,2,1).normalize(), before=point.clone();
-    const expected=point.clone().sub(center).applyQuaternion(new THREE.Quaternion().setFromAxisAngle(axis,0.7)).add(center);
-    expect(answered(checkAxisAngle(point,center,axis,0.7)).distanceTo(expected)).toBeLessThan(1e-6);
-    expect(point.equals(before)).toBe(true);
+  it('turns around an off-center, tilted hinge without changing any input', () => {
+    const point = new THREE.Vector3(4, 0, 2);
+    const center = new THREE.Vector3(1, 1, -2);
+    const axis = new THREE.Vector3(1, 2, 1);
+    const before = [point.clone(), center.clone(), axis.clone()];
+    for (const angle of [0.7, -0.4]) {
+      const expected = point.clone().sub(center).applyQuaternion(
+        new THREE.Quaternion().setFromAxisAngle(axis.clone().normalize(), angle),
+      ).add(center);
+      expect(answered(checkAxisAngle(point, center, axis, angle)).distanceTo(expected)).toBeLessThan(1e-6);
+    }
+    expect(point.equals(before[0]) && center.equals(before[1]) && axis.equals(before[2])).toBe(true);
   });
 });
 
 describe('rotation.quaternions', () => {
-  it('checks quaternions', () => {
-    const orientation=new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,1,0),0.7);
-    const axis=new THREE.Vector3(1,0,0), before=orientation.clone();
-    const actual=answered(checkQuaternions(orientation,axis,0.5));
-    const expected=new THREE.Object3D(); expected.quaternion.copy(orientation); expected.rotateOnAxis(axis,0.5);
-    expect(actual.angleTo(expected.quaternion)).toBeLessThan(1e-6); expect(orientation.angleTo(before)).toBe(0);
+  it('turns around a local axis after the current pose and preserves both inputs', () => {
+    const orientation = new THREE.Quaternion().setFromEuler(new THREE.Euler(0.4, 0.7, -0.2));
+    const axis = new THREE.Vector3(2, 0, 1);
+    const beforePose = orientation.clone(), beforeAxis = axis.clone();
+    const expected = orientation.clone().multiply(new THREE.Quaternion().setFromAxisAngle(axis.clone().normalize(), 0.5));
+    expect(answered(checkQuaternions(orientation, axis, 0.5)).angleTo(expected)).toBeLessThan(1e-6);
+    expect(orientation.angleTo(beforePose)).toBe(0);
+    expect(axis.equals(beforeAxis)).toBe(true);
   });
 });
 
@@ -63,13 +74,16 @@ describe('rotation.rotation-basis', () => {
 });
 
 describe('rotation.lookat-up', () => {
-  it('checks lookat up', () => {
-    const from=new THREE.Vector3(2,1,3), target=new THREE.Vector3(-1,2,0), up=new THREE.Vector3(0,1,0); const before=from.clone();
-    const q=answered(checkLookatUp(from,target,up));
-    expect(new THREE.Vector3(0,0,1).applyQuaternion(q).angleTo(target.clone().sub(from))).toBeLessThan(1e-6);
-    expect(from.equals(before)).toBe(true);
-    const q2=answered(checkLookatUp(from,target,new THREE.Vector3(1,1,0).normalize()));
-    expect(q2.angleTo(q)).toBeGreaterThan(0.01);
+  it('aims ordinary +Z with a tilted up without changing inputs', () => {
+    const from = new THREE.Vector3(2, 1, 3);
+    const target = new THREE.Vector3(-1, 2, 0);
+    const up = new THREE.Vector3(1, 2, -0.5);
+    const before = [from.clone(), target.clone(), up.clone()];
+    const expected = new THREE.Object3D();
+    expected.position.copy(from); expected.up.copy(up); expected.lookAt(target);
+    const actual = answered(checkLookatUp(from, target, up));
+    expect(actual.angleTo(expected.quaternion)).toBeLessThan(1e-6);
+    expect(from.equals(before[0]) && target.equals(before[1]) && up.equals(before[2])).toBe(true);
   });
 });
 

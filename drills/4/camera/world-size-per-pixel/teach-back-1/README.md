@@ -11,7 +11,7 @@ misconceptions: [camera.world-size-per-pixel/constant-size]
 
 # A constant-size gizmo: explain the scale
 
-> **The job:** explain a real 3D decision in five plain sentences.
+> **The job:** Explain how to keep a perspective gizmo 32 CSS pixels tall.
 
 ## Task
 

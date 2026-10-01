@@ -29,7 +29,9 @@ Try the scene. The readout changes when your function gives an answer.
 
 | Value | Space |
 | --- | --- |
-| Inputs and answer | World space unless named otherwise in the task. |
+| Hit face normal | The mesh's own space |
+| Object transform | Maps the mesh into world space |
+| Returned normal | World direction |
 
 ## Your code
 
@@ -41,7 +43,7 @@ npm run drill -- drills/2/queries/intersection-anatomy/implement-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The test uses rotation and uneven scale, compares to the normal matrix, and checks that the input normal stays unchanged.
 
 <details><summary>Hint</summary>
 
@@ -51,4 +53,6 @@ A direction transform is wrong for a normal under non-uniform scale.
 
 ## Where else?
 
-Where else would the same code help? The concept card lists Painting at a UV, Picking an instance.
+Where else does a local face normal need a world direction?
+
+<details><summary>A few answers</summary> Surface markers, decals, or aligning an object to a hit. </details>

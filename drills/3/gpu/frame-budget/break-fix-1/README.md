@@ -9,15 +9,15 @@ lenses: [cost]
 misconceptions: []
 ---
 
-# Frame budget: find the faulty result
+# Frame budget: judge frame headroom when CPU and GPU work overlap
 
-> **The job:** A frame is marked over budget when CPU submission and GPU execution each fit separately.
+> **The job:** Judge frame headroom when CPU and GPU work overlap.
 
 ## Task
 
-A frame is marked over budget when CPU submission and GPU execution each fit separately. They overlap, so compare the slower side with the display budget.
+A dashboard marks a frame over budget although its CPU and GPU spans each fit the display budget.
 
-Fix `headroomMs` in `drill.ts`. The scene shows the current result alongside a reference; they should agree after the repair.
+Fix the function in `drill.ts`. The blue headroom bar should meet the yellow expected value.
 
 <div data-scene="demo"></div>
 
@@ -33,7 +33,7 @@ Fix `drill.ts`, write one sentence in `cause.md`, and replace the placeholder in
 
 ## The check
 
-The acceptance test covers more than the scene pose. Your check must fail on the original bug and pass after the fix, using behavior instead of looking for a particular line of code.
+Compare the slower overlapping CPU/GPU span with the refresh budget, including when the limiting side changes. Write a short assertion in `check.ts` with a different input. It must reject the starter and accept the repair.
 
 <details><summary>Hint</summary>
 
@@ -43,7 +43,7 @@ Which of the overlapping CPU and GPU times limits the next frame?
 
 ## Where else?
 
-Where else would the same wrong assumption cause an error?
+Why can two individually short CPU and GPU spans still fill the frame?
 
 <details><summary>A few answers</summary>
 

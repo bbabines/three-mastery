@@ -9,15 +9,15 @@ lenses: [space]
 misconceptions: [interaction.drag-on-plane/hit-is-position]
 ---
 
-# Drag on plane: find the faulty result
+# Drag on plane: keep the grabbed spot under the pointer
 
-> **The job:** A dragged part snaps its origin under the cursor as soon as the drag starts.
+> **The job:** Keep the grabbed spot under the pointer.
 
 ## Task
 
-A dragged part snaps its origin under the cursor as soon as the drag starts. Return the part position from the plane hit while keeping the original grab offset.
+A part jumps as soon as a wall drag starts: the grabbed spot no longer stays under the pointer.
 
-Fix `dragPosition` in `drill.ts`. The scene shows the current result alongside a reference; they should agree after the repair.
+Fix the function in `drill.ts`. Follow the red wall hit. The blue part should keep the same offset as the yellow reference.
 
 <div data-scene="demo"></div>
 
@@ -36,7 +36,7 @@ Fix `drill.ts`, write one sentence in `cause.md`, and replace the placeholder in
 
 ## The check
 
-The acceptance test covers more than the scene pose. Your check must fail on the original bug and pass after the fix, using behavior instead of looking for a particular line of code.
+The part origin must equal the wall hit plus the saved grab offset, without changing either input. Write a short assertion in `check.ts` with a different input. It must reject the starter and accept the repair.
 
 <details><summary>Hint</summary>
 
@@ -46,7 +46,7 @@ Where was the object origin relative to the point initially grabbed?
 
 ## Where else?
 
-Where else would the same wrong assumption cause an error?
+How would the same grab-offset rule work for a floor drag?
 
 <details><summary>A few answers</summary>
 

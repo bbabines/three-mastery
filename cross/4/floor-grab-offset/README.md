@@ -11,7 +11,7 @@ misconceptions: []
 
 # Drag a part across the floor with a grab offset
 
-> **The job:** make one decision that needs ideas from several parts of 3D work.
+> **The job:** Move a dragged part across the floor without snapping its origin to the pointer.
 
 ## Task
 
@@ -40,10 +40,16 @@ The check uses an off-center grab, a sloping ray, and a parallel ray. It also ch
 
 <details><summary>Hint</summary>
 
-Use the relevant three.js method from the concept pages. Keep every value in the same space before combining it.
+What gap separates the grabbed point from the part origin at pointer-down, and should that gap change?
 
 </details>
 
 ## Where else?
 
-Where else would this same decision appear in a product viewer or tool?
+When else does an off-center grab matter?
+
+<details><summary>A few answers</summary>
+
+Dragging a wall-mounted handle, a 3D slider thumb, or a gizmo grabbed away from its pivot.
+
+</details>

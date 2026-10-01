@@ -21,7 +21,7 @@ Configure a material for glass with the given opacity. Enable transparency, keep
 | --- | --- |
 | `glassMaterial(material: THREE.MeshBasicMaterial, opacity: number)` | The blended, depth-tested, non-depth-writing material. |
 
-Try the scene. The readout changes when your function gives an answer.
+Look through the blue glass at the yellow part. The glass should blend while leaving depth available for the part behind it.
 
 <div data-scene="practice"></div>
 
@@ -39,7 +39,7 @@ npm run drill -- drills/2/gpu/blending/implement-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The check verifies that the code keeps a translucent surface from writing opaque depth. It also rejects an unanswered function.
 
 <details><summary>Hint</summary>
 
@@ -49,4 +49,4 @@ three.js leaves depthWrite on unless you set it false for transparent layers.
 
 ## Where else?
 
-Where else would the same code help? The concept card lists Glass, Overlays.
+Where would a fading overlay need depth testing without writing depth?

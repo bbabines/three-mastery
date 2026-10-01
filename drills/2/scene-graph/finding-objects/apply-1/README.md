@@ -36,7 +36,7 @@ npm run drill -- drills/2/scene-graph/finding-objects/apply-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The tests find both meshes with a repeated name, ignore a Group with that name, and remove adjacent tagged helpers.
 
 <details><summary>Hint</summary>
 
@@ -46,4 +46,6 @@ Collect objects first, then remove them after traversal.
 
 ## Where else?
 
-Where else would the same code help? The concept card lists Finding a node, Locating lights.
+Where else do repeated names and changing child lists matter?
+
+<details><summary>A few answers</summary> Imported parts, helper cleanup, or a scene-tree search. </details>

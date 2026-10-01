@@ -9,5 +9,9 @@ describe('geometry.tangent-space', () => {
     expect(answered(normalFromMap(new THREE.Vector3(0.5,0.5,1),tangent,bitangent,normal)).distanceTo(normal)).toBeLessThan(1e-6);
     const sample=new THREE.Vector3(0.8,0.2,0.9); const expected=new THREE.Vector3(0.6,-0.6,0.8).normalize();
     expect(answered(normalFromMap(sample,tangent,bitangent,normal)).distanceTo(expected)).toBeLessThan(1e-6);
+    expect(sample.equals(new THREE.Vector3(0.8,0.2,0.9))).toBe(true);
+    expect(tangent.equals(new THREE.Vector3(1,0,0))).toBe(true);
+    expect(bitangent.equals(new THREE.Vector3(0,1,0))).toBe(true);
+    expect(normal.equals(new THREE.Vector3(0,0,1))).toBe(true);
   });
 });

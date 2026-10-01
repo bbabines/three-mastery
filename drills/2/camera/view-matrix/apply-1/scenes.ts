@@ -1,18 +1,28 @@
-import { attempt, ball, COLORS, overlay } from '@harness/lesson';
+import { attempt, ball, COLORS, overlay, slider } from '@harness/lesson';
 import type { SceneSetup } from '@harness/scene';
 import * as THREE from 'three';
+import { comparison } from '../../compare';
 import { viewDepth } from './drill';
 
 export const demo: SceneSetup = ({ scene, camera, controls, container }) => {
-  camera.position.set(3.5, 3, 5);
-  controls.target.set(0, 0.5, 0);
-  const subject = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.8, 0.8), new THREE.MeshStandardMaterial({ color: COLORS.blue }));
-  const marker = ball(COLORS.yellow);
-  subject.position.y = 0.5;
-  marker.position.set(1.5, 0.5, 0);
-  scene.add(subject, marker);
-  const readout = overlay(container, 'readout');
-  const viewCamera=new THREE.PerspectiveCamera(); viewCamera.position.set(0,1,3); scene.add(viewCamera);
-  const result = attempt('viewDepth', () => viewDepth(viewCamera, new THREE.Vector3(1,0,0)));
-  readout.textContent = result.ok ? `viewDepth: ${JSON.stringify(result.value)?.slice(0, 160)}` : result.note;
+  camera.position.set(5, 4, 7); controls.target.set(0, 1, 0);
+  const lens = new THREE.PerspectiveCamera();
+  lens.position.set(0, 1, 4);
+  const marker = ball(COLORS.yellow, 1, 0.18);
+  marker.position.set(1, 1, 0);
+  scene.add(marker);
+  const controlsBar = overlay(container, 'controls');
+  const show = comparison(container, 'View depth differs from distance to the marker');
+  let x = 1;
+  const update = () => {
+    marker.position.x = x;
+    lens.updateMatrixWorld();
+    const expected = -marker.position.clone().applyMatrix4(lens.matrixWorldInverse).z;
+    const result = attempt('viewDepth', () => viewDepth(lens, marker.position.clone()));
+    show(`side offset ${x.toFixed(1)} · straight distance ${lens.position.distanceTo(marker.position).toFixed(2)}`,
+      result.ok ? `view depth ${result.value.toFixed(2)}` : result.note,
+      `view depth ${expected.toFixed(2)}`);
+  };
+  slider(controlsBar, 'side offset', { min: -2, max: 2, step: 0.5, value: x }, value => { x = value; update(); });
+  update();
 };

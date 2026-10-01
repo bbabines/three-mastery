@@ -2,15 +2,20 @@ import { answered } from '@harness/check';
 import * as THREE from 'three';
 import { expect, it, vi } from 'vitest';
 import { farOriginGradient } from './drill';
-it('compiles and draws in WebGL', () => {
+it('keeps a far-origin gradient distinct on opposite sides', () => {
  const errors=vi.spyOn(console,'error');
  const renderer=new THREE.WebGLRenderer({antialias:false}); renderer.setSize(16,16);
  const geometry=new THREE.PlaneGeometry(2,2), material=answered(farOriginGradient(100000.0));
  const scene=new THREE.Scene(); scene.add(new THREE.Mesh(geometry,material));
  const camera=new THREE.PerspectiveCamera(60,1,.1,10); camera.position.z=2;
  const target=new THREE.WebGLRenderTarget(16,16); renderer.setRenderTarget(target); renderer.render(scene,camera);
- const pixel=new Uint8Array(4); renderer.readRenderTargetPixels(target,8,8,1,1,pixel);
- expect(pixel[3]).toBe(255);
+ const left=new Uint8Array(4), right=new Uint8Array(4);
+ renderer.readRenderTargetPixels(target,4,8,1,1,left);
+ renderer.readRenderTargetPixels(target,12,8,1,1,right);
+ expect(left[3]).toBe(255);
+ expect(right[3]).toBe(255);
+ expect(left[0]).toBeGreaterThan(200);
+ expect(right[0]).toBeLessThan(20);
  expect(errors.mock.calls.flat().join(' ')).not.toMatch(/THREE.WebGLProgram: Shader Error|VALIDATE_STATUS false/);
  errors.mockRestore(); target.dispose(); geometry.dispose(); material.dispose(); renderer.dispose();
 });

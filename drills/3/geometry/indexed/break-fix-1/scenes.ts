@@ -1,15 +1,42 @@
-import { attempt, ball, COLORS, overlay } from '@harness/lesson';
+import { attempt, choiceButtons, COLORS, overlay } from '@harness/lesson';
 import type { SceneSetup } from '@harness/scene';
 import * as THREE from 'three';
 import { triangleAt } from './drill';
 
 export const demo: SceneSetup = ({ scene, camera, controls, container }) => {
-  camera.position.set(3,3,5); controls.target.set(0,0.5,0);
-  const subject = new THREE.Mesh(new THREE.BoxGeometry(),new THREE.MeshStandardMaterial({color:COLORS.blue}));
-  const marker = ball(COLORS.yellow); subject.position.y=0.5; marker.position.x=1.5; marker.position.y=0.5; scene.add(subject,marker);
-  const readout=overlay(container,'readout');
+  camera.position.set(2.5, 3, 5);
+  controls.target.set(0, 1.3, 0);
+  const geometry = new THREE.BufferGeometry();
+  geometry.setAttribute('position', new THREE.Float32BufferAttribute([
+    -1, 1, 0, 1, 1, 0, 1, 2.4, 0, -1, 2.4, 0,
+    2, 1.2, 0, 2.5, 2.2, 0,
+  ], 3));
+  geometry.setIndex([0, 1, 2, 0, 2, 3]);
+  geometry.computeVertexNormals();
+  scene.add(new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({ color: COLORS.gray, side: THREE.DoubleSide, transparent: true, opacity: 0.5 })));
+  const outline = (color: string) => {
+    const shape = new THREE.LineLoop(new THREE.BufferGeometry(), new THREE.LineBasicMaterial({ color, depthTest: false }));
+    shape.frustumCulled = false;
+    scene.add(shape);
+    return shape;
+  };
+  const yours = outline(COLORS.blue);
+  const reference = outline(COLORS.yellow);
+  const readout = overlay(container, 'readout');
+  const controlsBar = overlay(container, 'controls');
+  const position = geometry.getAttribute('position');
 
-  const got=attempt('triangleAt',()=>triangleAt(new THREE.BoxGeometry(), 1));
-  const want=([new THREE.Vector3(),new THREE.Vector3(),new THREE.Vector3()]);
-  readout.textContent=got.ok?`your result: ${JSON.stringify(got.value)?.slice(0,100)}\nreference: ${JSON.stringify(want)?.slice(0,100)}`:got.note;
+  const update = (triangle: number) => {
+    const result = attempt('triangleAt', () => triangleAt(geometry, triangle));
+    const expected = [0, 1, 2].map((corner) => new THREE.Vector3().fromBufferAttribute(position, geometry.index!.getX(3 * triangle + corner)));
+    reference.geometry.setFromPoints(expected);
+    yours.visible = result.ok;
+    if (!result.ok) { readout.textContent = result.note; return; }
+    yours.geometry.setFromPoints(result.value);
+    readout.textContent = `triangle ${triangle} · blue: your outline · yellow: reference\nindices: ${[0, 1, 2].map(corner => geometry.index!.getX(3 * triangle + corner)).join(', ')}`;
+  };
+  choiceButtons(controlsBar, [
+    { html: 'second face', select: () => update(1) },
+    { html: 'first face', select: () => update(0) },
+  ]);
 };

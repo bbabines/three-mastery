@@ -9,40 +9,49 @@ lenses: []
 misconceptions: [geometry.object-types-tour/instanced-batched-same]
 ---
 
-# Object types and instances: build one instancedmesh for repeated parts that share geometry and material, setting each instance a different pose
+# InstancedMesh: repeat a part
 
-> **The job:** Build one InstancedMesh for repeated parts that share geometry and material, setting each instance a different pose.
+> **The job:** Place repeated copies in one InstancedMesh.
 
 ## Task
 
-Build one `InstancedMesh` for repeated parts that share geometry and material, setting each instance a different pose. Each copy goes one unit farther along X; mark the instance matrices for upload. This is one object and one material for the repeated parts.
+Write `makeRepeatedParts(geometry, material, count)`. Return an InstancedMesh using the supplied geometry and material. Set each instance’s transform so instance 0 is at X=0, instance 1 at X=1, and so on, then mark the instance matrix for upload. Preserve the supplied resources.
 
-Write `makeRepeatedParts(geometry, material, count)` for the behavior above. Save the starter to update the scene.
+Save your code and inspect the scene; compare the blue result with the green reference.
 
 <div data-scene="demo"></div>
 
+## Spaces
+
+| Value | Space or units |
+| --- | --- |
+| `geometry` | Vertex data measured from object itself |
+| `material` | Shared material |
+| `count` | Number of instances |
+| Answer | InstancedMesh with poses in world units |
+
 ## Your code
 
-Write it in `drills/2/geometry/object-types-tour/apply-1/drill.ts`. Check it with:
+Write it in `drills/2/geometry/object-types-tour/apply-1/drill.ts`. Save to update the scene. Check it with:
 
     npm run drill -- drills/2/geometry/object-types-tour/apply-1
 
 ## The check
 
-It passes when `makeRepeatedParts` does the stated job for the scene and the other cases in the test. The test exercises the values and spaces named above.
+One mesh contains the requested number of instances and each instance has its own X position.
 
 <details><summary>Hint</summary>
 
-Use the method from the object types and instances page, and check which space the result belongs to.
+An InstancedMesh shares geometry and material but stores one matrix per instance. The matrices must reach the GPU.
 
 </details>
 
 ## Where else?
 
-Where else would the same operation help when a part moves or turns?
+Where else is instancing useful?
 
 <details><summary>A few answers</summary>
 
-A rack of repeated shelves. A point cloud scan.
+A rack of identical bolts, repeated tiles, or a field of markers.
 
 </details>

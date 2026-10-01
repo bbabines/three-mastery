@@ -1,18 +1,23 @@
-import { Color, LinearSRGBColorSpace, Mesh, MeshBasicMaterial, NoColorSpace, PlaneGeometry, Raycaster, Scene, Vector2, WebGLRenderTarget } from 'three';
+import { Color, DoubleSide, LinearSRGBColorSpace, Mesh, MeshBasicMaterial, NoColorSpace, PlaneGeometry, Raycaster, Scene, Vector2, WebGLRenderTarget } from 'three';
 import { overlay } from '@harness/lesson';
 import type { SceneSetup } from '@harness/scene';
 import { readPickId } from './drill';
 
-export const compare: SceneSetup = ({ camera, renderer, container }) => {
+export const compare: SceneSetup = ({ scene, camera, renderer, container }) => {
   const idColor = new Color().setRGB(19 / 255, 31 / 255, 47 / 255, LinearSRGBColorSpace);
   const dense = new Mesh(new PlaneGeometry(10, 10, 708, 708), new MeshBasicMaterial({ color: idColor, toneMapped: false }));
   dense.rotation.x = -Math.PI / 2;
   const pickScene = new Scene();
   pickScene.add(dense);
+  // Show the ID surface without drawing its million triangles in the normal scene.
+  const preview = new Mesh(new PlaneGeometry(10, 10), new MeshBasicMaterial({ color: 0x315784, side: DoubleSide, transparent: true, opacity: 0.65 }));
+  preview.rotation.x = -Math.PI / 2;
+  preview.position.y = 0.01;
+  scene.add(preview);
   const target = new WebGLRenderTarget(32, 32);
   target.texture.colorSpace = NoColorSpace;
   const readout = overlay(container, 'readout');
-  readout.textContent = 'About 1,002,528 triangles. Compare one center pick.';
+  readout.textContent = 'Blue: preview of the 1,002,528-triangle ID surface. Compare one center pick.';
   const controls = overlay(container, 'controls');
   const button = document.createElement('button');
   button.textContent = 'Compare picks';

@@ -9,15 +9,15 @@ lenses: []
 misconceptions: []
 ---
 
-# Face normals: find the faulty result
+# Face normals: a tilted surface marker
 
-> **The job:** A marker aligned to a hit face tilts after the part is stretched unevenly.
+> **The job:** Keep a face marker perpendicular to a stretched surface.
 
 ## Task
 
-A marker aligned to a hit face tilts after the part is stretched unevenly. Return its geometric face normal in world space.
+`worldFaceNormal(a, b, c, matrixWorld)` returns a unit world-space normal for a triangle with local-space corners `a`, `b`, and `c`. The part can be rotated and stretched unevenly. The starter transforms the normal like an ordinary direction, so a marker tilts away from the face. Leave the corners and matrix unchanged.
 
-Fix `worldFaceNormal` in `drill.ts`. The scene shows the current result alongside a reference; they should agree after the repair.
+The blue normal arrow should line up with the green reference on the stretched triangle.
 
 <div data-scene="demo"></div>
 
@@ -29,20 +29,20 @@ Fix `drill.ts`, write one sentence in `cause.md`, and replace the placeholder in
 
 ## The check
 
-The acceptance test covers more than the scene pose. Your check must fail on the original bug and pass after the fix, using behavior instead of looking for a particular line of code.
+The acceptance test uses a sloped triangle under non-uniform scale and compares against its transformed edges. Your check should reject a normal that is no longer perpendicular.
 
 <details><summary>Hint</summary>
 
-Compare the named spaces and the operation from the face normals page.
+The face-normals page uses `Triangle.getNormal` for the local face. Under uneven scale, its world direction needs the normal-specific matrix.
 
 </details>
 
 ## Where else?
 
-Where else would the same wrong assumption cause an error?
+Where else must a normal stay perpendicular after a stretch?
 
 <details><summary>A few answers</summary>
 
-A model editor, an interactive viewer, or a check before export.
+A surface decal, a contact shadow, or a selection ring on a sloped part.
 
 </details>

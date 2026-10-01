@@ -2,15 +2,19 @@ import { answered } from '@harness/check';
 import * as THREE from 'three';
 import { expect, it, vi } from 'vitest';
 import { cssChecker } from './drill';
-it('compiles and draws in WebGL', () => {
+it('uses device pixels and DPR to draw CSS-sized checker cells', () => {
  const errors=vi.spyOn(console,'error');
- const renderer=new THREE.WebGLRenderer({antialias:false}); renderer.setSize(16,16);
+ const renderer=new THREE.WebGLRenderer({antialias:false}); renderer.setSize(64,64);
  const geometry=new THREE.PlaneGeometry(2,2), material=answered(cssChecker(2));
  const scene=new THREE.Scene(); scene.add(new THREE.Mesh(geometry,material));
  const camera=new THREE.PerspectiveCamera(60,1,.1,10); camera.position.z=2;
- const target=new THREE.WebGLRenderTarget(16,16); renderer.setRenderTarget(target); renderer.render(scene,camera);
- const pixel=new Uint8Array(4); renderer.readRenderTargetPixels(target,8,8,1,1,pixel);
- expect(pixel[3]).toBe(255);
+ const target=new THREE.WebGLRenderTarget(64,64); renderer.setRenderTarget(target); renderer.render(scene,camera);
+ const first=new Uint8Array(4), next=new Uint8Array(4);
+ renderer.readRenderTargetPixels(target,10,10,1,1,first);
+ renderer.readRenderTargetPixels(target,26,10,1,1,next);
+ expect(first[3]).toBe(255);
+ expect(next[3]).toBe(255);
+ expect(Math.abs(first[0]-next[0])).toBeGreaterThan(150);
  expect(errors.mock.calls.flat().join(' ')).not.toMatch(/THREE.WebGLProgram: Shader Error|VALIDATE_STATUS false/);
  errors.mockRestore(); target.dispose(); geometry.dispose(); material.dispose(); renderer.dispose();
 });

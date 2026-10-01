@@ -11,7 +11,7 @@ misconceptions: []
 
 # Debugging triage: explain the decision
 
-> **The job:** explain a real 3D decision in five plain sentences.
+> **The job:** trace a wrong finish color through the viewer before changing its shader.
 
 ## Task
 

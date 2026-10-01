@@ -21,7 +21,7 @@ Call `readRenderTargetPixelsAsync` for one pixel at x and y, and return the resu
 | --- | --- |
 | `readIdPixel(renderer: Pick<THREE.WebGLRenderer, "readRenderTargetPixelsAsync">, target: THREE.WebGLRenderTarget, x: number, y: number)` | The Promise for one RGBA picking pixel. |
 
-Try the scene. The readout changes when your function gives an answer.
+The ID target contains one pick color. Read one RGBA pixel asynchronously and compare it with the color shown.
 
 <div data-scene="practice"></div>
 
@@ -39,7 +39,7 @@ npm run drill -- drills/2/gpu/readback/apply-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The check verifies that the code requests exactly one pixel and returns the async result. It also rejects an unanswered function.
 
 <details><summary>Hint</summary>
 
@@ -49,4 +49,4 @@ Even one synchronous read can wait for earlier GPU work to finish.
 
 ## Where else?
 
-Where else would the same code help? The concept card lists GPU picking, Color sampling.
+When would an asynchronous ID read matter during pointer movement?

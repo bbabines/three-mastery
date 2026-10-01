@@ -9,15 +9,15 @@ lenses: []
 misconceptions: []
 ---
 
-# Ray: find the faulty result
+# Ray and sphere: return the surface point
 
 > **The job:** A coarse pointer hit returns the ray origin instead of the sphere surface, especially when the ray starts inside the sphere.
 
 ## Task
 
-A coarse pointer hit returns the ray origin instead of the sphere surface, especially when the ray starts inside the sphere. Return the nearest surface hit in the ray’s forward direction.
+A coarse pick says the ray crosses a sphere, but the marker appears at the pointer ray's origin. Return the first surface point along the forward ray, or `null` when it misses. A ray starting inside exits through the far side.
 
-Fix `sphereEntry` in `drill.ts`. The scene shows the current result alongside a reference; they should agree after the repair.
+Fix `sphereEntry` in `drill.ts`. The yellow dot sits on the sphere surface; your result is red.
 
 <div data-scene="demo"></div>
 
@@ -29,7 +29,7 @@ Fix `drill.ts`, write one sentence in `cause.md`, and replace the placeholder in
 
 ## The check
 
-The acceptance test covers more than the scene pose. Your check must fail on the original bug and pass after the fix, using behavior instead of looking for a particular line of code.
+The test starts rays outside and inside the sphere, and includes a miss. Your check should require the returned point to lie on the surface.
 
 <details><summary>Hint</summary>
 
@@ -39,10 +39,10 @@ What point does an intersection test return, and how does it differ from a yes-o
 
 ## Where else?
 
-Where else would the same wrong assumption cause an error?
+Where else do you need the hit point rather than a yes-or-no overlap?
 
 <details><summary>A few answers</summary>
 
-Pointer picking; Placing on the ground.
+Hotspot placement, measuring distance to a round part, or a broad collision test.
 
 </details>

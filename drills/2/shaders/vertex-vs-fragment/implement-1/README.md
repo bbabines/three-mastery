@@ -15,7 +15,7 @@ misconceptions: [shaders.vertex-vs-fragment/once-per-pixel]
 
 ## Task
 
-Color each fragment from its interpolated UV while the vertex shader only places vertices. Return a working `ShaderMaterial`. The scene renders the material on a plane; the tests inspect its inputs and compile it in Chromium.
+Color each fragment from its interpolated UV while the vertex shader only places vertices. Write `uvGradient()` so the vertex stage only places vertices and passes UVs; the fragment stage colors each pixel.
 
 <div data-scene="preview"></div>
 
@@ -38,7 +38,7 @@ npm run drill -- drills/2/shaders/vertex-vs-fragment/implement-1
 
 ## The check
 
-The Node check verifies the shader's data path. The browser check compiles and draws it on a WebGL canvas.
+The Node test checks UV interpolation wiring. The browser test reads red and green pixels across both axes to prove the gradient follows UVs.
 
 <details><summary>Hint</summary> Pass `uv` through a varying; the rasterizer fills in a different value for each fragment. </details>
 
@@ -46,4 +46,4 @@ The Node check verifies the shader's data path. The browser check compiles and d
 
 How would displacement move vertices while this UV color still changes per fragment?
 
-<details><summary>A starting point</summary> Visualize one intermediate value before restoring the finished fragment color. </details>
+<details><summary>A few answers</summary> Vertex displacement changes the shape before rasterization; the fragment stage still receives interpolated UVs over the displaced triangles. </details>

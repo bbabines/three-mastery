@@ -1,18 +1,36 @@
-import { attempt, ball, COLORS, overlay } from '@harness/lesson';
+import { attempt, ball, COLORS, overlay, screenTag, slider } from '@harness/lesson';
 import type { SceneSetup } from '@harness/scene';
 import * as THREE from 'three';
+import { comparison } from '../../compare';
 import { labelPosition } from './drill';
 
 export const demo: SceneSetup = ({ scene, camera, controls, container }) => {
-  camera.position.set(3.5, 3, 5);
-  controls.target.set(0, 0.5, 0);
-  const subject = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.8, 0.8), new THREE.MeshStandardMaterial({ color: COLORS.blue }));
-  const marker = ball(COLORS.yellow);
-  subject.position.y = 0.5;
-  marker.position.set(1.5, 0.5, 0);
-  scene.add(subject, marker);
-  const readout = overlay(container, 'readout');
-  const viewCamera=new THREE.PerspectiveCamera(60,1,0.1,100); viewCamera.position.z=4; scene.add(viewCamera);
-  const result = attempt('labelPosition', () => labelPosition(viewCamera, new THREE.Vector3(0,0,0), 800, 600));
-  readout.textContent = result.ok ? `labelPosition: ${JSON.stringify(result.value)?.slice(0, 160)}` : result.note;
+  camera.position.set(5, 4, 7); controls.target.set(0, 1, 0);
+  const lens = new THREE.PerspectiveCamera(55, 1, 0.1, 20);
+  lens.position.set(0, 1, 5); lens.lookAt(0, 1, 0);
+  const point = ball(COLORS.yellow, 1, 0.18);
+  point.position.set(1, 1, 0);
+  scene.add(point);
+  const yours = screenTag(container, 'your label', COLORS.blue);
+  const reference = screenTag(container, 'reference', COLORS.green);
+  const controlsBar = overlay(container, 'controls');
+  const show = comparison(container, 'World marker → CSS label');
+  let x = 1;
+  const update = () => {
+    point.position.x = x;
+    lens.updateMatrixWorld();
+    const width = container.clientWidth, height = container.clientHeight;
+    lens.aspect = width / height; lens.updateProjectionMatrix();
+    const expected = point.position.clone().project(lens);
+    const refX = (expected.x + 1) * width / 2, refY = (1 - expected.y) * height / 2;
+    const result = attempt('labelPosition', () => labelPosition(lens, point.position.clone(), width, height));
+    reference.style.left = `${refX}px`; reference.style.top = `${refY}px`;
+    yours.style.display = result.ok ? '' : 'none';
+    if (result.ok) { yours.style.left = `${result.value.x}px`; yours.style.top = `${result.value.y}px`; }
+    show(`world marker x ${x.toFixed(1)}`,
+      result.ok ? `CSS (${result.value.x.toFixed(0)}, ${result.value.y.toFixed(0)}), NDC z ${result.value.z.toFixed(2)}` : result.note,
+      `CSS (${refX.toFixed(0)}, ${refY.toFixed(0)}), NDC z ${expected.z.toFixed(2)}`);
+  };
+  slider(controlsBar, 'marker x', { min: -2, max: 2, step: 0.5, value: x }, value => { x = value; update(); });
+  update();
 };

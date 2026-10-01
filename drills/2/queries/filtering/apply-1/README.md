@@ -36,7 +36,7 @@ npm run drill -- drills/2/queries/filtering/apply-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The tests ignore a closer unlisted helper, detect a ray starting inside a box, and reject a box behind the ray.
 
 <details><summary>Hint</summary>
 
@@ -46,4 +46,6 @@ Raycaster only tests the objects you pass it. A ray begins at its origin and mov
 
 ## Where else?
 
-Where else would the same code help? The concept card lists Selectable parts only, Ground-only placement.
+Where else should a visible object be excluded from a hit test?
+
+<details><summary>A few answers</summary> Editor helpers, floor-only placement, or a ghost preview. </details>

@@ -21,7 +21,7 @@ Return an estimate for visible Mesh draws in a tree. A multi-material geometry w
 | --- | --- |
 | `estimatedDraws(root: THREE.Object3D, shadowLights: number)` | Estimated draw submissions across the main and shadow passes. |
 
-Try the scene. The readout changes when your function gives an answer.
+Compare the estimate with the grouped meshes and shadow lights shown in the scene. Each visible group submits once per pass.
 
 <div data-scene="practice"></div>
 
@@ -39,7 +39,7 @@ npm run drill -- drills/2/gpu/draw-call-anatomy/implement-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The check verifies that the code counts material groups, hidden branches, and shadow submissions. It also rejects an unanswered function.
 
 <details><summary>Hint</summary>
 
@@ -49,4 +49,4 @@ A draw call is CPU/driver submission; shared materials do not turn separate mesh
 
 ## Where else?
 
-Where else would the same code help? The concept card lists Many small parts, Multi-material meshes.
+How would a shadow pass change a scene with many small parts?

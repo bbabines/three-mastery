@@ -6,7 +6,9 @@ export function stageForPixelColor(perPixel: boolean): Answer<'fragment' | 'vert
 }
 
 export function setUniform(material: THREE.ShaderMaterial, name: string, value: number): Answer<number> {
-  material.uniforms[name]={value}; return material.uniforms[name].value as number;
+  if (material.uniforms[name]) material.uniforms[name].value=value;
+  else material.uniforms[name]={value};
+  return value;
 }
 
 export function worldPointFromModel(local: THREE.Vector3, model: THREE.Matrix4): Answer<THREE.Vector3> {

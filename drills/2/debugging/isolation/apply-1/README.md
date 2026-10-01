@@ -21,7 +21,7 @@ Show only children in the half-open index interval `[start, end)` and hide the r
 | --- | --- |
 | `visibleSlice(root: THREE.Object3D, start: number, end: number)` | Names of the visible half of the scene. |
 
-Try the scene. The readout changes when your function gives an answer.
+The preview shows one visible child range without detaching the others.
 
 <div data-scene="practice"></div>
 
@@ -35,7 +35,7 @@ npm run drill -- drills/2/debugging/isolation/apply-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The test checks half-open bounds, child order, visibility, and that no child is detached.
 
 <details><summary>Hint</summary>
 
@@ -45,4 +45,6 @@ A reversible visibility change makes a smaller repro without changing ownership.
 
 ## Where else?
 
-Where else would the same code help? The concept card lists Z-fighting source, Performance hotspot.
+How could a visible slice locate a z-fighting part?
+
+<details><summary>A few answers</summary> Keep halving the visible range until the overlapping pair is in the remaining group. </details>

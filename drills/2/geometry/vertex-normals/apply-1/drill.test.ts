@@ -8,6 +8,15 @@ describe('geometry.vertex-normals', () => {
     const g=new THREE.BoxGeometry(); const copy=answered(hardEdges(g));
     expect(copy.index).toBeNull(); expect(copy.getAttribute('normal').count).toBe(copy.getAttribute('position').count);
     const n=copy.getAttribute('normal');
-    for(let i=0;i<n.count;i+=3) { const a=new THREE.Vector3().fromBufferAttribute(n,i); for(const j of [1,2]) expect(a.distanceTo(new THREE.Vector3().fromBufferAttribute(n,i+j))).toBeLessThan(1e-6); }
+    const position=copy.getAttribute('position');
+    for(let i=0;i<n.count;i+=3) {
+      const face=THREE.Triangle.getNormal(
+        new THREE.Vector3().fromBufferAttribute(position,i),
+        new THREE.Vector3().fromBufferAttribute(position,i+1),
+        new THREE.Vector3().fromBufferAttribute(position,i+2),
+        new THREE.Vector3());
+      for(const j of [0,1,2]) expect(face.distanceTo(new THREE.Vector3().fromBufferAttribute(n,i+j))).toBeLessThan(1e-6);
+    }
+    expect(g.index).not.toBeNull();
   });
 });

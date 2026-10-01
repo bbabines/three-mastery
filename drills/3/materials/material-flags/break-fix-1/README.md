@@ -9,7 +9,7 @@ lenses: []
 misconceptions: [materials.material-flags/doubleside-free]
 ---
 
-# Material flags: repair the preview
+# Material flags: cutouts stack like glass
 
 > **The job:** Render a one-sided perforated wall panel with depth-writing cutouts.
 

@@ -15,9 +15,9 @@ misconceptions: []
 
 ## Task
 
-Convert exposure in photographic stops into the renderer exposure multiplier while keeping Neutral tone mapping for bright studio lighting. Work from the input values; do not replace an input object when the task asks you to configure it.
+Convert exposure in photographic stops into the renderer exposure multiplier while keeping Neutral tone mapping for bright studio lighting. Write `setExposureStops(renderer, stops)` and return the same renderer. One positive stop doubles exposure; one negative stop halves it.
 
-The preview calls your answer on a concrete scene. The readout stays at "not answered yet" until your function returns a value.
+The preview uses one stops value; the test checks brighter and darker settings.
 
 <div data-scene="preview"></div>
 
@@ -31,7 +31,7 @@ npm run drill -- drills/2/materials/tone-mapping/apply-1
 
 ## The check
 
-The acceptance test uses several inputs and checks both the intended result and settings that must be preserved. Read the failed assertion as a scene symptom, then adjust only your function.
+The test checks positive and negative stops, Neutral tone mapping, and the original renderer.
 
 <details><summary>Hint</summary> One stop doubles the light multiplier; a negative stop halves it. </details>
 
@@ -39,4 +39,4 @@ The acceptance test uses several inputs and checks both the intended result and 
 
 How would you make a bright HDR environment one stop darker without changing its texture?
 
-<details><summary>A starting point</summary> Trace the same property from the three.js object through the material or light that consumes it. </details>
+<details><summary>A few answers</summary> Reduce exposure by one stop to halve the multiplier while keeping the HDR environment texture. </details>

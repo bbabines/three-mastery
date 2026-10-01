@@ -9,15 +9,15 @@ lenses: []
 misconceptions: [scene-graph.finding-objects/names-unique]
 ---
 
-# Finding objects: find the faulty result
+# Finding objects: a name misses the part
 
 > **The job:** A part lookup fails after a glTF import renames its nodes.
 
 ## Task
 
-A part lookup fails after a glTF import renames its nodes. Find a nested object by its stable SKU metadata rather than its display name.
+A loaded model has two parts with the same imported name. `findSku` receives the root and a SKU. Return the nested object whose `userData.sku` matches, or `null` when none does.
 
-Fix `findSku` in `drill.ts`. The scene shows the current result alongside a reference; they should agree after the repair.
+Fix `findSku` in `drill.ts`. The green outline marks SKU B-2; your returned part turns yellow.
 
 <div data-scene="demo"></div>
 
@@ -29,20 +29,20 @@ Fix `drill.ts`, write one sentence in `cause.md`, and replace the placeholder in
 
 ## The check
 
-The acceptance test covers more than the scene pose. Your check must fail on the original bug and pass after the fix, using behavior instead of looking for a particular line of code.
+The test uses duplicate names and nested parts, then asks for a SKU that is absent. Your check should catch a lookup that trusts names.
 
 <details><summary>Hint</summary>
 
-What happens if a Group and a Mesh carry the same name?
+Which value survives imported name cleanup, and how do you visit children inside Groups?
 
 </details>
 
 ## Where else?
 
-Where else would the same wrong assumption cause an error?
+Where else is a stable part ID safer than an imported name?
 
 <details><summary>A few answers</summary>
 
-Grouping by material; Locating lights.
+Restoring a selected part, applying a finish to one item, or matching a saved cart choice.
 
 </details>

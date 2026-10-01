@@ -10,11 +10,12 @@ describe('rotated rail', () => {
     const rail = new Object3D();
     rail.rotation.z = 0.4;
     parent.add(rail);
-    parent.updateMatrixWorld(true);
     const motion = new Vector3(2, -1, 3);
+    const result = railMotion(motion, rail);
+    // The answer must refresh the changed parent; a renderer has not done that yet.
+    rail.updateWorldMatrix(true, false);
     const axis = new Vector3(1, 0, 0).transformDirection(rail.matrixWorld);
     const expected = motion.clone().projectOnVector(axis);
-    const result = railMotion(motion, rail);
     expectVector(result, expected);
     expectUnchanged(motion, new Vector3(2, -1, 3), 'motion');
     expect(Math.abs(motion.clone().sub(result!).dot(axis))).toBeLessThan(1e-6);

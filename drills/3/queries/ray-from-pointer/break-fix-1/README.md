@@ -9,15 +9,15 @@ lenses: [space]
 misconceptions: []
 ---
 
-# Ray from pointer: find the faulty result
+# Pointer ray: an offset canvas misses the part
 
 > **The job:** A click selects the wrong part when the canvas is offset on the page.
 
 ## Task
 
-A click selects the wrong part when the canvas is offset on the page. Build a world ray from pointer CSS coordinates using the canvas rectangle.
+The canvas starts away from the window's top-left corner. `clientX` and `clientY` are viewport CSS pixels; subtract the canvas rectangle's left and top before converting to NDC. Return a world-space ray through that canvas point.
 
-Fix `pointerRay` in `drill.ts`. The scene shows the current result alongside a reference; they should agree after the repair.
+Fix `pointerRay` in `drill.ts`. The supplied pointer is at canvas center. The yellow center ray reaches the blue target; yours is red.
 
 <div data-scene="demo"></div>
 
@@ -25,8 +25,9 @@ Fix `pointerRay` in `drill.ts`. The scene shows the current result alongside a r
 
 | Value | Space |
 | --- | --- |
-| Inputs | The named camera, world, or screen space in the task |
-| Answer | The space stated in the task |
+| Pointer and canvas rectangle | Viewport CSS pixels |
+| Intermediate pointer | Canvas NDC, from −1 to +1 |
+| Returned ray | World space |
 
 ## Your code
 
@@ -36,7 +37,7 @@ Fix `drill.ts`, write one sentence in `cause.md`, and replace the placeholder in
 
 ## The check
 
-The acceptance test covers more than the scene pose. Your check must fail on the original bug and pass after the fix, using behavior instead of looking for a particular line of code.
+The test uses an offset canvas and checks the ray's origin and direction against `Raycaster.setFromCamera`. Your check should also work away from canvas center.
 
 <details><summary>Hint</summary>
 
@@ -46,10 +47,10 @@ What offset separates client coordinates from canvas coordinates?
 
 ## Where else?
 
-Where else would the same wrong assumption cause an error?
+Where else does forgetting the canvas offset shift a 3D query?
 
 <details><summary>A few answers</summary>
 
-Hover; Drag start.
+Hover picking, the start of a drag, or a touch tap on a scrolled page.
 
 </details>

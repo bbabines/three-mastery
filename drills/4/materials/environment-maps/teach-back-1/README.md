@@ -11,7 +11,7 @@ misconceptions: []
 
 # Environment maps: explain the decision
 
-> **The job:** explain a real 3D decision in five plain sentences.
+> **The job:** find why a chrome part stays dark despite a visible background image.
 
 ## Task
 

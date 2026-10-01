@@ -22,7 +22,7 @@ A shader compile log reports a line number in the injected source. Subtract the 
 | `authoredShaderLine(log: string, injectedLines: number)` | The authored shader line, or −1 when the log has no line. |
 | `debugViewMaterial(view: "normal" | "depth" | "wireframe")` | A material that reveals normals, depth, or mesh edges. |
 
-Try the scene. The readout changes when your function gives an answer.
+The preview maps one compiler line back to the authored line.
 
 <div data-scene="practice"></div>
 
@@ -36,7 +36,7 @@ npm run drill -- drills/2/debugging/shader-errors/apply-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The test checks line adjustment and the requested normal, depth, or wireframe debug material.
 
 <details><summary>Hint</summary>
 
@@ -46,4 +46,6 @@ Three.js injects shader code before yours, so the compiled line needs an offset.
 
 ## Where else?
 
-Where else would the same code help? The concept card lists Typos, Precision errors.
+When can a normal view help after a shader compile error?
+
+<details><summary>A few answers</summary> It confirms the geometry and normals still render while the custom shader is broken. </details>

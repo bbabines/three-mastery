@@ -14,7 +14,7 @@ misconceptions: [interaction.pointer-events/dpr-ndc]
 
 ## Task
 
-The generated picker seems right on a full-window canvas at DPR 1, but taps shift on a small high-DPR canvas. Use CSS-pixel client coordinates and the canvas rectangle. Return NDC in the range −1 to 1.
+The generated picker seems right on a full-window canvas at DPR 1, but taps shift on a small high-DPR canvas. Return NDC in the range −1 to 1 for a pointer anywhere inside that canvas.
 
 Review the proposed code in `drill.ts`. State the faulty assumption and its effect in `cause.md`, then repair the code. Run the acceptance check to prove the behavior.
 

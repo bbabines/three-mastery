@@ -9,15 +9,15 @@ lenses: []
 misconceptions: [interaction.hover-selection/one-flag]
 ---
 
-# Hover selection: find the faulty result
+# Hover selection: keep selected emphasis after hover ends
 
-> **The job:** A selected part shrinks when the pointer leaves it.
+> **The job:** Keep selected emphasis after hover ends.
 
 ## Task
 
-A selected part shrinks when the pointer leaves it. Return its next emphasis scale: selection wins over hover, and the transition uses elapsed time.
+A selected part shrinks when the pointer leaves it.
 
-Fix `nextEmphasis` in `drill.ts`. The scene shows the current result alongside a reference; they should agree after the repair.
+Fix the function in `drill.ts`. The blue part should match the yellow selected-size outline after hover ends.
 
 <div data-scene="demo"></div>
 
@@ -29,7 +29,7 @@ Fix `drill.ts`, write one sentence in `cause.md`, and replace the placeholder in
 
 ## The check
 
-The acceptance test covers more than the scene pose. Your check must fail on the original bug and pass after the fix, using behavior instead of looking for a particular line of code.
+Selection must win after hover ends, and equal elapsed time must produce equal emphasis at different refresh rates. Write a short assertion in `check.ts` with a different input. It must reject the starter and accept the repair.
 
 <details><summary>Hint</summary>
 
@@ -39,7 +39,7 @@ Which state wins if a part stays selected after hover ends?
 
 ## Where else?
 
-Where else would the same wrong assumption cause an error?
+How would you keep a selected part highlighted as the pointer moves elsewhere?
 
 <details><summary>A few answers</summary>
 

@@ -9,15 +9,15 @@ lenses: [cost]
 misconceptions: []
 ---
 
-# Stencil: find the faulty result
+# Stencil: draw a smooth mask into an offscreen target
 
-> **The job:** A masked offscreen outline has jagged edges and ignores its stencil reference.
+> **The job:** Draw a smooth mask into an offscreen target.
 
 ## Task
 
-A masked offscreen outline has jagged edges and ignores its stencil reference. Give the target both stencil storage and MSAA samples, then configure the writer material.
+An offscreen mask ignores its selected area and has jagged edges.
 
-Fix `maskedTarget` in `drill.ts`. The scene shows the current result alongside a reference; they should agree after the repair.
+Fix the function in `drill.ts`. The blue mask should fill the yellow circle without covering the rest of the preview.
 
 <div data-scene="demo"></div>
 
@@ -33,7 +33,7 @@ Fix `drill.ts`, write one sentence in `cause.md`, and replace the placeholder in
 
 ## The check
 
-The acceptance test covers more than the scene pose. Your check must fail on the original bug and pass after the fix, using behavior instead of looking for a particular line of code.
+The target needs stencil storage and the requested samples; the writer must store the selected reference on a depth pass. Write a short assertion in `check.ts` with a different input. It must reject the starter and accept the repair.
 
 <details><summary>Hint</summary>
 
@@ -43,7 +43,7 @@ Does the offscreen target contain stencil storage, and what value will the mater
 
 ## Where else?
 
-Where else would the same wrong assumption cause an error?
+How would you use a stencil mask for a portal or outline?
 
 <details><summary>A few answers</summary>
 

@@ -54,6 +54,8 @@ describe('assets.reuse-caching', () => {
 describe('assets.disposal', () => {
   it('makes the right judgment', () => {
     const m=new THREE.MeshBasicMaterial(); let count=0; m.addEventListener('dispose',()=>count++); expect(answered(check.disposeIfOwned(m,new Set([m])))).toBe(true); expect(count).toBe(1);
+    const shared=new THREE.MeshBasicMaterial(); let sharedDisposals=0; shared.addEventListener('dispose',()=>sharedDisposals++);
+    expect(answered(check.disposeIfOwned(shared,new Set([m])))).toBe(false); expect(sharedDisposals).toBe(0);
   });
 });
 

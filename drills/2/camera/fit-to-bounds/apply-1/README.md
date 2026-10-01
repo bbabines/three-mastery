@@ -9,17 +9,15 @@ lenses: [space]
 misconceptions: [camera.fit-to-bounds/vertical-enough]
 ---
 
-# Fit and pixel size: find a camera distance that fits a bounding sphere in both portrait and landscape viewports
+# Fit to bounds: sphere and pixel scale
 
-> **The job:** Find a camera distance that fits a bounding sphere in both portrait and landscape viewports.
+> **The job:** Fit a sphere in either viewport shape.
 
 ## Task
 
-Find a camera distance that fits a bounding sphere in both portrait and landscape viewports. The sphere is centered on the view axis; use the narrower of the horizontal and vertical field of view. `radius` is in world units, `verticalFovDegrees` is an angle in degrees, and `aspect` is width divided by height.
+Write `distanceForRadius(radius, verticalFovDegrees, aspect)` to return the smallest camera-to-center distance that fits a sphere in both width and height. `aspect` is width divided by height. Also write `worldPerPixel(viewDepth, verticalFovDegrees, viewportHeight)` for world units covered by one CSS pixel at that view depth.
 
-Also write `worldPerPixel(viewDepth, verticalFovDegrees, viewportHeight)`: the world-space height one CSS pixel covers at a point this far along the camera's view axis. `viewportHeight` is in CSS pixels; use the same pixel kind for the hotspot you size with the result.
-
-Write both functions in the starter. Save it to update the scene.
+Save your code and inspect the scene; compare the blue result with the green reference.
 
 <div data-scene="demo"></div>
 
@@ -27,35 +25,34 @@ Write both functions in the starter. Save it to update the scene.
 
 | Value | Space or units |
 | --- | --- |
-| `radius` | World units along the camera view axis |
-| `verticalFovDegrees` | Degrees of vertical field of view |
-| `aspect` | Viewport width divided by height |
-| `viewDepth` | World units along the camera view axis |
+| `radius, viewDepth` | World units |
+| `verticalFovDegrees` | Degrees, top to bottom |
+| `aspect` | Viewport width / height |
 | `viewportHeight` | CSS pixels |
-| Both answers | World units |
+| Answers | World units; world units per CSS pixel |
 
 ## Your code
 
-Write it in `drills/2/camera/fit-to-bounds/apply-1/drill.ts`. Check it with:
+Write it in `drills/2/camera/fit-to-bounds/apply-1/drill.ts`. Save to update the scene. Check it with:
 
     npm run drill -- drills/2/camera/fit-to-bounds/apply-1
 
 ## The check
 
-It passes when a sphere fits in both portrait and landscape views, and a hotspot sized with `worldPerPixel` spans one CSS pixel at several depths.
+Portrait and landscape both fit the sphere; moving a target farther away increases world units per CSS pixel.
 
 <details><summary>Hint</summary>
 
-Use the method from the fit and pixel size page, and check which space the result belongs to.
+The narrower of the horizontal and vertical half-angles controls fit. At a chosen depth, use the visible vertical span and canvas height.
 
 </details>
 
 ## Where else?
 
-Where else would the same operation help when a part moves or turns?
+Where else is world size per CSS pixel useful?
 
 <details><summary>A few answers</summary>
 
-Focus on a part. Auto-frame on load.
+Keep a gizmo readable or choose a level of detail for a distant part.
 
 </details>

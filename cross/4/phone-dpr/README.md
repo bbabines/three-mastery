@@ -11,7 +11,7 @@ misconceptions: []
 
 # Frame drops only on phones
 
-> **The job:** combine ideas from several domains in one small piece of code.
+> **The job:** Limit drawing-buffer pixels while keeping the sharpest DPR the budget allows.
 
 ## Task
 
@@ -37,10 +37,16 @@ The check covers a phone above budget, a desktop below budget, and invalid sizes
 
 <details><summary>Hint</summary>
 
-Use the relevant three.js methods shown on the concept pages. Check the behavior rather than only the code shape.
+DPR scales both drawing-buffer dimensions. Compare pixel area, not only width.
 
 </details>
 
 ## Where else?
 
-Where else would this choice appear in a product viewer or tool?
+Where else does a pixel budget help more than a fixed DPR?
+
+<details><summary>A few answers</summary>
+
+A tablet configurator, split-screen product thumbnails, or a full-screen viewer.
+
+</details>

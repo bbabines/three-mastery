@@ -3,7 +3,11 @@ import { expect } from 'vitest';
 import type { flipFrontFace } from './drill';
 
 export function checkWindingOrder(subject: typeof flipFrontFace): void {
-  const g=new THREE.BufferGeometry(); g.setAttribute('position',new THREE.Float32BufferAttribute([0,0,0,2,0,0,0,2,0],3)); g.setIndex([0,1,2]); g.computeVertexNormals();
-  const f=subject(g); const p=f.getAttribute('position'); const n=THREE.Triangle.getNormal(...([0,1,2].map(i=>new THREE.Vector3().fromBufferAttribute(p,i)) as [THREE.Vector3,THREE.Vector3,THREE.Vector3]),new THREE.Vector3());
-  expect(n.z).toBeLessThan(0); expect(g.index).not.toBeNull();
+  const geometry = new THREE.PlaneGeometry(2, 2);
+  const result = subject(geometry);
+  const mesh = new THREE.Mesh(result, new THREE.MeshBasicMaterial({ side: THREE.FrontSide }));
+  const front = new THREE.Raycaster(new THREE.Vector3(0.3, 0.2, 3), new THREE.Vector3(0, 0, -1));
+  const back = new THREE.Raycaster(new THREE.Vector3(0.3, 0.2, -3), new THREE.Vector3(0, 0, 1));
+  expect(front.intersectObject(mesh)).toHaveLength(0);
+  expect(back.intersectObject(mesh)).toHaveLength(1);
 }

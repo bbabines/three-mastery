@@ -28,7 +28,7 @@ Edit `drills/4/camera/fit-to-bounds/ai-review-1/drill.ts` and `cause.md`. Check 
 
 A narrow aspect must use the horizontal half-angle; a wide aspect must still fit vertically. The acceptance check fails on the proposal and passes after the repair.
 
-<details><summary>Hint</summary> Look for a case the proposed helper handles differently from the job's contract. </details>
+<details><summary>Hint</summary> The proposal fits the top and bottom. In a portrait viewport, which angle controls the left and right edges? </details>
 
 ## Where else?
 

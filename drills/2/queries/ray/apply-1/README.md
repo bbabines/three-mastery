@@ -36,7 +36,7 @@ npm run drill -- drills/2/queries/ray/apply-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The tests read a point along a ray without moving it, then handle sphere hits from inside and a miss.
 
 <details><summary>Hint</summary>
 
@@ -46,4 +46,6 @@ Ray.at moves forward only; intersectSphere finds the nearest forward surface.
 
 ## Where else?
 
-Where else would the same code help? The concept card lists Line of sight, Placing on the ground.
+Where else do you need a point along a forward ray?
+
+<details><summary>A few answers</summary> Pointer picking, line of sight, or hotspot placement. </details>

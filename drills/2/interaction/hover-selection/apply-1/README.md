@@ -22,7 +22,7 @@ A selected part should stay selected when its hover ends. Return the visual stat
 | `partState(selected: boolean, hovered: boolean)` | The visual state with selection taking priority. |
 | `setOrbitDragState(controls: { enabled: boolean }, dragging: boolean)` | Whether orbit is enabled after the drag state is applied. |
 
-Try the scene. The readout changes when your function gives an answer.
+The blue part is selected and no longer hovered. It should keep its selected emphasis while orbit is disabled only during a drag.
 
 <div data-scene="practice"></div>
 
@@ -36,7 +36,7 @@ npm run drill -- drills/2/interaction/hover-selection/apply-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The check verifies that the code keeps selection when hover exits; disables orbit only during a custom drag. It also rejects an unanswered function.
 
 <details><summary>Hint</summary>
 
@@ -46,4 +46,4 @@ Selection and hover are distinct states. A custom drag must own pointer movement
 
 ## Where else?
 
-Where else would the same code help? The concept card lists Part highlight, Deselect on empty click.
+How would you keep a selected part highlighted as the pointer moves elsewhere?

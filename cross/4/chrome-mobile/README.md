@@ -11,7 +11,7 @@ misconceptions: []
 
 # Chrome finish looks black on mobile
 
-> **The job:** combine ideas from several domains in one small piece of code.
+> **The job:** Choose a supported environment texture so a metal finish can reflect it.
 
 ## Task
 
@@ -33,10 +33,16 @@ The check covers both device branches and verifies the scene environment and mat
 
 <details><summary>Hint</summary>
 
-Use the relevant three.js methods shown on the concept pages. Check the behavior rather than only the code shape.
+A background image is not automatically the environment light, and compressed formats need device support.
 
 </details>
 
 ## Where else?
 
-Where else would this choice appear in a product viewer or tool?
+Where else should texture-format support decide a fallback?
+
+<details><summary>A few answers</summary>
+
+An HDR showroom, a compressed finish swatch, or an older device's material preview.
+
+</details>

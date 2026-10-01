@@ -9,15 +9,15 @@ lenses: []
 misconceptions: []
 ---
 
-# Orbit pan dolly: find the faulty result
+# Orbit pan dolly: focus the camera and its orbit point together
 
-> **The job:** Focusing a part moves the camera, but the next orbit swings around the old target.
+> **The job:** Focus the camera and its orbit point together.
 
 ## Task
 
-Focusing a part moves the camera, but the next orbit swings around the old target. Move the camera along its current view direction and update the orbit target together.
+After focusing a part, the next orbit swings around the old target.
 
-Fix `focusView` in `drill.ts`. The scene shows the current result alongside a reference; they should agree after the repair.
+Fix the function in `drill.ts`. The red orbit target should land on the green part; the blue camera should meet the yellow reference.
 
 <div data-scene="demo"></div>
 
@@ -29,7 +29,7 @@ Fix `drill.ts`, write one sentence in `cause.md`, and replace the placeholder in
 
 ## The check
 
-The acceptance test covers more than the scene pose. Your check must fail on the original bug and pass after the fix, using behavior instead of looking for a particular line of code.
+The orbit target must land on the focus point and the camera must stay on its original view line at the requested distance. Write a short assertion in `check.ts` with a different input. It must reject the starter and accept the repair.
 
 <details><summary>Hint</summary>
 
@@ -39,7 +39,7 @@ Which point will OrbitControls use as its center after focus?
 
 ## Where else?
 
-Where else would the same wrong assumption cause an error?
+What else should move with the camera when focus changes?
 
 <details><summary>A few answers</summary>
 

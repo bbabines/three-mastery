@@ -7,5 +7,7 @@ describe('geometry.bounding-volumes', () => {
     const g=new THREE.BoxGeometry(1,1,1); g.computeBoundingSphere(); const old=g.boundingSphere!.radius;
     const moved=new THREE.Vector3(20,0,0), sphere=deformAndBound(g,0,moved);
     expect(sphere.radius).toBeGreaterThan(old); expect(sphere.containsPoint(moved)).toBe(true);
+    expect(moved).toEqual(new THREE.Vector3(20,0,0));
+    expect(new THREE.Vector3().fromBufferAttribute(g.getAttribute('position'),0)).toEqual(moved);
   });
 });

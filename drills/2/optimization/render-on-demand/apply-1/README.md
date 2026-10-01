@@ -22,13 +22,13 @@ A static viewer renders on a change or a newly visible tab. Return whether it sh
 | `shouldDraw(changed: boolean, tabVisible: boolean)` | Whether this frame needs rendering. |
 | `qualityStep(level: number, frameMs: number, targetMs: number, bandMs: number)` | The next quality level from measured frame time. |
 
-Try the scene. The readout changes when your function gives an answer.
+The preview shows one draw decision and quality step; the test covers other states.
 
 <div data-scene="practice"></div>
 
 ## Measure
 
-Run the Domain 10 skip-render experiment while updates continue. Record average frame time and render calls while static, then after a change. For adaptive quality, compare at least 30 frame-time samples on the same scene before and after a level change; no fixed timing threshold is a pass bar.
+With updates paused, record frame time and `renderer.info.render.calls` before and after skipping unchanged frames. For quality changes, compare several frames on the same scene; frame time is measured, not graded.
 
 ## Your code
 
@@ -40,7 +40,7 @@ npm run drill -- drills/2/optimization/render-on-demand/apply-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The test checks both draw conditions and a quality dead band around the frame target.
 
 <details><summary>Hint</summary>
 
@@ -50,4 +50,6 @@ A dirty flag is enough for a static scene. Hysteresis avoids changing quality ev
 
 ## Where else?
 
-Where else would the same code help? The concept card lists Static viewer, Background tabs.
+Which events should wake a static viewer?
+
+<details><summary>A few answers</summary> A camera drag, variant change, resize, or newly visible tab should request a frame. </details>

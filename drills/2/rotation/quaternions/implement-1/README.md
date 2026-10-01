@@ -9,15 +9,15 @@ lenses: []
 misconceptions: [rotation.quaternions/components-angles]
 ---
 
-# Quaternions: apply a turn around an object’s own axis to its current orientation without changing either input
+# Quaternions: turn around a local axis
 
-> **The job:** Apply a turn around an object’s own axis to its current orientation without changing either input.
+> **The job:** Turn a part around an axis that moves with the part.
 
 ## Task
 
-Apply a turn around an object’s own axis to its current orientation without changing either input.
+A part already has an orientation. `localDelta(orientation, localAxis, radians)` returns the orientation after turning around its own `localAxis`. The axis may be any nonzero length. Leave the orientation and axis unchanged.
 
-Write `localDelta(orientation, localAxis, radians)` for the behavior above. Save the starter to update the scene.
+The blue aim and green up arrows should match the yellow pose after a local-axis turn.
 
 <div data-scene="demo"></div>
 
@@ -29,20 +29,20 @@ Write it in `drills/2/rotation/quaternions/implement-1/drill.ts`. Check it with:
 
 ## The check
 
-It passes when `localDelta` does the stated job for the scene and the other cases in the test. The test exercises the values and spaces named above.
+The check compares the result with a local-axis turn on a pre-rotated part and checks both inputs remain unchanged.
 
 <details><summary>Hint</summary>
 
-Use the method from the quaternions page, and check which space the result belongs to.
+A local turn acts after the current orientation in the part’s frame. Build the axis turn with a unit axis before combining quaternions.
 
 </details>
 
 ## Where else?
 
-Where else would the same operation help when a part moves or turns?
+Where else is a local-axis turn useful?
 
 <details><summary>A few answers</summary>
 
-Local vs world deltas. Orientation from two vectors.
+Rolling an aircraft. Twisting a robot wrist. Spinning a wheel attached to a rotated axle.
 
 </details>

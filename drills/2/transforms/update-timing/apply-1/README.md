@@ -9,15 +9,15 @@ lenses: [space]
 misconceptions: [transforms.update-timing/stale-read]
 ---
 
-# Update timing: put a marker at the world center of a part directly after the part or one of its parents moves
+# Update timing: move a bounds marker
 
-> **The job:** Put a marker at the world center of a part directly after the part or one of its parents moves.
+> **The job:** Place a marker at a part’s world center just after its parent moves.
 
 ## Task
 
-Put a marker at the world center of a part directly after the part or one of its parents moves.
+`freshBoundsCenter(part, localCenter)` returns the world point for a bounds center in the part’s local frame. A parent may have moved since the last render. Leave the local center unchanged.
 
-Write `freshBoundsCenter(part, localCenter)` for the behavior above. Save the starter to update the scene.
+Move the parent. The blue marker should follow the yellow bounds center immediately.
 
 <div data-scene="demo"></div>
 
@@ -25,9 +25,10 @@ Write `freshBoundsCenter(part, localCenter)` for the behavior above. Save the st
 
 | Value | Space or units |
 | --- | --- |
-| `part` | Its local frame is relative to its parent |
-| `localCenter` | Part local space |
-| Answer | Scalar or object described in the Task |
+| `part` | Local frame under a parent |
+| `localCenter` | Part local point |
+| Answer | World point |
+
 
 ## Your code
 
@@ -37,20 +38,20 @@ Write it in `drills/2/transforms/update-timing/apply-1/drill.ts`. Check it with:
 
 ## The check
 
-It passes when `freshBoundsCenter` does the stated job for the scene and the other cases in the test. The test exercises the values and spaces named above.
+The check changes an ancestor after an earlier matrix update, then verifies the marker without rendering another frame. It checks the local center is unchanged.
 
 <details><summary>Hint</summary>
 
-Use the method from the update timing page, and check which space the result belongs to.
+Refresh the full parent chain before using `matrixWorld`. A rendered frame might update it later, but the answer is needed now.
 
 </details>
 
 ## Where else?
 
-Where else would the same operation help when a part moves or turns?
+Where else do you need a fresh world point between frames?
 
 <details><summary>A few answers</summary>
 
-Raycasting right after a move. Bounds after a transform.
+Collision queries. Drag handles. Audio emitters on moving parts.
 
 </details>

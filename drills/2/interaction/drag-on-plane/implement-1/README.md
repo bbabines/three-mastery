@@ -21,7 +21,7 @@ Find the world ray–plane hit, add the world grab offset, and return that point
 | --- | --- |
 | `planeDragLocal(ray: THREE.Ray, plane: THREE.Plane, grabOffset: THREE.Vector3, child: THREE.Object3D)` | The new position in the child's parent space. |
 
-Try the scene. The readout changes when your function gives an answer.
+The yellow grab marker starts away from the blue part’s origin. The part should keep that offset and follow the wall plane.
 
 <div data-scene="practice"></div>
 
@@ -41,7 +41,7 @@ npm run drill -- drills/2/interaction/drag-on-plane/implement-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The check verifies that the code keeps the offset under a rotated and translated parent. It also rejects an unanswered function.
 
 <details><summary>Hint</summary>
 
@@ -51,4 +51,4 @@ The hit and grab offset are world-space; child.position is in its parent's space
 
 ## Where else?
 
-Where else would the same code help? The concept card lists Floor drag, 3D slider.
+How would the same grab-offset rule work for a floor drag?

@@ -9,15 +9,15 @@ lenses: []
 misconceptions: [rotation.axis-angle/on-axis-world]
 ---
 
-# Axis-angle and orbit: rotate a point around a tilted axis through a chosen center, preserving the point and center
+# Axis-angle: orbit around a tilted hinge
 
-> **The job:** Rotate a point around a tilted axis through a chosen center, preserving the point and center.
+> **The job:** Swing a point around a tilted hinge that does not pass through the scene origin.
 
 ## Task
 
-Rotate a point around a tilted axis through a chosen center, preserving the point and center. The axis can tilt in any direction. Move the point relative to the center, apply the axis-angle turn, then put it back in world space.
+A hinge can point in any direction. `orbitOnAxis(point, center, axis, radians)` returns the point after turning around the line through `center` in the direction of `axis`. Positive radians follow the right-hand rule. The axis may have any nonzero length. Leave all three vectors unchanged.
 
-Write `orbitOnAxis(point, center, axis, radians)` for the behavior above. Save the starter to update the scene.
+In the scene, the blue point should land on the yellow target while the orange hinge stays fixed.
 
 <div data-scene="demo"></div>
 
@@ -29,20 +29,20 @@ Write it in `drills/2/rotation/axis-angle/apply-1/drill.ts`. Check it with:
 
 ## The check
 
-It passes when `orbitOnAxis` does the stated job for the scene and the other cases in the test. The test exercises the values and spaces named above.
+The check uses an off-center hinge and a tilted, non-unit axis. It compares the returned point with a three.js rotation and checks that the inputs are untouched.
 
 <details><summary>Hint</summary>
 
-Use the method from the axis-angle and orbit page, and check which space the result belongs to.
+Move the point relative to the hinge before turning it. `applyAxisAngle` expects a unit axis; restore the hinge offset afterward.
 
 </details>
 
 ## Where else?
 
-Where else would the same operation help when a part moves or turns?
+What else rotates around a hinge away from the world origin?
 
 <details><summary>A few answers</summary>
 
-Hinges. rotateOnAxis vs rotateOnWorldAxis.
+A robot arm joint. A tilted solar panel. A door handle around its spindle.
 
 </details>

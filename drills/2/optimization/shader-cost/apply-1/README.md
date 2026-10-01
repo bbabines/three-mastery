@@ -22,13 +22,13 @@ A scene has many lights, and a product finish enables optional physical features
 | `enabledPhysicalFeatures(material: THREE.MeshPhysicalMaterial)` | How many optional physical shader features are enabled. |
 | `precompileScene(renderer: Pick<THREE.WebGLRenderer, "compileAsync">, scene: THREE.Scene, camera: THREE.Camera)` | The Promise for shader compilation before first use. |
 
-Try the scene. The readout changes when your function gives an answer.
+The preview reports enabled physical features for one material.
 
 <div data-scene="practice"></div>
 
 ## Measure
 
-Run the Domain 10 shader-swap experiment at fixed resolution and coverage. Record frame time for the enabled physical features and the simpler material. Then compare first-use hitch before and after compileAsync; note both measured frame times, without imposing a device-independent threshold.
+Keep resolution and coverage fixed. Record frame time with optional physical features on and off. Then compare the first variant switch before and after `compileAsync`; record both times.
 
 ## Your code
 
@@ -40,7 +40,7 @@ npm run drill -- drills/2/optimization/shader-cost/apply-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The test counts clearcoat, sheen, and transmission and checks the returned compile promise.
 
 <details><summary>Hint</summary>
 
@@ -50,4 +50,6 @@ A physical material with zero optional features can be close in cost to Standard
 
 ## Where else?
 
-Where else would the same code help? The concept card lists Mobile fallback, Shadow cost.
+What would you simplify for a mobile material fallback?
+
+<details><summary>A few answers</summary> Disable unused physical features and precompile the chosen simpler variant before showing it. </details>

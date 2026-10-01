@@ -22,8 +22,8 @@ export function sortMaterials(meshes: THREE.Mesh[]): Answer<THREE.Mesh[]> {
   return null;
 }
 
-// depth-early-z: Judge whether a surface can benefit from early depth rejection.
-export function canRejectEarly(opaque: boolean, writesDepth: boolean): Answer<boolean> {
+// depth-early-z: A simple case where depth testing can reject hidden fragments early.
+export function earlyDepthLikely(depthTest: boolean, alphaTested: boolean): Answer<boolean> {
   return null;
 }
 

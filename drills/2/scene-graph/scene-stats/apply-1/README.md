@@ -36,7 +36,7 @@ npm run drill -- drills/2/scene-graph/scene-stats/apply-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The tests count shared geometry once, then check camera layers and hidden ancestors before calling a mesh visible.
 
 <details><summary>Hint</summary>
 
@@ -46,4 +46,6 @@ A hidden parent stops rendering; layers are tested on each object, not inherited
 
 ## Where else?
 
-Where else would the same code help? The concept card lists Asset audit, Variant comparison.
+Where else can a scene audit count objects the camera cannot show?
+
+<details><summary>A few answers</summary> A minimap, a debug layer, or an optimization comparison. </details>

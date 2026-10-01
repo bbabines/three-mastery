@@ -11,7 +11,7 @@ misconceptions: []
 
 # Verify a transform bug with normals as color
 
-> **The job:** combine ideas from several domains in one small piece of code.
+> **The job:** Show world-space normals as colors that stay fixed when the camera moves.
 
 ## Task
 
@@ -41,10 +41,16 @@ A browser check renders an unevenly scaled, rotated plane from two camera positi
 
 <details><summary>Hint</summary>
 
-Use the relevant three.js methods shown on the concept pages. Check the behavior rather than only the code shape.
+The built-in normalMatrix follows the camera. Which object transform describes the surface in world space?
 
 </details>
 
 ## Where else?
 
-Where else would this choice appear in a product viewer or tool?
+When could world-normal colors expose a transform mistake?
+
+<details><summary>A few answers</summary>
+
+A mirrored part, a stretched decal receiver, or a surface-aligned annotation.
+
+</details>

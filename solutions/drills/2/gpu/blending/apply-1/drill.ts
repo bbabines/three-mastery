@@ -4,5 +4,10 @@ import type { Answer } from '@harness/drill';
 import * as THREE from 'three';
 // The material configured for the current fade alpha.
 export function fadeMaterial(material: THREE.MeshBasicMaterial, alpha: number): Answer<THREE.MeshBasicMaterial> {
-  material.opacity=THREE.MathUtils.clamp(alpha,0,1); material.transparent=material.opacity<1; material.depthWrite=!material.transparent; return material;
+  material.opacity=THREE.MathUtils.clamp(alpha,0,1);
+  const transparent=material.opacity<1;
+  if(material.transparent!==transparent) material.needsUpdate=true;
+  material.transparent=transparent;
+  material.depthWrite=!transparent;
+  return material;
 }

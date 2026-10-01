@@ -9,40 +9,48 @@ lenses: []
 misconceptions: [geometry.face-normals/average-of-vertex]
 ---
 
-# Face normals: use a triangle’s geometric face normal to tell whether its front faces a world-space view direction
+# Face normals: front toward a view
 
-> **The job:** Use a triangle’s geometric face normal to tell whether its front faces a world-space view direction.
+> **The job:** Test a triangle’s geometric front.
 
 ## Task
 
-Use a triangle’s geometric face normal to tell whether its front faces a world-space view direction.
+Write `flatFaceToward(a, b, c, worldView)`. The corners are world positions in counter-clockwise front order. `worldView` points from the triangle toward the viewer in the world. Return true only when the triangle’s flat face normal points toward that direction. Do not change the vectors.
 
-Write `flatFaceToward(a, b, c, worldView)` for the behavior above. Save the starter to update the scene.
+Save your code and inspect the scene; compare the blue result with the green reference.
 
 <div data-scene="demo"></div>
 
+## Spaces
+
+| Value | Space or units |
+| --- | --- |
+| `a, b, c` | World positions |
+| `worldView` | World direction toward viewer |
+| Answer | Boolean |
+
 ## Your code
 
-Write it in `drills/2/geometry/face-normals/apply-1/drill.ts`. Check it with:
+Write it in `drills/2/geometry/face-normals/apply-1/drill.ts`. Save to update the scene. Check it with:
 
     npm run drill -- drills/2/geometry/face-normals/apply-1
 
 ## The check
 
-It passes when `flatFaceToward` does the stated job for the scene and the other cases in the test. The test exercises the values and spaces named above.
+It distinguishes viewers on opposite sides of a sloped triangle, regardless of smooth vertex normals.
 
 <details><summary>Hint</summary>
 
-Use the method from the face normals page, and check which space the result belongs to.
+A triangle’s corner order sets its geometric normal. Compare that direction with the direction toward the viewer.
 
 </details>
 
 ## Where else?
 
-Where else would the same operation help when a part moves or turns?
+Where else does geometric facing matter?
 
 <details><summary>A few answers</summary>
 
-Flat shading. Raycast face normal.
+Hide labels on the back of a model or reject a back-face hit.
 
 </details>

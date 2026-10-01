@@ -9,15 +9,15 @@ lenses: []
 misconceptions: []
 ---
 
-# Uvs: find the faulty result
+# UVs and groups: restore the decal face
 
-> **The job:** A decal uses the shifted texture tile but the first triangle still draws with material slot zero.
+> **The job:** Move one triangle to a different texture tile and draw it with the decal material.
 
 ## Task
 
-A decal uses the shifted texture tile but the first triangle still draws with material slot zero. Copy the mesh, shift the first face UVs, and assign that face to slot one.
+An indexed panel shares vertices between triangles. Its first triangle has the right UV offset, but the decal material does not cover the whole face. Fix `tileFirstFace` so it returns a new geometry: only the first triangle's UVs move by `offset`, that triangle uses material slot 1, and every remaining triangle uses slot 0. Keep the input geometry and offset unchanged.
 
-Fix `tileFirstFace` in `drill.ts`. The scene shows the current result alongside a reference; they should agree after the repair.
+In the scene, the decal triangle should be green and the rest red. A group count is a count of index entries or vertices, not triangles.
 
 <div data-scene="demo"></div>
 
@@ -29,20 +29,20 @@ Fix `drill.ts`, write one sentence in `cause.md`, and replace the placeholder in
 
 ## The check
 
-The acceptance test covers more than the scene pose. Your check must fail on the original bug and pass after the fix, using behavior instead of looking for a particular line of code.
+The acceptance test checks every triangle's UVs, both material groups, and the unchanged inputs. Write a check that would reject a group covering only part of the first triangle.
 
 <details><summary>Hint</summary>
 
-Compare the named spaces and the operation from the uvs page.
+Check how many index entries or vertices make one triangle. The UVs page shows why shared indexed vertices need separate corners when only one face changes.
 
 </details>
 
 ## Where else?
 
-Where else would the same wrong assumption cause an error?
+Where else would a too-short material group leave a visible gap?
 
 <details><summary>A few answers</summary>
 
-A model editor, an interactive viewer, or a check before export.
+A highlighted face in a mesh editor, a selected terrain tile, or one material strip on a product model.
 
 </details>

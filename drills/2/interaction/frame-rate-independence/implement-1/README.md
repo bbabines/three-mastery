@@ -21,7 +21,7 @@ Given a damping rate `lambda` and elapsed seconds `dt`, return the fraction to b
 | --- | --- |
 | `dampingFraction(lambda: number, dt: number)` | The elapsed-time damping fraction. |
 
-Try the scene. The readout changes when your function gives an answer.
+Compare a long frame with two short frames. Both should move the blue marker the same distance toward the yellow target.
 
 <div data-scene="practice"></div>
 
@@ -35,7 +35,7 @@ npm run drill -- drills/2/interaction/frame-rate-independence/implement-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The check verifies that the code composes across different frame lengths. It also rejects an unanswered function.
 
 <details><summary>Hint</summary>
 
@@ -45,4 +45,4 @@ A fixed lerp fraction changes speed with refresh rate; use elapsed seconds.
 
 ## Where else?
 
-Where else would the same code help? The concept card lists Camera smoothing, Drag smoothing.
+Where else must a transition behave the same at 60 Hz and 120 Hz?

@@ -23,8 +23,10 @@ The vignette center shifts when DPR changes from 1 to 2 even though the CSS view
 
 | Value | Space |
 | --- | --- |
-| input position or pixel | local space or device pixels, as named in the function |
-| output | the space named in the return description |
+| `device` | Device pixels from the fragment position |
+| `cssSize` | CSS pixels of the viewport |
+| `dpr` | Device pixels per CSS pixel |
+| returned radius | Unitless distance relative to the viewport size |
 
 ## Your code
 

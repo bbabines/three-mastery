@@ -9,15 +9,15 @@ lenses: [cost]
 misconceptions: []
 ---
 
-# Blending: find the faulty result
+# Blending: keep a later transparent part visible through tinted glass
 
-> **The job:** A tinted overlay hides the object behind it after transparency is enabled.
+> **The job:** Keep a later transparent part visible through tinted glass.
 
 ## Task
 
-A tinted overlay hides the object behind it after transparency is enabled. Keep depth testing but stop the transparent surface from writing opaque depth.
+A tinted pane hides the transparent part behind it when that part draws afterward.
 
-Fix `prepareGlass` in `drill.ts`. The scene shows the current result alongside a reference; they should agree after the repair.
+Fix the function in `drill.ts`. The blue part should remain visible through the yellow glass.
 
 <div data-scene="demo"></div>
 
@@ -33,7 +33,7 @@ Fix `drill.ts`, write one sentence in `cause.md`, and replace the placeholder in
 
 ## The check
 
-The acceptance test covers more than the scene pose. Your check must fail on the original bug and pass after the fix, using behavior instead of looking for a particular line of code.
+The glass must blend and keep depth testing while leaving depth writes off for later transparent geometry. Write a short assertion in `check.ts` with a different input. It must reject the starter and accept the repair.
 
 <details><summary>Hint</summary>
 
@@ -43,7 +43,7 @@ Does a transparent pane still write the depth buffer?
 
 ## Where else?
 
-Where else would the same wrong assumption cause an error?
+Where would a fading overlay need depth testing without writing depth?
 
 <details><summary>A few answers</summary>
 

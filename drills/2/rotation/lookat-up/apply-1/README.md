@@ -9,15 +9,15 @@ lenses: []
 misconceptions: [rotation.lookat-up/same-facing]
 ---
 
-# lookAt and up: aim a camera’s −z at a target, respecting the chosen up vector and keeping the input positions intact
+# lookAt and up: aim a camera
 
-> **The job:** Aim a camera’s −Z at a target, respecting the chosen up vector and keeping the input positions intact.
+> **The job:** Aim a camera at a target while honoring a chosen up direction.
 
 ## Task
 
-Aim a camera’s −Z at a target, respecting the chosen up vector and keeping the input positions intact.
+A camera looks down its own −Z axis. `cameraAim(from, target, up)` returns a quaternion that points this axis from `from` at `target`, with the camera’s +Y as close as possible to `up`. Leave the input vectors unchanged.
 
-Write `cameraAim(from, target, up)` for the behavior above. Save the starter to update the scene.
+The blue aim arrow should match yellow, while green shows the camera’s up direction.
 
 <div data-scene="demo"></div>
 
@@ -29,20 +29,20 @@ Write it in `drills/2/rotation/lookat-up/apply-1/drill.ts`. Check it with:
 
 ## The check
 
-It passes when `cameraAim` does the stated job for the scene and the other cases in the test. The test exercises the values and spaces named above.
+The check verifies the camera’s forward direction and roll for a tilted up vector, and checks every input vector is unchanged.
 
 <details><summary>Hint</summary>
 
-Use the method from the lookat and up page, and check which space the result belongs to.
+The camera convention differs from an ordinary Object3D: its −Z faces the target. Set the camera position and up vector before calling `lookAt`.
 
 </details>
 
 ## Where else?
 
-Where else would the same operation help when a part moves or turns?
+Where else must an aim keep a chosen roll?
 
 <details><summary>A few answers</summary>
 
-Billboards. Top-down camera.
+A drone camera. A side-mounted inspection camera. A camera on a tilted vehicle.
 
 </details>

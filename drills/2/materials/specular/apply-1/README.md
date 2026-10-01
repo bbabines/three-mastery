@@ -15,7 +15,7 @@ misconceptions: [materials.specular/highlights-stay]
 
 ## Task
 
-Compute a Blinn-Phong highlight from normal, light direction, view direction, and shininess. The highlight must move with the viewer and narrow as shininess grows. Use the supplied object or values; return the requested answer so the preview can run it. Keep unrelated settings intact.
+Compute a Blinn-Phong highlight from normal, light direction, view direction, and shininess. The highlight must move with the viewer and narrow as shininess grows. Write `blinnHighlight(normal, toLight, toView, shininess)` and return a value from 0 to 1. Do not change the vectors.
 
 <div data-scene="preview"></div>
 
@@ -29,7 +29,7 @@ npm run drill -- drills/2/materials/specular/apply-1
 
 ## The check
 
-The test covers the intended behavior on more than one input and also checks settings that the function should leave alone.
+The test varies view angle and shininess and checks that all three vectors remain unchanged.
 
 <details><summary>Hint</summary> Build the halfway vector from the directions toward the light and viewer, then raise the clamped normal cosine to shininess. </details>
 
@@ -37,4 +37,4 @@ The test covers the intended behavior on more than one input and also checks set
 
 What happens to a glossy highlight when the camera moves but the light stays fixed?
 
-<details><summary>A starting point</summary> Compare the material or light properties before and after your function returns. </details>
+<details><summary>A few answers</summary> The halfway direction changes with the camera, so a glossy highlight moves even when the light stays fixed. </details>

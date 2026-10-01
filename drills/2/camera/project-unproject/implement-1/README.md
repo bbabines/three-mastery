@@ -9,15 +9,15 @@ lenses: [space]
 misconceptions: [camera.project-unproject/behind-camera]
 ---
 
-# project and unproject: project a world point to screen pixels for a label, retaining its ndc depth for an off-screen check
+# Project: place a label
 
-> **The job:** Project a world point to screen pixels for a label, retaining its NDC depth for an off-screen check.
+> **The job:** Place a world marker on a CSS pixel canvas.
 
 ## Task
 
-Project a world point to screen pixels for a label, retaining its NDC depth for an off-screen check.
+Write `labelPosition(camera, worldPoint, width, height)`. Project the world point through the current camera and return a new Vector3. Its X/Y are CSS pixels from the canvas top-left; Z keeps NDC depth for off-screen checks. Leave the world point unchanged.
 
-Write `labelPosition(camera, worldPoint, width, height)` for the behavior above. Save the starter to update the scene.
+Save your code and inspect the scene; compare the blue result with the green reference.
 
 <div data-scene="demo"></div>
 
@@ -25,34 +25,34 @@ Write `labelPosition(camera, worldPoint, width, height)` for the behavior above.
 
 | Value | Space or units |
 | --- | --- |
-| `camera` | Camera pose and lens in world space |
-| `worldPoint` | World space |
-| `width` | CSS pixels |
-| `height` | CSS pixels |
-| Answer | World space |
+| `camera` | Pose in the world; lens |
+| `worldPoint` | World position |
+| `width, height` | Canvas size in CSS pixels |
+| Answer X/Y | CSS pixels |
+| Answer Z | NDC depth |
 
 ## Your code
 
-Write it in `drills/2/camera/project-unproject/implement-1/drill.ts`. Check it with:
+Write it in `drills/2/camera/project-unproject/implement-1/drill.ts`. Save to update the scene. Check it with:
 
     npm run drill -- drills/2/camera/project-unproject/implement-1
 
 ## The check
 
-It passes when `labelPosition` does the stated job for the scene and the other cases in the test. The test exercises the values and spaces named above.
+The label position follows a moved camera and maps back to the original world point; the input stays unchanged.
 
 <details><summary>Hint</summary>
 
-Use the method from the project and unproject page, and check which space the result belongs to.
+Projection gives NDC first. Convert only X/Y to top-left CSS pixels and preserve Z.
 
 </details>
 
 ## Where else?
 
-Where else would the same operation help when a part moves or turns?
+Where else would this projection be useful?
 
 <details><summary>A few answers</summary>
 
-3D labels. Building a ray.
+Anchor a tooltip to a part or place an edge-of-screen indicator.
 
 </details>

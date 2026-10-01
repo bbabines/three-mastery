@@ -2,15 +2,20 @@ import { answered } from '@harness/check';
 import * as THREE from 'three';
 import { expect, it, vi } from 'vitest';
 import { circleMask } from './drill';
-it('compiles and draws in WebGL', () => {
+it('draws the center and discards the corners', () => {
  const errors=vi.spyOn(console,'error');
  const renderer=new THREE.WebGLRenderer({antialias:false}); renderer.setSize(16,16);
+ renderer.setClearColor(0x000000, 0);
  const geometry=new THREE.PlaneGeometry(2,2), material=answered(circleMask());
  const scene=new THREE.Scene(); scene.add(new THREE.Mesh(geometry,material));
  const camera=new THREE.PerspectiveCamera(60,1,.1,10); camera.position.z=2;
  const target=new THREE.WebGLRenderTarget(16,16); renderer.setRenderTarget(target); renderer.render(scene,camera);
- const pixel=new Uint8Array(4); renderer.readRenderTargetPixels(target,8,8,1,1,pixel);
- expect(pixel[3]).toBe(255);
+ const center=new Uint8Array(4), corner=new Uint8Array(4);
+ renderer.readRenderTargetPixels(target,8,8,1,1,center);
+ renderer.readRenderTargetPixels(target,2,2,1,1,corner);
+ expect(center[3]).toBe(255);
+ expect(center[1]).toBeGreaterThan(center[0]);
+ expect(corner[3]).toBe(0);
  expect(errors.mock.calls.flat().join(' ')).not.toMatch(/THREE.WebGLProgram: Shader Error|VALIDATE_STATUS false/);
  errors.mockRestore(); target.dispose(); geometry.dispose(); material.dispose(); renderer.dispose();
 });

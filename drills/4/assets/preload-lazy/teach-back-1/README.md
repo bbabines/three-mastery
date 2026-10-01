@@ -11,7 +11,7 @@ misconceptions: [assets.preload-lazy/preload-everything]
 
 # Preload or wait: explain the priority
 
-> **The job:** explain a real 3D decision in five plain sentences.
+> **The job:** prioritize the base model, a likely next finish, and off-screen catalog assets.
 
 ## Task
 

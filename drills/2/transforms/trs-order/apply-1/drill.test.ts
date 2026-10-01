@@ -7,8 +7,10 @@ describe('transforms.trs-order', () => {
   it('scale and turn a point around a pivot, then put it back in the world at that pivot', () => {
     const point = new THREE.Vector3(4, 2, 1), pivot = new THREE.Vector3(1, 1, -2), scale = new THREE.Vector3(2, 1, 0.5);
     const rotation = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), 1.1);
+    const beforePoint = point.clone(), beforePivot = pivot.clone();
+    const beforeScale = scale.clone(), beforeRotation = rotation.clone();
     const expected = point.clone().sub(pivot).applyMatrix4(new THREE.Matrix4().compose(new THREE.Vector3(), rotation, scale)).add(pivot);
     expect(answered(orbitWithScale(point, pivot, rotation, scale)).distanceTo(expected)).toBeLessThan(1e-6);
-    expect(point.equals(new THREE.Vector3(4, 2, 1))).toBe(true);
+    expect(point.equals(beforePoint) && pivot.equals(beforePivot) && scale.equals(beforeScale) && rotation.equals(beforeRotation)).toBe(true);
   });
 });

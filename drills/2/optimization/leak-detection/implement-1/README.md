@@ -21,13 +21,13 @@ Render once to establish GPU memory counts. Run the supplied replacement-and-dis
 | --- | --- |
 | `swapMemoryDelta(renderer: Pick<THREE.WebGLRenderer, "render" | "info">, scene: THREE.Scene, camera: THREE.Camera, swap: () => void, cycles: number)` | The change in GPU geometry and texture counts after swaps. |
 
-Try the scene. The readout changes when your function gives an answer.
+The preview reports memory deltas after its fixed swap cycle.
 
 <div data-scene="practice"></div>
 
 ## Measure
 
-Run the Domain 10 memory proof with 20 variant swaps. Record renderer.info.memory.geometries and .textures before and after, plus frame time. Both memory deltas should return to zero after owned resources are disposed.
+Swap variants at least 20 times. Record `renderer.info.memory.geometries` and `.textures` after each unload, plus frame time. The counts should return to the first unloaded baseline when owned resources are disposed.
 
 ## Your code
 
@@ -39,7 +39,7 @@ npm run drill -- drills/2/optimization/leak-detection/implement-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The test renders before measuring, repeats the swap, and checks the change in both memory counters.
 
 <details><summary>Hint</summary>
 
@@ -49,4 +49,6 @@ renderer.info.memory tracks geometry and textures, not all materials; check disp
 
 ## Where else?
 
-Where else would the same code help? The concept card lists Variant cycling, Long sessions.
+Why measure after several route changes?
+
+<details><summary>A few answers</summary> A single swap can hide a slow leak; repeated unloads reveal a baseline that keeps climbing. </details>

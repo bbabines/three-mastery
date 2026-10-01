@@ -39,7 +39,7 @@ npm run drill -- drills/2/assets/disposal/apply-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The test retires one mesh, keeps shared geometry alive, and checks that its unique material is disposed once.
 
 <details><summary>Hint</summary>
 
@@ -49,4 +49,6 @@ Inspect what remains before disposing shared resources.
 
 ## Where else?
 
-Where else would the same code help? The concept card lists Variant switching, SPA route changes.
+Where else must a retired object leave shared resources alive?
+
+<details><summary>A few answers</summary> A variant switch, a deleted selection, or a product route change. </details>

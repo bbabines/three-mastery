@@ -29,7 +29,8 @@ Try the scene. The readout changes when your function gives an answer.
 
 | Value | Space |
 | --- | --- |
-| Inputs and answer | World space unless named otherwise in the task. |
+| Pointer and canvas rectangle | Viewport CSS pixels |
+| Returned point | Canvas NDC, from −1 to +1 |
 
 ## Your code
 
@@ -41,7 +42,7 @@ npm run drill -- drills/2/queries/ray-from-pointer/implement-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The test uses an offset, non-square canvas rectangle and checks center and corner NDC values.
 
 <details><summary>Hint</summary>
 
@@ -51,4 +52,6 @@ Use the canvas bounds in CSS pixels, not the window or drawing buffer.
 
 ## Where else?
 
-Where else would the same code help? The concept card lists Click, Drag start.
+Where else can a canvas offset shift a pointer action?
+
+<details><summary>A few answers</summary> Touch picking, hover, or a drag on a scrolled page. </details>

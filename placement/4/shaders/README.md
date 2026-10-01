@@ -23,7 +23,7 @@ A no-docs check of the decisions in this domain. Write every function in `placem
 | Function | Decision |
 | --- | --- |
 | `stageForPixelColor` | Choose the stage that runs for each covered fragment. |
-| `setUniform` | Change a uniform shared across a draw. |
+| `setUniform` | Update a uniform's value in place, or add it when missing. |
 | `worldPointFromModel` | Use the model matrix to put a vertex in world space. |
 | `blueRedGreen` | Reorder a vector's channels without changing its input. |
 | `clampedLighting` | Clamp a lighting dot product to zero. |

@@ -36,7 +36,7 @@ npm run drill -- drills/2/scene-graph/user-data/apply-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The tests read a parent tag and save the exact old material so it can be restored after a swap.
 
 <details><summary>Hint</summary>
 
@@ -46,4 +46,6 @@ Store the exact old material object; cloning it is not needed for a temporary sw
 
 ## Where else?
 
-Where else would the same code help? The concept card lists Tagging parts with IDs, Storing an original material.
+Where else should metadata and an original material travel with a part?
+
+<details><summary>A few answers</summary> Selection highlights, per-part IDs, or temporary x-ray views. </details>

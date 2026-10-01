@@ -19,12 +19,6 @@ The estimate claims discarded pixels cost nothing even though their fragment sha
 
 <div data-scene="preview"></div>
 
-## Spaces
-
-| Value | Space |
-| --- | --- |
-| input position or pixel | local space or device pixels, as named in the function |
-| output | the space named in the return description |
 
 ## Measure
 

@@ -11,7 +11,7 @@ misconceptions: []
 
 # Project and unproject: explain the decision
 
-> **The job:** explain a real 3D decision in five plain sentences.
+> **The job:** Explain how a pointer ray places a part on the floor.
 
 ## Task
 

@@ -36,7 +36,7 @@ npm run drill -- drills/2/shaders/extending-materials/apply-1
 
 ## The check
 
-The Node test checks the injection and material identity. The browser check compiles and renders a lit mesh with it.
+The Node test checks the injection and material identity. The browser test compares a lit base material with the same material after the emissive patch.
 
 <details><summary>Hint</summary> `onBeforeCompile` receives the assembled built-in shader before compilation; replace a known include and keep it in the source. </details>
 

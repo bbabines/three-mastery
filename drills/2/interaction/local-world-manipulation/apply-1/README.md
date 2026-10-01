@@ -21,7 +21,7 @@ Return the new parent-local position after moving a child `distance` world units
 | --- | --- |
 | `moveAlongLocalX(child: THREE.Object3D, distance: number)` | The new position measured from the child's parent. |
 
-Try the scene. The readout changes when your function gives an answer.
+The blue part sits under a turned parent. A local X move should follow the part’s own axis, then end in parent-local coordinates.
 
 <div data-scene="practice"></div>
 
@@ -41,7 +41,7 @@ npm run drill -- drills/2/interaction/local-world-manipulation/apply-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The check verifies that the code uses both parent and child rotation. It also rejects an unanswered function.
 
 <details><summary>Hint</summary>
 
@@ -51,4 +51,4 @@ The local direction changes with both rotations; position still belongs to the p
 
 ## Where else?
 
-Where else would the same code help? The concept card lists Moving along a rotated rail, Rotating relative to a parent.
+When would a part follow its own turned axis rather than a fixed world axis?

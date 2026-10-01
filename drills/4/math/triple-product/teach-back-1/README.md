@@ -11,7 +11,7 @@ misconceptions: [math.triple-product/handedness]
 
 # Detect a mirrored basis: explain the sign
 
-> **The job:** explain a real 3D decision in five plain sentences.
+> **The job:** detect a mirrored basis before baking its transform into geometry.
 
 ## Task
 

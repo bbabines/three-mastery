@@ -39,7 +39,7 @@ npm run drill -- drills/2/assets/disposal/implement-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The test watches dispose events: owned material and texture must go, while shared geometry stays.
 
 <details><summary>Hint</summary>
 
@@ -49,4 +49,6 @@ Removing a Mesh does not dispose resources; shared resources must remain alive.
 
 ## Where else?
 
-Where else would the same code help? The concept card lists Variant switching, Long sessions.
+Where else do you need to separate owned from shared GPU data?
+
+<details><summary>A few answers</summary> A product variant, a reusable model library, or a long editing session. </details>

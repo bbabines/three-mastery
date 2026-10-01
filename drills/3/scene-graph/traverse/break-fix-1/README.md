@@ -9,15 +9,15 @@ lenses: []
 misconceptions: [scene-graph.traverse/visible-children]
 ---
 
-# Traverse: find the faulty result
+# Traverse: a hidden branch gets counted
 
 > **The job:** A visible-part counter includes meshes under a hidden group.
 
 ## Task
 
-A visible-part counter includes meshes under a hidden group. Return the number of meshes the scene can currently show.
+A product root holds one visible mesh and a hidden group with two more. `visibleMeshCount` should count only meshes reached through visible branches. A hidden parent hides all its descendants.
 
-Fix `visibleMeshCount` in `drill.ts`. The scene shows the current result alongside a reference; they should agree after the repair.
+Fix `visibleMeshCount` in `drill.ts`. The scene shows one blue box, so the count should be one.
 
 <div data-scene="demo"></div>
 
@@ -29,7 +29,7 @@ Fix `drill.ts`, write one sentence in `cause.md`, and replace the placeholder in
 
 ## The check
 
-The acceptance test covers more than the scene pose. Your check must fail on the original bug and pass after the fix, using behavior instead of looking for a particular line of code.
+The test includes meshes under a hidden group. Your check should fail if the count includes any child of that group.
 
 <details><summary>Hint</summary>
 
@@ -39,10 +39,10 @@ Does traverse visit descendants of a hidden parent?
 
 ## Where else?
 
-Where else would the same wrong assumption cause an error?
+Where else should a hidden branch be left out of a scene walk?
 
 <details><summary>A few answers</summary>
 
-Finding the product root from a clicked mesh; Applying an override.
+Collecting visible meshes for an override, auditing a product view, or listing selectable parts.
 
 </details>

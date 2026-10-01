@@ -11,7 +11,7 @@ misconceptions: []
 
 # Selection outline: stencil vs post pass
 
-> **The job:** combine ideas from several domains in one small piece of code.
+> **The job:** Compare the added draw work of stencil and post-process selection outlines.
 
 ## Task
 
@@ -37,10 +37,16 @@ The check varies both selected draw count and DPR, so leaving out the squared DP
 
 <details><summary>Hint</summary>
 
-Use the relevant three.js methods shown on the concept pages. Check the behavior rather than only the code shape.
+Count selected-object redraws separately from the full-screen pixels. The existing FXAA pass is not new outline work.
 
 </details>
 
 ## Where else?
 
-Where else would this choice appear in a product viewer or tool?
+When else is a draw-call versus full-screen-pixel trade-off useful?
+
+<details><summary>A few answers</summary>
+
+Hover highlights, masked glows, or selection outlines on high-DPR displays.
+
+</details>

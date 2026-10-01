@@ -11,7 +11,7 @@ misconceptions: []
 
 # Slide a part along a rotated rail
 
-> **The job:** make one decision that needs ideas from several parts of 3D work.
+> **The job:** Keep a dragged part moving along its rail after the rail turns.
 
 ## Task
 
@@ -41,10 +41,16 @@ The check turns a parent and the rail, then compares the answer with a world-spa
 
 <details><summary>Hint</summary>
 
-Use the relevant three.js method from the concept pages. Keep every value in the same space before combining it.
+The pointer motion is in world space; the rail axis starts in local space. Compare them only after they use the same space.
 
 </details>
 
 ## Where else?
 
-Where else would this same decision appear in a product viewer or tool?
+Where else must a local axis guide world-space motion?
+
+<details><summary>A few answers</summary>
+
+A tilted drawer slide, a hinge handle, or an angled crane guide.
+
+</details>

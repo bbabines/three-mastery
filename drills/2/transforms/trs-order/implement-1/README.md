@@ -9,15 +9,15 @@ lenses: [space]
 misconceptions: [transforms.trs-order/order-irrelevant]
 ---
 
-# TRS order: place a model vertex after scale, then rotation, then translation; return its world position without changing inputs
+# TRS order: place a vertex
 
-> **The job:** Place a model vertex after scale, then rotation, then translation; return its world position without changing inputs.
+> **The job:** Find where a model vertex lands after scale, turn, and shift.
 
 ## Task
 
-Place a model vertex after scale, then rotation, then translation; return its world position without changing inputs.
+`placeVertex(vertex, position, rotation, scale)` returns the world point after scaling the local vertex, rotating it, then translating it. Use the given scale on each axis. Leave all inputs unchanged.
 
-Write `placeVertex(vertex, position, rotation, scale)` for the behavior above. Save the starter to update the scene.
+The blue vertex should land on the yellow world marker.
 
 <div data-scene="demo"></div>
 
@@ -25,11 +25,12 @@ Write `placeVertex(vertex, position, rotation, scale)` for the behavior above. S
 
 | Value | Space or units |
 | --- | --- |
-| `vertex` | Model local space |
-| `position` | World space unless named local |
-| `rotation` | Value in the units named in the Task |
-| `scale` | Value in the units named in the Task |
-| Answer | World space |
+| `vertex` | Model local point |
+| `position` | World offset |
+| `rotation` | Model local to world turn |
+| `scale` | Model local multipliers |
+| Answer | World point |
+
 
 ## Your code
 
@@ -39,20 +40,20 @@ Write it in `drills/2/transforms/trs-order/implement-1/drill.ts`. Check it with:
 
 ## The check
 
-It passes when `placeVertex` does the stated job for the scene and the other cases in the test. The test exercises the values and spaces named above.
+The check uses nonzero translation, a turn, and unequal scale to distinguish TRS order. It checks all inputs remain unchanged.
 
 <details><summary>Hint</summary>
 
-Use the method from the trs order page, and check which space the result belongs to.
+A `Matrix4` can compose position, quaternion, and scale in the usual TRS order. Apply it to a copy of the vertex.
 
 </details>
 
 ## Where else?
 
-Where else would the same operation help when a part moves or turns?
+Where else do you place local geometry in the world?
 
 <details><summary>A few answers</summary>
 
-Orbiting a point. Scaling a rotated part.
+A mesh corner. A collision sample. A model-space annotation.
 
 </details>

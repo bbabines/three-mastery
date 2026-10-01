@@ -9,15 +9,15 @@ lenses: [space]
 misconceptions: [transforms.points-vs-directions/apply-matrix-directions]
 ---
 
-# Points vs directions: move a ray from model space into world space: its point moves with translation, while its direction does not
+# Points vs directions: move a ray
 
-> **The job:** Move a ray from model space into world space: its point moves with translation, while its direction does not.
+> **The job:** Move a ray from model coordinates into the world.
 
 ## Task
 
-Move a ray from model space into world space: its point moves with translation, while its direction does not.
+`moveRay(point, direction, transform)` returns a world-space point and a unit world direction. Translation moves the point but not the direction; rotation turns both. The matrix may have unequal scale. Leave all inputs unchanged.
 
-Write `moveRay(point, direction, transform)` for the behavior above. Save the starter to update the scene.
+The blue ray should start at the yellow world hit and point along the yellow ray.
 
 <div data-scene="demo"></div>
 
@@ -25,10 +25,11 @@ Write `moveRay(point, direction, transform)` for the behavior above. Save the st
 
 | Value | Space or units |
 | --- | --- |
-| `point` | World space unless named local |
-| `direction` | Value in the units named in the Task |
-| `transform` | Saved transform between named spaces |
-| Answer | World space |
+| `point` | Model local point |
+| `direction` | Model local direction |
+| `transform` | Model local to world transform |
+| Answer | World point and unit world direction |
+
 
 ## Your code
 
@@ -38,20 +39,20 @@ Write it in `drills/2/transforms/points-vs-directions/implement-1/drill.ts`. Che
 
 ## The check
 
-It passes when `moveRay` does the stated job for the scene and the other cases in the test. The test exercises the values and spaces named above.
+The check uses translation, rotation, and unequal scale. It verifies both ray fields and checks the input point, direction, and matrix.
 
 <details><summary>Hint</summary>
 
-Use the method from the points vs directions page, and check which space the result belongs to.
+A point uses `applyMatrix4`; a direction uses `transformDirection`, which drops translation and normalizes. Work on copies.
 
 </details>
 
 ## Where else?
 
-Where else would the same operation help when a part moves or turns?
+Where else do points and directions travel together?
 
 <details><summary>A few answers</summary>
 
-Transforming a ray direction. Transforming a velocity.
+A picking ray. A spotlight origin and aim. A projectile spawn and heading.
 
 </details>

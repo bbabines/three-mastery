@@ -9,15 +9,15 @@ lenses: []
 misconceptions: []
 ---
 
-# Safe mutation: find the faulty result
+# Safe mutation: skipped highlight helpers
 
 > **The job:** Clearing temporary highlight helpers skips every other helper in a group.
 
 ## Task
 
-Clearing temporary highlight helpers can skip one or crash while walking a group, leaving parts highlighted. Each helper points to a mesh whose original material is saved in `target.userData.originalMaterial`. Restore each material and remove every helper; report how many were cleared.
+Four highlighted parts have a red helper ring each. Every helper points to its mesh through `userData.target`; the original material is in `target.userData.originalMaterial`. Restore each material, remove every helper, and return the number cleared.
 
-Fix `clearMarked` in `drill.ts`. The scene shows the current result alongside a reference; they should agree after the repair.
+Fix `clearMarked` in `drill.ts`. All four boxes should turn blue, and every red ring should disappear.
 
 <div data-scene="demo"></div>
 
@@ -29,7 +29,7 @@ Fix `drill.ts`, write one sentence in `cause.md`, and replace the placeholder in
 
 ## The check
 
-The acceptance test covers more than the scene pose. Your check must fail on the original bug and pass after the fix, using behavior instead of looking for a particular line of code.
+The test puts several helpers next to one another and checks the count, parent links, and restored materials. Your check should catch a helper left behind.
 
 <details><summary>Hint</summary>
 
@@ -39,10 +39,10 @@ What can happen to the next sibling when a traversal removes the current child?
 
 ## Where else?
 
-Where else would the same wrong assumption cause an error?
+Where else can changing children during a walk skip work?
 
 <details><summary>A few answers</summary>
 
-Removing helpers; Splitting groups.
+Replacing imported meshes, clearing selection outlines, or removing temporary labels.
 
 </details>

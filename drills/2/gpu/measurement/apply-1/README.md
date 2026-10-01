@@ -21,7 +21,7 @@ A resolution experiment records baseline and changed frame times with everything
 | --- | --- |
 | `frameSaving(baselineMs: number, changedMs: number)` | Saved frame milliseconds and percentage from baseline. |
 
-Try the scene. The readout changes when your function gives an answer.
+Sample DPR 2 for at least 30 frames, switch to DPR 1, and compare frame interval and draw count with the camera still.
 
 <div data-scene="practice"></div>
 
@@ -39,7 +39,7 @@ npm run drill -- drills/2/gpu/measurement/apply-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The check verifies that the code reports improvement and regression with the baseline as denominator. It also rejects an unanswered function.
 
 <details><summary>Hint</summary>
 
@@ -49,4 +49,4 @@ Change one variable, keep coverage fixed, and compare frame time rather than FPS
 
 ## Where else?
 
-Where else would the same code help? The concept card lists Timing a frame, renderer.info counts.
+Which experiment would separate fill cost from draw submission cost?

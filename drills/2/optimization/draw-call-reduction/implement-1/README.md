@@ -21,13 +21,13 @@ A static room uses the same bracket at several positions. Build an InstancedMesh
 | --- | --- |
 | `instanceHardware(geometry: THREE.BufferGeometry, material: THREE.Material, placements: THREE.Matrix4[])` | One InstancedMesh carrying each copy transform. |
 
-Try the scene. The readout changes when your function gives an answer.
+The preview draws three placements through one instance batch.
 
 <div data-scene="practice"></div>
 
 ## Measure
 
-Run the Domain 10 draw-call experiment with equal screen coverage. Record `renderer.info.render.calls` before and after instancing, plus the live frame-time average. Keep the same three placements. A lower draw count is the invariant; frame time has no fixed pass bar.
+Draw the same three brackets separately and as instances. Record `renderer.info.render.calls` and frame time with equal screen coverage. Draw calls should fall; frame time has no fixed threshold.
 
 ## Your code
 
@@ -39,7 +39,7 @@ npm run drill -- drills/2/optimization/draw-call-reduction/implement-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The test checks the shared geometry and material, instance count, and each placement matrix.
 
 <details><summary>Hint</summary>
 
@@ -49,4 +49,6 @@ Instancing reduces CPU draw submissions, not fragment work.
 
 ## Where else?
 
-Where else would the same code help? The concept card lists Repeated hardware, Many same-material parts.
+When does instancing help repeated hardware?
+
+<details><summary>A few answers</summary> It helps when many identical parts use the same geometry and material but sit at different transforms. </details>

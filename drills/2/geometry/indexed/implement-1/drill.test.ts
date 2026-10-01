@@ -10,5 +10,11 @@ describe('geometry.indexed', () => {
     expect(a.distanceTo(new THREE.Vector3(0,0,0))).toBeLessThan(1e-6);
     expect(b.distanceTo(new THREE.Vector3(2,2,0))).toBeLessThan(1e-6);
     expect(c.distanceTo(new THREE.Vector3(0,2,0))).toBeLessThan(1e-6);
+    const nonindexed = g.toNonIndexed();
+    const second = answered(triangleVertices(nonindexed, 1));
+    expect(second[0].distanceTo(new THREE.Vector3(0,0,0))).toBeLessThan(1e-6);
+    expect(second[1].distanceTo(new THREE.Vector3(2,2,0))).toBeLessThan(1e-6);
+    expect(second[2].distanceTo(new THREE.Vector3(0,2,0))).toBeLessThan(1e-6);
+    expect(g.index!.array).toEqual(new Uint16Array([0, 1, 2, 0, 2, 3]));
   });
 });

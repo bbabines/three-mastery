@@ -11,5 +11,8 @@ describe('adaptive phone resolution', () => {
   it('uses the device ratio below the cap and handles invalid sizes', () => {
     expectNumber(budgetedDpr(800,600,1.5,2000000),1.5);
     expectNumber(budgetedDpr(0,600,2,1000000),1);
+    expectNumber(budgetedDpr(NaN,600,2,1000000),1);
+    expectNumber(budgetedDpr(800,600,Infinity,1000000),1);
+    expectNumber(budgetedDpr(800,600,2,NaN),1);
   });
 });

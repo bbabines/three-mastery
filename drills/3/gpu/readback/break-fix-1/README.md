@@ -9,15 +9,15 @@ lenses: [cost]
 misconceptions: [gpu.readback/one-pixel-free]
 ---
 
-# Readback: find the faulty result
+# Readback: pick an ID pixel without a pointer hitch
 
-> **The job:** A one-pixel ID pick stalls the main thread because it uses synchronous readback.
+> **The job:** Pick an ID pixel without a pointer hitch.
 
 ## Task
 
-A one-pixel ID pick stalls the main thread because it uses synchronous readback. Return the asynchronous read promise for the RGBA ID pixel.
+Picking one ID pixel causes a visible pointer hitch on a busy scene.
 
-Fix `pickPixel` in `drill.ts`. The scene shows the current result alongside a reference; they should agree after the repair.
+Fix the function in `drill.ts`. The red ID color should appear on the ball; compare synchronous and asynchronous read counts.
 
 <div data-scene="demo"></div>
 
@@ -33,7 +33,7 @@ Fix `drill.ts`, write one sentence in `cause.md`, and replace the placeholder in
 
 ## The check
 
-The acceptance test covers more than the scene pose. Your check must fail on the original bug and pass after the fix, using behavior instead of looking for a particular line of code.
+Read exactly one pixel from the requested target coordinates through the asynchronous API; never use the blocking read. Write a short assertion in `check.ts` with a different input. It must reject the starter and accept the repair.
 
 <details><summary>Hint</summary>
 
@@ -43,7 +43,7 @@ What work must finish before a synchronous pixel read returns?
 
 ## Where else?
 
-Where else would the same wrong assumption cause an error?
+When would an asynchronous ID read matter during pointer movement?
 
 <details><summary>A few answers</summary>
 

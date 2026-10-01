@@ -11,7 +11,7 @@ misconceptions: []
 
 # Leak detection: explain the decision
 
-> **The job:** explain a real 3D decision in five plain sentences.
+> **The job:** check whether repeated route changes leave GPU resources behind.
 
 ## Task
 

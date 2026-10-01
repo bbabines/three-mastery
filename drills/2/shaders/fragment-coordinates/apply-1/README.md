@@ -15,7 +15,7 @@ misconceptions: [shaders.fragment-coordinates/css-pixels]
 
 ## Task
 
-Build a checker in CSS pixels by converting `gl_FragCoord.xy` from device pixels using the supplied DPR. Return a material that draws the effect on the preview plane. Use readable GLSL and keep the variable spaces explicit.
+Build a checker in CSS pixels by converting `gl_FragCoord.xy` from device pixels using the supplied DPR. Write `cssChecker(dpr)` and divide device-pixel coordinates by the supplied DPR before making the checker.
 
 <div data-scene="preview"></div>
 
@@ -38,10 +38,12 @@ npm run drill -- drills/2/shaders/fragment-coordinates/apply-1
 
 ## The check
 
-The Node test inspects the data path. The browser test compiles and draws it in WebGL.
+The Node test checks the DPR uniform and fragment-coordinate path. The browser test checks that two pixels one CSS cell apart have opposite checker colors.
 
 <details><summary>Hint</summary> Divide device pixel coordinates by DPR before choosing an eight-CSS-pixel cell. </details>
 
 ## Where else?
 
 Why does a screen-space checker halve in CSS size when DPR doubles and the shader ignores it?
+
+<details><summary>A few answers</summary> Without dividing by DPR, each checker tile occupies half as many CSS pixels when DPR doubles. </details>

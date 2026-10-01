@@ -21,7 +21,7 @@ Return the world motion from `start` to `end` projected onto `axis`. The axis ca
 | --- | --- |
 | `railDelta(start: THREE.Vector3, end: THREE.Vector3, axis: THREE.Vector3)` | The world-space drag movement along the axis. |
 
-Try the scene. The readout changes when your function gives an answer.
+The yellow rail is tilted. The blue part should travel along it even when the pointer motion points partly across it.
 
 <div data-scene="practice"></div>
 
@@ -41,7 +41,7 @@ npm run drill -- drills/2/interaction/axis-drag/implement-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The check verifies that the code projects onto a tilted non-unit rail without changing inputs. It also rejects an unanswered function.
 
 <details><summary>Hint</summary>
 
@@ -51,4 +51,4 @@ Project the whole world movement onto the rail axis, not the screen x movement.
 
 ## Where else?
 
-Where else would the same code help? The concept card lists Height adjustment, Sliding along a rail.
+Where would a rail-constrained drag help besides a translation gizmo?

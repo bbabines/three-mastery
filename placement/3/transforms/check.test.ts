@@ -23,13 +23,19 @@ describe('transforms.local-vs-world', () => {
 });
 
 describe('transforms.matrix-vs-matrixworld', () => {
-  it('checks matrix vs matrixworld', () => {
-    const parent = new THREE.Group(); const part = new THREE.Object3D(); parent.add(part);
-    parent.position.set(4, 2, -3); parent.rotation.y = 0.7; part.position.set(1, 0, 2);
+  it('captures the fresh full world matrix as an independent snapshot', () => {
+    const parent = new THREE.Group(), part = new THREE.Object3D(); parent.add(part);
+    parent.position.set(4, 2, -3); parent.rotation.y = 0.7;
+    part.position.set(1, 0, 2); part.scale.set(1.5, 0.8, 2);
     const actual = answered(checkMatrixVsMatrixworld(part));
-    const expected = new THREE.Matrix4().multiplyMatrices(parent.matrixWorld, part.matrix);
-    expect(new THREE.Vector3(1, 0, 0).applyMatrix4(actual).distanceTo(new THREE.Vector3(1, 0, 0).applyMatrix4(expected))).toBeLessThan(1e-6);
+    parent.updateWorldMatrix(true, true);
+    const expected = part.matrixWorld.clone();
+    for (const probe of [new THREE.Vector3(), new THREE.Vector3(1, 0, 0), new THREE.Vector3(0, 1, 1)]) {
+      expect(probe.clone().applyMatrix4(actual).distanceTo(probe.clone().applyMatrix4(expected))).toBeLessThan(1e-6);
+    }
     expect(actual).not.toBe(part.matrixWorld);
+    parent.position.x += 3; parent.updateWorldMatrix(true, true);
+    expect(actual.equals(expected)).toBe(true);
   });
 });
 
@@ -44,13 +50,15 @@ describe('transforms.update-timing', () => {
 });
 
 describe('transforms.trs-order', () => {
-  it('checks trs order', () => {
-    const vertex = new THREE.Vector3(1, 2, -1), position = new THREE.Vector3(3, 0, 2), scale = new THREE.Vector3(2, 1, 3);
+  it('places a vertex in TRS order while preserving all inputs', () => {
+    const vertex = new THREE.Vector3(1, 2, -1), position = new THREE.Vector3(3, 0, 2);
+    const scale = new THREE.Vector3(2, 1, 3);
     const rotation = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), 0.7);
-    const actual = answered(checkTrsOrder(vertex, position, rotation, scale));
+    const beforeVertex = vertex.clone(), beforePosition = position.clone();
+    const beforeScale = scale.clone(), beforeRotation = rotation.clone();
     const expected = vertex.clone().multiply(scale).applyQuaternion(rotation).add(position);
-    expect(actual.distanceTo(expected)).toBeLessThan(1e-6);
-    expect(vertex.equals(new THREE.Vector3(1, 2, -1))).toBe(true);
+    expect(answered(checkTrsOrder(vertex, position, rotation, scale)).distanceTo(expected)).toBeLessThan(1e-6);
+    expect(vertex.equals(beforeVertex) && position.equals(beforePosition) && scale.equals(beforeScale) && rotation.equals(beforeRotation)).toBe(true);
   });
 });
 
@@ -65,13 +73,16 @@ describe('transforms.compose-decompose', () => {
 });
 
 describe('transforms.points-vs-directions', () => {
-  it('checks points vs directions', () => {
-    const m = new THREE.Matrix4().compose(new THREE.Vector3(4, 2, -1), new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,1,0), 0.6), new THREE.Vector3(1,1,1));
-    const p = new THREE.Vector3(1,0,0), d = new THREE.Vector3(0,0,-2);
-    const actual = answered(checkPointsVsDirections(p,d,m));
-    expect(actual.point.distanceTo(p.clone().applyMatrix4(m))).toBeLessThan(1e-6);
-    expect(actual.direction.distanceTo(d.clone().applyMatrix3(new THREE.Matrix3().setFromMatrix4(m)).normalize())).toBeLessThan(1e-6);
-    expect(p.equals(new THREE.Vector3(1,0,0)) && d.equals(new THREE.Vector3(0,0,-2))).toBe(true);
+  it('moves a ray origin with translation and its aim without translation or scale length', () => {
+    const matrix = new THREE.Matrix4().compose(new THREE.Vector3(4, 2, -1),
+      new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), 0.6), new THREE.Vector3(2, 0.7, 1.5));
+    const point = new THREE.Vector3(1, 0.3, -0.4), direction = new THREE.Vector3(0.3, 0.2, -2);
+    const beforePoint = point.clone(), beforeDirection = direction.clone(), beforeMatrix = matrix.clone();
+    const actual = answered(checkPointsVsDirections(point, direction, matrix));
+    expect(actual.point.distanceTo(point.clone().applyMatrix4(matrix))).toBeLessThan(1e-6);
+    expect(actual.direction.distanceTo(direction.clone().transformDirection(matrix))).toBeLessThan(1e-6);
+    expect(actual.direction.length()).toBeCloseTo(1, 6);
+    expect(point.equals(beforePoint) && direction.equals(beforeDirection) && matrix.equals(beforeMatrix)).toBe(true);
   });
 });
 
@@ -85,19 +96,30 @@ describe('transforms.inverse-matrices', () => {
 });
 
 describe('transforms.add-vs-attach', () => {
-  it('checks add vs attach', () => {
-    const a=new THREE.Group(), b=new THREE.Group(), part=new THREE.Object3D(); a.position.x=3; b.position.x=-2; a.add(part); const before=part.getWorldPosition(new THREE.Vector3()); expect(answered(checkAddVsAttach(part,b)).distanceTo(before)).toBeLessThan(1e-6); expect(part.parent).toBe(b);
+  it('reparents without changing the part’s world location', () => {
+    const oldParent = new THREE.Group(), newParent = new THREE.Group(), part = new THREE.Object3D();
+    oldParent.position.set(3, 1, 0); oldParent.rotation.y = 0.5;
+    newParent.position.set(-2, 0, 1); newParent.rotation.y = -0.7;
+    oldParent.add(part); part.position.set(0.4, 0.3, 0.8);
+    const before = part.getWorldPosition(new THREE.Vector3());
+    const result = answered(checkAddVsAttach(part, newParent));
+    expect(result.distanceTo(before)).toBeLessThan(1e-6);
+    expect(part.parent).toBe(newParent);
+    expect(part.getWorldPosition(new THREE.Vector3()).distanceTo(before)).toBeLessThan(1e-6);
   });
 });
 
 describe('transforms.pivots', () => {
-  it('checks pivots', () => {
-    const hinge=new THREE.Vector3(3,0,-2), point=new THREE.Vector3(4,1,-2), before=point.clone();
-    for (const angle of [0,Math.PI/2,-Math.PI/3]) {
-      const expected=point.clone().sub(hinge).applyQuaternion(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,1,0),angle)).add(hinge);
-      expect(answered(checkPivots(hinge,point,angle)).distanceTo(expected)).toBeLessThan(1e-6);
+  it('swings around an offset hinge in both directions without changing the points', () => {
+    const hinge = new THREE.Vector3(3, 0, -2), point = new THREE.Vector3(4, 1, -2);
+    const beforeHinge = hinge.clone(), beforePoint = point.clone();
+    for (const angle of [0, Math.PI / 2, -Math.PI / 3]) {
+      const expected = point.clone().sub(hinge).applyQuaternion(
+        new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), angle),
+      ).add(hinge);
+      expect(answered(checkPivots(hinge, point, angle)).distanceTo(expected)).toBeLessThan(1e-6);
     }
-    expect(point.equals(before)).toBe(true);
+    expect(hinge.equals(beforeHinge) && point.equals(beforePoint)).toBe(true);
   });
 });
 

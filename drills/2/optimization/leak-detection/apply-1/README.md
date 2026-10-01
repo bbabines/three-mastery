@@ -21,7 +21,7 @@ A route cycle records renderer.info.memory after each unload. Return true when t
 | --- | --- |
 | `memoryGrew(samples: { geometries: number; textures: number }[])` | Whether GPU resource counts finish above their starting baseline. |
 
-Try the scene. The readout changes when your function gives an answer.
+The preview compares one series of resource counts; the test also covers a stable series.
 
 <div data-scene="practice"></div>
 
@@ -39,7 +39,7 @@ npm run drill -- drills/2/optimization/leak-detection/apply-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The test checks stable and rising geometry or texture counts across at least 20 samples.
 
 <details><summary>Hint</summary>
 
@@ -49,4 +49,6 @@ Watch a repeated full load/unload cycle; one high point during loading is not a 
 
 ## Where else?
 
-Where else would the same code help? The concept card lists SPA route changes, Variant cycling.
+How would you use this comparison during finish swaps?
+
+<details><summary>A few answers</summary> Sample memory after each swap and compare the last unloaded baseline with the first. </details>

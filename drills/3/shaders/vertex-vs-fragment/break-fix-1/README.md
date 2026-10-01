@@ -9,22 +9,16 @@ lenses: [cost]
 misconceptions: [shaders.vertex-vs-fragment/once-per-pixel]
 ---
 
-# Vertex vs fragment: repair the effect
+# Vertex vs fragment: overlapping layers cost more
 
-> **The job:** Count vertex work across color and shadow passes and fragment work across covered device pixels.
+> **The job:** Count vertex and fragment work when the same translucent surface is drawn in several equal-size passes.
 
 ## Task
 
-The performance estimate stays low when a displaced translucent layer is stacked over itself. Repair `shaderRuns`. The preview reports its output, and the test covers another input.
+The estimate stays low when overlapping translucent layers are drawn in several equal-size passes. Repair `shaderRuns`. The preview reports one case, and the test covers another.
 
 <div data-scene="preview"></div>
 
-## Spaces
-
-| Value | Space |
-| --- | --- |
-| input position or pixel | local space or device pixels, as named in the function |
-| output | the space named in the return description |
 
 ## Measure
 
@@ -42,10 +36,10 @@ npm run drill -- drills/3/shaders/vertex-vs-fragment/break-fix-1
 
 The acceptance test covers the symptom and a general case. Your check must reject the original bug and pass on the repair.
 
-<details><summary>Hint</summary> Fragment invocations grow with DPR squared and overdraw; vertex work repeats in each draw pass. </details>
+<details><summary>Hint</summary> Each pass runs vertices and covered fragments again. Overlap can run several fragments at one device pixel. </details>
 
 ## Where else?
 
-What would a shadow pass add to a displaced mesh?
+Why should a shadow pass be measured separately from this equal-size estimate?
 
-<details><summary>A few answers</summary> Another vertex run, and the depth material must match the displacement. </details>
+<details><summary>A few answers</summary> Its resolution and covered area come from the shadow map, not the canvas. It also needs matching displacement in its depth material. </details>

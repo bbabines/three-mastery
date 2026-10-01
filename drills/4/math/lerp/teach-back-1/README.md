@@ -11,7 +11,7 @@ misconceptions: [math.lerp/t-in-range]
 
 # Blend two colors: explain the fraction
 
-> **The job:** explain a real 3D decision in five plain sentences.
+> **The job:** blend blue and amber with a slider while preserving both endpoint colors.
 
 ## Task
 

@@ -22,7 +22,7 @@ Configure a material so passing fragments write a stencil reference. Create an o
 | `stencilWriter(material: THREE.Material, reference: number)` | The material configured to write a stencil reference. |
 | `msaaTarget(width: number, height: number, samples: number)` | The multisampled offscreen target. |
 
-Try the scene. The readout changes when your function gives an answer.
+The mask writer should store the selected reference, and the offscreen target should own its MSAA samples.
 
 <div data-scene="practice"></div>
 
@@ -40,7 +40,7 @@ npm run drill -- drills/2/gpu/stencil/apply-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The check verifies that the code writes the selected stencil reference on depth pass; sets samples on the offscreen target itself. It also rejects an unanswered function.
 
 <details><summary>Hint</summary>
 
@@ -50,4 +50,4 @@ The renderer must have a stencil buffer at construction, and each render target 
 
 ## Where else?
 
-Where else would the same code help? The concept card lists Outlines, Clipping caps.
+How would you use a stencil mask for a portal or outline?

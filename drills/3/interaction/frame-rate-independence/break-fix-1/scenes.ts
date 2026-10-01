@@ -1,15 +1,29 @@
-import { attempt, ball, COLORS, overlay } from '@harness/lesson';
+import { attempt, ball, COLORS, line, overlay, setLine } from '@harness/lesson';
 import type { SceneSetup } from '@harness/scene';
 import * as THREE from 'three';
 import { smoothMove } from './drill';
 
-export const demo: SceneSetup = ({ scene, camera, controls, container }) => {
-  camera.position.set(3,3,5); controls.target.set(0,0.5,0);
-  const subject = new THREE.Mesh(new THREE.BoxGeometry(),new THREE.MeshStandardMaterial({color:COLORS.blue}));
-  const marker = ball(COLORS.yellow); subject.position.y=0.5; marker.position.x=1.5; marker.position.y=0.5; scene.add(subject,marker);
-  const readout=overlay(container,'readout');
-
-  const got=attempt('smoothMove',()=>smoothMove(0,10,8,0.1));
-  const want=10*(1-Math.exp(-0.8));
-  readout.textContent=got.ok?`your result: ${JSON.stringify(got.value)?.slice(0,100)}\nreference: ${JSON.stringify(want)?.slice(0,100)}`:got.note;
+export const demo: SceneSetup = ({ scene, camera, controls, container, onFrame }) => {
+  camera.position.set(3, 2, 6);
+  controls.target.set(0, 0.5, 0);
+  const oneFrame = ball(COLORS.blue, 1, 0.21);
+  const twoFrames = ball(COLORS.yellow, 1, 0.14);
+  const target = ball(COLORS.green, 1, 0.14);
+  const track = line(COLORS.gray);
+  setLine(track, new THREE.Vector3(-2, 0.7, 0), new THREE.Vector3(2, 0.7, 0));
+  target.position.set(2, 0.7, 0);
+  scene.add(track, oneFrame, twoFrames, target);
+  const readout = overlay(container, 'readout');
+  onFrame((_, elapsed) => {
+    const dt = (1 + Math.sin(elapsed * 0.7) * 0.5) / 30;
+    const single = attempt('smoothMove', () => smoothMove(-2, 2, 8, dt));
+    const split = attempt('smoothMove', () => smoothMove(smoothMove(-2, 2, 8, dt / 2), 2, 8, dt / 2));
+    if (!single.ok) { readout.textContent = single.note; return; }
+    if (!split.ok) { readout.textContent = split.note; return; }
+    oneFrame.position.set(single.value, 0.7, 0);
+    twoFrames.position.set(split.value, 0.7, 0);
+    readout.textContent = `blue: one frame; yellow: two half frames
+separation: ${Math.abs(single.value - split.value).toFixed(3)} world units
+green: target`;
+  });
 };

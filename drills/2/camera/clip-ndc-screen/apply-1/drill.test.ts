@@ -10,6 +10,7 @@ describe('camera.clip-ndc-screen', () => {
       const camera=new THREE.PerspectiveCamera(60,800/600,0.1,100);
       const roundTrip=new THREE.Vector3((p.x+1)*400,(1-p.y)*300,0);
       expect(roundTrip.x).toBeCloseTo(x,6); expect(roundTrip.y).toBeCloseTo(y,6);
+      expect(p.z).toBe(0);
       expect(Number.isFinite(p.clone().unproject(camera).x)).toBe(true);
     }
   });

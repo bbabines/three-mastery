@@ -21,7 +21,7 @@ Each post pass covers the target picture once. Return the number of pixel-sized 
 | --- | --- |
 | `postFragments(width: number, height: number, passes: number)` | The full-screen fragment candidates across the passes. |
 
-Try the scene. The readout changes when your function gives an answer.
+Raise the resolution or pass count and watch the full-screen fragment estimate rise with both.
 
 <div data-scene="practice"></div>
 
@@ -39,7 +39,7 @@ npm run drill -- drills/2/gpu/multi-pass/implement-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The check verifies that the code scales with both resolution and pass count. It also rejects an unanswered function.
 
 <details><summary>Hint</summary>
 
@@ -49,4 +49,4 @@ A full-screen pass costs work at every output pixel, even if its filter code is 
 
 ## Where else?
 
-Where else would the same code help? The concept card lists Bloom, FXAA.
+What does a second full-screen effect add at twice the canvas width and height?

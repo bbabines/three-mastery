@@ -11,7 +11,7 @@ misconceptions: []
 
 # Quaternions: explain the decision
 
-> **The job:** explain a real 3D decision in five plain sentences.
+> **The job:** apply an extra world-up turn to a rotated model in the right order.
 
 ## Task
 

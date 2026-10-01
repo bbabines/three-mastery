@@ -9,15 +9,15 @@ lenses: [space]
 misconceptions: []
 ---
 
-# Projection matrix: find the faulty result
+# Projection matrix: stretched thumbnails
 
-> **The job:** A product looks too narrow in a wide thumbnail and too wide in a tall one.
+> **The job:** Build the projection matrix for a viewport's actual shape.
 
 ## Task
 
-A product looks too narrow in a wide thumbnail and too wide in a tall one. Return the projection matrix for the new viewport; FOV is vertical and width and height are CSS pixels.
+`viewportLens(verticalFov, width, height, near, far)` returns a fresh perspective projection matrix. `verticalFov` is in degrees; `width` and `height` are positive CSS pixels. The starter swaps the two viewport dimensions, so the product squeezes in wide thumbnails and stretches in tall ones. Fix its aspect without changing the vertical field of view.
 
-Fix `viewportLens` in `drill.ts`. The scene shows the current result alongside a reference; they should agree after the repair.
+Switch between wide and tall pictures in the scene. The product should keep its shape, and your horizontal scale should match the reference value.
 
 <div data-scene="demo"></div>
 
@@ -25,8 +25,10 @@ Fix `viewportLens` in `drill.ts`. The scene shows the current result alongside a
 
 | Value | Space |
 | --- | --- |
-| Inputs | The named camera, world, or screen space in the task |
-| Answer | The space stated in the task |
+| `width`, `height` | CSS pixels |
+| `verticalFov` | Vertical angle in degrees |
+| `near`, `far` | Positive distances along the view axis |
+| Answer | Matrix taking camera-space points to clip space |
 
 ## Your code
 
@@ -36,20 +38,20 @@ Fix `drill.ts`, write one sentence in `cause.md`, and replace the placeholder in
 
 ## The check
 
-The acceptance test covers more than the scene pose. Your check must fail on the original bug and pass after the fix, using behavior instead of looking for a particular line of code.
+The acceptance test compares wide and tall matrices with three.js camera projections. Your check should reject an inverted aspect ratio.
 
 <details><summary>Hint</summary>
 
-Compare the named spaces and the operation from the projection matrix page.
+The projection-matrix page keeps the vertical field of view fixed. Check which dimension belongs on top when computing `aspect`.
 
 </details>
 
 ## Where else?
 
-Where else would the same wrong assumption cause an error?
+Where else does the wrong aspect distort a camera view?
 
 <details><summary>A few answers</summary>
 
-A model editor, an interactive viewer, or a check before export.
+A resizable canvas, a video preview, or a portrait screenshot.
 
 </details>

@@ -21,7 +21,7 @@ A product color map appears washed out. Return `material` if its map is missing 
 | --- | --- |
 | `colorFaultArea(material: THREE.MeshStandardMaterial, outputColorSpace: string)` | The first color setup area to inspect. |
 
-Try the scene. The readout changes when your function gives an answer.
+The preview reports the first color fault for its fixed map and output settings.
 
 <div data-scene="practice"></div>
 
@@ -35,7 +35,7 @@ npm run drill -- drills/2/debugging/triage/apply-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The test checks the map's color space before renderer output and returns ready only when both are correct.
 
 <details><summary>Hint</summary>
 
@@ -45,4 +45,6 @@ A color map uses sRGB input; output color conversion is a renderer setting.
 
 ## Where else?
 
-Where else would the same code help? The concept card lists Black screen, Missing object.
+What should you inspect first when a color map looks washed out?
+
+<details><summary>A few answers</summary> Check the map's sRGB tag, then the renderer output color space before touching lights. </details>

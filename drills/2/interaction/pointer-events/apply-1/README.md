@@ -22,7 +22,7 @@ Pointer coordinates are viewport CSS pixels. Subtract the canvas rectangle and s
 | `canvasNdc(clientX: number, clientY: number, rect: { left: number; top: number; width: number; height: number })` | Canvas-relative normalized coordinates. |
 | `wasDrag(down: THREE.Vector2, up: THREE.Vector2, thresholdCssPx: number)` | Whether movement exceeded the drag threshold. |
 
-Try the scene. The readout changes when your function gives an answer.
+The canvas begins away from the viewport origin. Check that the marker follows canvas-relative NDC and a small CSS-pixel motion stays a click.
 
 <div data-scene="practice"></div>
 
@@ -42,7 +42,7 @@ npm run drill -- drills/2/interaction/pointer-events/apply-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The check verifies that the code uses the canvas rectangle even when it starts away from the window origin; uses a movement threshold in CSS pixels. It also rejects an unanswered function.
 
 <details><summary>Hint</summary>
 
@@ -52,4 +52,4 @@ Pointer events report CSS pixels, while NDC is always −1 to +1.
 
 ## Where else?
 
-Where else would the same code help? The concept card lists Click, Pen input.
+How would this handle a pen event on a canvas offset within the page?

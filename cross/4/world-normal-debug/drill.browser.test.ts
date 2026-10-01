@@ -9,7 +9,8 @@ describe('world normal debug color', () => {
     const target = new WebGLRenderTarget(1,1);
     const scene = new Scene();
     const material = answered(worldNormalMaterial());
-    const mesh = new Mesh(new PlaneGeometry(4,4),material);
+    const geometry = new PlaneGeometry(4,4).rotateX(0.35).rotateY(0.25);
+    const mesh = new Mesh(geometry,material);
     mesh.scale.set(2,1,0.5);
     mesh.rotation.y = 0.4;
     scene.add(mesh);
@@ -25,12 +26,13 @@ describe('world normal debug color', () => {
     };
     const first = sample(0), second = sample(1);
     mesh.updateMatrixWorld(true);
-    const normal = new Vector3(0,0,1).applyMatrix3(new Matrix3().getNormalMatrix(mesh.matrixWorld)).normalize();
+    const localNormal = new Vector3().fromBufferAttribute(geometry.getAttribute('normal'), 0);
+    const normal = localNormal.applyMatrix3(new Matrix3().getNormalMatrix(mesh.matrixWorld)).normalize();
     const expected = [normal.x,normal.y,normal.z].map(value => (value*0.5+0.5)*255);
     for(let i=0;i<3;i++) {
       expect(first[i]).toBeCloseTo(expected[i],-1);
       expect(second[i]).toBeCloseTo(expected[i],-1);
     }
-    renderer.dispose(); target.dispose(); material.dispose();
+    renderer.dispose(); target.dispose(); material.dispose(); geometry.dispose();
   });
 });

@@ -9,15 +9,15 @@ lenses: [space]
 misconceptions: [transforms.local-vs-world/position-is-world]
 ---
 
-# Local vs world: place a work light a fixed offset from a nested part, returning the light spot in world space without changing the offset
+# Local vs world: place a work light
 
-> **The job:** Place a work light a fixed offset from a nested part, returning the light spot in world space without changing the offset.
+> **The job:** Place a light at a local offset from a moving machine part.
 
 ## Task
 
-Place a work light a fixed offset from a nested part, returning the light spot in world space without changing the offset.
+A work light is bolted to a nested part. `lightWorld(part, localOffset)` returns the offset’s current world position. The part may be turned and shifted by its ancestors. Leave the local offset unchanged.
 
-Write `lightWorld(part, localOffset)` for the behavior above. Save the starter to update the scene.
+Move the rack. The blue light should follow the yellow mounting spot.
 
 <div data-scene="demo"></div>
 
@@ -25,9 +25,10 @@ Write `lightWorld(part, localOffset)` for the behavior above. Save the starter t
 
 | Value | Space or units |
 | --- | --- |
-| `part` | Its local frame is relative to its parent |
-| `localOffset` | Part local space |
-| Answer | World space |
+| `part` | Local frame under its parent |
+| `localOffset` | Part local point |
+| Answer | World point |
+
 
 ## Your code
 
@@ -37,20 +38,20 @@ Write it in `drills/2/transforms/local-vs-world/apply-1/drill.ts`. Check it with
 
 ## The check
 
-It passes when `lightWorld` does the stated job for the scene and the other cases in the test. The test exercises the values and spaces named above.
+The check rotates and moves the part’s parent, then compares the world light spot. It checks that the local offset is unchanged.
 
 <details><summary>Hint</summary>
 
-Use the method from the local vs world page, and check which space the result belongs to.
+`localToWorld` walks the full parent chain. Give it a copy of the mounting offset.
 
 </details>
 
 ## Where else?
 
-Where else would the same operation help when a part moves or turns?
+Where else does a local mounting point need a world spot?
 
 <details><summary>A few answers</summary>
 
-A part's world position. Attaching a light to a part.
+A tool tip. A camera bolted to a rig. A label pinned to a model.
 
 </details>

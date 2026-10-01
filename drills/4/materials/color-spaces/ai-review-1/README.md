@@ -14,7 +14,7 @@ misconceptions: [materials.color-spaces/all-srgb]
 
 ## Task
 
-The generated loader treats every image as display color. The surface then shades differently from the same model loaded from glTF. Set the color map to SRGBColorSpace and the normal map to NoColorSpace.
+The generated loader treats every image as display color. The surface then shades differently from the same model loaded from glTF. Configure the two maps so display color decodes correctly without altering normal data.
 
 Review the proposed code in `drill.ts`. State the faulty assumption and its effect in `cause.md`, then repair the code. Run the acceptance check to prove the behavior.
 
