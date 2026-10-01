@@ -28,8 +28,10 @@ describe('gpu.state-sorting', () => {
 });
 
 describe('gpu.depth-early-z', () => {
-  it('makes the right judgment', () => {
-    expect(answered(check.canRejectEarly(true,true))).toBe(true); expect(answered(check.canRejectEarly(false,true))).toBe(false);
+  it('distinguishes ordinary depth testing from a cutout that may shade first', () => {
+    expect(answered(check.earlyDepthLikely(true,false))).toBe(true);
+    expect(answered(check.earlyDepthLikely(true,true))).toBe(false);
+    expect(answered(check.earlyDepthLikely(false,false))).toBe(false);
   });
 });
 

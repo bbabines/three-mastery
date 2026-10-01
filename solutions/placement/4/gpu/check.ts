@@ -20,8 +20,8 @@ export function sortMaterials(meshes: THREE.Mesh[]): Answer<THREE.Mesh[]> {
   return [...opaque,...transparent];
 }
 
-export function canRejectEarly(opaque: boolean, writesDepth: boolean): Answer<boolean> {
-  return opaque&&writesDepth;
+export function earlyDepthLikely(depthTest: boolean, alphaTested: boolean): Answer<boolean> {
+  return depthTest&&!alphaTested;
 }
 
 export function enableStencilMask(material: THREE.Material, reference: number): Answer<number> {

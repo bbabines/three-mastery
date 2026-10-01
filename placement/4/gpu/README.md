@@ -28,7 +28,7 @@ A no-docs check of the decisions in this domain. Write every function in `placem
 | `fragmentWork` | Estimate fragment work from coverage and overdraw. |
 | `drawCallsForGroups` | Estimate draws when every mesh has material groups. |
 | `sortMaterials` | Group opaque meshes by material while preserving transparent draw order. |
-| `canRejectEarly` | Judge whether a surface can benefit from early depth rejection. |
+| `earlyDepthLikely` | Identify the simple depth-tested case without an alpha cutout. Alpha testing can prevent early rejection; depth writes alone do not decide it. |
 | `enableStencilMask` | Configure a material to write a stencil reference. |
 | `enableTransparency` | Mark a changed material transparent before its next draw. |
 | `offscreenTarget` | Allocate an offscreen color target at physical size. |
