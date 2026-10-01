@@ -269,19 +269,19 @@ export const agree: SceneSetup = ({ scene, camera, controls, container, onFrame 
 
 ## Elective pages (VFX)
 
-The Procedural & VFX elective (Domain 15) is written in TSL and has its own format, recorded in the inventory's Domain 15 section. One concept page and one effect exist as a sample for Brad's review; build the rest only after he approves it, copying the sample's shape. The sample predates "Size and voice", and whether VFX pages follow Domain 1's limits is part of that review.
+The Procedural & VFX elective (Domain 15) is written in TSL and has its own format, recorded in the inventory's Domain 15 section. Brad approved the signed distance fields and selection-ring samples on Oct 1, 2026, along with the 95% pixel-match bar and logging a concept exercise once on its first pass. All 13 concept pages and six guided/from-memory effects are built. VFX pages follow the sample's format; Domain 1's Loop 1 size limits are scoped to the core pages.
 
 **Files**
 
 ```
-electives/vfx/<concept>/            README.md, scenes.ts, drill.ts
+electives/vfx/<concept>/            README.md, scenes.ts, drill.ts; numeric exercises also have drill.test.ts
 electives/vfx/effects/<effect>/guided/        README.md, drill.ts
 electives/vfx/effects/<effect>/from-memory/   README.md, drill.ts
 solutions/electives/...             the same paths: each drill.ts's reference answer
 concepts/vfx/<concept>.md           the card, as for any concept, without `tier`
 ```
 
-The concept and effect lists, in order, are in `scripts/lib/domains.ts` (the VFX domain's `concepts` and `effects`). `pick` and `coverage` leave electives out.
+The concept and effect lists, in order, are in `scripts/lib/domains.ts` (the VFX domain's `concepts` and `effects`). `coverage` leaves electives out. After all six from-memory effects are logged complete, `pick` adds them to maintenance rotation.
 
 **Frontmatter**
 
@@ -293,7 +293,7 @@ concepts: [vfx.<concept>]                 # an effect lists every concept it com
 renderer: webgpu                          # scenes mount on harness/tsl.ts (WebGPURenderer, WebGL 2 fallback)
 ```
 
-**A concept page** (`electives/vfx/sdf/` is the model) has the Loop 1 opening block, then `## A · The basics` (plain words, an analogy, live TSL scenes), `## B · Going deeper` (the TSL you type with each node's GLSL name and Unreal node, what it costs, the common mistakes), and `## Exercise · Build it`, which ends with `<div data-exercise></div>`. Its `scenes.ts` exports each scene as a `TslSceneSetup` and one `exercise` (a `MaskExercise` from `harness/exercise.ts`): the function Brad writes, its parameters, three check settings, and how to draw it. `drill.ts` holds that one function, returning `null` (`Answer<T>`) until solved. The page draws Brad's version beside the reference from `/solutions` and scores the pixel overlap at the worst of the check settings; at `PASS_MATCH` (95%) it logs the page as done, once.
+**A concept page** (`electives/vfx/sdf/` is the mask model) has the Loop 1 opening block, then `## A · The basics` (plain words, an analogy, live TSL scenes), `## B · Going deeper` (the TSL you type with each node's GLSL name and Unreal node, what it costs, the common mistakes), and `## Exercise · Build it`. Mask pages end with `<div data-exercise></div>`; `scenes.ts` exports each scene as a `TslSceneSetup` and one `MaskExercise` with three check settings. `drill.ts` holds the function Brad writes, returning `null` (`Answer<T>`) until solved. The page draws his version beside the reference from `/solutions` and scores pixel overlap at the worst setting; at `PASS_MATCH` (95%) it logs the page as done, once. Numeric concept exercises use a Vitest `drill.test.ts` and a live scene instead of pixel scoring. `node scripts/verify-vfx.mjs http://localhost:5181` smoke-checks all pages and self-scores each reference mask at 100% without logging progress.
 
 **An effect build** (`electives/vfx/effects/selection-ring/` is the model) runs Brad's rack model twice, his version beside the reference, with `<div data-effect="hookName"></div>`. Its `drill.ts` exports the scene wiring as `effect` (an `EffectSetup`) plus the one hook Brad writes. The guided build's README walks through numbered steps, each naming the concept page it comes from; the from-memory build has only a description and a checklist. Both are checked by eye and end with `<div data-mark-done></div>`, a button that logs them as done.
 

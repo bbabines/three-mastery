@@ -293,6 +293,7 @@ export async function mountEffect(
     scene.updateMatrixWorld(); // the effect measures the part in the world
     let yoursShows = false;
     let yoursProblem = yours.problem;
+    let referenceProblem = sides[1].problem;
     for (const side of sides) {
       const part = index === null ? null : side.model.children[index];
       for (const listener of side.listeners) {
@@ -301,6 +302,7 @@ export async function mountEffect(
           if (side === yours && shown) yoursShows = true;
         } catch (error) {
           if (side === yours) yoursProblem = message(error);
+          else referenceProblem = message(error);
         }
       }
     }
@@ -311,6 +313,7 @@ export async function mountEffect(
     if (!yours.setup) lines.push("Yours: drill.ts doesn't export `effect`");
     else if (yoursProblem) lines.push(`Yours: error: ${yoursProblem}`);
     else if (index !== null && !yoursShows) lines.push(`Yours: ${effects.hook} returned null`);
+    if (referenceProblem) lines.push(`Reference error: ${referenceProblem}`);
     readout.textContent = lines.join('\n');
   };
 

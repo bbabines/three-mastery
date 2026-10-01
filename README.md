@@ -92,7 +92,7 @@ COVERAGE.md    generated
 
 ## Build status
 
-The harness, `pick.ts`, and all of Loop 1 are built: each of the 159 concepts in Domains 1–14 has a card and a Loop 1 page, covering every misconception listed for them, including the seven tour pages that cover a family of classes instead of one idea. After a blind review, every domain except Domain 2 (kept as Brad approved it) was brought to Domain 1's size and voice, which `npm run coverage` now measures; [docs/loop1-build-notes.md](docs/loop1-build-notes.md) lists what came up while building them. The sidebar also shows two electives: Procedural & VFX (in TSL, with a sample page and effect built for review) and Blank-file scenes. The Loop 1 checkpoint is built, and Loop 2's code drills are being built domain by domain, starting with Domain 1. [CLAUDE.md](CLAUDE.md) has the current status, and [COVERAGE.md](COVERAGE.md) tracks the rest.
+The harness and all four core loops are built, including their checkpoints, placement checks, and cross-domain drills. Each of the 159 core concepts has a card and Loop 1 page. The Procedural & VFX elective has all 13 concept pages and six effects; the Blank-file scenes elective is planned but unbuilt. After a blind review, every Loop 1 domain except Domain 2 (kept as Brad approved it) was brought to Domain 1's size and voice. [CLAUDE.md](CLAUDE.md) has the current status and open calls; [COVERAGE.md](COVERAGE.md) tracks the core loops.
 
 ## Authoring
 

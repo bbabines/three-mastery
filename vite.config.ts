@@ -95,7 +95,7 @@ export default defineConfig({
         extends: true,
         test: {
           name: 'node',
-          include: ['{drills,placement,checkpoints,cross}/**/*.test.ts'],
+          include: ['{drills,placement,checkpoints,cross,electives}/**/*.test.ts'],
           exclude: ['**/*.browser.test.ts', '**/node_modules/**'],
           environment: 'node',
         },
@@ -106,7 +106,7 @@ export default defineConfig({
         extends: true,
         test: {
           name: 'browser',
-          include: ['{drills,placement,checkpoints,cross}/**/*.browser.test.ts'],
+          include: ['{drills,placement,checkpoints,cross,electives}/**/*.browser.test.ts'],
           browser: {
             enabled: true,
             headless: true,

@@ -309,7 +309,9 @@ async function mountElective(drill: Drill, content: HTMLElement, recordDone: (at
     else if (!yours.module || !reference.module) exercisePlaceholder.textContent = yours.problem ?? reference.problem ?? '';
     else {
       const { mountMaskExercise } = await import('./exercise');
-      backend = await mountMaskExercise(exercisePlaceholder, exercise, { yours: yours.module, reference: reference.module }, async () => {
+      const selfCheck = new URLSearchParams(location.search).get('vfx-check') === '1';
+      backend = await mountMaskExercise(exercisePlaceholder, exercise, { yours: selfCheck ? reference.module : yours.module, reference: reference.module }, async () => {
+        if (selfCheck) return 'Reference self-check; progress not logged.';
         // Logged once: a solved drill.ts stays solved, so reopening the page adds nothing.
         const doneAt = finished.get(drill.meta.id);
         if (doneAt) return `Done ${formatDate(doneAt)}.`;
