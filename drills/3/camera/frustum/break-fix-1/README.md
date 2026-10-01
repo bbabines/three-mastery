@@ -9,15 +9,15 @@ lenses: [space]
 misconceptions: []
 ---
 
-# Frustum: find the faulty result
+# Frustum: stale after resize
 
-> **The job:** After changing the thumbnail from square to portrait, a part outside the new view still counts as visible.
+> **The job:** Test whether a point is visible after changing a camera's viewport.
 
 ## Task
 
-After changing the thumbnail from square to portrait, a part outside the new view still counts as visible. Update the lens for the new aspect, then test the world point against the frustum.
+`visibleAfterResize(camera, width, height, worldPoint)` changes a perspective camera's aspect to `width / height`, then reports whether `worldPoint` is inside the new frustum. The starter changes `aspect` but keeps the old projection matrix, so a side marker still counts as visible after a portrait resize. `width` and `height` are positive CSS pixels; leave the point unchanged.
 
-Fix `visibleAfterResize` in `drill.ts`. The scene shows the current result alongside a reference; they should agree after the repair.
+Switch between wide and tall views in the scene. The marker beside the center should leave the tall camera's view.
 
 <div data-scene="demo"></div>
 
@@ -25,8 +25,9 @@ Fix `visibleAfterResize` in `drill.ts`. The scene shows the current result along
 
 | Value | Space |
 | --- | --- |
-| Inputs | The named camera, world, or screen space in the task |
-| Answer | The space stated in the task |
+| `worldPoint` | World position |
+| `width`, `height` | CSS pixels used to set the camera's aspect |
+| Answer | Whether the point is inside the camera frustum |
 
 ## Your code
 
@@ -36,20 +37,20 @@ Fix `drill.ts`, write one sentence in `cause.md`, and replace the placeholder in
 
 ## The check
 
-The acceptance test covers more than the scene pose. Your check must fail on the original bug and pass after the fix, using behavior instead of looking for a particular line of code.
+The acceptance test changes the same camera from wide to tall and checks a side point in both views. Your check should catch a stale projection matrix after resize.
 
 <details><summary>Hint</summary>
 
-Compare the named spaces and the operation from the frustum page.
+The frustum page uses the camera's projection and inverse world matrices together. After changing a lens setting, which matrix must be refreshed?
 
 </details>
 
 ## Where else?
 
-Where else would the same wrong assumption cause an error?
+Where else could a stale lens give the wrong visibility answer?
 
 <details><summary>A few answers</summary>
 
-A model editor, an interactive viewer, or a check before export.
+Label culling after a sidebar opens, a portrait product viewer, or thumbnail generation.
 
 </details>

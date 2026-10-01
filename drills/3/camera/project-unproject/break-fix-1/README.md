@@ -9,15 +9,15 @@ lenses: [space]
 misconceptions: [camera.project-unproject/behind-camera]
 ---
 
-# Project unproject: find the faulty result
+# Projected labels: behind the camera
 
-> **The job:** A 3D label appears for a part behind the camera because its projected X and Y happen to be inside the picture.
+> **The job:** Show a 3D label only when its point is inside the camera's view.
 
 ## Task
 
-A 3D label appears for a part behind the camera because its projected X and Y happen to be inside the picture. Return whether the point is inside the visible NDC cube.
+`labelVisible(camera, worldPoint)` decides whether a world point belongs in a camera overlay. The starter checks projected X and Y but draws a label for a point behind the camera. Return true only when the point lies inside the visible NDC cube on all three axes. Leave the point unchanged.
 
-Fix `labelVisible` in `drill.ts`. The scene shows the current result alongside a reference; they should agree after the repair.
+The scene has one marker in front of the camera and one behind it. Only the front marker should get a label.
 
 <div data-scene="demo"></div>
 
@@ -25,8 +25,9 @@ Fix `labelVisible` in `drill.ts`. The scene shows the current result alongside a
 
 | Value | Space |
 | --- | --- |
-| Inputs | The named camera, world, or screen space in the task |
-| Answer | The space stated in the task |
+| `worldPoint` | World position |
+| Projected point | NDC, −1 to +1 on X, Y, and Z |
+| Answer | Whether a label belongs inside the camera view |
 
 ## Your code
 
@@ -36,20 +37,20 @@ Fix `drill.ts`, write one sentence in `cause.md`, and replace the placeholder in
 
 ## The check
 
-The acceptance test covers more than the scene pose. Your check must fail on the original bug and pass after the fix, using behavior instead of looking for a particular line of code.
+The acceptance test checks points in front, behind, and to the side. Your check should reject a point whose X and Y pass but whose depth does not.
 
 <details><summary>Hint</summary>
 
-Compare the named spaces and the operation from the project unproject page.
+The project/unproject page shows three coordinates after `project`, not just the two used for screen position. Which one separates front from behind?
 
 </details>
 
 ## Where else?
 
-Where else would the same wrong assumption cause an error?
+Where else could a point behind the camera pass a two-axis test?
 
 <details><summary>A few answers</summary>
 
-A model editor, an interactive viewer, or a check before export.
+Hotspot labels, edge arrows for off-screen targets, or a 3D selection overlay.
 
 </details>

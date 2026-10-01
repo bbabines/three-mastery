@@ -1,15 +1,40 @@
-import { attempt, ball, COLORS, overlay } from '@harness/lesson';
+import { attempt, ball, cameraView, choiceButtons, COLORS, overlay, showCamera } from '@harness/lesson';
 import type { SceneSetup } from '@harness/scene';
 import * as THREE from 'three';
 import { fitAndPixelSize } from './drill';
 
-export const demo: SceneSetup = ({ scene, camera, controls, container }) => {
-  camera.position.set(3,3,5); controls.target.set(0,0.5,0);
-  const subject = new THREE.Mesh(new THREE.BoxGeometry(),new THREE.MeshStandardMaterial({color:COLORS.blue}));
-  const marker = ball(COLORS.yellow); subject.position.y=0.5; marker.position.x=1.5; marker.position.y=0.5; scene.add(subject,marker);
-  const readout=overlay(container,'readout');
+export const demo: SceneSetup = (harness) => {
+  const { scene, camera, controls, container } = harness;
+  camera.position.set(8, 6, 8);
+  controls.target.set(0, 2, 1);
+  const center = new THREE.Vector3(0, 2, 0);
+  const sphere = ball(COLORS.blue, 1, 2);
+  sphere.position.copy(center);
+  scene.add(sphere);
+  const eye = new THREE.PerspectiveCamera(60, 1, 0.1, 30);
+  const helper = showCamera(eye);
+  scene.add(eye, helper);
+  const picture = cameraView(harness, eye, [helper]);
+  const readout = overlay(container, 'readout');
+  const controlsBar = overlay(container, 'controls');
 
-  const got=attempt('fitAndPixelSize',()=>fitAndPixelSize(2, 60, 0.5, 600));
-  const want=({distance:2/Math.sin(Math.atan(Math.tan(Math.PI/6)*0.5)),unitsPerPixel:2*(2/Math.sin(Math.atan(Math.tan(Math.PI/6)*0.5)))*Math.tan(Math.PI/6)/600});
-  readout.textContent=got.ok?`your result: ${JSON.stringify(got.value)?.slice(0,100)}\nreference: ${JSON.stringify(want)?.slice(0,100)}`:got.note;
+  const update = (aspect: number) => {
+    const result = attempt('fitAndPixelSize', () => fitAndPixelSize(2, 60, aspect, 320));
+    if (!result.ok) { readout.textContent = result.note; return; }
+    const halfVertical = THREE.MathUtils.degToRad(30);
+    const halfHorizontal = Math.atan(Math.tan(halfVertical) * aspect);
+    const expected = 2 / Math.sin(Math.min(halfVertical, halfHorizontal));
+    eye.aspect = aspect;
+    eye.position.copy(center).add(new THREE.Vector3(0, 0, result.value.distance));
+    eye.lookAt(center);
+    eye.updateProjectionMatrix();
+    eye.updateWorldMatrix(true, false);
+    helper.update();
+    picture.setSize(Math.round(320 * aspect), 320);
+    readout.textContent = `aspect ${aspect.toFixed(1)} · your distance ${result.value.distance.toFixed(2)}\nfit distance ${expected.toFixed(2)} · one CSS pixel ${result.value.unitsPerPixel.toFixed(3)} world units`;
+  };
+  choiceButtons(controlsBar, [
+    { html: 'tall', select: () => update(0.5) },
+    { html: 'wide', select: () => update(2) },
+  ]);
 };

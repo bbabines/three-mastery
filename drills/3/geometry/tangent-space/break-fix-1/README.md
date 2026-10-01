@@ -9,15 +9,15 @@ lenses: []
 misconceptions: [geometry.tangent-space/world-directions]
 ---
 
-# Tangent space: find the faulty result
+# Tangent space: the lighting stays behind
 
-> **The job:** A normal-mapped face lights as though the map colors were fixed world directions when the part turns.
+> **The job:** Turn a normal-map sample into a direction on the surface.
 
 ## Task
 
-A normal-mapped face lights as though the map colors were fixed world directions when the part turns. Convert the sample from 0–1 to tangent-space −1–1, then use the TBN basis.
+`normalFromMap(sample, tangent, bitangent, normal)` returns a unit direction in the same space as its three basis vectors. `sample` holds normal-map RGB values from 0 to 1; the basis is the surface's tangent, bitangent, and normal. The starter treats RGB as a direction already in the world, so the lighting does not turn with the part. Leave all four vectors unchanged.
 
-Fix `normalFromMap` in `drill.ts`. The scene shows the current result alongside a reference; they should agree after the repair.
+The blue light-direction arrow should match the green reference when the surface basis turns.
 
 <div data-scene="demo"></div>
 
@@ -29,20 +29,20 @@ Fix `drill.ts`, write one sentence in `cause.md`, and replace the placeholder in
 
 ## The check
 
-The acceptance test covers more than the scene pose. Your check must fail on the original bug and pass after the fix, using behavior instead of looking for a particular line of code.
+The acceptance test checks a flat sample and a tilted sample under a turned basis. Your check should reject an answer that ignores the basis or changes an input.
 
 <details><summary>Hint</summary>
 
-Compare the named spaces and the operation from the tangent space page.
+The tangent-space page shows what `(0.5, 0.5, 1)` means and how the TBN basis turns that map direction with the surface.
 
 </details>
 
 ## Where else?
 
-Where else would the same wrong assumption cause an error?
+Where else must a local surface direction turn with its face?
 
 <details><summary>A few answers</summary>
 
-A model editor, an interactive viewer, or a check before export.
+Scratched metal, brushed wood, or a normal-mapped character turning under a light.
 
 </details>

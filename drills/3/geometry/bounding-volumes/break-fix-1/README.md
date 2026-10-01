@@ -9,15 +9,15 @@ lenses: []
 misconceptions: []
 ---
 
-# Bounding volumes: find the faulty result
+# Bounding volumes: the missing vertex
 
-> **The job:** After a direct vertex edit, the part can disappear because its old bounding sphere no longer covers the new position.
+> **The job:** Keep a part's bounding sphere current after moving a vertex.
 
 ## Task
 
-After a direct vertex edit, the part can disappear because its old bounding sphere no longer covers the new position. Return a current local-space sphere after the edit.
+`deformAndBound(geometry, index, point)` moves one local-space vertex to `point` and returns a new sphere that covers the edited geometry. The starter marks the position buffer for upload but returns the old sphere. That can make the renderer cull the part while its moved vertex should still be visible. Leave `point` unchanged.
 
-Fix `deformAndBound` in `drill.ts`. The scene shows the current result alongside a reference; they should agree after the repair.
+The scene moves a vertex away from a small part. The returned sphere should grow to cover it.
 
 <div data-scene="demo"></div>
 
@@ -29,20 +29,20 @@ Fix `drill.ts`, write one sentence in `cause.md`, and replace the placeholder in
 
 ## The check
 
-The acceptance test covers more than the scene pose. Your check must fail on the original bug and pass after the fix, using behavior instead of looking for a particular line of code.
+The acceptance test edits a vertex beyond the old bound and checks the returned sphere. Your check should prove that a later, different edit also remains inside the bound.
 
 <details><summary>Hint</summary>
 
-Compare the named spaces and the operation from the bounding volumes page.
+The bounding-volumes page separates marking a buffer for GPU upload from recomputing the CPU bound used for culling.
 
 </details>
 
 ## Where else?
 
-Where else would the same wrong assumption cause an error?
+What other direct shape edit can leave a stale bound?
 
 <details><summary>A few answers</summary>
 
-A model editor, an interactive viewer, or a check before export.
+Terrain sculpting, a stretching cable, or a cloth mesh after deformation.
 
 </details>

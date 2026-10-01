@@ -9,15 +9,15 @@ lenses: []
 misconceptions: [geometry.interleaved/own-array]
 ---
 
-# Interleaved: find the faulty result
+# Interleaved: a vertex drag changes UVs
 
-> **The job:** Dragging one vertex changes its UVs and the renderer keeps the previous position.
+> **The job:** Move one vertex in a shared position/UV buffer.
 
 ## Task
 
-Dragging one vertex changes its UVs and the renderer keeps the previous position. Update the interleaved position at the vertex index and mark its shared buffer for upload.
+`moveInterleaved(position, index, point)` updates one position in an interleaved buffer, then marks that shared buffer for GPU upload. Each vertex stores position and UV values together. The starter writes to the flat array as though it contained positions only, changing a UV and leaving the renderer with the previous position. Keep `point` and all UVs unchanged.
 
-Fix `moveInterleaved` in `drill.ts`. The scene shows the current result alongside a reference; they should agree after the repair.
+In the scene, the selected vertex should move to the yellow marker without changing the texture coordinates.
 
 <div data-scene="demo"></div>
 
@@ -29,20 +29,20 @@ Fix `drill.ts`, write one sentence in `cause.md`, and replace the placeholder in
 
 ## The check
 
-The acceptance test covers more than the scene pose. Your check must fail on the original bug and pass after the fix, using behavior instead of looking for a particular line of code.
+The acceptance test checks the moved XYZ, unchanged UVs, and an upload version increase. Your check should reject a write into the wrong part of the shared array.
 
 <details><summary>Hint</summary>
 
-Compare the named spaces and the operation from the interleaved page.
+The interleaved page shows an attribute's offset and its shared stride. Its setter handles both; the shared data tracks upload changes.
 
 </details>
 
 ## Where else?
 
-Where else would the same wrong assumption cause an error?
+Where else can packed vertex data make a flat-array write hit the wrong field?
 
 <details><summary>A few answers</summary>
 
-A model editor, an interactive viewer, or a check before export.
+Imported glTF meshes, vertex colors packed beside positions, or a deforming mesh with UVs.
 
 </details>

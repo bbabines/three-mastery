@@ -9,15 +9,15 @@ lenses: []
 misconceptions: []
 ---
 
-# Indexed: find the faulty result
+# Indexed geometry: the wrong triangle
 
-> **The job:** The inspector outlines the wrong triangle on an indexed mesh.
+> **The job:** Find the three corners of a chosen mesh triangle.
 
 ## Task
 
-The inspector outlines the wrong triangle on an indexed mesh. Return the three local-space corners of a triangle, following the index buffer when one exists.
+`triangleAt(geometry, triangleIndex)` returns three new local-space points in winding order. An indexed mesh can reuse a position across triangles; its index buffer says which position each corner uses. The starter reads three consecutive positions instead, so the inspector outlines the wrong face. It should also work when there is no index buffer. Leave the geometry unchanged.
 
-Fix `triangleAt` in `drill.ts`. The scene shows the current result alongside a reference; they should agree after the repair.
+The blue outline should trace the same triangle as the yellow reference.
 
 <div data-scene="demo"></div>
 
@@ -29,20 +29,20 @@ Fix `drill.ts`, write one sentence in `cause.md`, and replace the placeholder in
 
 ## The check
 
-The acceptance test covers more than the scene pose. Your check must fail on the original bug and pass after the fix, using behavior instead of looking for a particular line of code.
+The acceptance test chooses a later triangle in an indexed mesh and a triangle without indices. Your check should reject reading consecutive positions when indices differ.
 
 <details><summary>Hint</summary>
 
-Compare the named spaces and the operation from the indexed page.
+The indexed page shows that three index entries choose the position vertices for one triangle. Check whether this geometry has an index first.
 
 </details>
 
 ## Where else?
 
-Where else would the same wrong assumption cause an error?
+Where else must triangle corners follow the index buffer?
 
 <details><summary>A few answers</summary>
 
-A model editor, an interactive viewer, or a check before export.
+Face selection, a barycentric marker, or a wireframe over an imported mesh.
 
 </details>

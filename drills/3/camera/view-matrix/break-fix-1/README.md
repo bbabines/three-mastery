@@ -9,15 +9,15 @@ lenses: [space]
 misconceptions: [camera.view-matrix/inverse]
 ---
 
-# View matrix: find the faulty result
+# View matrix: a point follows the camera
 
-> **The job:** A label depth readout follows a moving camera, but the shown camera-space point moves in the same direction as the camera instead of the opposite direction.
+> **The job:** Express a fixed world point in a moving camera's space.
 
 ## Task
 
-A label depth readout follows a moving camera, but the shown camera-space point moves in the same direction as the camera instead of the opposite direction. Return a fresh view-space point; do not change the world point.
+`worldToView(camera, worldPoint)` returns a new point in the camera's view space. A label depth readout moves the wrong way as the camera moves, because the starter uses the camera's world transform in the wrong direction. Leave `worldPoint` and the camera pose unchanged.
 
-Fix `worldToView` in `drill.ts`. The scene shows the current result alongside a reference; they should agree after the repair.
+Move the camera in the scene. A fixed world marker should move the opposite way in view-space coordinates.
 
 <div data-scene="demo"></div>
 
@@ -25,8 +25,9 @@ Fix `worldToView` in `drill.ts`. The scene shows the current result alongside a 
 
 | Value | Space |
 | --- | --- |
-| Inputs | The named camera, world, or screen space in the task |
-| Answer | The space stated in the task |
+| `worldPoint` | World position |
+| `camera.matrixWorld` | Camera local space to world space |
+| Answer | Position in camera view space |
 
 ## Your code
 
@@ -36,20 +37,20 @@ Fix `drill.ts`, write one sentence in `cause.md`, and replace the placeholder in
 
 ## The check
 
-The acceptance test covers more than the scene pose. Your check must fail on the original bug and pass after the fix, using behavior instead of looking for a particular line of code.
+The acceptance test moves and turns the camera, compares against its inverse world matrix, and checks that the input point stays unchanged. Your check should reject the wrong transform direction.
 
 <details><summary>Hint</summary>
 
-Compare the named spaces and the operation from the view matrix page.
+The view-matrix page distinguishes moving a camera point into the world from moving a world point into the camera. Which direction does the label readout need?
 
 </details>
 
 ## Where else?
 
-Where else would the same wrong assumption cause an error?
+Where else must a world point become camera-relative?
 
 <details><summary>A few answers</summary>
 
-A model editor, an interactive viewer, or a check before export.
+Depth sorting labels, camera-space effects, or testing if a point sits in front of the lens.
 
 </details>
