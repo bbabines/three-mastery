@@ -11,7 +11,7 @@ misconceptions: [geometry.updating-buffers/array-updates-gpu]
 
 # Highlight one vertex: explain the upload
 
-> **The job:** explain a real 3D decision in five plain sentences.
+> **The job:** Explain how an edited vertex color reaches the GPU.
 
 ## Task
 

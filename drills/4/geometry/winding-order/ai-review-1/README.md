@@ -28,7 +28,7 @@ Edit `drills/4/geometry/winding-order/ai-review-1/drill.ts` and `cause.md`. Chec
 
 Compare the transformed face direction with the geometry’s transformed normal under ordinary and mirrored scales. The acceptance check fails on the proposal and passes after the repair.
 
-<details><summary>Hint</summary> Look for a case the proposed helper handles differently from the job's contract. </details>
+<details><summary>Hint</summary> `applyMatrix4` transforms positions and normals. Which part of indexed geometry still decides what `FrontSide` shows? </details>
 
 ## Where else?
 
