@@ -228,7 +228,9 @@ export function renderNav(container: HTMLElement, drills: NavDrill[], selected: 
       });
       loopGroup.append(placement, cross);
       for (const [mode, heading] of [['ai-review', 'AI review'], ['teach-back', 'Teach-back']] as const) {
-        const built = drills.filter((drill) => drill.loop === 4 && drill.mode === mode);
+        const built = drills.filter((drill) => drill.loop === 4 && drill.mode === mode)
+          .sort((a, b) => DOMAINS.findIndex((domain) => a.concept.startsWith(`${domain.slug}.`))
+            - DOMAINS.findIndex((domain) => b.concept.startsWith(`${domain.slug}.`)));
         const details = group(`${loopId}/${mode}`, 'domain',
           `<span>${heading}</span><span class="count">${built.length}</span>`,
           isOpen(`${loopId}/${mode}`, false));
