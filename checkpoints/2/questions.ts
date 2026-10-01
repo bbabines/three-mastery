@@ -77,10 +77,10 @@ export const questions: Question[] = [
     ['ray.intersectPlane(floor, new Vector3())', 'ray.projectOnPlane(floor)', 'raycaster.intersectObject(floor)'], 0,
     'Ray.intersectPlane finds the geometric crossing and returns null for no forward hit.'),
 
-  q('interaction', 'const hit = ray.intersectPlane(plane, new Vector3());\n// drag began away from the part origin',
+  q('interaction', 'const hit = ray.intersectPlane(plane, new Vector3())!;\n// a hit exists; part may have a transformed parent',
     'What should be saved at pointer-down?',
-    ['part.position.clone().sub(hit)', 'hit.clone().normalize()', 'part.position.clone().add(hit)'], 0,
-    'The origin-minus-hit offset prevents the part from snapping to the cursor.'),
+    ['part.getWorldPosition(new Vector3()).sub(hit)', 'part.position.clone().sub(hit)', 'hit.clone().normalize()'], 0,
+    'Save the world origin minus world hit. Convert the resulting world position into parent space when storing it.'),
   q('interaction', 'const decay = 5;\nconst dt = clock.getDelta();',
     'Which interpolation weight is stable across frame rates?',
     ['1 - Math.exp(-decay * dt)', '0.1', 'decay * 60'], 0,
