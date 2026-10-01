@@ -8,6 +8,6 @@ export const idlePlan:SceneSetup=({scene,camera,controls,container,onFrame})=>{
  slider(bar,'slow frames',{min:0,max:4,step:1,value:0},v=>{slow=v;dirty=true;});
  slider(bar,'changed',{min:0,max:1,step:1,value:0},v=>{dirty=!!v;});
  onFrame(()=>{const result=attempt('planFrame',()=>planFrame(dirty,true,dpr,slow,0));if(!result.ok){readout.textContent=result.note;return;}
-  samples++;if(result.value.render)requests++;dpr=result.value.dpr;readout.textContent=`callbacks: ${samples}\nrequested renders: ${requests}\nDPR: ${dpr}`;
+  samples++;if(result.value.render)requests++;dirty=false;dpr=result.value.dpr;readout.textContent=`harness callbacks: ${samples}\nplanned renders: ${requests}\nDPR: ${dpr}`;
  });
 };
