@@ -1,6 +1,6 @@
 ---
 id: 3.shaders.placement
-loop: 2
+loop: 3
 domain: shaders
 parts:
   - shaders.vertex-vs-fragment

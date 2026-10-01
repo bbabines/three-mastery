@@ -1,6 +1,6 @@
 ---
 id: 3.materials.placement
-loop: 2
+loop: 3
 domain: materials
 parts:
   - materials.materials-tour
