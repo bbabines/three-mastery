@@ -23,7 +23,7 @@ describe('gpu.draw-call-anatomy', () => {
 
 describe('gpu.state-sorting', () => {
   it('makes the right judgment', () => {
-    const shared=new THREE.MeshBasicMaterial(), other=new THREE.MeshBasicMaterial(); const a=new THREE.Mesh(undefined,shared), b=new THREE.Mesh(undefined,other), c=new THREE.Mesh(undefined,shared); const sorted=answered(check.sortMaterials([a,b,c])); expect(Math.abs(sorted.indexOf(a)-sorted.indexOf(c))).toBe(1);
+    const shared=new THREE.MeshBasicMaterial(), other=new THREE.MeshBasicMaterial(); const a=new THREE.Mesh(undefined,shared), b=new THREE.Mesh(undefined,other), c=new THREE.Mesh(undefined,shared); const translucent=new THREE.MeshBasicMaterial({transparent:true}); const t1=new THREE.Mesh(undefined,translucent),t2=new THREE.Mesh(undefined,translucent); const sorted=answered(check.sortMaterials([t1,a,b,c,t2])); expect(Math.abs(sorted.indexOf(a)-sorted.indexOf(c))).toBe(1); expect(sorted.slice(-2)).toEqual([t1,t2]);
   });
 });
 

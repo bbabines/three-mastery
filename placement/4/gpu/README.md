@@ -27,7 +27,7 @@ A no-docs check of the decisions in this domain. Write every function in `placem
 | `cappedDpr` | Cap renderer pixel ratio before setup. |
 | `fragmentWork` | Estimate fragment work from coverage and overdraw. |
 | `drawCallsForGroups` | Estimate draws when every mesh has material groups. |
-| `sortMaterials` | Group meshes by material ID to reduce state switches. |
+| `sortMaterials` | Group opaque meshes by material while preserving transparent draw order. |
 | `canRejectEarly` | Judge whether a surface can benefit from early depth rejection. |
 | `enableStencilMask` | Configure a material to write a stencil reference. |
 | `enableTransparency` | Mark a changed material transparent before its next draw. |

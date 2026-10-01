@@ -14,7 +14,10 @@ export function drawCallsForGroups(meshes: number, groupsPerMesh: number): Answe
 }
 
 export function sortMaterials(meshes: THREE.Mesh[]): Answer<THREE.Mesh[]> {
-  return [...meshes].sort((a,b)=>(a.material as THREE.Material).uuid.localeCompare((b.material as THREE.Material).uuid));
+  const opaque = meshes.filter(mesh => !(mesh.material as THREE.Material).transparent);
+  const transparent = meshes.filter(mesh => (mesh.material as THREE.Material).transparent);
+  opaque.sort((a,b)=>(a.material as THREE.Material).uuid.localeCompare((b.material as THREE.Material).uuid));
+  return [...opaque,...transparent];
 }
 
 export function canRejectEarly(opaque: boolean, writesDepth: boolean): Answer<boolean> {

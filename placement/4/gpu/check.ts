@@ -17,7 +17,7 @@ export function drawCallsForGroups(meshes: number, groupsPerMesh: number): Answe
   return null;
 }
 
-// state-sorting: Group meshes by material ID to reduce state switches.
+// state-sorting: Group opaque meshes by material while preserving transparent draw order.
 export function sortMaterials(meshes: THREE.Mesh[]): Answer<THREE.Mesh[]> {
   return null;
 }
