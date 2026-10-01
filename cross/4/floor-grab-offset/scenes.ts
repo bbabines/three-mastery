@@ -16,7 +16,7 @@ export const floor: SceneSetup = ({ scene, container, onFrame }) => {
   onFrame((_, elapsed) => {
     const ray = new Ray(new Vector3(3, 5, 4), new Vector3(Math.sin(elapsed) - 1, -3, -2).normalize());
     setLine(rayGuide, ray.origin, ray.at(7, new Vector3()));
-    const result = attempt('part origin', () => dragFloor(ray, grabbed, new Vector3(0, 0, 0)));
+    const result = attempt('part origin', () => dragFloor(ray.clone(), grabbed.clone(), new Vector3(0, 0, 0)));
     if (result.ok) marker.position.copy(result.value);
     readout.textContent = result.ok ? 'Orange: pointer ray. Blue: original grab. Green: part origin.' : `Orange: pointer ray. Blue: original grab. ${result.note}`;
   });

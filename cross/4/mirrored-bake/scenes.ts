@@ -11,7 +11,7 @@ export const mirror: SceneSetup = ({ scene, container }) => {
   const sourceLabel = label('source', '#e5e7eb');
   sourceLabel.position.set(-1.3, 2, 0);
   scene.add(sourceLabel);
-  const result = attempt('baked variant', () => bakeMirror(source,new Matrix4().makeScale(-1,1,1)));
+  const result = attempt('baked variant', () => bakeMirror(source.clone(),new Matrix4().makeScale(-1,1,1)));
   if(result.ok) {
     const mesh = new Mesh(result.value,new MeshBasicMaterial({color:0x22c55e}));
     mesh.position.set(1.3,1,0);

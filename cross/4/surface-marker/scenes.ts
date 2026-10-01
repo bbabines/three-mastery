@@ -21,7 +21,7 @@ export const marker: SceneSetup = ({ scene, container, onFrame }) => {
   scene.add(normalArrow);
   const readout = overlay(container, 'readout');
   onFrame(() => {
-    const result = attempt('world normal', () => markerNormal(localNormal, mesh));
+    const result = attempt('world normal', () => markerNormal(localNormal.clone(), mesh));
     if (result.ok) setArrow(normalArrow, mesh.getWorldPosition(new Vector3()), result.value);
     else normalArrow.visible = false;
     readout.textContent = result.ok ? 'Blue: stretched face. Green: world-space surface normal.' : `Blue: stretched face. ${result.note}`;

@@ -23,7 +23,7 @@ export const rail: SceneSetup = ({ scene, container, onFrame }) => {
   onFrame((_, elapsed) => {
     const motion = new Vector3(Math.sin(elapsed) * 2, 1, 1);
     setArrow(inputArrow, new Vector3(), motion);
-    const result = attempt('rail motion', () => railMotion(motion, axis));
+    const result = attempt('rail motion', () => railMotion(motion.clone(), axis));
     if (result.ok) setArrow(outputArrow, new Vector3(), result.value);
     else outputArrow.visible = false;
     readout.textContent = result.ok ? 'Yellow: rail. Blue: pointer motion. Green: motion along rail.' : `Yellow: rail. Blue: pointer motion. ${result.note}`;
