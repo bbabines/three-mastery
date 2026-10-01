@@ -146,11 +146,31 @@ Each domain opens Loops 2–4 with one, in `placement/<loop>/<domain>/`:
 
 ## Loop 3: fix the bug
 
-A break-and-fix drill uses the same files and sections, with three changes:
+A break-and-fix drill keeps the code-drill frontmatter and page sections. Its mode is
+`break-and-fix`. The starter `drill.ts` runs, but has one realistic bug with a visible symptom;
+the Task describes that symptom without naming the cause. The bug comes from a card's
+misconception or a fact in `docs/loop1-build-notes.md`. The acceptance test fails on the starter
+and passes on the reference.
 
-- The starter is working code with one subtle bug that shows in the scene, so the acceptance test fails until it's fixed and `verify`'s check still holds. The bug is one of the card's misconceptions, or a fact cut from a Loop 1 page (`docs/loop1-build-notes.md` keeps them).
-- The Task describes the symptom, never the cause.
-- After the fix, Brad names the cause in one sentence and, wherever the bug can be caught automatically, writes the check that would have caught it, following `docs/addendum-write-the-check.md`. Where it can't be, he says what a person has to look at. Where the sentence and the check live, and how `verify` proves his check fails on the broken code, is for the first Loop 3 build to settle; the addendum's open questions list the options.
+Brad works it in three steps:
+
+1. Fix `drill.ts` and watch the scene change. Run `npm run drill -- <folder>`.
+2. Write one sentence in `cause.md` naming the wrong assumption and its effect. The starter file
+   has a prompt; the reference sentence lives at `solutions/<folder>/cause.md`. The sentence is
+   ungraded.
+3. If the bug can be checked automatically, replace the throwing placeholder in `check.ts` with
+   a short invariant assertion. `check.test.ts` calls it with the drill function; Brad writes the
+   assertion, not the test wiring. The check must reject the original bug and pass after the fix.
+   Keep it about behavior, with a general case and three.js-derived expected values. If the bug
+   cannot be checked automatically, `cause.md` instead gives one or two sentences about what a
+   person must look at and why a test cannot see it; omit `check.ts` and `check.test.ts`.
+
+For an automatable drill, `solutions/<folder>/` mirrors both `drill.ts` and `check.ts`. The
+acceptance test checks the repair; the learner-authored check runs as a second test. `npm run
+verify` runs all tests against the references and starters, then runs each reference regression
+check against its **broken** starter with `CHECK_SOURCE=solutions`. It reports a check that passes
+on the bug or fails to run. This is separate from the acceptance test: a passing acceptance test
+cannot stand in for the check Brad wrote. Browser checks use `check.browser.test.ts`.
 
 ## Before you call it done
 

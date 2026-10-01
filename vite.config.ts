@@ -7,15 +7,19 @@ import { appendLog, readLog } from './scripts/lib/log';
 const ROOT = import.meta.dirname;
 const SOLUTIONS = path.join(ROOT, 'solutions');
 
-// With DRILL_SOURCE=solutions, a test's `./drill` or `./check` import resolves to the
-// mirrored file under /solutions, so the same acceptance tests verify the reference answers.
+// Solution swaps let the same tests run against the learner's file or its reference. Loop 3
+// also swaps `./check` independently, to prove a reference regression check rejects the bug.
 function solutionsSwap(): Plugin {
   return {
     name: 'solutions-swap',
     enforce: 'pre',
     resolveId(source, importer) {
-      if (process.env.DRILL_SOURCE !== 'solutions' || !importer) return null;
+      if (!importer) return null;
       if (source !== './drill' && source !== './check') return null;
+      const useSolution = source === './check'
+        ? (process.env.CHECK_SOURCE ?? process.env.DRILL_SOURCE) === 'solutions'
+        : process.env.DRILL_SOURCE === 'solutions';
+      if (!useSolution) return null;
       if (importer.startsWith(SOLUTIONS)) return null;
       const relativeDir = path.relative(ROOT, path.dirname(importer));
       return path.join(SOLUTIONS, relativeDir, `${source.slice(2)}.ts`);
