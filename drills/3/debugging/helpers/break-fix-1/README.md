@@ -4,7 +4,7 @@ loop: 3
 tier: light
 concepts: [debugging.helpers, debugging.visualizing-vectors]
 mode: break-and-fix
-context: debugging.visualizing-vectors/ray-direction
+context: debugging.helpers/orientation
 lenses: [space]
 misconceptions:
   - debugging.visualizing-vectors/parent-irrelevant

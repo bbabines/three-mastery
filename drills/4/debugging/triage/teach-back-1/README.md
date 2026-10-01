@@ -4,7 +4,7 @@ loop: 4
 tier: core
 concepts: [debugging.triage]
 mode: teach-back
-context: debugging.triage/black-screen
+context: debugging.triage/wrong-color
 lenses: []
 misconceptions: []
 ---
@@ -15,18 +15,18 @@ misconceptions: []
 
 ## Task
 
-A product viewer suddenly shows a black canvas after loading a variant. Explain how to narrow the cause before rewriting the shader. No docs for this one. Write your answer in the box, then reveal the key points and compare. Nothing is graded.
+A product viewer loads a variant, but its finish has the wrong color. Explain how to narrow the cause before rewriting the shader. No docs for this one. Write your answer in the box, then reveal the key points and compare. Nothing is graded.
 
 <div data-teach-back>
 <ol>
 <li>First decide whether the fault is transform, geometry, material, camera, or pipeline.</li>
-<li>Use a simple known material to isolate material from geometry and camera.</li>
-<li>Check camera bounds, lighting, and material inputs before blaming the shader.</li>
-<li>Inspect actual inputs and intermediate outputs before changing many settings.</li>
+<li>Use a simple known material to check whether geometry and camera still show the part correctly.</li>
+<li>Check the assigned material, texture, and lighting before blaming the shader.</li>
+<li>Inspect the input color and an intermediate output to separate a map problem from an output pipeline problem.</li>
 <li>Change one variable and compare against the original symptom.</li>
 </ol>
 </div>
 
 ## Where else?
 
-How would you narrow a black material before changing its shader?
+How would the first checks change if the variant were missing entirely?

@@ -4,7 +4,7 @@ loop: 3
 tier: light
 concepts: [optimization.render-on-demand, optimization.adaptive-quality]
 mode: break-and-fix
-context: optimization.adaptive-quality/thermal-throttling
+context: optimization.render-on-demand/static-viewer
 lenses: [cost]
 misconceptions:
   - optimization.render-on-demand/continuous-required

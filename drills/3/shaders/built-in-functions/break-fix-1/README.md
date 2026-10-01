@@ -4,7 +4,7 @@ loop: 3
 tier: core
 concepts: [shaders.built-in-functions]
 mode: break-and-fix
-context: shaders.built-in-functions/falloff
+context: shaders.built-in-functions/rings
 lenses: [space]
 misconceptions: [shaders.built-in-functions/step-smoothstep]
 ---

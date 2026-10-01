@@ -4,18 +4,18 @@ loop: 3
 tier: core
 concepts: [shaders.built-in-matrices]
 mode: break-and-fix
-context: shaders.built-in-matrices/world-height
+context: shaders.built-in-matrices/rim-light
 lenses: [space]
 misconceptions: [shaders.built-in-matrices/world-normals]
 ---
 
-# Built in matrices: repair the effect
+# Built in matrices: remove an accidental rim-like highlight
 
-> **The job:** Tint a world-space slope consistently as the camera moves.
+> **The job:** Keep a world-lit surface from behaving like a camera-following rim light.
 
 ## Task
 
-The reported world normal rotates when only the camera changes. Repair `worldNormal`. The preview reports its output, and the test covers another input.
+A surface lit by a fixed world light develops a rim-like highlight as the camera moves. The reported world normal rotates when only the camera changes. Repair `worldNormal`. The preview reports its output, and the test covers another input.
 
 <div data-scene="preview"></div>
 

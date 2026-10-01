@@ -4,7 +4,7 @@ loop: 3
 tier: core
 concepts: [debugging.reading-matrices]
 mode: break-and-fix
-context: debugging.reading-matrices/mirroring
+context: debugging.reading-matrices/spotting-scale
 lenses: [space]
 misconceptions: []
 ---
@@ -15,7 +15,7 @@ misconceptions: []
 
 ## Task
 
-`isMirrored(matrix)` reads a world transform. The starter treats one element's sign as the answer; after a part rotates, it can report a mirror where there is none, or miss a real mirror.
+During a scale audit, `isMirrored(matrix)` reads a saved world transform. The starter treats one element's sign as the answer; after a part rotates, it can report a mirror where there is none, or miss a real mirror. Determine whether the full basis, including scale, reverses handedness.
 
 Fix the classifier without changing the matrix. Name why one component is insufficient in `cause.md`, then write a regression assertion in `check.ts`. The scene compares an ordinary rotated part with a mirrored one.
 

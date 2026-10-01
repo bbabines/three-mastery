@@ -4,7 +4,7 @@ loop: 2
 tier: light
 concepts: [debugging.shader-errors, debugging.debug-views]
 mode: apply
-context: debugging.shader-errors/on-before-compile
+context: debugging.debug-views/depth-issues
 lenses: []
 misconceptions: []
 ---
@@ -15,7 +15,7 @@ misconceptions: []
 
 ## Task
 
-A shader compile log reports a line number in the injected source. Subtract the known injected prefix to get the authored line. Return a normal, depth, or wireframe material for a chosen debug view.
+A shader compile log reports a line number in the injected source. Subtract the known injected prefix to get the authored line. Return a normal, depth, or wireframe material for a chosen debug view. A depth view helps distinguish a visibility problem from the compile error.
 
 | Function | Return |
 | --- | --- |
