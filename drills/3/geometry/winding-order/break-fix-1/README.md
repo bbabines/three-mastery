@@ -9,15 +9,15 @@ lenses: []
 misconceptions: [geometry.winding-order/normals-flip-culling]
 ---
 
-# Winding order: find the faulty result
+# Winding order: an inside-out part
 
-> **The job:** An inside-out import still disappears from the front after its normals are flipped.
+> **The job:** Reverse which side of a triangle counts as its front.
 
 ## Task
 
-An inside-out import still disappears from the front after its normals are flipped. Return a copy whose triangle winding faces the other way; leave the original alone.
+An imported panel faces the wrong way. Its normals were flipped for lighting, but the renderer still hides the panel from the side that should be visible. Fix `flipFrontFace` so it returns a geometry with reversed winding and matching normals. Keep each corner's UV with its position, and leave the input alone. The input may be indexed or non-indexed.
 
-Fix `flipFrontFace` in `drill.ts`. The scene shows the current result alongside a reference; they should agree after the repair.
+In the scene, your triangle is on the left and the reference is on the right. Switch between front and back: both should disappear from the front and show from the back. The yellow outlines mark their locations.
 
 <div data-scene="demo"></div>
 
@@ -29,20 +29,20 @@ Fix `drill.ts`, write one sentence in `cause.md`, and replace the placeholder in
 
 ## The check
 
-The acceptance test covers more than the scene pose. Your check must fail on the original bug and pass after the fix, using behavior instead of looking for a particular line of code.
+The acceptance test checks both indexed and non-indexed geometry, UVs, normals, and the visible side. Write a short check that raycasts a front-side triangle from both sides; it should reject the original bug.
 
 <details><summary>Hint</summary>
 
-Compare the named spaces and the operation from the winding order page.
+The winding order page shows which corner order counts as the front. Flipping a normal changes lighting, but does it change back-face culling?
 
 </details>
 
 ## Where else?
 
-Where else would the same wrong assumption cause an error?
+Where else could flipped normals leave a surface invisible?
 
 <details><summary>A few answers</summary>
 
-A model editor, an interactive viewer, or a check before export.
+A mirrored mesh import, an inside-out room, or a reversed face on a collision marker.
 
 </details>

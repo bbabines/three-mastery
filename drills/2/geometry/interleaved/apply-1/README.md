@@ -9,40 +9,49 @@ lenses: []
 misconceptions: [geometry.interleaved/own-array]
 ---
 
-# Interleaved buffers: move a vertex in an interleaved position attribute by vertex number, then mark its shared buffer for upload
+# Interleaved attributes: move one vertex
 
-> **The job:** Move a vertex in an interleaved position attribute by vertex number, then mark its shared buffer for upload.
+> **The job:** Edit one position in a shared buffer.
 
 ## Task
 
-Move a vertex in an interleaved position attribute by vertex number, then mark its shared buffer for upload. The UV values share the same storage and must stay unchanged; the stride is wider than the three position components.
+Write `moveInterleavedVertex(position, index, newPosition)`. `index` is a vertex number in an interleaved position attribute. Write the new XYZ, mark the shared InterleavedBuffer for upload, and return true. Keep other vertices and `newPosition` unchanged.
 
-Write `moveInterleavedVertex(position, index, newPosition)` for the behavior above. Save the starter to update the scene.
+Save your code and inspect the scene; compare the blue result with the green reference.
 
 <div data-scene="demo"></div>
 
+## Spaces
+
+| Value | Space or units |
+| --- | --- |
+| `position` | Interleaved vertex positions measured from object |
+| `index` | Vertex number |
+| `newPosition` | Position measured from object |
+| Answer | Boolean success |
+
 ## Your code
 
-Write it in `drills/2/geometry/interleaved/apply-1/drill.ts`. Check it with:
+Write it in `drills/2/geometry/interleaved/apply-1/drill.ts`. Save to update the scene. Check it with:
 
     npm run drill -- drills/2/geometry/interleaved/apply-1
 
 ## The check
 
-It passes when `moveInterleavedVertex` does the stated job for the scene and the other cases in the test. The test exercises the values and spaces named above.
+The chosen vertex moves, neighboring packed values stay put, and the shared buffer is marked for upload.
 
 <details><summary>Hint</summary>
 
-Use the method from the interleaved buffers page, and check which space the result belongs to.
+The position attribute is one view of an interleaved buffer. Which object owns the GPU update flag?
 
 </details>
 
 ## Where else?
 
-Where else would the same operation help when a part moves or turns?
+Where else do several attributes share one upload?
 
 <details><summary>A few answers</summary>
 
-Reading loaded glTF data. Manual vertex edits.
+Move a vertex whose position and color are packed in the same buffer.
 
 </details>

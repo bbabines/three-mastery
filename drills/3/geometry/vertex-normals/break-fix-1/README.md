@@ -9,15 +9,15 @@ lenses: []
 misconceptions: []
 ---
 
-# Vertex normals: find the faulty result
+# Vertex normals: the hard edge stays smooth
 
-> **The job:** A low-poly part still shades smoothly across a hard corner after its vertex normals are rebuilt.
+> **The job:** Give each flat face its own lighting normal.
 
 ## Task
 
-A low-poly part still shades smoothly across a hard corner after its vertex normals are rebuilt. Return a separate-vertex copy with flat per-face normals.
+`flatNormals(geometry)` returns a new geometry that shades each triangle as a flat face. The starter recomputes normals on indexed geometry, where neighboring faces still share vertices and their normals are averaged. Give the faces separate vertices before rebuilding their normals, and leave the input geometry unchanged.
 
-Fix `flatNormals` in `drill.ts`. The scene shows the current result alongside a reference; they should agree after the repair.
+The scene should show a clear hard edge between faces, like the reference part.
 
 <div data-scene="demo"></div>
 
@@ -29,20 +29,20 @@ Fix `drill.ts`, write one sentence in `cause.md`, and replace the placeholder in
 
 ## The check
 
-The acceptance test covers more than the scene pose. Your check must fail on the original bug and pass after the fix, using behavior instead of looking for a particular line of code.
+The acceptance test checks that adjacent faces have separate corner normals and the original geometry is unchanged. Your check should reject smooth shared normals.
 
 <details><summary>Hint</summary>
 
-Compare the named spaces and the operation from the vertex normals page.
+The vertex-normals page shows why `computeVertexNormals` averages at a shared index. It also shows how to give faces their own corners.
 
 </details>
 
 ## Where else?
 
-Where else would the same wrong assumption cause an error?
+Where else should a sharp edge stay sharp after rebuilding normals?
 
 <details><summary>A few answers</summary>
 
-A model editor, an interactive viewer, or a check before export.
+Low-poly props, a beveled panel, or a cut edge on an imported mesh.
 
 </details>

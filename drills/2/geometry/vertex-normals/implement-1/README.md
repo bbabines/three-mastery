@@ -9,40 +9,47 @@ lenses: []
 misconceptions: [geometry.vertex-normals/imported-right]
 ---
 
-# Vertex normals: rebuild a mesh’s per-vertex normals for smooth shading after its positions change, preserving the original geometry
+# Vertex normals: restore smooth shading
 
-> **The job:** Rebuild a mesh’s per-vertex normals for smooth shading after its positions change, preserving the original geometry.
+> **The job:** Rebuild per-vertex normals after a shape edit.
 
 ## Task
 
-Rebuild a mesh’s per-vertex normals for smooth shading after its positions change, preserving the original geometry.
+Write `smoothNormals(geometry)`. Return a copy with normals recomputed from its current triangle positions. Preserve the input geometry. Indexed triangles can share a vertex, so their normals can average into a smooth surface.
 
-Write `smoothNormals(geometry)` for the behavior above. Save the starter to update the scene.
+Save your code and inspect the scene; compare the blue result with the green reference.
 
 <div data-scene="demo"></div>
 
+## Spaces
+
+| Value | Space or units |
+| --- | --- |
+| `geometry positions` | Measured from object itself |
+| Answer | New geometry with rebuilt normal attribute |
+
 ## Your code
 
-Write it in `drills/2/geometry/vertex-normals/implement-1/drill.ts`. Check it with:
+Write it in `drills/2/geometry/vertex-normals/implement-1/drill.ts`. Save to update the scene. Check it with:
 
     npm run drill -- drills/2/geometry/vertex-normals/implement-1
 
 ## The check
 
-It passes when `smoothNormals` does the stated job for the scene and the other cases in the test. The test exercises the values and spaces named above.
+The copy’s normals follow changed positions, while the source retains its original attributes.
 
 <details><summary>Hint</summary>
 
-Use the method from the vertex normals page, and check which space the result belongs to.
+Three.js has a geometry method that recomputes vertex normals from triangle positions.
 
 </details>
 
 ## Where else?
 
-Where else would the same operation help when a part moves or turns?
+When else should normals be rebuilt?
 
 <details><summary>A few answers</summary>
 
-Smoothing artifacts. Fixing bad normals.
+After deforming a mesh or changing a procedural surface.
 
 </details>

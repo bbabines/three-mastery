@@ -9,40 +9,48 @@ lenses: []
 misconceptions: [geometry.indexed/shared-normals]
 ---
 
-# Indexed geometry: read the three local-space corners of one triangle from either indexed or non-indexed geometry
+# Indexed geometry: read triangle corners
 
-> **The job:** Read the three local-space corners of one triangle from either indexed or non-indexed geometry.
+> **The job:** Find one triangle’s three positions.
 
 ## Task
 
-Read the three local-space corners of one triangle from either indexed or non-indexed geometry.
+Write `triangleVertices(geometry, triangleIndex)`. Return three new Vector3 positions measured from the object itself. If the geometry has an index list, use it to find vertex numbers; otherwise each three consecutive vertices form a triangle. Do not modify the geometry.
 
-Write `triangleVertices(geometry, triangleIndex)` for the behavior above. Save the starter to update the scene.
+Save your code and inspect the scene; compare the blue result with the green reference.
 
 <div data-scene="demo"></div>
 
+## Spaces
+
+| Value | Space or units |
+| --- | --- |
+| `triangleIndex` | Triangle number, starting at zero |
+| `geometry positions` | Measured from object itself |
+| Answer | Three positions in the same space |
+
 ## Your code
 
-Write it in `drills/2/geometry/indexed/implement-1/drill.ts`. Check it with:
+Write it in `drills/2/geometry/indexed/implement-1/drill.ts`. Save to update the scene. Check it with:
 
     npm run drill -- drills/2/geometry/indexed/implement-1
 
 ## The check
 
-It passes when `triangleVertices` does the stated job for the scene and the other cases in the test. The test exercises the values and spaces named above.
+Both indexed and nonindexed cases return the requested triangle, not always the first three attribute entries.
 
 <details><summary>Hint</summary>
 
-Use the method from the indexed geometry page, and check which space the result belongs to.
+The triangle number selects three entries in draw order. For indexed geometry, those entries are vertex numbers.
 
 </details>
 
 ## Where else?
 
-Where else would the same operation help when a part moves or turns?
+Where else do triangle corners matter?
 
 <details><summary>A few answers</summary>
 
-Memory savings. Per-face colors.
+Compute a face normal or mark a raycast hit triangle.
 
 </details>

@@ -9,40 +9,47 @@ lenses: []
 misconceptions: [geometry.indexed/shared-normals]
 ---
 
-# Indexed geometry: make a copy of indexed geometry whose triangles have separate vertices so each face can carry its own color
+# Indexed geometry: separate faces
 
-> **The job:** Make a copy of indexed geometry whose triangles have separate vertices so each face can carry its own color.
+> **The job:** Give each triangle its own corners.
 
 ## Task
 
-Make a copy of indexed geometry whose triangles have separate vertices so each face can carry its own color.
+Write `separateFaces(geometry)`. Return a nonindexed copy of an indexed triangle geometry, so each triangle has its own vertex data and can receive a separate face color. Preserve the source geometry, its attributes, and triangle order.
 
-Write `separateFaces(geometry)` for the behavior above. Save the starter to update the scene.
+Save your code and inspect the scene; compare the blue result with the green reference.
 
 <div data-scene="demo"></div>
 
+## Spaces
+
+| Value | Space or units |
+| --- | --- |
+| `geometry` | Vertex data measured from object itself |
+| Answer | New nonindexed BufferGeometry |
+
 ## Your code
 
-Write it in `drills/2/geometry/indexed/apply-1/drill.ts`. Check it with:
+Write it in `drills/2/geometry/indexed/apply-1/drill.ts`. Save to update the scene. Check it with:
 
     npm run drill -- drills/2/geometry/indexed/apply-1
 
 ## The check
 
-It passes when `separateFaces` does the stated job for the scene and the other cases in the test. The test exercises the values and spaces named above.
+The copy has one position entry for each index entry and no index list; the source remains indexed.
 
 <details><summary>Hint</summary>
 
-Use the method from the indexed geometry page, and check which space the result belongs to.
+Three.js can expand an indexed geometry into one independent vertex per triangle corner.
 
 </details>
 
 ## Where else?
 
-Where else would the same operation help when a part moves or turns?
+When else do faces need independent corners?
 
 <details><summary>A few answers</summary>
 
-Memory savings. Flat shading.
+Assign flat normals or split UVs at a texture seam.
 
 </details>

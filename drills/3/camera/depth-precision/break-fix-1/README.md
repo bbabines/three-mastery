@@ -9,15 +9,15 @@ lenses: [space]
 misconceptions: []
 ---
 
-# Depth precision: find the faulty result
+# Depth precision: a linear estimate
 
-> **The job:** A decal test treats perspective depth as if it grows evenly with distance, so it predicts the same precision near and far.
+> **The job:** Read the depth value a perspective camera would store at a distance.
 
 ## Task
 
-A decal test treats perspective depth as if it grows evenly with distance, so it predicts the same precision near and far. Return the normalized depth-buffer value at a view-axis distance.
+`depthBufferValue(near, far, viewDepth)` returns a value from 0 to 1 for a point `viewDepth` units straight ahead of a perspective camera. `near` and `far` are the camera clip distances. The starter spreads depth evenly through that range, which gives the wrong answer for a decal far from the camera.
 
-Fix `depthBufferValue` in `drill.ts`. The scene shows the current result alongside a reference; they should agree after the repair.
+Move the depth control in the scene. Your value should match the camera's projection, with much more of the depth range used near the camera.
 
 <div data-scene="demo"></div>
 
@@ -25,8 +25,8 @@ Fix `depthBufferValue` in `drill.ts`. The scene shows the current result alongsi
 
 | Value | Space |
 | --- | --- |
-| Inputs | The named camera, world, or screen space in the task |
-| Answer | The space stated in the task |
+| `near`, `far`, `viewDepth` | Positive distances along the camera's view axis |
+| Answer | Depth-buffer value from 0 at near to 1 at far |
 
 ## Your code
 
@@ -36,20 +36,20 @@ Fix `drill.ts`, write one sentence in `cause.md`, and replace the placeholder in
 
 ## The check
 
-The acceptance test covers more than the scene pose. Your check must fail on the original bug and pass after the fix, using behavior instead of looking for a particular line of code.
+The acceptance test compares your value with a point projected through a three.js perspective camera at near, middle, and far depths. Your check should reject a linear estimate.
 
 <details><summary>Hint</summary>
 
-Compare the named spaces and the operation from the depth precision page.
+The depth precision page shows that perspective depth is uneven. Project a point on the camera's −Z axis, then map its NDC Z from −1…+1 to 0…1.
 
 </details>
 
 ## Where else?
 
-Where else would the same wrong assumption cause an error?
+Where else would linear depth give the wrong distance?
 
 <details><summary>A few answers</summary>
 
-A model editor, an interactive viewer, or a check before export.
+A decal overlap, a depth-based fade, or a screen-space effect.
 
 </details>

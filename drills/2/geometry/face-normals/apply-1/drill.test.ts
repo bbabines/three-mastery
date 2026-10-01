@@ -7,7 +7,9 @@ describe('geometry.face-normals', () => {
   it('use a triangle’s geometric face normal to tell whether its front faces a world-space view direction', () => {
     const a=new THREE.Vector3(0,0,0), b=new THREE.Vector3(1,0,0), c=new THREE.Vector3(0,1,1);
     const n=THREE.Triangle.getNormal(a,b,c,new THREE.Vector3());
+    const before=[a.clone(),b.clone(),c.clone(),n.clone()];
     expect(answered(flatFaceToward(a,b,c,n))).toBe(true);
     expect(answered(flatFaceToward(a,b,c,n.clone().negate()))).toBe(false);
+    expect([a,b,c,n].every((value,i)=>value.equals(before[i]))).toBe(true);
   });
 });

@@ -9,15 +9,15 @@ lenses: [space]
 misconceptions: [camera.clip-ndc-screen/ndc-y-down]
 ---
 
-# Clip, NDC, screen: place a projected ndc point on a css pixel canvas, flipping the vertical direction to match the page
+# NDC: place a screen label
 
-> **The job:** Place a projected NDC point on a CSS pixel canvas, flipping the vertical direction to match the page.
+> **The job:** Place an NDC point on a CSS pixel canvas.
 
 ## Task
 
-Place a projected NDC point on a CSS pixel canvas, flipping the vertical direction to match the page.
+Write `ndcToPixel(ndc, width, height)`. Return a new Vector3: X and Y are CSS pixels from the canvas’s top-left, while Z keeps the input NDC depth. NDC top-left (−1, +1) becomes pixel (0, 0). Leave `ndc` unchanged.
 
-Write `ndcToPixel(ndc, width, height)` for the behavior above. Save the starter to update the scene.
+Save your code and inspect the scene; compare the blue result with the green reference.
 
 <div data-scene="demo"></div>
 
@@ -26,32 +26,32 @@ Write `ndcToPixel(ndc, width, height)` for the behavior above. Save the starter 
 | Value | Space or units |
 | --- | --- |
 | `ndc` | Normalized device coordinates |
-| `width` | CSS pixels |
-| `height` | CSS pixels |
-| Answer | CSS pixels, with NDC depth where stated |
+| `width, height` | Canvas size in CSS pixels |
+| Answer X/Y | CSS pixels from canvas top-left |
+| Answer Z | Unchanged NDC depth |
 
 ## Your code
 
-Write it in `drills/2/camera/clip-ndc-screen/implement-1/drill.ts`. Check it with:
+Write it in `drills/2/camera/clip-ndc-screen/implement-1/drill.ts`. Save to update the scene. Check it with:
 
     npm run drill -- drills/2/camera/clip-ndc-screen/implement-1
 
 ## The check
 
-It passes when `ndcToPixel` does the stated job for the scene and the other cases in the test. The test exercises the values and spaces named above.
+A quarter-right, half-down NDC point lands at the matching pixel, and the input remains unchanged.
 
 <details><summary>Hint</summary>
 
-Use the method from the clip, ndc, screen page, and check which space the result belongs to.
+The X range grows from [−1, +1] to [0, width]. Y needs the opposite direction.
 
 </details>
 
 ## Where else?
 
-Where else would the same operation help when a part moves or turns?
+Where else do projected points need CSS positions?
 
 <details><summary>A few answers</summary>
 
-World point to label position. Off-screen test.
+Put a name tag over a part or place a screen-space selection handle.
 
 </details>

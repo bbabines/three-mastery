@@ -9,15 +9,15 @@ lenses: []
 misconceptions: []
 ---
 
-# Object types tour: find the faulty result
+# Instanced mesh: one shelf moves all
 
-> **The job:** Moving one repeated shelf moves every shelf together.
+> **The job:** Reposition one shelf in a repeated set.
 
 ## Task
 
-Moving one repeated shelf moves every shelf together. Update only the chosen instance pose, not the InstancedMesh object transform.
+`placeInstance(mesh, index, pose)` moves one shelf to the given local pose in an `InstancedMesh`. The starter changes the whole mesh object's position instead, so every shelf moves. Keep every other instance and the mesh object's transform unchanged, and mark the instance data for upload.
 
-Fix `placeInstance` in `drill.ts`. The scene shows the current result alongside a reference; they should agree after the repair.
+The middle shelf should move to the yellow target while the left and right shelves stay put.
 
 <div data-scene="demo"></div>
 
@@ -29,20 +29,20 @@ Fix `drill.ts`, write one sentence in `cause.md`, and replace the placeholder in
 
 ## The check
 
-The acceptance test covers more than the scene pose. Your check must fail on the original bug and pass after the fix, using behavior instead of looking for a particular line of code.
+The acceptance test reads the chosen instance matrix and checks the mesh object has not moved. Your check should also catch a fix that moves all instances.
 
 <details><summary>Hint</summary>
 
-Compare the named spaces and the operation from the object types tour page.
+The object types tour separates one mesh's world transform from each instance's matrix. Which one controls one shelf?
 
 </details>
 
 ## Where else?
 
-Where else would the same wrong assumption cause an error?
+Where else would moving the whole instanced mesh be too broad?
 
 <details><summary>A few answers</summary>
 
-A model editor, an interactive viewer, or a check before export.
+One tree in a forest, one bolt on a machine, or one marker in a dense point display.
 
 </details>

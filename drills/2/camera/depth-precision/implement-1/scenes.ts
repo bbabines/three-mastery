@@ -1,18 +1,22 @@
-import { attempt, ball, COLORS, overlay } from '@harness/lesson';
+import { attempt, COLORS, hideFloorHelpers, overlay, slider } from '@harness/lesson';
 import type { SceneSetup } from '@harness/scene';
 import * as THREE from 'three';
+import { comparison } from '../../compare';
 import { depthAt } from './drill';
 
-export const demo: SceneSetup = ({ scene, camera, controls, container }) => {
-  camera.position.set(3.5, 3, 5);
-  controls.target.set(0, 0.5, 0);
-  const subject = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.8, 0.8), new THREE.MeshStandardMaterial({ color: COLORS.blue }));
-  const marker = ball(COLORS.yellow);
-  subject.position.y = 0.5;
-  marker.position.set(1.5, 0.5, 0);
-  scene.add(subject, marker);
-  const readout = overlay(container, 'readout');
-
-  const result = attempt('depthAt', () => depthAt(new THREE.PerspectiveCamera(60,1,0.1,100), 10));
-  readout.textContent = result.ok ? `depthAt: ${JSON.stringify(result.value)?.slice(0, 160)}` : result.note;
+export const demo: SceneSetup = ({ scene, container }) => {
+  hideFloorHelpers(scene);
+  const controlsBar = overlay(container, 'controls');
+  const show = comparison(container, 'Depth buffer is nonlinear');
+  const lens = new THREE.PerspectiveCamera(60, 1, 0.1, 100);
+  let depth = 10;
+  const update = () => {
+    const expected = (new THREE.Vector3(0, 0, -depth).project(lens).z + 1) / 2;
+    const result = attempt('depthAt', () => depthAt(lens, depth));
+    show(`view depth ${depth.toFixed(1)} world units · near 0.1, far 100`,
+      result.ok ? `depth buffer ${result.value.toFixed(5)}` : result.note,
+      `depth buffer ${expected.toFixed(5)}`);
+  };
+  slider(controlsBar, 'view depth', { min: 1, max: 60, step: 1, value: depth }, value => { depth = value; update(); });
+  update();
 };

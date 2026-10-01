@@ -9,40 +9,47 @@ lenses: []
 misconceptions: [geometry.tangent-space/world-directions]
 ---
 
-# Tangent space: convert a directx-style −y normal-map sample to the +y convention used by three
+# Normal maps: flip the green channel
 
-> **The job:** Convert a DirectX-style −Y normal-map sample to the +Y convention used by three.
+> **The job:** Convert a −Y normal-map sample to +Y.
 
 ## Task
 
-Convert a DirectX-style −Y normal-map sample to the +Y convention used by three.js and glTF.
+Write `flipNormalGreen(sample)`. The input is RGB values in the 0–1 range using the −Y convention. Return a new Vector3 for the +Y convention used by three.js and glTF. Keep red and blue as they are, reflect green around 0.5, and leave the sample unchanged.
 
-Write `flipNormalGreen(sample)` for the behavior above. Save the starter to update the scene.
+Save your code and inspect the scene; compare the blue result with the green reference.
 
 <div data-scene="demo"></div>
 
+## Spaces
+
+| Value | Space or units |
+| --- | --- |
+| `sample` | RGB components from 0 to 1 |
+| Answer | Converted RGB components from 0 to 1 |
+
 ## Your code
 
-Write it in `drills/2/geometry/tangent-space/apply-1/drill.ts`. Check it with:
+Write it in `drills/2/geometry/tangent-space/apply-1/drill.ts`. Save to update the scene. Check it with:
 
     npm run drill -- drills/2/geometry/tangent-space/apply-1
 
 ## The check
 
-It passes when `flipNormalGreen` does the stated job for the scene and the other cases in the test. The test exercises the values and spaces named above.
+Only the green component changes, and applying the conversion twice recovers the sample.
 
 <details><summary>Hint</summary>
 
-Use the method from the tangent space page, and check which space the result belongs to.
+The midpoint 0.5 represents no sideways tilt. Values equally far above and below it trade places.
 
 </details>
 
 ## Where else?
 
-Where else would the same operation help when a part moves or turns?
+Where else does map convention matter?
 
 <details><summary>A few answers</summary>
 
-Surface detail on low-poly meshes. Mirrored UVs breaking lighting.
+Import a normal map from a different tool or diagnose inside-out bumps.
 
 </details>

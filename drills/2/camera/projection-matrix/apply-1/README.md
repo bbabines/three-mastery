@@ -9,15 +9,15 @@ lenses: [space]
 misconceptions: [camera.projection-matrix/fov-horizontal]
 ---
 
-# Projection matrix: build an orthographic lens that maps a chosen world-space box into the picture without perspective shrinking
+# Orthographic projection: frame a box
 
-> **The job:** Build an orthographic lens that maps a chosen world-space box into the picture without perspective shrinking.
+> **The job:** Build an orthographic lens with no distance shrink.
 
 ## Task
 
-Build an orthographic lens that maps a chosen world-space box into the picture without perspective shrinking.
+Write `orthoForBox(left, right, top, bottom, near, far)`. Return a Matrix4 for an orthographic camera with those same view-space bounds. A point’s picture size stays constant as its view depth changes; the bounds are measured in world units from the camera.
 
-Write `orthoForBox(left, right, top, bottom, near, far)` for the behavior above. Save the starter to update the scene.
+Save your code and inspect the scene; compare the blue result with the green reference.
 
 <div data-scene="demo"></div>
 
@@ -25,36 +25,32 @@ Write `orthoForBox(left, right, top, bottom, near, far)` for the behavior above.
 
 | Value | Space or units |
 | --- | --- |
-| `left` | Value in the units named in the Task |
-| `right` | Value in the units named in the Task |
-| `top` | Value in the units named in the Task |
-| `bottom` | Value in the units named in the Task |
-| `near` | World units along the camera view axis |
-| `far` | World units along the camera view axis |
-| Answer | Scalar or object described in the Task |
+| `left, right, top, bottom` | View-space world units from the camera |
+| `near, far` | World units along viewing axis |
+| Answer | Projection matrix from view space to clip space |
 
 ## Your code
 
-Write it in `drills/2/camera/projection-matrix/apply-1/drill.ts`. Check it with:
+Write it in `drills/2/camera/projection-matrix/apply-1/drill.ts`. Save to update the scene. Check it with:
 
     npm run drill -- drills/2/camera/projection-matrix/apply-1
 
 ## The check
 
-It passes when `orthoForBox` does the stated job for the scene and the other cases in the test. The test exercises the values and spaces named above.
+The returned matrix matches an OrthographicCamera at asymmetric bounds, including the near/far mapping.
 
 <details><summary>Hint</summary>
 
-Use the method from the projection matrix page, and check which space the result belongs to.
+Three.js has a camera class that builds this lens. Check its projection matrix after updating it.
 
 </details>
 
 ## Where else?
 
-Where else would the same operation help when a part moves or turns?
+Where does an orthographic lens help?
 
 <details><summary>A few answers</summary>
 
-Zoom vs dolly. Orthographic thumbnails.
+Show a dimensioned drawing or keep a UI overlay the same size with depth.
 
 </details>

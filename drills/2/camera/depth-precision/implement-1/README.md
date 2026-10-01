@@ -9,15 +9,15 @@ lenses: [space]
 misconceptions: [camera.depth-precision/far-plane]
 ---
 
-# Depth precision: measure the depth-buffer value of a surface at a given distance along a perspective camera’s view axis
+# Depth precision: read depth
 
-> **The job:** Measure the depth-buffer value of a surface at a given distance along a perspective camera’s view axis.
+> **The job:** Find a perspective surface’s depth-buffer value.
 
 ## Task
 
-Measure the depth-buffer value of a surface at a given distance along a perspective camera’s view axis.
+Write `depthAt(camera, viewDepth)`. The depth is positive distance along the camera’s viewing axis, not distance to an off-axis point. Return the projected depth-buffer value from 0 at near to 1 at far. Use the camera’s current lens.
 
-Write `depthAt(camera, viewDepth)` for the behavior above. Save the starter to update the scene.
+Save your code and inspect the scene; compare the blue result with the green reference.
 
 <div data-scene="demo"></div>
 
@@ -25,32 +25,32 @@ Write `depthAt(camera, viewDepth)` for the behavior above. Save the starter to u
 
 | Value | Space or units |
 | --- | --- |
-| `camera` | Camera pose and lens in world space |
-| `viewDepth` | World units along the camera view axis |
-| Answer | Scalar or object described in the Task |
+| `camera` | Perspective lens |
+| `viewDepth` | World units in front along viewing axis |
+| Answer | Depth-buffer value, 0–1 |
 
 ## Your code
 
-Write it in `drills/2/camera/depth-precision/implement-1/drill.ts`. Check it with:
+Write it in `drills/2/camera/depth-precision/implement-1/drill.ts`. Save to update the scene. Check it with:
 
     npm run drill -- drills/2/camera/depth-precision/implement-1
 
 ## The check
 
-It passes when `depthAt` does the stated job for the scene and the other cases in the test. The test exercises the values and spaces named above.
+Near, middle, and far depths follow the camera’s nonlinear projection; a depth ten times farther is not ten times the depth-buffer value.
 
 <details><summary>Hint</summary>
 
-Use the method from the depth precision page, and check which space the result belongs to.
+Project a camera-space point on the −Z axis. NDC Z runs from −1 to +1; the depth buffer runs from 0 to 1.
 
 </details>
 
 ## Where else?
 
-Where else would the same operation help when a part moves or turns?
+What needs the same depth conversion?
 
 <details><summary>A few answers</summary>
 
-Coplanar decals. Logarithmic depth trade-off.
+Compare a sampled depth texture with a world surface or inspect z-fighting.
 
 </details>

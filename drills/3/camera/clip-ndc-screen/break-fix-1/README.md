@@ -9,15 +9,15 @@ lenses: [space]
 misconceptions: [camera.clip-ndc-screen/ndc-y-down]
 ---
 
-# Clip ndc screen: find the faulty result
+# Screen Y: a label on the wrong side
 
-> **The job:** A label projected near the top of the camera appears near the bottom of the page.
+> **The job:** Put a projected label at the matching CSS pixel height.
 
 ## Task
 
-A label projected near the top of the camera appears near the bottom of the page. Return its CSS pixel Y position from NDC Y and viewport height.
+`screenY(ndcY, height)` converts a projected Y value to a CSS pixel Y in a viewport of `height` pixels. NDC Y is +1 at the top and −1 at the bottom. CSS pixel Y starts at 0 at the top. The starter places a label near the top at the bottom instead. Fix the conversion.
 
-Fix `screenY` in `drill.ts`. The scene shows the current result alongside a reference; they should agree after the repair.
+In the scene, your blue label and the green reference should land at the same height.
 
 <div data-scene="demo"></div>
 
@@ -25,8 +25,9 @@ Fix `screenY` in `drill.ts`. The scene shows the current result alongside a refe
 
 | Value | Space |
 | --- | --- |
-| Inputs | The named camera, world, or screen space in the task |
-| Answer | The space stated in the task |
+| `ndcY` | Normalized device Y, from −1 to +1, positive up |
+| `height` | Viewport height in CSS pixels |
+| Answer | CSS pixels from the viewport's top |
 
 ## Your code
 
@@ -36,20 +37,20 @@ Fix `drill.ts`, write one sentence in `cause.md`, and replace the placeholder in
 
 ## The check
 
-The acceptance test covers more than the scene pose. Your check must fail on the original bug and pass after the fix, using behavior instead of looking for a particular line of code.
+The acceptance test checks the top, middle, and bottom of several viewport heights. Your check should reject a conversion that puts positive NDC Y below the middle.
 
 <details><summary>Hint</summary>
 
-Compare the named spaces and the operation from the clip ndc screen page.
+The clip/NDC/screen page shows where each Y axis starts and which way it grows. Check both endpoints before writing the conversion.
 
 </details>
 
 ## Where else?
 
-Where else would the same wrong assumption cause an error?
+Where else does an upside-down Y axis put a UI element in the wrong place?
 
 <details><summary>A few answers</summary>
 
-A model editor, an interactive viewer, or a check before export.
+A tooltip over a mesh, a pointer-to-ray conversion, or a selection rectangle.
 
 </details>

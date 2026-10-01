@@ -1,15 +1,28 @@
-import { attempt, ball, COLORS, overlay } from '@harness/lesson';
+import { attempt, COLORS, label, overlay, sunlight } from '@harness/lesson';
 import type { SceneSetup } from '@harness/scene';
 import * as THREE from 'three';
 import { flatNormals } from './drill';
 
 export const demo: SceneSetup = ({ scene, camera, controls, container }) => {
-  camera.position.set(3,3,5); controls.target.set(0,0.5,0);
-  const subject = new THREE.Mesh(new THREE.BoxGeometry(),new THREE.MeshStandardMaterial({color:COLORS.blue}));
-  const marker = ball(COLORS.yellow); subject.position.y=0.5; marker.position.x=1.5; marker.position.y=0.5; scene.add(subject,marker);
-  const readout=overlay(container,'readout');
-
-  const got=attempt('flatNormals',()=>flatNormals(new THREE.BoxGeometry()));
-  const want=new THREE.BoxGeometry().toNonIndexed();
-  readout.textContent=got.ok?`your result: ${JSON.stringify(got.value)?.slice(0,100)}\nreference: ${JSON.stringify(want)?.slice(0,100)}`:got.note;
+  camera.position.set(3.5, 3.2, 5.5);
+  controls.target.set(0, 1, 0);
+  sunlight(scene, new THREE.Vector3(3, 5, 4));
+  const source = new THREE.CylinderGeometry(0.7, 0.7, 1.6, 5, 1);
+  const result = attempt('flatNormals', () => flatNormals(source));
+  const reference = source.toNonIndexed();
+  reference.computeVertexNormals();
+  const material = new THREE.MeshStandardMaterial({ color: COLORS.blue, roughness: 0.8, side: THREE.DoubleSide });
+  const makePart = (geometry: THREE.BufferGeometry, x: number, text: string) => {
+    const mesh = new THREE.Mesh(geometry, material);
+    mesh.position.set(x, 1, 0);
+    const tag = label(text, COLORS.yellow);
+    tag.position.set(x, 2.1, 0);
+    scene.add(mesh, tag);
+  };
+  if (result.ok) makePart(result.value, -1.2, 'yours');
+  makePart(reference, 1.2, 'reference');
+  const readout = overlay(container, 'readout');
+  readout.textContent = result.ok
+    ? `left: your normals · right: flat reference\nyour indexed: ${result.value.index !== null} (goal: false)`
+    : result.note;
 };

@@ -9,15 +9,15 @@ lenses: [space]
 misconceptions: [camera.fit-to-bounds/vertical-enough]
 ---
 
-# Fit to bounds: find the faulty result
+# Fit to bounds: a clipped thumbnail
 
-> **The job:** A sphere fits in landscape but clips in a portrait thumbnail, and hotspot sizing uses the resulting distance.
+> **The job:** Keep a bounding sphere inside a portrait view and size a hotspot there.
 
 ## Task
 
-A sphere fits in landscape but clips in a portrait thumbnail, and hotspot sizing uses the resulting distance. Return a distance that fits both axes and the world size of one CSS pixel there.
+`fitAndPixelSize(radius, verticalFovDegrees, aspect, viewportHeight)` returns a camera distance that fits a centered bounding sphere, plus the world height of one CSS pixel at that distance. The sphere fits in landscape but clips across a portrait thumbnail. `aspect` is width divided by height; `radius` and `distance` are world units. Fix the distance and keep the pixel size consistent with it.
 
-Fix `fitAndPixelSize` in `drill.ts`. The scene shows the current result alongside a reference; they should agree after the repair.
+Switch between wide and tall viewports in the scene. The sphere should fit within both pictures.
 
 <div data-scene="demo"></div>
 
@@ -25,8 +25,10 @@ Fix `fitAndPixelSize` in `drill.ts`. The scene shows the current result alongsid
 
 | Value | Space |
 | --- | --- |
-| Inputs | The named camera, world, or screen space in the task |
-| Answer | The space stated in the task |
+| `radius`, `distance`, `unitsPerPixel` | World units |
+| `verticalFovDegrees` | Vertical angle in degrees |
+| `aspect` | Viewport width divided by height |
+| `viewportHeight` | CSS pixels |
 
 ## Your code
 
@@ -36,20 +38,20 @@ Fix `drill.ts`, write one sentence in `cause.md`, and replace the placeholder in
 
 ## The check
 
-The acceptance test covers more than the scene pose. Your check must fail on the original bug and pass after the fix, using behavior instead of looking for a particular line of code.
+The acceptance test checks portrait and landscape fitting and the pixel size at the returned distance. Your check should reject a distance based only on vertical field of view.
 
 <details><summary>Hint</summary>
 
-Compare the named spaces and the operation from the fit to bounds page.
+The fit-to-bounds page shows how vertical field of view and aspect give the horizontal opening. Which opening is narrower in portrait?
 
 </details>
 
 ## Where else?
 
-Where else would the same wrong assumption cause an error?
+Where else must a camera fit a subject after its viewport changes shape?
 
 <details><summary>A few answers</summary>
 
-A model editor, an interactive viewer, or a check before export.
+A product thumbnail, a model preview beside a sidebar, or a phone layout.
 
 </details>

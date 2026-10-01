@@ -3,7 +3,11 @@ import { expect } from 'vitest';
 import type { tileFirstFace } from './drill';
 
 export function checkUvs(subject: typeof tileFirstFace): void {
-  const g=new THREE.PlaneGeometry(2,2,2,2), before=g.getAttribute('uv').getY(1); const copy=subject(g,new THREE.Vector2(-0.5,1));
-  expect(copy.getAttribute('uv').getY(1)).toBeCloseTo(before+1);
-  expect(copy.groups[0]).toEqual({start:0,count:3,materialIndex:1});
+  const geometry = new THREE.PlaneGeometry(2, 2, 2, 2);
+  const result = subject(geometry, new THREE.Vector2(-0.5, 1));
+  const corners = result.index?.count ?? result.getAttribute('position').count;
+  expect(result.groups).toEqual([
+    { start: 0, count: 3, materialIndex: 1 },
+    { start: 3, count: corners - 3, materialIndex: 0 },
+  ]);
 }

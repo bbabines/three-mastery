@@ -9,15 +9,15 @@ lenses: [space]
 misconceptions: [camera.clip-ndc-screen/ndc-y-down]
 ---
 
-# Clip, NDC, screen: convert a pointer’s css pixel position into ndc so a ray can be cast through the camera
+# NDC: pointer to camera coordinates
 
-> **The job:** Convert a pointer’s CSS pixel position into NDC so a ray can be cast through the camera.
+> **The job:** Turn a canvas pointer position into NDC.
 
 ## Task
 
-Convert a pointer’s CSS pixel position into NDC so a ray can be cast through the camera.
+Write `pixelToNdc(x, y, width, height)`. The input is in CSS pixels from the canvas’s top-left; return a new Vector3 in normalized device coordinates (NDC). The center is (0, 0), left/right are −1/+1, top/bottom are +1/−1, and Z is 0.
 
-Write `pixelToNdc(x, y, width, height)` for the behavior above. Save the starter to update the scene.
+Save your code and inspect the scene; compare the blue result with the green reference.
 
 <div data-scene="demo"></div>
 
@@ -25,34 +25,32 @@ Write `pixelToNdc(x, y, width, height)` for the behavior above. Save the starter
 
 | Value | Space or units |
 | --- | --- |
-| `x` | NDC or CSS pixels as named in the Task |
-| `y` | NDC or CSS pixels as named in the Task |
-| `width` | CSS pixels |
-| `height` | CSS pixels |
-| Answer | CSS pixels, with NDC depth where stated |
+| `x, y` | CSS pixels from canvas top-left |
+| `width, height` | Canvas size in CSS pixels |
+| Answer | NDC; Z is 0 |
 
 ## Your code
 
-Write it in `drills/2/camera/clip-ndc-screen/apply-1/drill.ts`. Check it with:
+Write it in `drills/2/camera/clip-ndc-screen/apply-1/drill.ts`. Save to update the scene. Check it with:
 
     npm run drill -- drills/2/camera/clip-ndc-screen/apply-1
 
 ## The check
 
-It passes when `pixelToNdc` does the stated job for the scene and the other cases in the test. The test exercises the values and spaces named above.
+The corners and center land at the expected NDC coordinates, including the reversed vertical direction.
 
 <details><summary>Hint</summary>
 
-Use the method from the clip, ndc, screen page, and check which space the result belongs to.
+Compare where +Y points on the canvas and in NDC before writing the vertical conversion.
 
 </details>
 
 ## Where else?
 
-Where else would the same operation help when a part moves or turns?
+What else starts with a pointer in CSS pixels?
 
 <details><summary>A few answers</summary>
 
-Pointer to NDC. World point to label position.
+Cast a picking ray or aim a drag handle through the camera.
 
 </details>

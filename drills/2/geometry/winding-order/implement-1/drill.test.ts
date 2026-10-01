@@ -9,5 +9,9 @@ describe('geometry.winding-order', () => {
     expect(answered(frontFacesViewer(a,b,c,view))).toBe(true);
     expect(answered(frontFacesViewer(a,c,b,view))).toBe(false);
     expect(answered(frontFacesViewer(a,b,c,view.clone().negate()))).toBe(false);
+    expect(a.equals(new THREE.Vector3(0,0,0))).toBe(true);
+    expect(b.equals(new THREE.Vector3(2,0,0))).toBe(true);
+    expect(c.equals(new THREE.Vector3(0,1,0))).toBe(true);
+    expect(view.equals(new THREE.Vector3(0,0,1))).toBe(true);
   });
 });

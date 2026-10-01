@@ -10,5 +10,8 @@ describe('camera.frustum', () => {
     expect(answered(visibleAfterResize(camera,800,400,edge))).toBe(true);
     expect(answered(visibleAfterResize(camera,400,800,edge))).toBe(false);
     expect(camera.aspect).toBe(0.5);
+    expect(edge.equals(new THREE.Vector3(3, 0, 0))).toBe(true);
+    expect(answered(visibleAfterResize(camera,400,800,new THREE.Vector3(0,0,4.95)))).toBe(false);
+    expect(answered(visibleAfterResize(camera,400,800,new THREE.Vector3(0,0,-100)))).toBe(false);
   });
 });

@@ -12,6 +12,7 @@ describe('camera.fit-to-bounds', () => {
       const angularRadius=Math.asin(radius/distance);
       const vertical=Math.PI/6, horizontal=Math.atan(Math.tan(vertical)*aspect);
       expect(angularRadius).toBeLessThanOrEqual(Math.min(vertical,horizontal)+1e-6);
+      expect(distance).toBeCloseTo(radius / Math.sin(Math.min(vertical, horizontal)), 6);
     }
     expect(answered(distanceForRadius(2,60,0.5))).toBeGreaterThan(answered(distanceForRadius(2,60,2)));
   });

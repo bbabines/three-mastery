@@ -9,40 +9,47 @@ lenses: []
 misconceptions: [geometry.vertex-normals/imported-right]
 ---
 
-# Vertex normals: give each triangle its own vertices and face normals to make a low-poly model show hard edges
+# Vertex normals: make hard edges
 
-> **The job:** Give each triangle its own vertices and face normals to make a low-poly model show hard edges.
+> **The job:** Give each face its own flat shading.
 
 ## Task
 
-Give each triangle its own vertices and face normals to make a low-poly model show hard edges.
+Write `hardEdges(geometry)`. Return a copy with independent triangle corners and rebuilt face-aligned normals. The source geometry must stay unchanged. When adjacent faces no longer share a vertex, their normals need not be averaged.
 
-Write `hardEdges(geometry)` for the behavior above. Save the starter to update the scene.
+Save your code and inspect the scene; compare the blue result with the green reference.
 
 <div data-scene="demo"></div>
 
+## Spaces
+
+| Value | Space or units |
+| --- | --- |
+| `geometry positions` | Measured from object itself |
+| Answer | New geometry with per-face normal attributes |
+
 ## Your code
 
-Write it in `drills/2/geometry/vertex-normals/apply-1/drill.ts`. Check it with:
+Write it in `drills/2/geometry/vertex-normals/apply-1/drill.ts`. Save to update the scene. Check it with:
 
     npm run drill -- drills/2/geometry/vertex-normals/apply-1
 
 ## The check
 
-It passes when `hardEdges` does the stated job for the scene and the other cases in the test. The test exercises the values and spaces named above.
+The copy has independent corners and distinct normals at a cube edge; the source stays intact.
 
 <details><summary>Hint</summary>
 
-Use the method from the vertex normals page, and check which space the result belongs to.
+Smooth shading averages shared vertex normals. How can the faces stop sharing them?
 
 </details>
 
 ## Where else?
 
-Where else would the same operation help when a part moves or turns?
+Where else are hard edges useful?
 
 <details><summary>A few answers</summary>
 
-Smoothing artifacts. Low-poly look.
+Low-poly props, a chamfer boundary, or a flat-shaded terrain tile.
 
 </details>

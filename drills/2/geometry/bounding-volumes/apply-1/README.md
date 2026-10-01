@@ -9,40 +9,47 @@ lenses: []
 misconceptions: [geometry.bounding-volumes/world-space]
 ---
 
-# Bounding volumes: recompute a geometry’s local-space bounding sphere after direct edits to its position array
+# Bounding volumes: refresh a sphere
 
-> **The job:** Recompute a geometry’s local-space bounding sphere after direct edits to its position array.
+> **The job:** Refresh a local bounding sphere after vertices move.
 
 ## Task
 
-Recompute a geometry’s local-space bounding sphere after direct edits to its position array.
+Write `freshBoundingSphere(geometry)`. The position array has been edited directly since the sphere was last computed. Recompute the geometry’s bounding sphere and return a separate Sphere with the new center and radius. The sphere is measured from the object itself, before its world transform.
 
-Write `freshBoundingSphere(geometry)` for the behavior above. Save the starter to update the scene.
+Save your code and inspect the scene; compare the blue result with the green reference.
 
 <div data-scene="demo"></div>
 
+## Spaces
+
+| Value | Space or units |
+| --- | --- |
+| `geometry positions` | Measured from the object itself |
+| Answer | Sphere center and radius in the same space |
+
 ## Your code
 
-Write it in `drills/2/geometry/bounding-volumes/apply-1/drill.ts`. Check it with:
+Write it in `drills/2/geometry/bounding-volumes/apply-1/drill.ts`. Save to update the scene. Check it with:
 
     npm run drill -- drills/2/geometry/bounding-volumes/apply-1
 
 ## The check
 
-It passes when `freshBoundingSphere` does the stated job for the scene and the other cases in the test. The test exercises the values and spaces named above.
+The new sphere encloses the edited vertices and is not the stale sphere from before the change.
 
 <details><summary>Hint</summary>
 
-Use the method from the bounding volumes page, and check which space the result belongs to.
+A bound cached before a position edit does not follow array writes. Which geometry method rebuilds it?
 
 </details>
 
 ## Where else?
 
-Where else would the same operation help when a part moves or turns?
+What else needs a refreshed bound?
 
 <details><summary>A few answers</summary>
 
-Culling. Raycast early-out.
+Camera framing, frustum culling, or a quick raycast rejection.
 
 </details>

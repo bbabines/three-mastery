@@ -36,9 +36,11 @@ export function checkVertexNormals(geometry: THREE.BufferGeometry): Answer<THREE
 }
 
 export function checkUvs(geometry: THREE.BufferGeometry, uv: THREE.Vector2): Answer<THREE.BufferGeometry> {
-  const copy=geometry.clone(); const attr=copy.getAttribute('uv');
-  for(let i=0;i<Math.min(3,attr.count);i++) attr.setXY(i,attr.getX(i)+uv.x,attr.getY(i)+uv.y);
-  attr.needsUpdate=true; return copy;
+  const copy = geometry.index ? geometry.toNonIndexed() : geometry.clone();
+  const attr = copy.getAttribute('uv');
+  for (let i = 0; i < 3; i++) attr.setXY(i, attr.getX(i) + uv.x, attr.getY(i) + uv.y);
+  attr.needsUpdate = true;
+  return copy;
 }
 
 export function checkBoundingVolumes(geometry: THREE.BufferGeometry): Answer<THREE.Sphere> {
