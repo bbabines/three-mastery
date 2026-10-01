@@ -1,0 +1,1 @@
+The code used hover alone to choose a scale and a fixed per-frame lerp factor. Selection should have its own stronger target, and damping should use delta time so the result does not depend on frame rate.
