@@ -4,7 +4,7 @@ loop: 2
 tier: core
 concepts: [rotation.euler-order]
 mode: apply
-context: rotation.euler-order/yaw-pitch-camera
+context: rotation.euler-order/imported-rotations
 lenses: []
 misconceptions: [rotation.euler-order/order-irrelevant]
 ---

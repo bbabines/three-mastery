@@ -4,7 +4,7 @@ loop: 2
 tier: core
 concepts: [transforms.local-vs-world]
 mode: apply
-context: transforms.local-vs-world/nested-compare
+context: transforms.local-vs-world/light-on-part
 lenses: [space]
 misconceptions: [transforms.local-vs-world/position-is-world]
 ---
