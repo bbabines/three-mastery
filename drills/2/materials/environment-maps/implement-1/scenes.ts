@@ -1,0 +1,21 @@
+import { attempt, overlay } from '@harness/lesson';
+import type { SceneSetup } from '@harness/scene';
+import * as THREE from 'three';
+import { setStudioEnvironment } from './drill';
+export const preview: SceneSetup = ({ scene, camera, controls, container }) => {
+  camera.position.set(0, 1.5, 3);
+  controls.target.set(0, 0.5, 0);
+  const sample = new THREE.MeshStandardMaterial({ color: '#c7823a' });
+  const object = new THREE.Mesh(new THREE.SphereGeometry(0.6, 32, 16), sample);
+  object.position.y = 0.6;
+  scene.add(object);
+  const canvas = document.createElement('canvas'); canvas.width = 256; canvas.height = 128;
+ const ctx = canvas.getContext('2d')!; const gradient = ctx.createLinearGradient(0, 0, 0, 128);
+ gradient.addColorStop(0, '#cfe5ff'); gradient.addColorStop(1, '#313d53');
+ ctx.fillStyle = gradient; ctx.fillRect(0, 0, 256, 128);
+ const lighting = new THREE.CanvasTexture(canvas); lighting.mapping = THREE.EquirectangularReflectionMapping;
+ const backdrop = new THREE.CanvasTexture(canvas); backdrop.mapping = THREE.EquirectangularReflectionMapping;
+  const readout = overlay(container, 'readout');
+  const result = attempt('setStudioEnvironment', () => setStudioEnvironment(scene, lighting, backdrop));
+  readout.textContent = result.ok ? `environment light: ${scene.environment === lighting ? 'set' : 'missing'}\nbackground: ${scene.background === backdrop ? 'separate' : 'missing'}` : result.note;
+};
