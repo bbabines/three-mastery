@@ -9,15 +9,15 @@ lenses: []
 misconceptions: [rotation.quaternions/components-angles]
 ---
 
-# Quaternions: apply a turn around an axis measured in the parent’s frame, preserving the current orientation
+# Quaternions: turn around a parent axis
 
-> **The job:** Apply a turn around an axis measured in the parent’s frame, preserving the current orientation.
+> **The job:** Turn a mounted part around an axis measured in its parent frame.
 
 ## Task
 
-Apply a turn around an axis measured in the parent’s frame, preserving the current orientation.
+A mounted part already has an orientation. `parentDelta(orientation, parentAxis, radians)` returns its orientation after a turn around `parentAxis` in the parent frame. The axis may be any nonzero length. Leave the orientation and axis unchanged.
 
-Write `parentDelta(orientation, parentAxis, radians)` for the behavior above. Save the starter to update the scene.
+The blue aim and green up arrows should match the yellow pose after a parent-axis turn.
 
 <div data-scene="demo"></div>
 
@@ -29,20 +29,20 @@ Write it in `drills/2/rotation/quaternions/apply-1/drill.ts`. Check it with:
 
 ## The check
 
-It passes when `parentDelta` does the stated job for the scene and the other cases in the test. The test exercises the values and spaces named above.
+The check compares the result with a world-axis turn after an existing orientation, and checks both inputs remain unchanged.
 
 <details><summary>Hint</summary>
 
-Use the method from the quaternions page, and check which space the result belongs to.
+A parent-frame turn acts before the part’s current orientation. Make a quaternion for the axis turn, then combine it on the parent side.
 
 </details>
 
 ## Where else?
 
-Where else would the same operation help when a part moves or turns?
+Where else is a parent-frame turn useful?
 
 <details><summary>A few answers</summary>
 
-Accumulating rotations. Local vs world deltas.
+Turning a camera mount around world up. Swinging a robot joint. Rotating a panel around its rack axis.
 
 </details>

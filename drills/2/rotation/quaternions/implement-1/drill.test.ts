@@ -4,11 +4,13 @@ import { describe, expect, it } from 'vitest';
 import { localDelta } from './drill';
 
 describe('rotation.quaternions', () => {
-  it('apply a turn around an object’s own axis to its current orientation without changing either input', () => {
-    const orientation=new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,1,0),0.7);
-    const axis=new THREE.Vector3(1,0,0), before=orientation.clone();
-    const actual=answered(localDelta(orientation,axis,0.5));
-    const expected=new THREE.Object3D(); expected.quaternion.copy(orientation); expected.rotateOnAxis(axis,0.5);
-    expect(actual.angleTo(expected.quaternion)).toBeLessThan(1e-6); expect(orientation.angleTo(before)).toBe(0);
+  it('turns around a local axis after the current pose and preserves both inputs', () => {
+    const orientation = new THREE.Quaternion().setFromEuler(new THREE.Euler(0.4, 0.7, -0.2));
+    const axis = new THREE.Vector3(2, 0, 1);
+    const beforePose = orientation.clone(), beforeAxis = axis.clone();
+    const expected = orientation.clone().multiply(new THREE.Quaternion().setFromAxisAngle(axis.clone().normalize(), 0.5));
+    expect(answered(localDelta(orientation, axis, 0.5)).angleTo(expected)).toBeLessThan(1e-6);
+    expect(orientation.angleTo(beforePose)).toBe(0);
+    expect(axis.equals(beforeAxis)).toBe(true);
   });
 });

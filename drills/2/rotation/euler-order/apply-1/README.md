@@ -9,15 +9,15 @@ lenses: []
 misconceptions: [rotation.euler-order/order-irrelevant]
 ---
 
-# Euler order: read three imported angles in their stated order and return an equivalent orientation, leaving the angles intact
+# Euler order: import the stated turn
 
-> **The job:** Read three imported angles in their stated order and return an equivalent orientation, leaving the angles intact.
+> **The job:** Rebuild a part orientation from three imported angles and their order.
 
 ## Task
 
-Read three imported angles in their stated order and return an equivalent orientation, leaving the angles intact.
+An asset file gives X, Y, and Z angles plus the order in which they act. `importTurn(angles, order)` returns the matching quaternion. The angles are radians. Do not change the vector of imported angles.
 
-Write `importTurn(angles, order)` for the behavior above. Save the starter to update the scene.
+Move the middle angle. Blue should match the yellow pose imported with ZXY order.
 
 <div data-scene="demo"></div>
 
@@ -29,20 +29,20 @@ Write it in `drills/2/rotation/euler-order/apply-1/drill.ts`. Check it with:
 
 ## The check
 
-It passes when `importTurn` does the stated job for the scene and the other cases in the test. The test exercises the values and spaces named above.
+The check tries several orders with the same nonzero angles, compares the orientation with three.js, and checks the angle vector is unchanged.
 
 <details><summary>Hint</summary>
 
-Use the method from the euler order page, and check which space the result belongs to.
+Construct an Euler with the supplied order before converting it. The default order only matches one of the cases.
 
 </details>
 
 ## Where else?
 
-Where else would the same operation help when a part moves or turns?
+Where else can a turn order change the result?
 
 <details><summary>A few answers</summary>
 
-UI rotation sliders. Reading imported rotations.
+Imported camera rigs. Character joint poses. Animation keyframes.
 
 </details>

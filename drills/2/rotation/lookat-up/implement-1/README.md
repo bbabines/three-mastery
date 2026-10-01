@@ -9,15 +9,15 @@ lenses: []
 misconceptions: [rotation.lookat-up/same-facing]
 ---
 
-# lookAt and up: aim an ordinary object’s +z at a target while keeping its +y as close as possible to a given up direction
+# lookAt and up: aim a part
 
-> **The job:** Aim an ordinary object’s +Z at a target while keeping its +Y as close as possible to a given up direction.
+> **The job:** Aim an ordinary part at a target without losing its chosen up.
 
 ## Task
 
-Aim an ordinary object’s +Z at a target while keeping its +Y as close as possible to a given up direction.
+A regular Object3D points its own +Z at a `lookAt` target. `aimWithUp(from, target, up)` returns the orientation that aims +Z from `from` at `target`, keeping +Y as close as possible to `up`. Leave the input vectors unchanged.
 
-Write `aimWithUp(from, target, up)` for the behavior above. Save the starter to update the scene.
+The blue aim arrow should match yellow, while green shows the part’s up direction.
 
 <div data-scene="demo"></div>
 
@@ -29,20 +29,20 @@ Write it in `drills/2/rotation/lookat-up/implement-1/drill.ts`. Check it with:
 
 ## The check
 
-It passes when `aimWithUp` does the stated job for the scene and the other cases in the test. The test exercises the values and spaces named above.
+The check measures both the part’s +Z aim and its +Y roll, including a tilted up direction. It checks the positions and up vector for mutation.
 
 <details><summary>Hint</summary>
 
-Use the method from the lookat and up page, and check which space the result belongs to.
+Use an ordinary Object3D at `from`. Set its `up` before aiming; a camera has the opposite forward-axis convention.
 
 </details>
 
 ## Where else?
 
-Where else would the same operation help when a part moves or turns?
+Where else does a part need an aim and an up direction?
 
 <details><summary>A few answers</summary>
 
-Aiming a spotlight. Top-down camera.
+A turret barrel. A spotlight mount. A robot gripper.
 
 </details>

@@ -1,18 +1,10 @@
-import { attempt, ball, COLORS, overlay } from '@harness/lesson';
-import type { SceneSetup } from '@harness/scene';
+// Blue shows the blended camera pose; yellow marks the shortest-turn target.
 import * as THREE from 'three';
+import { poseView } from '../../scene-view';
 import { smoothOrientation } from './drill';
 
-export const demo: SceneSetup = ({ scene, camera, controls, container }) => {
-  camera.position.set(3.5, 3, 5);
-  controls.target.set(0, 0.5, 0);
-  const subject = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.8, 0.8), new THREE.MeshStandardMaterial({ color: COLORS.blue }));
-  const marker = ball(COLORS.yellow);
-  subject.position.y = 0.5;
-  marker.position.set(1.5, 0.5, 0);
-  scene.add(subject, marker);
-  const readout = overlay(container, 'readout');
-
-  const result = attempt('smoothOrientation', () => smoothOrientation(new THREE.Quaternion(), new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,1,0),1.5), 0.5));
-  readout.textContent = result.ok ? `smoothOrientation: ${JSON.stringify(result.value)?.slice(0, 160)}` : result.note;
-};
+const start = new THREE.Quaternion().setFromEuler(new THREE.Euler(-1.35, -0.5, 0.2, 'YXZ'));
+const end = new THREE.Quaternion().setFromEuler(new THREE.Euler(-1.4, 1.8, -0.3, 'YXZ'));
+export const demo = poseView('smoothOrientation', { label: 'fraction', min: 0, max: 1, step: 0.05, value: 0.45 },
+  (fraction) => smoothOrientation(start.clone(), end.clone(), fraction),
+  (fraction) => start.clone().slerp(end, fraction), new THREE.Vector3(0, 0, -1));

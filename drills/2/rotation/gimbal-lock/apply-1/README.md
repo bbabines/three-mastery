@@ -9,15 +9,15 @@ lenses: []
 misconceptions: [rotation.gimbal-lock/library-bug]
 ---
 
-# Gimbal lock and slerp: blend a camera between two orientations on the shortest arc, including when its view passes near straight down
+# Slerp: blend through a steep turn
 
-> **The job:** Blend a camera between two orientations on the shortest arc, including when its view passes near straight down.
+> **The job:** Blend a camera from one orientation to another at a chosen fraction.
 
 ## Task
 
-Blend a camera between two orientations on the shortest arc, including when its view passes near straight down. Keep the inputs unchanged. Interpolating Euler numbers here can behave badly at gimbal lock; interpolate the orientations themselves.
+A camera can pass near straight down while it moves between two saved poses. `smoothOrientation(start, end, fraction)` returns the orientation at a fraction from 0 to 1 along the shortest turn. Keep both saved quaternions unchanged.
 
-Write `smoothOrientation(start, end, fraction)` for the behavior above. Save the starter to update the scene.
+Move the fraction slider. The blue aim pointer should follow the yellow orientation as the fraction changes.
 
 <div data-scene="demo"></div>
 
@@ -29,20 +29,20 @@ Write it in `drills/2/rotation/gimbal-lock/apply-1/drill.ts`. Check it with:
 
 ## The check
 
-It passes when `smoothOrientation` does the stated job for the scene and the other cases in the test. The test exercises the values and spaces named above.
+The check samples both ends and several fractions between them. The angular distance must grow in proportion to the fraction, and the saved poses must stay unchanged.
 
 <details><summary>Hint</summary>
 
-Use the method from the gimbal lock and slerp page, and check which space the result belongs to.
+Use quaternion interpolation for the turn itself. Blending three Euler angles can take a different route near a steep pitch.
 
 </details>
 
 ## Where else?
 
-Where else would the same operation help when a part moves or turns?
+Where else do smooth orientation blends matter?
 
 <details><summary>A few answers</summary>
 
-Camera pitched straight down. Turntable at extremes.
+Camera transitions. Character aim. A robot wrist moving between poses.
 
 </details>

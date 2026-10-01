@@ -9,15 +9,15 @@ lenses: []
 misconceptions: [rotation.converting/same-numbers]
 ---
 
-# Converting turns: convert a saved euler turn into an equivalent quaternion, even when a later euler round-trip uses different angle numbers
+# Converting turns: preserve an imported pose
 
-> **The job:** Convert a saved Euler turn into an equivalent quaternion, even when a later Euler round-trip uses different angle numbers.
+> **The job:** Turn a saved Euler orientation into a quaternion for an animated part.
 
 ## Task
 
-Convert a saved Euler turn into an equivalent quaternion, even when a later Euler round-trip uses different angle numbers.
+An imported part stores its turn as Euler angles with an order. `orientationFromEuler(angles)` returns a quaternion for the same orientation. Keep the given angles and their order unchanged; an equivalent quaternion may use different numbers.
 
-Write `orientationFromEuler(angles)` for the behavior above. Save the starter to update the scene.
+The blue pointer should face the same way as the yellow reference after conversion.
 
 <div data-scene="demo"></div>
 
@@ -29,20 +29,20 @@ Write it in `drills/2/rotation/converting/apply-1/drill.ts`. Check it with:
 
 ## The check
 
-It passes when `orientationFromEuler` does the stated job for the scene and the other cases in the test. The test exercises the values and spaces named above.
+The check compares the quaternion with the orientation three.js gives an object for two different Euler orders. It also checks the saved Euler input is unchanged.
 
 <details><summary>Hint</summary>
 
-Use the method from the converting turns page, and check which space the result belongs to.
+A quaternion can be built from an Euler directly. Keep the Euler order; converting through a default-order Euler changes the pose.
 
 </details>
 
 ## Where else?
 
-Where else would the same operation help when a part moves or turns?
+Where else do you need to carry an orientation between representations?
 
 <details><summary>A few answers</summary>
 
-Serializing state. Displaying rotation in UI.
+Importing an animation clip. Saving a camera pose. Blending two keyframes.
 
 </details>
