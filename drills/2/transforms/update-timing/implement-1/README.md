@@ -9,15 +9,15 @@ lenses: [space]
 misconceptions: [transforms.update-timing/stale-read]
 ---
 
-# Update timing: get a point on a part in world space immediately after an ancestor moves, before another frame renders
+# Update timing: read a moved point
 
-> **The job:** Get a point on a part in world space immediately after an ancestor moves, before another frame renders.
+> **The job:** Read a point on a nested part immediately after an ancestor shifts.
 
 ## Task
 
-Get a point on a part in world space immediately after an ancestor moves, before another frame renders.
+`freshWorldPoint(part, localPoint)` returns the local point in world space without waiting for the next render. The part’s parent may have changed position or turn. Leave the local point unchanged.
 
-Write `freshWorldPoint(part, localPoint)` for the behavior above. Save the starter to update the scene.
+Move the rack. The blue point should meet the yellow mark before another frame renders.
 
 <div data-scene="demo"></div>
 
@@ -25,9 +25,10 @@ Write `freshWorldPoint(part, localPoint)` for the behavior above. Save the start
 
 | Value | Space or units |
 | --- | --- |
-| `part` | Its local frame is relative to its parent |
-| `localPoint` | Part local space |
-| Answer | World space |
+| `part` | Local frame under a parent |
+| `localPoint` | Part local point |
+| Answer | World point |
+
 
 ## Your code
 
@@ -37,20 +38,20 @@ Write it in `drills/2/transforms/update-timing/implement-1/drill.ts`. Check it w
 
 ## The check
 
-It passes when `freshWorldPoint` does the stated job for the scene and the other cases in the test. The test exercises the values and spaces named above.
+The check moves an ancestor after its last update, then compares the world point immediately. It checks the local input is unchanged.
 
 <details><summary>Hint</summary>
 
-Use the method from the update timing page, and check which space the result belongs to.
+Call `updateWorldMatrix` through the parent chain, then apply the current world matrix to a copy of the point.
 
 </details>
 
 ## Where else?
 
-Where else would the same operation help when a part moves or turns?
+Where else is a fresh world-space attachment needed?
 
 <details><summary>A few answers</summary>
 
-Raycasting right after a move. Syncing to external data.
+A live collision probe. A tool tip. A camera rig marker.
 
 </details>

@@ -9,15 +9,15 @@ lenses: [space]
 misconceptions: [transforms.object3d-tour/position-assign]
 ---
 
-# Object3D and attach: move a part into a new group with the object3d attach operation, keeping the part at the same world spot
+# Object3D: attach without a jump
 
-> **The job:** Move a part into a new group with the Object3D attach operation, keeping the part at the same world spot.
+> **The job:** Move a part to a new group while keeping its world position.
 
 ## Task
 
-Move a part into a new group with the Object3D `attach` operation, keeping the part at the same world spot. The parents have only position and rotation; `attach` cannot keep the world transform exactly under non-uniform scale.
+A part changes parent during an assembly step. `keepWorldOnAttach(part, newParent)` attaches it to the new group and returns its world position. The part should stay in the same visible place even though its local coordinates change.
 
-Write `keepWorldOnAttach(part, newParent)` for the behavior above. Save the starter to update the scene.
+Attach the part. The orange part and blue returned point should stay on the yellow starting spot.
 
 <div data-scene="demo"></div>
 
@@ -25,9 +25,10 @@ Write `keepWorldOnAttach(part, newParent)` for the behavior above. Save the star
 
 | Value | Space or units |
 | --- | --- |
-| `part` | Its local frame is relative to its parent |
-| `newParent` | Its local frame is relative to its parent |
-| Answer | Scalar or object described in the Task |
+| `part` | Local frame under old parent, then new parent |
+| `newParent` | Target local frame |
+| Answer | World point |
+
 
 ## Your code
 
@@ -37,20 +38,20 @@ Write it in `drills/2/transforms/object3d-tour/apply-1/drill.ts`. Check it with:
 
 ## The check
 
-It passes when `keepWorldOnAttach` does the stated job for the scene and the other cases in the test. The test exercises the values and spaces named above.
+The check uses two translated and rotated groups. It checks the part’s parent changed while its world position stayed fixed.
 
 <details><summary>Hint</summary>
 
-Use the method from the object3d and attach page, and check which space the result belongs to.
+`add` keeps local coordinates and usually makes the part jump. `attach` adjusts the local transform to preserve its world pose.
 
 </details>
 
 ## Where else?
 
-Where else would the same operation help when a part moves or turns?
+Where else do you reparent without a visible jump?
 
 <details><summary>A few answers</summary>
 
-Placing and turning a product. Hiding a part.
+Picking up an object. Moving a tool between rigs. Reorganizing a scene hierarchy.
 
 </details>

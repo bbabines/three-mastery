@@ -9,15 +9,15 @@ lenses: [space]
 misconceptions: [transforms.matrix-vs-matrixworld/always-current]
 ---
 
-# matrix vs matrixWorld: save the full world transform of a nested part after its parent has moved, leaving the part and parent untouched
+# matrixWorld: save a nested pose
 
-> **The job:** Save the full world transform of a nested part after its parent has moved, leaving the part and parent untouched.
+> **The job:** Capture the full world transform of a part after its rack moves.
 
 ## Task
 
-Save the full world transform of a nested part after its parent has moved, leaving the part and parent untouched.
+`worldTransform(part)` returns a copy of the part’s current world matrix, including all ancestors. A caller may keep that copy while the rack moves again. Leave the part and its parent untouched.
 
-Write `worldTransform(part)` for the behavior above. Save the starter to update the scene.
+Move the rack. The blue corner placed by the saved matrix should meet the yellow world corner.
 
 <div data-scene="demo"></div>
 
@@ -25,8 +25,9 @@ Write `worldTransform(part)` for the behavior above. Save the starter to update 
 
 | Value | Space or units |
 | --- | --- |
-| `part` | Its local frame is relative to its parent |
-| Answer | Scalar or object described in the Task |
+| `part` | Local frame under a parent |
+| Answer | Copy of part local to world transform |
+
 
 ## Your code
 
@@ -36,20 +37,20 @@ Write it in `drills/2/transforms/matrix-vs-matrixworld/implement-1/drill.ts`. Ch
 
 ## The check
 
-It passes when `worldTransform` does the stated job for the scene and the other cases in the test. The test exercises the values and spaces named above.
+The check moves an ancestor after a previous update, compares all matrix elements, and then moves it again to ensure the returned matrix is a snapshot.
 
 <details><summary>Hint</summary>
 
-Use the method from the matrix vs matrixworld page, and check which space the result belongs to.
+Update the world matrix through the parents and clone it. Returning the live `matrixWorld` lets a later move change the saved pose.
 
 </details>
 
 ## Where else?
 
-Where else would the same operation help when a part moves or turns?
+Where else do you need a pose snapshot?
 
 <details><summary>A few answers</summary>
 
-World-space bounds. Exporting transforms.
+Saving an animation key. Recording a grab pose. Sending a transform to a renderer.
 
 </details>

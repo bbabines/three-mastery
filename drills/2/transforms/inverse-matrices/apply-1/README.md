@@ -9,15 +9,15 @@ lenses: [space]
 misconceptions: [transforms.inverse-matrices/inverse-transpose]
 ---
 
-# Inverse matrices: undo a saved model-to-world transform so a world hit becomes a local point, preserving the saved matrix
+# Inverse matrices: undo a saved pose
 
-> **The job:** Undo a saved model-to-world transform so a world hit becomes a local point, preserving the saved matrix.
+> **The job:** Map a world-space hit back onto an imported model.
 
 ## Task
 
-Undo a saved model-to-world transform so a world hit becomes a local point, preserving the saved matrix.
+A hit arrives in world coordinates, while the model keeps points in local coordinates. `undoTransform(worldPoint, modelToWorld)` returns the corresponding local point. The matrix may include translation, turn, and unequal scale. Leave both inputs unchanged.
 
-Write `undoTransform(worldPoint, modelToWorld)` for the behavior above. Save the starter to update the scene.
+The blue local hit should meet the yellow point on the gray local ghost.
 
 <div data-scene="demo"></div>
 
@@ -25,9 +25,10 @@ Write `undoTransform(worldPoint, modelToWorld)` for the behavior above. Save the
 
 | Value | Space or units |
 | --- | --- |
-| `worldPoint` | World space |
-| `modelToWorld` | Saved transform between named spaces |
-| Answer | Part local space |
+| `worldPoint` | World point |
+| `modelToWorld` | Model local to world transform |
+| Answer | Model local point |
+
 
 ## Your code
 
@@ -37,20 +38,20 @@ Write it in `drills/2/transforms/inverse-matrices/apply-1/drill.ts`. Check it wi
 
 ## The check
 
-It passes when `undoTransform` does the stated job for the scene and the other cases in the test. The test exercises the values and spaces named above.
+The check uses a transformed model with translation, rotation, and unequal scale. It compares the recovered local point and checks both inputs are intact.
 
 <details><summary>Hint</summary>
 
-Use the method from the inverse matrices page, and check which space the result belongs to.
+Invert a copy of the saved model-to-world matrix. Applying the forward matrix to the world hit moves it in the wrong direction.
 
 </details>
 
 ## Where else?
 
-Where else would the same operation help when a part moves or turns?
+Where else do you undo a saved transform?
 
 <details><summary>A few answers</summary>
 
-worldToLocal. A hit point in object space.
+Picking a mesh vertex. Reading a local texture coordinate. Testing a point against local bounds.
 
 </details>

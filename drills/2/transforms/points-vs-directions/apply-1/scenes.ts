@@ -1,18 +1,14 @@
-import { attempt, ball, COLORS, overlay } from '@harness/lesson';
-import type { SceneSetup } from '@harness/scene';
+// The blue velocity keeps the part’s scale; yellow shows the correct world velocity.
+import { COLORS } from '@harness/lesson';
 import * as THREE from 'three';
+import { vectorView } from '../../scene-view';
 import { worldVelocity } from './drill';
 
-export const demo: SceneSetup = ({ scene, camera, controls, container }) => {
-  camera.position.set(3.5, 3, 5);
-  controls.target.set(0, 0.5, 0);
-  const subject = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.8, 0.8), new THREE.MeshStandardMaterial({ color: COLORS.blue }));
-  const marker = ball(COLORS.yellow);
-  subject.position.y = 0.5;
-  marker.position.set(1.5, 0.5, 0);
-  scene.add(subject, marker);
-  const readout = overlay(container, 'readout');
-
-  const result = attempt('worldVelocity', () => worldVelocity(new THREE.Vector3(1,0,0), new THREE.Matrix4().compose(new THREE.Vector3(3,0,0), new THREE.Quaternion(), new THREE.Vector3(2,1,1))));
-  readout.textContent = result.ok ? `worldVelocity: ${JSON.stringify(result.value)?.slice(0, 160)}` : result.note;
-};
+const local = new THREE.Vector3(0.65, 0.3, 0.1);
+const part = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.5, 0.6), new THREE.MeshStandardMaterial({ color: COLORS.orange, wireframe: true }));
+const turn = (degrees: number) => new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), THREE.MathUtils.degToRad(degrees));
+const pose = (degrees: number) => new THREE.Matrix4().compose(new THREE.Vector3(2, 1, -1), turn(degrees), new THREE.Vector3(2, 0.6, 1.4));
+export const demo = vectorView('worldVelocity', { label: 'part turn', min: -150, max: 150, step: 5, value: 50 },
+  (degrees) => worldVelocity(local.clone(), pose(degrees)),
+  (degrees) => local.clone().multiply(new THREE.Vector3(2, 0.6, 1.4)).applyQuaternion(turn(degrees)),
+  (scene, degrees) => { if (!part.parent) scene.add(part); part.matrixAutoUpdate = false; part.matrix.copy(pose(degrees)); });

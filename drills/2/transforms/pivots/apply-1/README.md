@@ -9,15 +9,15 @@ lenses: [space]
 misconceptions: [transforms.pivots/center-rotation]
 ---
 
-# Pivots: swing a point on a door around its hinge instead of around the scene origin, keeping the input points intact
+# Pivots: swing a door
 
-> **The job:** Swing a point on a door around its hinge instead of around the scene origin, keeping the input points intact.
+> **The job:** Swing a point around a door hinge away from the scene origin.
 
 ## Task
 
-Swing a point on a door around its hinge instead of around the scene origin, keeping the input points intact.
+`swingDoor(hinge, point, angle)` returns the point after a positive `angle` in radians around the world Y axis through `hinge`. Keep both input points unchanged.
 
-Write `swingDoor(hinge, point, angle)` for the behavior above. Save the starter to update the scene.
+Move the turn slider. The blue door edge should meet the yellow swing target.
 
 <div data-scene="demo"></div>
 
@@ -25,10 +25,11 @@ Write `swingDoor(hinge, point, angle)` for the behavior above. Save the starter 
 
 | Value | Space or units |
 | --- | --- |
-| `hinge` | World space unless named local |
-| `point` | World space unless named local |
-| `angle` | Value in the units named in the Task |
-| Answer | Scalar or object described in the Task |
+| `hinge` | World point on hinge |
+| `point` | World point on door |
+| `angle` | Radians around world Y |
+| Answer | World point |
+
 
 ## Your code
 
@@ -38,20 +39,20 @@ Write it in `drills/2/transforms/pivots/apply-1/drill.ts`. Check it with:
 
 ## The check
 
-It passes when `swingDoor` does the stated job for the scene and the other cases in the test. The test exercises the values and spaces named above.
+The check places the hinge away from the origin and turns in both directions. It checks the returned point and both inputs.
 
 <details><summary>Hint</summary>
 
-Use the method from the pivots page, and check which space the result belongs to.
+Move the point into the hinge’s frame, turn it around Y, then move it back. A turn around the world origin swings the wrong arc.
 
 </details>
 
 ## Where else?
 
-Where else would the same operation help when a part moves or turns?
+Where else do you rotate around an offset pivot?
 
 <details><summary>A few answers</summary>
 
-Door hinge. Rotating around a bounding box center.
+A robot elbow. A turntable corner. A cabinet handle.
 
 </details>
