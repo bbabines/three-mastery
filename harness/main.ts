@@ -160,6 +160,40 @@ async function renderDrill(drill: Drill) {
   content.innerHTML = marked.parse(drill.body, { async: false });
   article.append(title, meta, content);
 
+  // Teach-back is a private, ungraded comparison. Keep the key points hidden until the
+  // learner has written an explanation, then record the reveal as completed practice.
+  for (const placeholder of content.querySelectorAll<HTMLElement>('[data-teach-back]')) {
+    const keyPoints = document.createElement('div');
+    keyPoints.className = 'teach-back-points';
+    keyPoints.append(...placeholder.childNodes);
+    keyPoints.hidden = true;
+    const answer = document.createElement('textarea');
+    answer.rows = 7;
+    answer.setAttribute('aria-label', 'Explain this in five plain sentences');
+    answer.placeholder = 'Explain it in five plain sentences before revealing the key points.';
+    const reveal = document.createElement('button');
+    reveal.type = 'button';
+    reveal.textContent = 'Reveal key points';
+    const status = document.createElement('p');
+    status.setAttribute('role', 'status');
+    reveal.addEventListener('click', async () => {
+      if (!answer.value.trim()) {
+        status.textContent = 'Write your explanation first.';
+        answer.focus();
+        return;
+      }
+      keyPoints.hidden = false;
+      reveal.disabled = true;
+      const at = await logFinished(drill);
+      if (at) {
+        showDone(at);
+        finished.set(drill.meta.id, at);
+        status.textContent = 'Compare your answer with the key points. Logged as done.';
+      } else status.textContent = "Key points revealed. Couldn't save progress; is the dev server running?";
+    });
+    placeholder.replaceChildren(answer, reveal, status, keyPoints);
+  }
+
   // Each ## section becomes a collapsible panel, so you can close what you're not working on.
   let panel: HTMLDetailsElement | undefined;
   for (const element of [...content.children]) {

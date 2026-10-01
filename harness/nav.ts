@@ -108,7 +108,9 @@ export function renderNav(container: HTMLElement, drills: NavDrill[], selected: 
     ? []
     : current.elective
       ? [`elective/${current.elective}`]
-      : [`loop-${current.loop}`, `loop-${current.loop}/${current.domain ?? current.concept.split('.')[0]}`];
+      : current.loop === 4
+        ? [`loop-4`, current.check === 'placement' ? 'loop-4/placement' : current.folder.startsWith('cross/') ? 'loop-4/cross' : `loop-4/${current.mode}`]
+        : [`loop-${current.loop}`, `loop-${current.loop}/${current.domain ?? current.concept.split('.')[0]}`];
   // The current page's groups always open. Otherwise the remembered state wins over the default.
   const isOpen = (id: string, byDefault: boolean) => currentGroups.includes(id) || (stored ? stored.has(id) : byDefault);
 
@@ -205,22 +207,40 @@ export function renderNav(container: HTMLElement, drills: NavDrill[], selected: 
       entry.classList.add('checkpoint');
       loopGroup.append(entry);
     } else {
-      // Loop 4 is still only a plan: nothing here links to built drills yet. When the first
-      // cross-domain drill is built, match it by title and link it like the loops above.
+      const placement = group(
+        `${loopId}/placement`, 'domain',
+        '<span>Placement checks</span>',
+        isOpen(`${loopId}/placement`, false),
+      );
+      for (const domain of CORE_DOMAINS) {
+        const item = drills.find((drill) => drill.loop === 4 && drill.check === 'placement' && drill.domain === domain.slug);
+        placement.append(item ? link(item, domain.name, selected) : upcoming(domain.name));
+      }
       const cross = group(
         `${loopId}/cross`,
         'domain',
-        `<span>Cross-domain drills</span><span class="count">0/${CROSS_DRILLS.length}</span>`,
+        `<span>Cross-domain drills</span><span class="count">${drills.filter((drill) => drill.folder.startsWith('cross/4/')).length}/${CROSS_DRILLS.length}</span>`,
         isOpen(`${loopId}/cross`, false),
       );
-      CROSS_DRILLS.forEach((drill, index) =>
-        cross.append(upcoming(`${index + 1}. ${drill.title}`, `domains ${drill.domains.join(', ')}`)),
-      );
-      loopGroup.append(
-        cross,
-        upcoming('AI review', 'find the flaw in generated code'),
-        upcoming('Teach-back', 'explain a concept in five plain sentences'),
-      );
+      CROSS_DRILLS.forEach((planned, index) => {
+        const built = drills.find((drill) => drill.folder.startsWith('cross/4/') && drill.title === planned.title);
+        cross.append(built ? pageLink(built, index + 1, selected) : upcoming(`${index + 1}. ${planned.title}`, `domains ${planned.domains.join(', ')}`));
+      });
+      loopGroup.append(placement, cross);
+      for (const [mode, heading] of [['ai-review', 'AI review'], ['teach-back', 'Teach-back']] as const) {
+        const built = drills.filter((drill) => drill.loop === 4 && drill.mode === mode)
+          .sort((a, b) => DOMAINS.findIndex((domain) => a.concept.startsWith(`${domain.slug}.`))
+            - DOMAINS.findIndex((domain) => b.concept.startsWith(`${domain.slug}.`)));
+        const details = group(`${loopId}/${mode}`, 'domain',
+          `<span>${heading}</span><span class="count">${built.length}</span>`,
+          isOpen(`${loopId}/${mode}`, false));
+        built.forEach((drill, index) => details.append(pageLink(drill, index + 1, selected)));
+        loopGroup.append(details);
+      }
+      const checkpoint = drills.find((drill) => drill.loop === 4 && drill.check === 'checkpoint');
+      const entry = checkpoint ? link(checkpoint, 'Loop 4 checkpoint', selected) : upcoming('Loop 4 checkpoint');
+      entry.classList.add('checkpoint');
+      loopGroup.append(entry);
     }
     container.append(loopGroup);
   }
