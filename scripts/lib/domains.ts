@@ -332,6 +332,39 @@ export const DOMAINS: Domain[] = [
 
 export const CORE_DOMAINS = DOMAINS.filter((domain) => !domain.elective);
 
+// A track narrows the plan to whole domains, worked through in order: Rogue, then Tech art, then
+// Everything. Debugging and Optimization are only in Everything; they draw on every other domain.
+export interface Track {
+  slug: string;
+  name: string;
+  domains: string[];
+}
+
+export const TRACKS: Track[] = [
+  { slug: 'all', name: 'Everything', domains: DOMAINS.map((domain) => domain.slug) },
+  { slug: 'rogue', name: 'Rogue', domains: ['math', 'transforms', 'rotation', 'camera', 'geometry', 'scene-graph', 'assets', 'queries', 'interaction'] },
+  { slug: 'tech-art', name: 'Tech art', domains: ['geometry', 'gpu', 'materials', 'shaders', 'vfx'] },
+];
+
+// Every concept id a track shows: its domains' concepts, plus the foundations they need from other
+// domains, followed through each card's prerequisites (concept id → that card's list).
+export function trackConcepts(track: Track, prerequisites: Map<string, string[]>) {
+  const concepts = new Set(
+    DOMAINS.filter((domain) => track.domains.includes(domain.slug)).flatMap((domain) =>
+      domain.concepts.map((concept) => `${domain.slug}.${concept.slug}`),
+    ),
+  );
+  const queue = [...concepts];
+  for (const id of queue) {
+    for (const needed of prerequisites.get(id) ?? []) {
+      if (concepts.has(needed)) continue;
+      concepts.add(needed);
+      queue.push(needed);
+    }
+  }
+  return concepts;
+}
+
 // A concept's 1-based position in its domain's teaching order, or Infinity if it isn't listed.
 export function teachingOrder(conceptId: string) {
   const [domainSlug, conceptSlug] = conceptId.split('.');

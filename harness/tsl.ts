@@ -5,6 +5,7 @@
 // with it too.
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import * as THREE from 'three/webgpu';
+import { onLeave } from './teardown';
 
 type FrameCallback = (delta: number, elapsed: number) => void;
 
@@ -58,7 +59,8 @@ export async function createTslHarness(container: HTMLElement): Promise<TslHarne
     camera.aspect = width / height;
     camera.updateProjectionMatrix();
   };
-  new ResizeObserver(resize).observe(container);
+  const observer = new ResizeObserver(resize);
+  observer.observe(container);
   resize();
 
   const callbacks: FrameCallback[] = [];
@@ -69,6 +71,13 @@ export async function createTslHarness(container: HTMLElement): Promise<TslHarne
     for (const callback of callbacks) callback(timer.getDelta(), timer.getElapsed());
     controls.update();
     renderer.render(scene, camera);
+  });
+  onLeave(container, () => {
+    renderer.setAnimationLoop(null);
+    observer.disconnect();
+    controls.dispose();
+    timer.dispose();
+    renderer.dispose();
   });
 
   return {

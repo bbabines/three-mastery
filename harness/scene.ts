@@ -1,6 +1,7 @@
 // Shared scene for visual drills: renderer, camera, scene, controls, frame loop.
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { onLeave } from './teardown';
 
 type FrameCallback = (delta: number, elapsed: number) => void;
 
@@ -41,7 +42,8 @@ export function createHarness(container: HTMLElement): Harness {
     camera.aspect = width / height;
     camera.updateProjectionMatrix();
   };
-  new ResizeObserver(resize).observe(container);
+  const observer = new ResizeObserver(resize);
+  observer.observe(container);
   resize();
 
   const callbacks: FrameCallback[] = [];
@@ -52,6 +54,15 @@ export function createHarness(container: HTMLElement): Harness {
     for (const callback of callbacks) callback(timer.getDelta(), timer.getElapsed());
     controls.update();
     renderer.render(scene, camera);
+  });
+  // Browsers cap live WebGL contexts, so leaving a page has to give its context back.
+  onLeave(container, () => {
+    renderer.setAnimationLoop(null);
+    observer.disconnect();
+    controls.dispose();
+    timer.dispose();
+    renderer.dispose();
+    renderer.forceContextLoss();
   });
 
   return {

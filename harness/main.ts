@@ -4,11 +4,12 @@
 // viewer (<div data-effect>), and a "Mark done" button (<div data-mark-done>).
 import { marked } from 'marked';
 import { parse } from 'yaml';
-import { DOMAINS, MODE_LABELS } from '../scripts/lib/domains';
+import { DOMAINS, MODE_LABELS, trackConcepts, type Track } from '../scripts/lib/domains';
 import type { EffectSetup, MaskExercise } from './exercise';
-import { renderNav, renderPace } from './nav';
+import { readTrack, renderNav, renderPace, shownPart } from './nav';
 import { renderQuiz, type Question } from './quiz';
 import { createHarness, type SceneSetup } from './scene';
+import { leavePage } from './teardown';
 import type { TslSceneSetup } from './tsl';
 
 interface DrillMeta {
@@ -61,6 +62,19 @@ const drills: Drill[] = Object.entries(readmeFiles).flatMap(([path, text]) => {
   return [{ folder: path.slice(1, -'/README.md'.length), meta, title, body }];
 });
 
+// Each concept card's prerequisites, which decide the foundations a track borrows.
+const cardFiles = import.meta.glob<string>('/concepts/**/*.md', { query: '?raw', import: 'default', eager: true });
+const prerequisites = new Map(
+  Object.values(cardFiles).flatMap((text) => {
+    const frontmatter = text.match(/^---\n([\s\S]*?)\n---/)?.[1];
+    if (!frontmatter) return [];
+    const card = parse(frontmatter) as { id: string; prerequisites?: string[] };
+    return [[card.id, card.prerequisites ?? []] as const];
+  }),
+);
+const viewFor = (track: Track) => ({ track, concepts: trackConcepts(track, prerequisites) });
+let view = viewFor(readTrack());
+
 interface LogEntry {
   type: string;
   id: string;
@@ -99,8 +113,10 @@ async function logFinished(drill: Drill, score?: { right: number; total: number 
 const formatDate = (iso: string) => new Date(iso).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
 
 const finished = await loadFinished();
-const selected = new URLSearchParams(location.search).get('drill');
+let selected = new URLSearchParams(location.search).get('drill');
+const sidebar = document.querySelector<HTMLElement>('nav')!;
 const nav = document.querySelector<HTMLDivElement>('#drills')!;
+const pace = document.querySelector<HTMLDivElement>('#pace')!;
 const article = document.querySelector<HTMLElement>('#drill')!;
 
 // Placement checks and checkpoints are pages too, told apart by their ids.
@@ -110,52 +126,82 @@ function checkKind(drill: Drill) {
   return undefined;
 }
 
-renderNav(
-  nav,
-  drills.map((drill) => ({
-    folder: drill.folder,
-    loop: drill.meta.loop,
-    elective: drill.meta.elective,
-    kind: drill.meta.kind,
-    // Effect builds' ids read <elective>.effects.<effect>.<kind>.
-    effect: drill.meta.kind === 'page' ? undefined : drill.meta.id.split('.')[2],
-    concept: drill.meta.concepts[0] ?? '',
-    concepts: drill.meta.concepts,
-    mode: drill.meta.mode,
-    check: checkKind(drill),
-    domain: drill.meta.domain,
-    title: drill.title,
-    done: finished.has(drill.meta.id),
-  })),
-  selected,
-);
-const pace = document.querySelector<HTMLDivElement>('#pace')!;
-renderPace(pace, finished);
+// Drawn again on every page change, keeping the sidebar's scroll and showing the current page.
+function renderSidebar() {
+  const scroll = sidebar.scrollTop;
+  nav.replaceChildren();
+  renderNav(
+    nav,
+    drills.map((drill) => ({
+      folder: drill.folder,
+      loop: drill.meta.loop,
+      elective: drill.meta.elective,
+      kind: drill.meta.kind,
+      // Effect builds' ids read <elective>.effects.<effect>.<kind>.
+      effect: drill.meta.kind === 'page' ? undefined : drill.meta.id.split('.')[2],
+      concept: drill.meta.concepts[0] ?? '',
+      concepts: drill.meta.concepts,
+      mode: drill.meta.mode,
+      check: checkKind(drill),
+      domain: drill.meta.domain,
+      title: drill.title,
+      done: finished.has(drill.meta.id),
+    })),
+    selected,
+    view,
+  );
+  renderPace(pace, finished, view);
+  sidebar.scrollTop = scroll;
+  nav.querySelector('a.drill[aria-current]')?.scrollIntoView({ block: 'nearest' });
+}
 
 const KIND_LABELS: Record<string, string> = { page: 'exercise', guided: 'guided build', 'from-memory': 'build from memory' };
+const LOOP_4_GROUPS: Record<string, string> = { 'ai-review': 'AI review', 'teach-back': 'Teach-back' };
 
+// Where the page sits, as the sidebar shows it: Loop 1 › 3D Math Primitives › 5 of 12.
 function metaLine(drill: Drill) {
-  const { elective, kind, loop, mode } = drill.meta;
+  const { elective, kind, loop, mode, concepts } = drill.meta;
+  if (elective) {
+    const domain = DOMAINS.find((item) => item.slug === elective);
+    return `Elective › ${domain?.name ?? elective} › ${KIND_LABELS[kind ?? 'page']}`;
+  }
   const check = checkKind(drill);
-  if (check) return `Loop ${loop} · ${check === 'checkpoint' ? 'checkpoint' : 'placement check'}`;
-  if (!elective) return `Loop ${loop} · ${MODE_LABELS[mode] ?? mode.replaceAll('-', ' ')}`;
-  const domain = DOMAINS.find((item) => item.slug === elective);
-  return `Elective · ${domain?.name ?? elective} · ${KIND_LABELS[kind ?? 'page']}`;
+  if (check === 'checkpoint') return `Loop ${loop} › checkpoint`;
+  const domain = DOMAINS.find((item) => item.slug === (drill.meta.domain ?? concepts[0]?.split('.')[0]));
+  if (check === 'placement') return `Loop ${loop} › ${domain?.name} › placement check`;
+  if (drill.folder.startsWith('cross/')) return `Loop ${loop} › Cross-domain drills`;
+  if (LOOP_4_GROUPS[mode]) return `Loop ${loop} › ${LOOP_4_GROUPS[mode]} › ${domain?.name}`;
+  const shown = domain ? shownPart(domain, view).concepts : [];
+  const position = shown.findIndex((concept) => `${domain?.slug}.${concept.slug}` === concepts[0]);
+  const where = position === -1 ? '' : ` › ${position + 1} of ${shown.length}`;
+  // Every Loop 1 page is read the code, so only later loops name the mode.
+  const modeText = loop === 1 ? '' : ` · ${MODE_LABELS[mode] ?? mode.replaceAll('-', ' ')}`;
+  return `Loop ${loop} › ${domain?.name}${where}${modeText}`;
 }
+
+// Redraws the open page's breadcrumb, whose position depends on the track.
+let repaintMeta: (() => void) | undefined;
 
 async function renderDrill(drill: Drill) {
   const title = document.createElement('h1');
   title.textContent = drill.title;
   const meta = document.createElement('p');
   meta.className = 'meta';
-  let metaText = metaLine(drill);
-  meta.textContent = metaText;
-  const showDone = (at: string) => {
-    meta.innerHTML = `${metaText} · <span class="done">✓ Done ${formatDate(at)}</span>`;
-    nav.querySelector('a.drill[aria-current]')?.classList.add('done');
+  let backendText = '';
+  let doneAt = finished.get(drill.meta.id);
+  const paintMeta = () => {
+    meta.textContent = metaLine(drill) + backendText;
+    if (doneAt) meta.insertAdjacentHTML('beforeend', ` · <span class="done">✓ Done ${formatDate(doneAt)}</span>`);
   };
-  const doneAt = finished.get(drill.meta.id);
-  if (doneAt) showDone(doneAt);
+  repaintMeta = paintMeta;
+  paintMeta();
+  // Redraws the sidebar too, so its ticks and counts include this page.
+  const showDone = (at: string) => {
+    doneAt = at;
+    paintMeta();
+    finished.set(drill.meta.id, at);
+    if (drill.folder === selected) renderSidebar();
+  };
   const content = document.createElement('div');
   content.innerHTML = marked.parse(drill.body, { async: false });
   article.append(title, meta, content);
@@ -214,14 +260,12 @@ async function renderDrill(drill: Drill) {
     const recordDone = (at: string) => {
       showDone(at);
       finished.set(drill.meta.id, at);
-      renderPace(pace, finished);
+      renderPace(pace, finished, view);
     };
     const backend = await mountElective(drill, content, recordDone);
     if (backend) {
-      metaText += ` · ${backend}`;
-      const at = finished.get(drill.meta.id);
-      if (at) showDone(at);
-      else meta.textContent = metaText;
+      backendText = ` · ${backend}`;
+      paintMeta();
     }
     return;
   }
@@ -258,7 +302,7 @@ async function renderDrill(drill: Drill) {
       if (!at) return "Couldn't save your progress. Is npm run dev running?";
       showDone(at);
       finished.set(drill.meta.id, at);
-      renderPace(pace, finished);
+      renderPace(pace, finished, view);
       return 'Logged as done.';
     });
   }
@@ -360,10 +404,58 @@ async function mountElective(drill: Drill, content: HTMLElement, recordDone: (at
   return backend;
 }
 
-const drill = drills.find((item) => item.folder === selected);
-if (drill) {
-  renderDrill(drill);
-} else {
-  article.innerHTML = `<h1>Drill viewer</h1>
-    <p>Pick a drill from the list, or run <code>npm run pick</code> for a suggestion.</p>`;
+function showPage() {
+  leavePage();
+  repaintMeta = undefined;
+  article.replaceChildren();
+  window.scrollTo(0, 0);
+  const drill = drills.find((item) => item.folder === selected);
+  if (drill) {
+    renderDrill(drill);
+  } else {
+    article.innerHTML = `<h1>Drill viewer</h1>
+      <p>Pick a drill from the list, or run <code>npm run pick</code> for a suggestion.</p>`;
+  }
 }
+
+// Sidebar links leave the track out, so it's written into each URL the viewer lands on. Back then
+// returns to the track you were in, not the one last remembered.
+function rememberTrackInUrl(track: Track) {
+  const params = new URLSearchParams(location.search);
+  if (params.get('track') === track.slug) return;
+  params.set('track', track.slug);
+  history.replaceState(null, '', `?${params}`);
+}
+
+// Follows the URL: a new track redraws the sidebar, a new drill swaps the page, neither reloads.
+function route() {
+  const track = readTrack();
+  rememberTrackInUrl(track);
+  const drill = new URLSearchParams(location.search).get('drill');
+  const pageChanged = drill !== selected;
+  if (track !== view.track) view = viewFor(track);
+  selected = drill;
+  renderSidebar();
+  if (pageChanged) showPage();
+  else repaintMeta?.();
+}
+
+// Links to another page of the viewer switch in place. Modified clicks still open a new tab.
+document.addEventListener('click', (event) => {
+  if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+  const anchor = (event.target as Element).closest('a');
+  if (!anchor || anchor.target) return;
+  const url = new URL(anchor.href);
+  if (url.origin !== location.origin || url.pathname !== location.pathname) return;
+  if (url.search === location.search && url.hash) return; // a jump within the page
+  event.preventDefault();
+  const next = url.searchParams;
+  if (next.get('drill') === selected && (next.get('track') ?? view.track.slug) === view.track.slug) return; // already here
+  history.pushState(null, '', url);
+  route();
+});
+window.addEventListener('popstate', route);
+
+rememberTrackInUrl(view.track);
+renderSidebar();
+showPage();
