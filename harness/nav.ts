@@ -120,7 +120,9 @@ export function renderNav(container: HTMLElement, drills: NavDrill[], selected: 
       (drill) => drill.loop === loop && !drill.check && drill.concepts.some((id) => id.startsWith(`${domain.slug}.`)),
     );
     const placement = drills.find((drill) => drill.loop === loop && drill.check === 'placement' && drill.domain === domain.slug);
-    const total = LOOP_PLAN[loop] ? plannedDrillCount(domain, loop) : domain.concepts.length;
+    // A light pair may be built as separate drills; never show more built than the total.
+    const planned = LOOP_PLAN[loop] ? plannedDrillCount(domain, loop) : domain.concepts.length;
+    const total = Math.max(planned, loopDrills.length);
     const doneCount = loopDrills.filter((drill) => drill.done).length;
     const details = group(
       id,
