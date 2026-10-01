@@ -1,0 +1,1 @@
+The distant part stayed on a transmission-enabled physical material even after its on-screen size shrank. Frustum culling only removes whole out-of-view objects; visible distant objects still need an appropriate geometry and material level.

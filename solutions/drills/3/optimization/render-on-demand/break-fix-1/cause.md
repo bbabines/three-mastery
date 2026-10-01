@@ -1,0 +1,1 @@
+The planner rendered every visible refresh even when nothing changed. A dirty frame or a quality-step change needs a new image; an idle viewer does not, so continuous redraw wastes battery without improving the picture.
