@@ -17,6 +17,8 @@ misconceptions: []
 
 Set a material opacity for a fade, enable blending only when alpha is below one, and disable depth writes during the fade. Return the material.
 
+When the `transparent` flag changes after the material has drawn, set `needsUpdate` so three.js uses the new blend program.
+
 | Function | Return |
 | --- | --- |
 | `fadeMaterial(material: THREE.MeshBasicMaterial, alpha: number)` | The material configured for the current fade alpha. |
