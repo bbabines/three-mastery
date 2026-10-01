@@ -15,7 +15,7 @@ misconceptions: []
 
 ## Task
 
-Make a UV-centered radial falloff with `clamp` and `mix`, going from a warm center to a cool edge. Return a working `ShaderMaterial`. The scene renders the material on a plane; the tests inspect its inputs and compile it in Chromium.
+Make a UV-centered radial falloff with `clamp` and `mix`, going from a warm center to a cool edge. Write `radialFalloff()` so UV distance blends a warm center into a cool edge.
 
 <div data-scene="preview"></div>
 
@@ -38,7 +38,7 @@ npm run drill -- drills/2/shaders/built-in-functions/apply-1
 
 ## The check
 
-The Node check verifies the shader's data path. The browser check compiles and draws it on a WebGL canvas.
+The Node test checks the `clamp` and `mix` data path; the browser test checks compilation and drawing.
 
 <details><summary>Hint</summary> Clamp a radius-based factor to 0–1, then mix the endpoint colors. </details>
 
@@ -46,4 +46,4 @@ The Node check verifies the shader's data path. The browser check compiles and d
 
 Could the same `clamp` and `mix` pattern make a soft circular mask?
 
-<details><summary>A starting point</summary> Visualize one intermediate value before restoring the finished fragment color. </details>
+<details><summary>A few answers</summary> Yes. Use the same clamped distance as an alpha value instead of mixing two colors. </details>

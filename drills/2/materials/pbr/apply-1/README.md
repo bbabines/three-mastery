@@ -15,9 +15,9 @@ misconceptions: [materials.pbr/half-metal]
 
 ## Task
 
-Configure a brushed steel material. Keep metalness at the metal endpoint, make reflections broader than polished chrome, and use the supplied finish color. Work from the input values; do not replace an input object when the task asks you to configure it.
+Configure a brushed steel material. Keep metalness at the metal endpoint, make reflections broader than polished chrome, and use the supplied finish color. Write `brushedSteel(material, color)` and return that material. Preserve its normal and environment maps.
 
-The preview calls your answer on a concrete scene. The readout stays at "not answered yet" until your function returns a value.
+After you answer, the preview should show a broader reflection than polished chrome.
 
 <div data-scene="preview"></div>
 
@@ -31,7 +31,7 @@ npm run drill -- drills/2/materials/pbr/apply-1
 
 ## The check
 
-The acceptance test uses several inputs and checks both the intended result and settings that must be preserved. Read the failed assertion as a scene symptom, then adjust only your function.
+The test requires metalness at the metal endpoint, higher roughness, the supplied color, and preservation of the normal map.
 
 <details><summary>Hint</summary> Roughness widens reflections; metalness says whether the surface is metal. </details>
 
@@ -39,4 +39,4 @@ The acceptance test uses several inputs and checks both the intended result and 
 
 Which channel describes scratches in a roughness texture?
 
-<details><summary>A starting point</summary> Trace the same property from the three.js object through the material or light that consumes it. </details>
+<details><summary>A few answers</summary> Scratches vary the roughness channel. They change reflection width without turning the surface into a nonmetal. </details>

@@ -9,7 +9,7 @@ lenses: []
 misconceptions: [materials.texture-sampling/mipmaps-performance]
 ---
 
-# Texture sampling: repair the preview
+# Texture sampling: a shimmering floor
 
 > **The job:** Stop shimmer on a distant tiled texture.
 

@@ -15,9 +15,9 @@ misconceptions: [materials.pbr/half-metal]
 
 ## Task
 
-Configure a standard material as polished chrome: fully metallic, low roughness, and a neutral base color. Return the same material. Work from the input values; do not replace an input object when the task asks you to configure it.
+Configure a standard material as polished chrome: fully metallic, low roughness, and a neutral base color. Return the same material. Write `chromeFinish(material)` and return the same material. Preserve its environment map.
 
-The preview calls your answer on a concrete scene. The readout stays at "not answered yet" until your function returns a value.
+The reflection should stay sharp on the chrome sphere.
 
 <div data-scene="preview"></div>
 
@@ -31,7 +31,7 @@ npm run drill -- drills/2/materials/pbr/implement-1
 
 ## The check
 
-The acceptance test uses several inputs and checks both the intended result and settings that must be preserved. Read the failed assertion as a scene symptom, then adjust only your function.
+The test checks the metal endpoint, narrow roughness, neutral base color, and unchanged environment map.
 
 <details><summary>Hint</summary> Metalness is an endpoint for a single physical surface, not a slider for gloss. </details>
 
@@ -39,4 +39,4 @@ The acceptance test uses several inputs and checks both the intended result and 
 
 What property would you change to turn polished chrome into brushed steel?
 
-<details><summary>A starting point</summary> Trace the same property from the three.js object through the material or light that consumes it. </details>
+<details><summary>A few answers</summary> Increase roughness to make brushed steel; keep metalness at the metal endpoint. </details>

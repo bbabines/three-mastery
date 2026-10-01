@@ -23,8 +23,10 @@ A surface lit by a fixed world light develops a rim-like highlight as the camera
 
 | Value | Space |
 | --- | --- |
-| input position or pixel | local space or device pixels, as named in the function |
-| output | the space named in the return description |
+| `local` normal | Local to the mesh |
+| `model` matrix | Changes local directions into world space |
+| `view` matrix | Changes world directions into camera space; the repair should not use it |
+| returned normal | World space, with unit length |
 
 ## Your code
 

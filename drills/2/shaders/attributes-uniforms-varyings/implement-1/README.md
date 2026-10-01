@@ -15,7 +15,7 @@ misconceptions: [shaders.attributes-uniforms-varyings/copied-unchanged]
 
 ## Task
 
-Pass per-vertex UV through an interpolated varying and use a per-draw time uniform to pulse its red channel. Return a working `ShaderMaterial`. The scene renders the material on a plane; the tests inspect its inputs and compile it in Chromium.
+Pass per-vertex UV through an interpolated varying and use a per-draw time uniform to pulse its red channel. Write `pulseUv(time)` so the vertex shader passes UVs and the fragment shader uses the time uniform to pulse red.
 
 <div data-scene="preview"></div>
 
@@ -38,7 +38,7 @@ npm run drill -- drills/2/shaders/attributes-uniforms-varyings/implement-1
 
 ## The check
 
-The Node check verifies the shader's data path. The browser check compiles and draws it on a WebGL canvas.
+The Node test checks UV varying and time uniform wiring; the browser test checks compilation and drawing.
 
 <details><summary>Hint</summary> A uniform is one value for the draw; a varying carries UV through interpolation. </details>
 
@@ -46,4 +46,4 @@ The Node check verifies the shader's data path. The browser check compiles and d
 
 How would a barycentric wireframe differ if its varying were declared `flat`?
 
-<details><summary>A starting point</summary> Visualize one intermediate value before restoring the finished fragment color. </details>
+<details><summary>A few answers</summary> A `flat` varying would hold one corner's value across each triangle, so a smooth wireframe fade would become a hard patch. </details>

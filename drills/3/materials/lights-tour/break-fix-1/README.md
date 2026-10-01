@@ -9,13 +9,13 @@ lenses: []
 misconceptions: [materials.lights-tour/rectarea-any-material]
 ---
 
-# Lights tour: the panel is present, but its tabletop stays dark and flat because the returned material does not respond to that light.
+# Lights tour: a dark tabletop
 
 > **The job:** Light a tabletop from a broad ceiling panel using a compatible lit material.
 
 ## Task
 
-The panel is present, but its tabletop stays dark and flat because the returned material does not respond to that light. Fix `ceilingPanel` without replacing unrelated objects or settings. The preview runs the current code; use its readout to check the repaired behavior.
+The ceiling panel is visible, but the tabletop stays dark and flat. Repair `ceilingPanel` while preserving the supplied light. Watch the readout change.
 
 <div data-scene="preview"></div>
 

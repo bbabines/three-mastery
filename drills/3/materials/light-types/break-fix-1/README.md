@@ -9,7 +9,7 @@ lenses: []
 misconceptions: [materials.light-types/units-dont-matter]
 ---
 
-# Light types: repair the preview
+# Light types: a distant wall stays bright
 
 > **The job:** Make a point source dim with square distance in scene units.
 

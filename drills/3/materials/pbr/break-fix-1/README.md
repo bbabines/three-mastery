@@ -9,13 +9,13 @@ lenses: []
 misconceptions: [materials.pbr/half-metal]
 ---
 
-# Pbr: the painted part has halfway metalness, giving an implausible mix of metal and dielectric reflection.
+# PBR: painted steel looks metallic
 
 > **The job:** Distinguish bare steel from opaque powder coat and rubber in a product material set.
 
 ## Task
 
-The painted part has halfway metalness, giving an implausible mix of metal and dielectric reflection. Fix `productFinish` without replacing unrelated objects or settings. The preview runs the current code; use its readout to check the repaired behavior.
+The painted part reflects like a mix of exposed steel and paint. Repair `productFinish` without changing the bare steel or rubber finishes. Watch the readout change.
 
 <div data-scene="preview"></div>
 

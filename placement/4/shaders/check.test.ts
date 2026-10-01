@@ -11,7 +11,14 @@ describe('shaders.vertex-vs-fragment', () => {
 
 describe('shaders.attributes-uniforms-varyings', () => {
   it('makes the right judgment', () => {
-    const m=new THREE.ShaderMaterial(); expect(answered(check.setUniform(m,'time',2))).toBe(2);
+    const m=new THREE.ShaderMaterial({uniforms:{time:{value:1},other:{value:5}}});
+    const time=m.uniforms.time;
+    expect(answered(check.setUniform(m,'time',2))).toBe(2);
+    expect(m.uniforms.time).toBe(time);
+    expect(time.value).toBe(2);
+    expect(m.uniforms.other.value).toBe(5);
+    expect(answered(check.setUniform(m,'newValue',3))).toBe(3);
+    expect(m.uniforms.newValue.value).toBe(3);
   });
 });
 

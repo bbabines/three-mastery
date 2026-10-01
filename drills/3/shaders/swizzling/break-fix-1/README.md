@@ -5,7 +5,7 @@ tier: light
 concepts: [shaders.swizzling]
 mode: break-and-fix
 context: shaders.swizzling/packed-textures
-lenses: [space]
+lenses: []
 misconceptions: []
 ---
 
@@ -19,12 +19,6 @@ The roughness readout follows red AO instead of green roughness. Repair `roughMe
 
 <div data-scene="preview"></div>
 
-## Spaces
-
-| Value | Space |
-| --- | --- |
-| input position or pixel | local space or device pixels, as named in the function |
-| output | the space named in the return description |
 
 ## Your code
 

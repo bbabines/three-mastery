@@ -15,7 +15,7 @@ misconceptions: [materials.texture-sampling/mipmaps-performance, materials.chann
 
 ## Task
 
-Connect one packed ORM texture to roughness and metalness, mark it as data, and configure mipmaps plus anisotropic filtering for a tiled surface. Use the supplied object or values; return the requested answer so the preview can run it. Keep unrelated settings intact.
+Connect one packed ORM texture to roughness and metalness, mark it as data, and configure mipmaps plus anisotropic filtering for a tiled surface. Write `packedTiledSurface(material, orm, maxAnisotropy)` and return that material. Use the packed data map for both roughness and metalness.
 
 <div data-scene="preview"></div>
 
@@ -29,7 +29,7 @@ npm run drill -- drills/2/materials/texture-sampling/apply-1
 
 ## The check
 
-The test covers the intended behavior on more than one input and also checks settings that the function should leave alone.
+The test checks shared ORM map identity, data color space, mipmaps, anisotropy, and the original material.
 
 <details><summary>Hint</summary> Green is roughness and blue is metalness in a packed ORM map; three.js reads those channels from their respective map slots. </details>
 
@@ -37,4 +37,4 @@ The test covers the intended behavior on more than one input and also checks set
 
 Why would a tiled ORM map shimmer at a grazing angle without mipmaps?
 
-<details><summary>A starting point</summary> Compare the material or light properties before and after your function returns. </details>
+<details><summary>A few answers</summary> Mipmap levels average distant detail; anisotropy helps when the tiled surface is seen at a grazing angle. </details>

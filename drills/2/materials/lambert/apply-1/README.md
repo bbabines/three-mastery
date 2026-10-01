@@ -15,9 +15,9 @@ misconceptions: []
 
 ## Task
 
-Build a two-band toon diffuse value from Lambert lighting: compare the clamped surface-light cosine against a threshold, returning a bright or dark level. The viewer position is irrelevant. Work from the input values; do not replace an input object when the task asks you to configure it.
+Build a two-band toon diffuse value from Lambert lighting: compare the clamped surface-light cosine against a threshold, returning a bright or dark level. The viewer position is irrelevant. Write `toonDiffuse(normal, toLight, threshold)`. Return 1 for the bright band and 0 for the dark band; do not change either vector.
 
-The preview calls your answer on a concrete scene. The readout stays at "not answered yet" until your function returns a value.
+The preview uses one light angle; the test also checks both sides of the band threshold.
 
 <div data-scene="preview"></div>
 
@@ -31,7 +31,7 @@ npm run drill -- drills/2/materials/lambert/apply-1
 
 ## The check
 
-The acceptance test uses several inputs and checks both the intended result and settings that must be preserved. Read the failed assertion as a scene symptom, then adjust only your function.
+The test checks both bands with vectors of different lengths and confirms the inputs stay unchanged.
 
 <details><summary>Hint</summary> Normalize the vectors first, then use the cosine to select a band. </details>
 
@@ -39,4 +39,4 @@ The acceptance test uses several inputs and checks both the intended result and 
 
 Why does a hard band still move when the light moves?
 
-<details><summary>A starting point</summary> Trace the same property from the three.js object through the material or light that consumes it. </details>
+<details><summary>A few answers</summary> A hard band follows the light because its threshold still compares the surface normal with the light direction. </details>

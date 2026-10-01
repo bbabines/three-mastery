@@ -9,15 +9,15 @@ lenses: []
 misconceptions: []
 ---
 
-# Environment maps: chrome
+# Environment maps: chrome reflections
 
 > **The job:** Give a chrome product material its own reflection texture and intensity without replacing the material; use full metalness and low roughness.
 
 ## Task
 
-Give a chrome product material its own reflection texture and intensity without replacing the material; use full metalness and low roughness. Work from the input values; do not replace an input object when the task asks you to configure it.
+Give a chrome product material its own reflection texture and intensity without replacing the material; use full metalness and low roughness. Write `localChromeReflection(material, reflection, intensity)` and return the same material. Keep its other maps.
 
-The preview calls your answer on a concrete scene. The readout stays at "not answered yet" until your function returns a value.
+After you answer, the sphere should reflect the supplied texture at the requested strength.
 
 <div data-scene="preview"></div>
 
@@ -31,7 +31,7 @@ npm run drill -- drills/2/materials/environment-maps/apply-1
 
 ## The check
 
-The acceptance test uses several inputs and checks both the intended result and settings that must be preserved. Read the failed assertion as a scene symptom, then adjust only your function.
+The test checks full metalness, low roughness, the supplied map and intensity, and that the original material is returned.
 
 <details><summary>Hint</summary> A visible scene background is not automatically the material envMap. </details>
 
@@ -39,4 +39,4 @@ The acceptance test uses several inputs and checks both the intended result and 
 
 When would a scene-wide environment be simpler than a per-material map?
 
-<details><summary>A starting point</summary> Trace the same property from the three.js object through the material or light that consumes it. </details>
+<details><summary>A few answers</summary> Several products in one studio can share `scene.environment`; use a material map when one object needs a different reflection. </details>

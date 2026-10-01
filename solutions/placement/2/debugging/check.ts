@@ -18,7 +18,8 @@ export function boundsHelper(object: THREE.Object3D): Answer<THREE.BoxHelper> {
 
 // Visualizing vectors: The unit direction for a world-space ArrowHelper.
 export function worldArrowDirection(object: THREE.Object3D, local: THREE.Vector3): Answer<THREE.Vector3> {
-  return local.clone().normalize().applyQuaternion(object.getWorldQuaternion(new THREE.Quaternion()));
+  object.updateWorldMatrix(true, false);
+  return local.clone().transformDirection(object.matrixWorld);
 }
 
 // Reading matrices: The translation Vector3 encoded in the matrix.

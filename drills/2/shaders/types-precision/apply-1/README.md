@@ -15,7 +15,7 @@ misconceptions: [shaders.types-precision/int-is-float]
 
 ## Task
 
-Keep a distant-origin gradient stable with high precision floats and explicit float literals. Return a material that draws the effect on the preview plane. Use readable GLSL and keep the variable spaces explicit.
+Keep a distant-origin gradient stable with high precision floats and explicit float literals. Write `farOriginGradient(origin)` using high precision float values and explicit float literals.
 
 <div data-scene="preview"></div>
 
@@ -38,10 +38,12 @@ npm run drill -- drills/2/shaders/types-precision/apply-1
 
 ## The check
 
-The Node test inspects the data path. The browser test compiles and draws it in WebGL.
+The Node test checks the precision declaration and float path; the browser test checks compilation and drawing.
 
 <details><summary>Hint</summary> GLSL float literals use decimal points; highp gives more useful range than mediump. </details>
 
 ## Where else?
 
 What visual symptom appears when a far-origin value loses precision on mobile?
+
+<details><summary>A few answers</summary> Low precision can make adjacent positions collapse to one value, causing bands or jitter far from the origin. </details>

@@ -15,7 +15,7 @@ misconceptions: [shaders.built-in-functions/step-smoothstep]
 
 ## Task
 
-Draw a ring whose two edges blend smoothly over a supplied width, using `smoothstep` on distance from UV center. Return a working `ShaderMaterial`. The scene renders the material on a plane; the tests inspect its inputs and compile it in Chromium.
+Draw a ring whose two edges blend smoothly over a supplied width, using `smoothstep` on distance from UV center. Write `softRing(radius, edge)`. Treat both inputs as distances in UV space and blend each ring edge over `edge`.
 
 <div data-scene="preview"></div>
 
@@ -38,7 +38,7 @@ npm run drill -- drills/2/shaders/built-in-functions/implement-1
 
 ## The check
 
-The Node check verifies the shader's data path. The browser check compiles and draws it on a WebGL canvas.
+The Node test checks the uniforms and smooth edges. The browser test reads dark pixels inside and outside the ring and a bright pixel on it.
 
 <details><summary>Hint</summary> A hard `step` aliases at edges; subtract two smooth transitions to keep the ring soft. </details>
 
@@ -46,4 +46,4 @@ The Node check verifies the shader's data path. The browser check compiles and d
 
 How would this ring edge look if both `smoothstep` calls became `step`?
 
-<details><summary>A starting point</summary> Visualize one intermediate value before restoring the finished fragment color. </details>
+<details><summary>A few answers</summary> Two hard `step` edges would look jagged as the ring crosses pixel centers. </details>

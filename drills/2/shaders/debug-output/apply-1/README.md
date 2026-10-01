@@ -15,7 +15,7 @@ misconceptions: []
 
 ## Task
 
-Output device depth as grayscale to inspect where the depth buffer spends its range. Return a working `ShaderMaterial`. The scene renders the material on a plane; the tests inspect its inputs and compile it in Chromium.
+Output device depth as grayscale to inspect where the depth buffer spends its range. Write `depthDebug()` to show device depth as raw grayscale from `gl_FragCoord.z`.
 
 <div data-scene="preview"></div>
 
@@ -38,7 +38,7 @@ npm run drill -- drills/2/shaders/debug-output/apply-1
 
 ## The check
 
-The Node check verifies the shader's data path. The browser check compiles and draws it on a WebGL canvas.
+The Node test checks the raw depth output path; the browser test checks compilation and drawing.
 
 <details><summary>Hint</summary> `gl_FragCoord.z` is the post-projection depth in [0,1], not world distance. </details>
 
@@ -46,4 +46,4 @@ The Node check verifies the shader's data path. The browser check compiles and d
 
 Why is device depth a poor direct substitute for world distance?
 
-<details><summary>A starting point</summary> Visualize one intermediate value before restoring the finished fragment color. </details>
+<details><summary>A few answers</summary> Device depth is nonlinear under perspective, so equal gray steps do not mean equal world distances. </details>

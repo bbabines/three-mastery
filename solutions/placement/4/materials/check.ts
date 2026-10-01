@@ -26,7 +26,7 @@ export function halfDirection(toLight: THREE.Vector3, toEye: THREE.Vector3): Ans
 }
 
 export function metalNeedsEnvironment(material: THREE.MeshStandardMaterial, scene: THREE.Scene): Answer<boolean> {
-  return material.metalness>0&&scene.environment===null;
+  return material.metalness>0&&material.envMap===null&&scene.environment===null;
 }
 
 export function shadowCapable(light: THREE.Light): Answer<boolean> {

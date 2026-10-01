@@ -22,7 +22,7 @@ Return whether the model's world bounds touch the camera frustum. Make a BoxHelp
 | `inCameraView(object: THREE.Object3D, camera: THREE.Camera)` | Whether the object world bounds touch the camera frustum. |
 | `boundsHelper(object: THREE.Object3D)` | A BoxHelper that shows the object bounds. |
 
-Try the scene. The readout changes when your function gives an answer.
+The preview checks one model against the camera and shows its bounds helper.
 
 <div data-scene="practice"></div>
 
@@ -42,7 +42,7 @@ npm run drill -- drills/2/debugging/nothing-renders/apply-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The test uses current world transforms for the frustum result and checks that the helper wraps the supplied object.
 
 <details><summary>Hint</summary>
 
@@ -52,4 +52,6 @@ A BoxHelper can show where a model went, even when its material does not render.
 
 ## Where else?
 
-Where else would the same code help? The concept card lists Invisible loaded model, Black post-processing output.
+What would a bounds helper show for an invisible loaded model?
+
+<details><summary>A few answers</summary> It shows whether the model loaded far away or at a surprising scale, even if its material is wrong. </details>

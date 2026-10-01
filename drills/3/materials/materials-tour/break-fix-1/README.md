@@ -9,7 +9,7 @@ lenses: []
 misconceptions: [materials.materials-tour/all-react]
 ---
 
-# Materials tour: the surface looks like an ordinary lit product even in normals mode, so rotations do not reveal the rgb normal field.
+# Materials tour: the missing normal view
 
 > **The job:** Show a normal-direction debug view without scene lighting.
 

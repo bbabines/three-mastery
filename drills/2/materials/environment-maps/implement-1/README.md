@@ -15,9 +15,9 @@ misconceptions: [materials.environment-maps/just-background]
 
 ## Task
 
-Use one environment texture for physically based reflections on every material in a scene, while keeping a separate background image for the camera. Work from the input values; do not replace an input object when the task asks you to configure it.
+Use one environment texture for physically based reflections on every material in a scene, while keeping a separate background image for the camera. Write `setStudioEnvironment(scene, lighting, backdrop)` and return the same scene. Keep its other settings.
 
-The preview calls your answer on a concrete scene. The readout stays at "not answered yet" until your function returns a value.
+The sphere should reflect the studio texture while the camera sees the separate backdrop.
 
 <div data-scene="preview"></div>
 
@@ -31,7 +31,7 @@ npm run drill -- drills/2/materials/environment-maps/implement-1
 
 ## The check
 
-The acceptance test uses several inputs and checks both the intended result and settings that must be preserved. Read the failed assertion as a scene symptom, then adjust only your function.
+The test checks `scene.environment` and `scene.background` separately and requires the original scene.
 
 <details><summary>Hint</summary> The scene has different properties for environment lighting and the visible background. </details>
 
@@ -39,4 +39,4 @@ The acceptance test uses several inputs and checks both the intended result and 
 
 Why can a chrome ball go black even when a sky is visible behind it?
 
-<details><summary>A starting point</summary> Trace the same property from the three.js object through the material or light that consumes it. </details>
+<details><summary>A few answers</summary> A visible sky can be only `scene.background`. Chrome also needs `scene.environment` or its own `envMap`. </details>

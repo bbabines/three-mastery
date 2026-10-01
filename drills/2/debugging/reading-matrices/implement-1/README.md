@@ -21,7 +21,7 @@ Return the translation stored in a Matrix4. `Matrix4.set` takes row-major argume
 | --- | --- |
 | `matrixTranslation(matrix: THREE.Matrix4)` | The translation Vector3 encoded in the matrix. |
 
-Try the scene. The readout changes when your function gives an answer.
+The preview reports translation from a matrix that also has rotation and scale.
 
 <div data-scene="practice"></div>
 
@@ -41,7 +41,7 @@ npm run drill -- drills/2/debugging/reading-matrices/implement-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The test reads translation after rotation and scale and confirms the source matrix remains unchanged.
 
 <details><summary>Hint</summary>
 
@@ -51,4 +51,6 @@ setFromMatrixPosition reads the translation from elements 12–14.
 
 ## Where else?
 
-Where else would the same code help? The concept card lists Console transform checks, Detecting mirroring.
+How would you inspect a nested part's world position?
+
+<details><summary>A few answers</summary> Update its world matrix and read translation from `matrixWorld`, not its local matrix. </details>
