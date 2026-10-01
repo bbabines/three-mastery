@@ -29,7 +29,8 @@ Try the scene. The readout changes when your function gives an answer.
 
 | Value | Space |
 | --- | --- |
-| Inputs and answer | World space unless named otherwise in the task. |
+| Hit point | World space |
+| Instance ID | Index within the instanced mesh; no space |
 
 ## Your code
 
@@ -41,7 +42,7 @@ npm run drill -- drills/2/queries/intersection-anatomy/apply-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The test reads an instance ID when present and returns a sentinel for an ordinary mesh.
 
 <details><summary>Hint</summary>
 
@@ -51,4 +52,6 @@ An intersection has object, point, distance, and optional instanceId fields.
 
 ## Where else?
 
-Where else would the same code help? The concept card lists Orienting a marker, Painting at a UV.
+Where else does the instance number identify the selected item?
+
+<details><summary>A few answers</summary> Instanced shelf parts, repeated bolts, or a large point display. </details>

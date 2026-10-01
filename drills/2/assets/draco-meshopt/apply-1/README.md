@@ -40,7 +40,7 @@ npm run drill -- drills/2/assets/draco-meshopt/apply-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The tests compare download and decode budgets, then count raw RGBA bytes with and without mipmaps.
 
 <details><summary>Hint</summary>
 
@@ -50,4 +50,6 @@ Compressed download size and decoded GPU size are separate budgets.
 
 ## Where else?
 
-Where else would the same code help? The concept card lists Payload budget, Choosing per asset.
+Where else can a smaller download still be the slower choice?
+
+<details><summary>A few answers</summary> A mobile model, a large swatch library, or a first-view load. </details>

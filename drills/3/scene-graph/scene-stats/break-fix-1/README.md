@@ -9,15 +9,15 @@ lenses: []
 misconceptions: []
 ---
 
-# Scene stats: find the faulty result
+# Scene audit: count the requested layer
 
 > **The job:** A scene audit counts meshes that the current camera layer cannot draw.
 
 ## Task
 
-A scene audit counts meshes that the current camera layer cannot draw. Count only visible meshes on the requested layer.
+The audit asks how many meshes on one layer can be shown. `visibleLayerMeshes` receives a root and a layer number. Count a mesh only when it and its ancestors are visible and that mesh's layer mask includes the requested layer.
 
-Fix `visibleLayerMeshes` in `drill.ts`. The scene shows the current result alongside a reference; they should agree after the repair.
+Fix `visibleLayerMeshes` in `drill.ts`. The blue box uses layer 3; the yellow one uses layer 1. The layer-3 count is one.
 
 <div data-scene="demo"></div>
 
@@ -29,7 +29,7 @@ Fix `drill.ts`, write one sentence in `cause.md`, and replace the placeholder in
 
 ## The check
 
-The acceptance test covers more than the scene pose. Your check must fail on the original bug and pass after the fix, using behavior instead of looking for a particular line of code.
+The test mixes layers and a hidden parent. Your check should reject a count that includes either the other layer or the hidden subtree.
 
 <details><summary>Hint</summary>
 
@@ -39,10 +39,10 @@ Which layer mask and ancestor visibility conditions decide whether a mesh is act
 
 ## Where else?
 
-Where else would the same wrong assumption cause an error?
+Where else would counting every mesh give a misleading budget?
 
 <details><summary>A few answers</summary>
 
-Before/after optimization; Variant comparison.
+Per-view asset audits, a minimap camera, or a before-and-after draw-call estimate.
 
 </details>

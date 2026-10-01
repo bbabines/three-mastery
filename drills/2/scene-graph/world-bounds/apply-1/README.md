@@ -29,7 +29,9 @@ Try the scene. The readout changes when your function gives an answer.
 
 | Value | Space |
 | --- | --- |
-| Inputs and answer | World space unless named otherwise in the task. |
+| Child geometry and positions | Each child's own and parent's space |
+| Lowest box point | World space |
+| Returned lift | Distance along world up |
 
 ## Your code
 
@@ -41,7 +43,7 @@ npm run drill -- drills/2/scene-graph/world-bounds/apply-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The test finds the lowest world point under rotation and checks that the root was not moved.
 
 <details><summary>Hint</summary>
 
@@ -51,4 +53,6 @@ The answer is the negative of the world box minimum y.
 
 ## Where else?
 
-Where else would the same code help? The concept card lists Camera fit, Floor placement.
+Where else does a local height give the wrong placement?
+
+<details><summary>A few answers</summary> Floor placement, camera fitting, or a rotated footprint. </details>

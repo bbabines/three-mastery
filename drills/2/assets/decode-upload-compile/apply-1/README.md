@@ -39,7 +39,7 @@ npm run drill -- drills/2/assets/decode-upload-compile/apply-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The test checks that the exact scene and camera reach compileAsync and that the pending promise is returned.
 
 <details><summary>Hint</summary>
 
@@ -49,4 +49,6 @@ Compile after setting the lighting and environment, or a new program may still c
 
 ## Where else?
 
-Where else would the same code help? The concept card lists First-interaction hitch, Pre-warming with compileAsync.
+Where else would preparing a shader before first use prevent a hitch?
+
+<details><summary>A few answers</summary> A hidden next variant, a new light setup, or a material switch. </details>

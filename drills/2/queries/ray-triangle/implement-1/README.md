@@ -29,7 +29,8 @@ Try the scene. The readout changes when your function gives an answer.
 
 | Value | Space |
 | --- | --- |
-| Inputs and answer | World space unless named otherwise in the task. |
+| Ray and triangle corners | World space |
+| Returned hit or ray origin | World space |
 
 ## Your code
 
@@ -41,7 +42,7 @@ npm run drill -- drills/2/queries/ray-triangle/implement-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The test accepts a front-face hit but returns the ray origin when it strikes the back.
 
 <details><summary>Hint</summary>
 
@@ -51,4 +52,6 @@ The order of a, b, and c controls which side is the front.
 
 ## Where else?
 
-Where else would the same code help? The concept card lists UV interpolation at a hit, Back-face handling.
+Where else does triangle facing change whether a hit counts?
+
+<details><summary>A few answers</summary> One-sided picking, thin panels, or a mesh collision proxy. </details>

@@ -9,15 +9,15 @@ lenses: []
 misconceptions: []
 ---
 
-# Closest point: find the faulty result
+# Closest point: a snap beyond the rail
 
 > **The job:** A snap marker slides beyond the end of a short rail.
 
 ## Task
 
-A snap marker slides beyond the end of a short rail. Return the closest point on the finite segment, not its endless supporting line.
+A rail runs from `a` to `b`, and the pointer is past an end. Return the point on the finite rail nearest to the pointer, without moving any input vector.
 
-Fix `segmentSnap` in `drill.ts`. The scene shows the current result alongside a reference; they should agree after the repair.
+Fix `segmentSnap` in `drill.ts`. The yellow marker stays at the rail end; your result is red.
 
 <div data-scene="demo"></div>
 
@@ -29,7 +29,7 @@ Fix `drill.ts`, write one sentence in `cause.md`, and replace the placeholder in
 
 ## The check
 
-The acceptance test covers more than the scene pose. Your check must fail on the original bug and pass after the fix, using behavior instead of looking for a particular line of code.
+The test puts the pointer beyond both ends of an angled segment and checks the returned point. Your check should reject a point outside the segment.
 
 <details><summary>Hint</summary>
 
@@ -39,10 +39,10 @@ Does a rail continue beyond either endpoint?
 
 ## Where else?
 
-Where else would the same wrong assumption cause an error?
+Where else does a finite edge need a clamped closest point?
 
 <details><summary>A few answers</summary>
 
-Distance measurement; Proximity hover.
+Edge snapping, a short slider track, or measuring from a part to a rail.
 
 </details>

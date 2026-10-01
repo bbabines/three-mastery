@@ -29,7 +29,8 @@ Try the scene. The readout changes when your function gives an answer.
 
 | Value | Space |
 | --- | --- |
-| Inputs and answer | World space unless named otherwise in the task. |
+| Hit point and triangle corners | World space |
+| Corner UVs and returned UV | Texture coordinates, from 0 to 1 |
 
 ## Your code
 
@@ -41,7 +42,7 @@ npm run drill -- drills/2/queries/ray-triangle/apply-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The test blends three UVs at a point inside a sloped triangle and leaves the inputs unchanged.
 
 <details><summary>Hint</summary>
 
@@ -51,4 +52,6 @@ Barycentric weights blend any corner value, not only positions.
 
 ## Where else?
 
-Where else would the same code help? The concept card lists Exact picking, UV interpolation at a hit.
+Where else do three corner values blend at a surface point?
+
+<details><summary>A few answers</summary> Vertex colors, texture painting, or a hit-based effect. </details>

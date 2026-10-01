@@ -35,7 +35,7 @@ npm run drill -- drills/2/assets/gltf-structure/apply-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The test finds two nodes using one mesh index, ignores other nodes, and returns an empty list for a missing index.
 
 <details><summary>Hint</summary>
 
@@ -45,4 +45,6 @@ Nodes are instances in a hierarchy; a mesh is a reusable geometry definition.
 
 ## Where else?
 
-Where else would the same code help? The concept card lists Finding a part by node name, Explaining unexpected child meshes.
+Where else can several nodes refer to the same mesh data?
+
+<details><summary>A few answers</summary> Repeated rack parts, a material audit, or a scene-tree inspector. </details>

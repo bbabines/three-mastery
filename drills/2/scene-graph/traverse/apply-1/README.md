@@ -35,7 +35,7 @@ npm run drill -- drills/2/scene-graph/traverse/apply-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The test walks past an untagged parent and returns the nearest ancestor with a product ID.
 
 <details><summary>Hint</summary>
 
@@ -45,4 +45,6 @@ The clicked object is a mesh; its metadata may be several parents above.
 
 ## Where else?
 
-Where else would the same code help? The concept card lists Collecting meshes, Finding the product root from a clicked mesh.
+Where else does a hit mesh need a parent part ID?
+
+<details><summary>A few answers</summary> Picking a rack assembly, selecting a grouped item, or opening part details. </details>

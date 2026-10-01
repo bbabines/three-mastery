@@ -29,7 +29,9 @@ Try the scene. The readout changes when your function gives an answer.
 
 | Value | Space |
 | --- | --- |
-| Inputs and answer | World space unless named otherwise in the task. |
+| Ray and wall plane | World space |
+| Offset | World units along the wall normal |
+| Returned marker point | World space |
 
 ## Your code
 
@@ -41,7 +43,7 @@ npm run drill -- drills/2/queries/ray-plane/apply-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The test uses an angled wall and checks that the marker offset follows its normal.
 
 <details><summary>Hint</summary>
 
@@ -51,4 +53,6 @@ Offset along the plane normal, not a fixed world axis.
 
 ## Where else?
 
-Where else would the same code help? The concept card lists Dragging on a floor, Placement grid.
+Where else should an offset follow a surface normal?
+
+<details><summary>A few answers</summary> Wall labels, decal placement, or keeping a marker off a floor. </details>

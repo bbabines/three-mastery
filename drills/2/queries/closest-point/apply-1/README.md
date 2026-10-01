@@ -35,7 +35,7 @@ npm run drill -- drills/2/queries/closest-point/apply-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The test snaps before, inside, and beyond an angled segment without changing its endpoints.
 
 <details><summary>Hint</summary>
 
@@ -45,4 +45,6 @@ Line3.closestPointToPoint takes a flag that clamps to the segment.
 
 ## Where else?
 
-Where else would the same code help? The concept card lists Snapping to an edge, Proximity hover.
+Where else is a finite edge different from an endless line?
+
+<details><summary>A few answers</summary> Rail snapping, proximity hover, or a short drag track. </details>
