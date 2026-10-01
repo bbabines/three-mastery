@@ -7,14 +7,14 @@ export const workloads: SceneSetup = ({ scene, container }) => {
   const hierarchy = new Object3D();
   let node = hierarchy;
   for (let i = 0; i < 150; i++) { const next = new Object3D(); node.add(next); node = next; }
-  node.add(new Mesh(new PlaneGeometry(4,4), new MeshBasicMaterial()));
+  node.add(new Mesh(new PlaneGeometry(4,4), new MeshBasicMaterial({ color: 0x3b82f6, transparent: true, opacity: 0.65 })));
   scene.add(hierarchy);
   const dense = new Mesh(new PlaneGeometry(4,4,400,400), new MeshBasicMaterial());
   dense.updateMatrixWorld(true); // query-only mesh: don't render hundreds of thousands of triangles every frame
   scene.updateMatrixWorld(true);
   const ray = new Raycaster(new Vector3(0,0,5), new Vector3(0,0,-1));
   const readout = overlay(container, 'readout');
-  readout.textContent = 'Measure both workloads.';
+  readout.textContent = 'Blue: leaf under 150 nodes. Dense comparison mesh stays query-only. Measure both.';
   const controls = overlay(container, 'controls');
   const button = document.createElement('button');
   button.textContent = 'Measure';
