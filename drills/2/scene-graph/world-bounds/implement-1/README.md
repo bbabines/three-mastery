@@ -29,7 +29,8 @@ Try the scene. The readout changes when your function gives an answer.
 
 | Value | Space |
 | --- | --- |
-| Inputs and answer | World space unless named otherwise in the task. |
+| Child geometry and transforms | Local to each child and parent |
+| Tight box size | Lengths along world axes |
 
 ## Your code
 
@@ -41,7 +42,7 @@ npm run drill -- drills/2/scene-graph/world-bounds/implement-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The test compares a tight world box under a moved, turned, scaled parent, including a hidden child.
 
 <details><summary>Hint</summary>
 
@@ -51,4 +52,6 @@ The geometry bounding box alone is in local space.
 
 ## Where else?
 
-Where else would the same code help? The concept card lists Floor placement, Footprint measurement.
+Where else would a loose or local box make a bad decision?
+
+<details><summary>A few answers</summary> Camera fit, floor placement, or footprint measurement. </details>

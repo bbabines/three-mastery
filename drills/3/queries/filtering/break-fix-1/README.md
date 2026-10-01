@@ -9,15 +9,15 @@ lenses: []
 misconceptions: [queries.filtering/helpers-ignored]
 ---
 
-# Filtering: find the faulty result
+# Pick filtering: a helper steals the hit
 
 > **The job:** A helper box steals a pick from a selectable part.
 
 ## Task
 
-A helper box steals a pick from a selectable part. Each object has a world Box3 in userData.bounds; return the nearest box hit among objects tagged selectable.
+The ray crosses a helper before it reaches a selectable part. Each candidate has a world-space `Box3` in `userData.bounds`. Return the nearest hit whose `userData.selectable` is true, or `null` if there is none.
 
-Fix `selectableBoxHit` in `drill.ts`. The scene shows the current result alongside a reference; they should agree after the repair.
+Fix `selectableBoxHit` in `drill.ts`. The yellow wire box is a helper; the solid part should turn green when picked.
 
 <div data-scene="demo"></div>
 
@@ -29,7 +29,7 @@ Fix `drill.ts`, write one sentence in `cause.md`, and replace the placeholder in
 
 ## The check
 
-The acceptance test covers more than the scene pose. Your check must fail on the original bug and pass after the fix, using behavior instead of looking for a particular line of code.
+The test places a closer helper ahead of a selectable box and checks which object wins. Your check should include an unselectable object with a nearer hit.
 
 <details><summary>Hint</summary>
 
@@ -39,10 +39,10 @@ Which candidates are allowed to compete for the nearest hit?
 
 ## Where else?
 
-Where else would the same wrong assumption cause an error?
+Where else should a visible object be excluded from picking?
 
 <details><summary>A few answers</summary>
 
-Ignoring helpers; Ground-only placement.
+Editor handles, floor-only placement, or a ghost preview in front of a product.
 
 </details>

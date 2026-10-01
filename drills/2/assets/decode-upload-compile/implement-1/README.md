@@ -39,7 +39,7 @@ npm run drill -- drills/2/assets/decode-upload-compile/implement-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The test checks that initTexture receives the supplied texture once and that the same texture is returned.
 
 <details><summary>Hint</summary>
 
@@ -49,4 +49,6 @@ initTexture uploads a texture; compileAsync handles shader programs.
 
 ## Where else?
 
-Where else would the same code help? The concept card lists Variant switch, Pre-warming with compileAsync.
+Where else would an early texture upload matter?
+
+<details><summary>A few answers</summary> A likely next swatch, a new product decal, or a first-use thumbnail. </details>

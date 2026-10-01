@@ -39,7 +39,7 @@ npm run drill -- drills/2/queries/bvh/apply-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The test counts a missed box but skips its children, and stops at the root when the ray points away.
 
 <details><summary>Hint</summary>
 
@@ -49,4 +49,6 @@ Measure the work done by the tree, not just the leaves returned.
 
 ## Where else?
 
-Where else would the same code help? The concept card lists High-poly picking, Shape casts.
+Where else can pruning a missed branch save many tests?
+
+<details><summary>A few answers</summary> Dense mesh picking, shape casts, or collision broad phases. </details>

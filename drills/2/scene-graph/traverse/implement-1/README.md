@@ -35,7 +35,7 @@ npm run drill -- drills/2/scene-graph/traverse/implement-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The test keeps a nested visible mesh, skips a hidden subtree, and checks that the child list is unchanged.
 
 <details><summary>Hint</summary>
 
@@ -45,4 +45,6 @@ Use the traversal variant that stops at a hidden parent.
 
 ## Where else?
 
-Where else would the same code help? The concept card lists Collecting meshes, Applying an override.
+Where else should hidden branches be skipped during a walk?
+
+<details><summary>A few answers</summary> Applying visible-only overrides, auditing a view, or collecting pick targets. </details>

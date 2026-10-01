@@ -9,15 +9,15 @@ lenses: []
 misconceptions: [scene-graph.clone-semantics/clone-color-only]
 ---
 
-# Clone semantics: find the faulty result
+# Clone: changing one finish changes both parts
 
 > **The job:** Changing a cloned variant’s material color also changes the original part.
 
 ## Task
 
-Changing a cloned variant’s material color also changes the original part. Return a variant whose material can be edited independently.
+The viewer duplicates a part, then changes the copy's finish. Return a variant whose material can be edited without recoloring the source. Sharing its geometry is fine.
 
-Fix `variant` in `drill.ts`. The scene shows the current result alongside a reference; they should agree after the repair.
+Fix `variant` in `drill.ts`. In the scene, the left box should stay blue when the right box turns yellow.
 
 <div data-scene="demo"></div>
 
@@ -29,7 +29,7 @@ Fix `drill.ts`, write one sentence in `cause.md`, and replace the placeholder in
 
 ## The check
 
-The acceptance test covers more than the scene pose. Your check must fail on the original bug and pass after the fix, using behavior instead of looking for a particular line of code.
+The test changes the copy's material color and checks that the source keeps its original color. Your check should do the same with a different source color.
 
 <details><summary>Hint</summary>
 
@@ -39,10 +39,10 @@ After cloning, which objects still share their material, and which should own a 
 
 ## Where else?
 
-Where else would the same wrong assumption cause an error?
+Where else could a shared material make one edit change several parts?
 
 <details><summary>A few answers</summary>
 
-Variant duplication; Memory audit.
+Recoloring one rack part, changing one sale swatch, or highlighting one selected instance.
 
 </details>

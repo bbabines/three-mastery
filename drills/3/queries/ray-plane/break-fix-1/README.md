@@ -9,15 +9,15 @@ lenses: []
 misconceptions: [queries.ray-plane/every-ray-hits]
 ---
 
-# Ray plane: find the faulty result
+# Ray and plane: a marker behind the pointer
 
 > **The job:** A floor-drag marker appears even when the pointer ray points away from the floor.
 
 ## Task
 
-A floor-drag marker appears even when the pointer ray points away from the floor. Return the forward ray–plane hit, or null when there is no hit.
+A floor drag puts a marker on the plane even when the pointer ray points away. `planeHit` should return the forward ray-plane hit, or `null` for a parallel ray or a hit behind the origin.
 
-Fix `planeHit` in `drill.ts`. The scene shows the current result alongside a reference; they should agree after the repair.
+Fix `planeHit` in `drill.ts`. Switch between rays toward and away from the blue plane. Only the first should show a yellow hit.
 
 <div data-scene="demo"></div>
 
@@ -29,7 +29,7 @@ Fix `drill.ts`, write one sentence in `cause.md`, and replace the placeholder in
 
 ## The check
 
-The acceptance test covers more than the scene pose. Your check must fail on the original bug and pass after the fix, using behavior instead of looking for a particular line of code.
+The test checks a forward hit and a ray pointing away. Your check should reject a projected point when the ray has no forward intersection.
 
 <details><summary>Hint</summary>
 
@@ -39,10 +39,10 @@ Can the plane projection of the origin lie behind the ray?
 
 ## Where else?
 
-Where else would the same wrong assumption cause an error?
+Where else can a plane be present but unreachable by the ray?
 
 <details><summary>A few answers</summary>
 
-Placement grid; Measuring.
+Wall placement, a floor grid, or measuring along a pointing ray.
 
 </details>

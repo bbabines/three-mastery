@@ -1,16 +1,29 @@
-import { attempt, ball, COLORS, overlay } from '@harness/lesson';
+import { attempt, COLORS, line, overlay, setLine } from '@harness/lesson';
 import type { SceneSetup } from '@harness/scene';
 import * as THREE from 'three';
 import { selectableBoxHit } from './drill';
 
 export const demo: SceneSetup = ({ scene, camera, controls, container }) => {
-  camera.position.set(3,3,5); controls.target.set(0,0.5,0);
-  const subject = new THREE.Mesh(new THREE.BoxGeometry(),new THREE.MeshStandardMaterial({color:COLORS.blue}));
-  const marker = ball(COLORS.yellow); subject.position.y=0.5; marker.position.x=1.5; marker.position.y=0.5; scene.add(subject,marker);
-  const readout=overlay(container,'readout');
-  subject.name='selectable part'; subject.userData.selectable=true;
-  subject.userData.bounds=new THREE.Box3(new THREE.Vector3(-1,-1,-1),new THREE.Vector3(1,1,1));
-  marker.name='helper'; marker.userData.bounds=new THREE.Box3(new THREE.Vector3(-1,-1,2),new THREE.Vector3(1,1,3));
-  const got=attempt('selectableBoxHit',()=>selectableBoxHit(new THREE.Ray(new THREE.Vector3(0,0,5),new THREE.Vector3(0,0,-1)),[marker,subject]));
-  readout.textContent=got.ok?`your pick: ${got.value?.name ?? 'none'}\nreference: selectable part`:got.note;
+  camera.position.set(4, 4, 8);
+  controls.target.set(0, 0.6, 0);
+  const helper = new THREE.Mesh(new THREE.BoxGeometry(1.2, 1.2, 0.5), new THREE.MeshBasicMaterial({ color: COLORS.yellow, wireframe: true }));
+  helper.position.set(0, 0.8, 2);
+  helper.name = 'helper';
+  helper.userData.bounds = new THREE.Box3().setFromObject(helper);
+  const part = new THREE.Mesh(new THREE.BoxGeometry(1.2, 1.2, 0.5), new THREE.MeshStandardMaterial({ color: COLORS.blue }));
+  part.position.set(0, 0.8, -1);
+  part.name = 'selectable part';
+  part.userData.selectable = true;
+  part.userData.bounds = new THREE.Box3().setFromObject(part);
+  scene.add(helper, part);
+  const ray = new THREE.Ray(new THREE.Vector3(0, 0.8, 5), new THREE.Vector3(0, 0, -1));
+  const path = line(COLORS.white);
+  setLine(path, ray.origin, ray.at(7, new THREE.Vector3()));
+  scene.add(path);
+  const got = attempt('selectableBoxHit', () => selectableBoxHit(ray, [helper, part]));
+  if (got.ok && got.value === part) (part.material as THREE.MeshStandardMaterial).color.set(COLORS.green);
+  const readout = overlay(container, 'readout');
+  readout.textContent = got.ok
+    ? `yellow wire box: closer helper\nblue/green box: selectable part\nyour pick: ${got.value?.name ?? 'none'} | expected: selectable part`
+    : got.note;
 };

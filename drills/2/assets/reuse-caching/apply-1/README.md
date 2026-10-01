@@ -40,7 +40,7 @@ npm run drill -- drills/2/assets/reuse-caching/apply-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The tests require one promise and one load for repeated URLs, then choose a likely preload within the byte budget.
 
 <details><summary>Hint</summary>
 
@@ -50,4 +50,6 @@ Cache the Promise immediately so two callers before completion still share one r
 
 ## Where else?
 
-Where else would the same code help? The concept card lists Repeated parts, Duplicate-load leaks.
+Where else should repeated asset requests share pending work?
+
+<details><summary>A few answers</summary> Duplicate rack parts, swatch variants, or a likely next model. </details>

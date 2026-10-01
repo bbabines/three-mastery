@@ -1,15 +1,42 @@
-import { attempt, ball, COLORS, overlay } from '@harness/lesson';
+import { attempt, ball, COLORS, line, overlay, setLine } from '@harness/lesson';
 import type { SceneSetup } from '@harness/scene';
 import * as THREE from 'three';
 import { uvAtHit } from './drill';
 
 export const demo: SceneSetup = ({ scene, camera, controls, container }) => {
-  camera.position.set(3,3,5); controls.target.set(0,0.5,0);
-  const subject = new THREE.Mesh(new THREE.BoxGeometry(),new THREE.MeshStandardMaterial({color:COLORS.blue}));
-  const marker = ball(COLORS.yellow); subject.position.y=0.5; marker.position.x=1.5; marker.position.y=0.5; scene.add(subject,marker);
-  const readout=overlay(container,'readout');
-
-  const got=attempt('uvAtHit',()=>uvAtHit(new THREE.Ray(new THREE.Vector3(0.5,0.5,2),new THREE.Vector3(0,0,-1)),new THREE.Vector3(),new THREE.Vector3(2,0,0),new THREE.Vector3(0,2,0),new THREE.Vector2(),new THREE.Vector2(1,0),new THREE.Vector2(0,1)));
-  const want=new THREE.Vector2(0.25,0.25);
-  readout.textContent=got.ok?`your result: ${JSON.stringify(got.value)?.slice(0,100)}\nreference: ${JSON.stringify(want)?.slice(0,100)}`:got.note;
+  camera.position.set(4, 3, 7);
+  controls.target.set(1, 1, 0);
+  const a = new THREE.Vector3(0, 0.5, 0), b = new THREE.Vector3(2, 0.5, 0), c = new THREE.Vector3(0, 2.5, 0);
+  const geometry = new THREE.BufferGeometry().setFromPoints([a, b, c]);
+  geometry.setIndex([0, 1, 2]);
+  scene.add(new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({ color: COLORS.blue, side: THREE.DoubleSide, transparent: true, opacity: 0.45 })));
+  const ray = new THREE.Ray(new THREE.Vector3(0.5, 1, 2), new THREE.Vector3(0, 0, -1));
+  const path = line(COLORS.white);
+  setLine(path, ray.origin, ray.at(3, new THREE.Vector3()));
+  scene.add(path);
+  const hit = ball(COLORS.white);
+  hit.position.set(0.5, 1, 0);
+  scene.add(hit);
+  const uva = new THREE.Vector2(0, 0), uvb = new THREE.Vector2(1, 0), uvc = new THREE.Vector2(0, 1);
+  const got = attempt('uvAtHit', () => uvAtHit(ray, a, b, c, uva, uvb, uvc));
+  const uvOrigin = new THREE.Vector3(2.8, 0.5, 0);
+  const uvCorners = [uvOrigin, uvOrigin.clone().add(new THREE.Vector3(2, 0, 0)), uvOrigin.clone().add(new THREE.Vector3(0, 2, 0))];
+  for (let i = 0; i < 3; i++) {
+    const edge = line(COLORS.green);
+    setLine(edge, uvCorners[i], uvCorners[(i + 1) % 3]);
+    scene.add(edge);
+  }
+  const expected = new THREE.Vector2(0.25, 0.25);
+  const yellow = ball(COLORS.yellow);
+  yellow.position.set(uvOrigin.x + expected.x * 2, uvOrigin.y + expected.y * 2, 0);
+  scene.add(yellow);
+  if (got.ok && got.value) {
+    const red = ball(COLORS.red);
+    red.position.set(uvOrigin.x + got.value.x * 2, uvOrigin.y + got.value.y * 2, 0);
+    scene.add(red);
+  }
+  const readout = overlay(container, 'readout');
+  readout.textContent = got.ok
+    ? `left: triangle hit | right: UV position\nyellow: interpolated UV | red: your UV\nyours: ${got.value ? got.value.toArray().map((n) => n.toFixed(2)).join(', ') : 'no hit'}`
+    : got.note;
 };

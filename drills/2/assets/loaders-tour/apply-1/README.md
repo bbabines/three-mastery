@@ -36,7 +36,7 @@ npm run drill -- drills/2/assets/loaders-tour/apply-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The tests distinguish Draco from Meshopt extensions and keep loading, ready, and failed states separate.
 
 <details><summary>Hint</summary>
 
@@ -46,4 +46,6 @@ GLTFLoader requires a decoder for files that declare KHR_draco_mesh_compression.
 
 ## Where else?
 
-Where else would the same code help? The concept card lists A compressed product model, A lookup table as a DataTexture.
+Where else does a loader need both setup and an honest state?
+
+<details><summary>A few answers</summary> A compressed product model, a missing environment map, or a failed swatch. </details>

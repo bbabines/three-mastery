@@ -35,7 +35,7 @@ npm run drill -- drills/2/scene-graph/clone-semantics/implement-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The test recolors the copy and checks that its material is separate, its geometry is shared, and the source stays blue.
 
 <details><summary>Hint</summary>
 
@@ -45,4 +45,6 @@ Object3D.clone shares geometry and material by default. Clone only the material 
 
 ## Where else?
 
-Where else would the same code help? The concept card lists Per-instance color bug, Memory audit.
+Where else could editing a clone unexpectedly change its source?
+
+<details><summary>A few answers</summary> A single part highlight, a finish preview, or a copied scene prop. </details>

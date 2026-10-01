@@ -39,7 +39,7 @@ npm run drill -- drills/2/queries/bvh/implement-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The test keeps hit leaves on both sides, then prunes the branch behind a second ray.
 
 <details><summary>Hint</summary>
 
@@ -49,4 +49,6 @@ A BVH is useful when you stop descending as soon as a node box misses.
 
 ## Where else?
 
-Where else would the same code help? The concept card lists High-poly picking, Collision queries.
+Where else can a bounds tree narrow a large search?
+
+<details><summary>A few answers</summary> Terrain picking, dense product meshes, or spatial collision queries. </details>

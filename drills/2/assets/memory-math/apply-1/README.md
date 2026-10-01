@@ -39,7 +39,7 @@ npm run drill -- drills/2/assets/memory-math/apply-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The test adds every mip level across two differently sized textures and checks the input list stays unchanged.
 
 <details><summary>Hint</summary>
 
@@ -49,4 +49,6 @@ A mip chain continues until width and height are both one.
 
 ## Where else?
 
-Where else would the same code help? The concept card lists A model's footprint, Mobile tab crashes.
+Where else would a set of textures exceed a memory budget?
+
+<details><summary>A few answers</summary> Variant libraries, mobile tabs, or several visible decals. </details>

@@ -35,7 +35,7 @@ npm run drill -- drills/2/scene-graph/clone-semantics/apply-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The test checks every cloned mesh: geometry stays shared, while single and array materials are independent.
 
 <details><summary>Hint</summary>
 
@@ -45,4 +45,6 @@ A deep Object3D clone makes new nodes, but their geometry and materials still po
 
 ## Where else?
 
-Where else would the same code help? The concept card lists Per-instance color bug, Variant duplication.
+Where else must copies share shape but keep separate finishes?
+
+<details><summary>A few answers</summary> Repeated parts, a selected highlight, or color variants. </details>

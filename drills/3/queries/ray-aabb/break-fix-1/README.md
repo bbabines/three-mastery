@@ -9,15 +9,15 @@ lenses: []
 misconceptions: []
 ---
 
-# Ray aabb: find the faulty result
+# Rotated box: the world ray misses
 
 > **The job:** A click misses a rotated part because its local axis-aligned box is tested against a world ray.
 
 ## Task
 
-A click misses a rotated part because its local axis-aligned box is tested against a world ray. Return the first world-space surface point on the rotated box.
+A part's box is in its own space, while the pointer ray is in world space. Use `boxToWorld` to bring them into one space for the test. Return the first forward hit in world space, or `null` on a miss.
 
-Fix `rotatedBoxHit` in `drill.ts`. The scene shows the current result alongside a reference; they should agree after the repair.
+Fix `rotatedBoxHit` in `drill.ts`. The yellow dot marks the world-space entry on the wire box; your hit is red.
 
 <div data-scene="demo"></div>
 
@@ -29,7 +29,7 @@ Fix `drill.ts`, write one sentence in `cause.md`, and replace the placeholder in
 
 ## The check
 
-The acceptance test covers more than the scene pose. Your check must fail on the original bug and pass after the fix, using behavior instead of looking for a particular line of code.
+The test turns and moves the box before sending a ray through it. Your check should reject a point that is still in the box's local space.
 
 <details><summary>Hint</summary>
 
@@ -39,10 +39,10 @@ Are the ray and the box expressed in the same coordinate frame?
 
 ## Where else?
 
-Where else would the same wrong assumption cause an error?
+Where else must a query and its target use the same space?
 
 <details><summary>A few answers</summary>
 
-Early-out; Grid lookup.
+Rotated part picking, a local collision proxy, or a box test inside a BVH.
 
 </details>

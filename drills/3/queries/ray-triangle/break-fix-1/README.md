@@ -9,15 +9,15 @@ lenses: []
 misconceptions: [queries.ray-triangle/barycentric-hit-only]
 ---
 
-# Ray triangle: find the faulty result
+# Triangle hit: the paint lands at a vertex
 
 > **The job:** Painting a triangle stamps the nearest vertex UV instead of the UV at the exact hit.
 
 ## Task
 
-Painting a triangle stamps the nearest vertex UV instead of the UV at the exact hit. Interpolate the three UVs using the ray hit’s barycentric weights.
+A ray hits inside a triangle, but the paint stamp uses one vertex's UV. Find the ray's point on the triangle, then blend its three vertex UVs using the hit's barycentric weights. Return `null` on a miss.
 
-Fix `uvAtHit` in `drill.ts`. The scene shows the current result alongside a reference; they should agree after the repair.
+Fix `uvAtHit` in `drill.ts`. The left shape shows the hit. On the right, the yellow dot is the blended UV; yours is red.
 
 <div data-scene="demo"></div>
 
@@ -29,7 +29,7 @@ Fix `drill.ts`, write one sentence in `cause.md`, and replace the placeholder in
 
 ## The check
 
-The acceptance test covers more than the scene pose. Your check must fail on the original bug and pass after the fix, using behavior instead of looking for a particular line of code.
+The test hits between three distinct UVs and checks the blended result. Your check should reject simply returning any one vertex's UV.
 
 <details><summary>Hint</summary>
 
@@ -39,10 +39,10 @@ What do the hit point’s three barycentric weights tell you about UVs?
 
 ## Where else?
 
-Where else would the same wrong assumption cause an error?
+Where else do values at a hit need all three triangle corners?
 
 <details><summary>A few answers</summary>
 
-Exact picking; Back-face handling.
+Painting a texture, interpolating vertex colors, or reading a surface coordinate.
 
 </details>

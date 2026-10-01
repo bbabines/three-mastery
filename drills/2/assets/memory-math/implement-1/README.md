@@ -39,7 +39,7 @@ npm run drill -- drills/2/assets/memory-math/implement-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The test counts a shared interleaved array once and includes the index array bytes.
 
 <details><summary>Hint</summary>
 
@@ -49,4 +49,6 @@ Use each array's byteLength, not its element count; interleaved attributes share
 
 ## Where else?
 
-Where else would the same code help? The concept card lists A model's footprint, Comparing variants.
+Where else would counting the same buffer twice mislead an audit?
+
+<details><summary>A few answers</summary> Imported geometry, shared vertex attributes, or variant comparisons. </details>

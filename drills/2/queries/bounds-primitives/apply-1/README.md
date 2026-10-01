@@ -30,7 +30,9 @@ Try the scene. The readout changes when your function gives an answer.
 
 | Value | Space |
 | --- | --- |
-| Inputs and answer | World space unless named otherwise in the task. |
+| Plane and point | World space |
+| Rotated mesh | Geometry in its own space; transform in the scene |
+| Box size | Lengths along world axes |
 
 ## Your code
 
@@ -42,7 +44,7 @@ npm run drill -- drills/2/queries/bounds-primitives/apply-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The tests use both signs of plane distance and measure the expanded AABB of a turned box.
 
 <details><summary>Hint</summary>
 
@@ -52,4 +54,6 @@ Plane distance is signed. A world AABB stays aligned with the axes, so turning e
 
 ## Where else?
 
-Where else would the same code help? The concept card lists Visibility, Trigger volumes.
+Where else do signed distances or rotated bounds decide a result?
+
+<details><summary>A few answers</summary> Placement zones, trigger volumes, or a visibility check. </details>

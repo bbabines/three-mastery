@@ -35,7 +35,7 @@ npm run drill -- drills/2/assets/gltf-structure/implement-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The test counts three primitives in one glTF mesh, one in another, and zero for a missing index.
 
 <details><summary>Hint</summary>
 
@@ -45,4 +45,6 @@ The mesh definition contains a primitives array. Each primitive has its own geom
 
 ## Where else?
 
-Where else would the same code help? The concept card lists Auditing material assignments, Explaining unexpected child meshes.
+Where else does one glTF mesh contain several drawable pieces?
+
+<details><summary>A few answers</summary> Material assignments, unexpected child meshes, or an asset audit. </details>
