@@ -10,7 +10,9 @@ export const demo: SceneSetup = ({ scene, camera, controls, container }) => {
   const geometry = new THREE.BufferGeometry();
   geometry.setAttribute('position', positions);
   geometry.computeVertexNormals();
-  scene.add(new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({ color: COLORS.gray, side: THREE.DoubleSide })));
+  const triangle = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({ color: COLORS.gray, side: THREE.DoubleSide }));
+  triangle.position.y = 0.5;
+  scene.add(triangle);
   const marker = (color: string) => new THREE.Mesh(new THREE.SphereGeometry(0.16), new THREE.MeshBasicMaterial({ color, depthTest: false }));
   const yours = marker(COLORS.blue);
   const reference = marker(COLORS.yellow);
@@ -21,10 +23,10 @@ export const demo: SceneSetup = ({ scene, camera, controls, container }) => {
   const update = (index: number) => {
     const expected = new THREE.Vector3(positions.getX(index), positions.getY(index), positions.getZ(index));
     const result = attempt('vertexAt', () => vertexAt(positions, index));
-    reference.position.copy(expected);
+    reference.position.copy(expected).add(triangle.position);
     yours.visible = result.ok;
     if (!result.ok) { readout.textContent = result.note; return; }
-    yours.position.copy(result.value);
+    yours.position.copy(result.value).add(triangle.position);
     readout.textContent = `vertex ${index} · blue: your marker · yellow: reference\nyour XYZ ${result.value.toArray().map(n => n.toFixed(1)).join(', ')}`;
   };
   choiceButtons(controlsBar, [
