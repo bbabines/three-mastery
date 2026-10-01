@@ -14,7 +14,7 @@ misconceptions: [debugging.reading-matrices/set-order]
 
 ## Task
 
-The generated inspector takes the values from the last column as printed in row-major notation. Its output stays zero after moving the part. Return the translation held in Matrix4.elements, which uses column-major storage.
+The generated inspector takes the values from the last column as printed in a matrix diagram. Its output stays zero after moving the part. Return the current translation from `Matrix4.elements`.
 
 Review the proposed code in `drill.ts`. State the faulty assumption and its effect in `cause.md`, then repair the code. Run the acceptance check to prove the behavior.
 
