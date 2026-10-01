@@ -7,6 +7,7 @@ const triangle = (indexed: boolean) => {
   const geometry = new BufferGeometry();
   geometry.setAttribute('position',new Float32BufferAttribute([0,0,0, 1,0,0, 0,1,0],3));
   geometry.setAttribute('uv',new Float32BufferAttribute([0,0, 1,0, 0,1],2));
+  geometry.setAttribute('vertexTag',new Float32BufferAttribute([10,20,30],1));
   if(indexed) geometry.setIndex([0,1,2]);
   return geometry;
 };
@@ -28,6 +29,8 @@ describe('mirrored baked geometry', () => {
     } else {
       expect(baked.attributes.uv.getY(1)).toBe(1);
       expect(baked.attributes.uv.getX(2)).toBe(1);
+      expect(baked.attributes.vertexTag.getX(1)).toBe(30);
+      expect(baked.attributes.vertexTag.getX(2)).toBe(20);
     }
   });
 });

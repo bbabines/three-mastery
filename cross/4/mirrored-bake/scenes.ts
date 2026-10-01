@@ -1,10 +1,13 @@
-import { BoxGeometry, Matrix4, Mesh, MeshBasicMaterial } from 'three';
+import { BufferGeometry, Float32BufferAttribute, Matrix4, Mesh, MeshBasicMaterial } from 'three';
 import { attempt, label, overlay } from '@harness/lesson';
 import type { SceneSetup } from '@harness/scene';
 import { bakeMirror } from './drill';
 
 export const mirror: SceneSetup = ({ scene, container }) => {
-  const source = new BoxGeometry(1,1,1);
+  // An open, asymmetric front face makes reversed winding disappear from this view.
+  const source = new BufferGeometry();
+  source.setAttribute('position', new Float32BufferAttribute([-0.6,-0.5,0, 0.8,-0.3,0, -0.2,0.7,0], 3));
+  source.setIndex([0,1,2]);
   const original = new Mesh(source, new MeshBasicMaterial({ color: 0x3b82f6 }));
   original.position.set(-1.3, 1, 0);
   scene.add(original);

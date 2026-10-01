@@ -37,4 +37,20 @@ describe('twenty finish swaps', () => {
     expect(answered(swapFinish(mesh,next,new Set(),new Set()))).toBe(true);
     expect(disposed).toBe(0);
   });
+  it('tracks owned maps across every standard-material slot', () => {
+    const shared = new Texture(), oldOnly = new Texture();
+    const old = new MeshStandardMaterial({aoMap: shared, emissiveMap: oldOnly});
+    const next = new MeshStandardMaterial({map: shared});
+    const mesh = new Mesh(undefined, old);
+    const ownedMaterials = new Set([old, next]);
+    const ownedTextures = new Set([shared, oldOnly]);
+    let sharedDisposals = 0, oldOnlyDisposals = 0;
+    shared.addEventListener('dispose', () => sharedDisposals++);
+    oldOnly.addEventListener('dispose', () => oldOnlyDisposals++);
+    answered(swapFinish(mesh, next, ownedMaterials, ownedTextures));
+    expect(oldOnlyDisposals).toBe(1);
+    expect(sharedDisposals).toBe(0);
+    answered(swapFinish(mesh, new MeshStandardMaterial(), ownedMaterials, ownedTextures));
+    expect(sharedDisposals).toBe(1);
+  });
 });
