@@ -4,7 +4,7 @@ loop: 3
 tier: core
 concepts: [transforms.matrix-vs-matrixworld, transforms.add-vs-attach]
 mode: break-and-fix
-context: transforms.matrix-vs-matrixworld/reparenting
+context: transforms.add-vs-attach/pick-up
 lenses: [space]
 misconceptions: [transforms.add-vs-attach/reparent-no-move]
 ---

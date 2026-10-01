@@ -1,0 +1,1 @@
+The variant callback allocated a new pixel buffer and GPU texture for every color change, then abandoned the previous texture. Updating the existing texture through scratch bytes keeps both heap allocation and GPU texture count stable.

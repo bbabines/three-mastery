@@ -1,0 +1,1 @@
+The code multiplied a CSS-pixel pointer delta by device pixel ratio before comparing with a CSS-pixel threshold. Pointer events already report CSS pixels, so that multiplication misclassifies taps on dense screens.

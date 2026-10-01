@@ -97,6 +97,12 @@
       .mark-done button { background: #22252c; border: 1px solid #3a3f4a; color: #d8dbe2; border-radius: 6px; padding: 6px 14px; cursor: pointer; }
       .mark-done button:disabled { opacity: 0.6; cursor: default; }
       .problem { color: #ef4444; }
+      [data-teach-back] { display: grid; gap: 10px; margin: 16px 0; }
+      [data-teach-back] textarea { box-sizing: border-box; width: 100%; resize: vertical; padding: 10px; color: #d8dbe2; background: #1c1f25; border: 1px solid #3a3f4a; border-radius: 6px; font: inherit; }
+      [data-teach-back] button { justify-self: start; padding: 6px 12px; color: #d8dbe2; background: #22252c; border: 1px solid #3a3f4a; border-radius: 6px; cursor: pointer; }
+      [data-teach-back] button:disabled { opacity: 0.6; cursor: default; }
+      [data-teach-back] [role="status"] { margin: 0; color: #8a8f99; }
+      [data-teach-back] .teach-back-points { padding: 4px 14px; background: #1c1f25; border-radius: 6px; }
       @media (max-width: 900px) {
         body { grid-template-columns: minmax(0, 1fr); }
         nav { position: static; height: auto; border-right: none; border-bottom: 1px solid #2c2f36; }

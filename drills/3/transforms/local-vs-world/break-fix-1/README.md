@@ -4,7 +4,7 @@ loop: 3
 tier: core
 concepts: [transforms.object3d-tour, transforms.local-vs-world]
 mode: break-and-fix
-context: transforms.local-vs-world/light-on-part
+context: transforms.local-vs-world/world-position
 lenses: [space]
 misconceptions: [transforms.local-vs-world/position-is-world]
 ---
