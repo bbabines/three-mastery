@@ -4,17 +4,17 @@ loop: 4
 tier: core
 concepts: [queries.intersection-anatomy]
 mode: ai-review
-context: queries.intersection-anatomy/orient-marker
+context: queries.intersection-anatomy/paint-uv
 lenses: []
 misconceptions: []
 ---
-# AI review: a click misses a part that just moved
+# AI review: a paint click misses a part that just moved
 
-> **The job:** Raycast a moved part in the same update tick.
+> **The job:** Raycast a moved paint target in the same update tick.
 
 ## Task
 
-The generated picker works until code moves an object immediately before asking for a hit. Update the object’s world transform before intersecting it. Return whether the ray hits its current position.
+The generated picker works until code moves a paintable object immediately before asking for a hit. The painter needs a current hit before it can use the hit's UV; this helper returns whether the ray reaches the object at its new position. Update its world transform before intersecting it.
 
 Review the proposed code in `drill.ts`. State the faulty assumption and its effect in `cause.md`, then repair the code. Run the acceptance check to prove the behavior.
 

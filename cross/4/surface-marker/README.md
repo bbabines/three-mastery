@@ -2,9 +2,9 @@
 id: 4.transforms.normal-matrix.cross.1
 loop: 4
 tier: core
-concepts: [transforms.normal-matrix, geometry.face-normals, queries.intersection-anatomy]
+concepts: [transforms.normal-matrix, geometry.face-normals, queries.intersection-anatomy, math.normalize]
 mode: cross-domain
-context: transforms.normal-matrix/face-normal-world
+context: math.normalize/surface-normal
 lenses: [space]
 misconceptions: []
 ---
@@ -15,7 +15,7 @@ misconceptions: []
 
 ## Task
 
-A raycast hit provides `hit.face.normal` in the mesh's local space. Write `markerNormal(localNormal, mesh)` to give a length-1 world normal for a marker. The mesh may sit inside a turned, unevenly stretched parent. Update its world matrix. Do not change the input normal.
+A raycast hit provides `hit.face.normal` in the mesh's local space. Write `markerNormal(localNormal, mesh)` to give a length-1 world normal for a marker. The mesh may sit inside a turned, unevenly stretched parent. Update its world matrix, then normalize the transformed normal. Do not change the input normal.
 
 <div data-scene="marker"></div>
 

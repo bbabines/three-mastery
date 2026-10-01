@@ -4,7 +4,7 @@ loop: 4
 tier: core
 concepts: [scene-graph.world-bounds]
 mode: teach-back
-context: scene-graph.world-bounds/camera-fit
+context: scene-graph.world-bounds/floor-placement
 lenses: []
 misconceptions: []
 ---
@@ -15,7 +15,7 @@ misconceptions: []
 
 ## Task
 
-A camera should frame a product made of nested meshes. Explain which bounds to use and what can make the result loose or stale. No docs for this one. Write your answer in the box, then reveal the key points and compare. Nothing is graded.
+A nested product should rest on the floor without sinking a rotated child into it. Explain which world bounds to measure, how to use their bottom edge, and what can make the result loose or stale. No docs for this one. Write your answer in the box, then reveal the key points and compare. Nothing is graded.
 
 <div data-teach-back>
 <ol>
@@ -23,10 +23,10 @@ A camera should frame a product made of nested meshes. Explain which bounds to u
 <li>`Box3.setFromObject` covers the object and its children in world space.</li>
 <li>Hidden helpers and children can still affect those bounds.</li>
 <li>Update world matrices before reading the bounds.</li>
-<li>For a tighter fit under rotation, request precise bounds.</li>
+<li>Move the product by the difference between floor height and `bounds.min.y`; request precise bounds if rotation makes the box too loose.</li>
 </ol>
 </div>
 
 ## Where else?
 
-When could a cached bound miss a child moved by its parent?
+When should floor placement recalculate a child's world bounds?

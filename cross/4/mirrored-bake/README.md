@@ -2,9 +2,9 @@
 id: 4.geometry.winding-order.cross.1
 loop: 4
 tier: core
-concepts: [transforms.trs-order, geometry.winding-order, materials.materials-tour]
+concepts: [transforms.trs-order, geometry.winding-order, materials.materials-tour, transforms.negative-scale]
 mode: cross-domain
-context: geometry.winding-order/mirrored
+context: transforms.negative-scale/mirrored-import
 lenses: []
 misconceptions: []
 ---
@@ -15,7 +15,7 @@ misconceptions: []
 
 ## Task
 
-A negative-scale transform is baked into vertex data for a left-hand variant. Write `bakeMirror(geometry, transform)` to return a clone with the transform applied. If the transform reverses handedness, reverse each triangle's winding, for both indexed and non-indexed geometry. Swap every non-indexed vertex attribute together, so UVs and normals stay with their corners. Do not change the original.
+A negative-scale transform from an imported part is baked into vertex data for a left-hand variant. Write `bakeMirror(geometry, transform)` to return a clone with the transform applied. If the transform reverses handedness, reverse each triangle's winding, for both indexed and non-indexed geometry. Swap every non-indexed vertex attribute together, so UVs and normals stay with their corners. Do not change the original.
 
 <div data-scene="mirror"></div>
 

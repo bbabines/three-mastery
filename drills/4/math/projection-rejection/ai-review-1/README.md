@@ -4,18 +4,18 @@ loop: 4
 tier: core
 concepts: [math.projection-rejection]
 mode: ai-review
-context: math.projection-rejection/wall-slide
+context: math.projection-rejection/axis-constraint
 lenses: []
 misconceptions: []
 ---
 
 # AI review: a wall slide that changes its input
 
-> **The job:** Review a generated collision helper before accepting it in a movement system.
+> **The job:** Review the wall-contact stage of a rail-constrained drag before accepting it.
 
 ## Task
 
-The proposed `slideOnWall(velocity, wallNormal)` returns the part of a velocity along a wall. It produces the right result on one call, yet another system that reads the same velocity afterward behaves differently. Both vectors belong to the caller and must come back unchanged.
+Before a rail-constrained drag projects movement onto its rail, `slideOnWall(velocity, wallNormal)` removes movement into a guard wall. The proposed helper produces the right result on one call, yet the later rail stage reads a changed velocity. Both vectors belong to the caller and must come back unchanged.
 
 Read `drill.ts`, name the flaw in `cause.md`, then fix it. In `check.ts`, write a small regression assertion that rejects the original version and accepts the repair. Run the drill check; the scene shows the incoming and outgoing directions.
 

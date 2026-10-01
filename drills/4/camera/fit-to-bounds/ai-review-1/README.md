@@ -4,17 +4,17 @@ loop: 4
 tier: light
 concepts: [camera.fit-to-bounds]
 mode: ai-review
-context: camera.fit-to-bounds/focus-part
+context: camera.fit-to-bounds/thumbnails
 lenses: []
 misconceptions: [camera.fit-to-bounds/vertical-enough]
 ---
-# AI review: a narrow viewport clips the product
+# AI review: a portrait thumbnail clips the product
 
 > **The job:** Choose a camera distance that fits a sphere in either viewport dimension.
 
 ## Task
 
-The generated formula fits the model vertically on a wide viewport, but clips its sides in a narrow one. The arguments are sphere radius, vertical field of view in degrees, and width divided by height. Return the smallest safe center distance.
+The generated formula fits the model vertically in a wide thumbnail, but clips its sides in a narrow portrait thumbnail. The arguments are sphere radius, vertical field of view in degrees, and width divided by height. Return the smallest safe center distance.
 
 Review the proposed code in `drill.ts`. State the faulty assumption and its effect in `cause.md`, then repair the code. Run the acceptance check to prove the behavior.
 

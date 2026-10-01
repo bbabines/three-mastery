@@ -4,17 +4,17 @@ loop: 4
 tier: core
 concepts: [transforms.points-vs-directions]
 mode: ai-review
-context: transforms.points-vs-directions/velocity
+context: transforms.points-vs-directions/ray-direction
 lenses: []
 misconceptions: [transforms.points-vs-directions/apply-matrix-directions]
 ---
-# AI review: a velocity that follows the parent’s position
+# AI review: a ray direction that follows the parent’s position
 
-> **The job:** Convert a local movement direction to the direction it travels in the world.
+> **The job:** Convert a local ray direction to the direction it travels in the world.
 
 ## Task
 
-The generated helper works while the parent is at the origin. Moving the parent changes the answer even though its orientation is unchanged. Return a unit world direction. The input direction and object belong to the caller and must not change.
+The generated ray helper works while the parent is at the origin. Moving the parent changes the ray direction even though its orientation is unchanged. Return a unit world direction. The input direction and object belong to the caller and must not change.
 
 Review the proposed code in `drill.ts`. State the faulty assumption and its effect in `cause.md`, then repair the code. Run the acceptance check to prove the behavior.
 

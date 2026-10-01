@@ -4,7 +4,7 @@ loop: 4
 tier: core
 concepts: [debugging.triage]
 mode: teach-back
-context: debugging.triage/wrong-color
+context: debugging.triage/black-screen
 lenses: []
 misconceptions: []
 ---
@@ -15,13 +15,13 @@ misconceptions: []
 
 ## Task
 
-A product suddenly looks washed out. Explain how to narrow the cause before rewriting the shader. No docs for this one. Write your answer in the box, then reveal the key points and compare. Nothing is graded.
+A product viewer suddenly shows a black canvas after loading a variant. Explain how to narrow the cause before rewriting the shader. No docs for this one. Write your answer in the box, then reveal the key points and compare. Nothing is graded.
 
 <div data-teach-back>
 <ol>
 <li>First decide whether the fault is transform, geometry, material, camera, or pipeline.</li>
 <li>Use a simple known material to isolate material from geometry and camera.</li>
-<li>Check texture color space and tone mapping for a color problem.</li>
+<li>Check camera bounds, lighting, and material inputs before blaming the shader.</li>
 <li>Inspect actual inputs and intermediate outputs before changing many settings.</li>
 <li>Change one variable and compare against the original symptom.</li>
 </ol>

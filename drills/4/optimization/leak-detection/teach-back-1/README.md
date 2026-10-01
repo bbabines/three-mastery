@@ -4,7 +4,7 @@ loop: 4
 tier: core
 concepts: [optimization.leak-detection]
 mode: teach-back
-context: optimization.leak-detection/long-sessions
+context: optimization.leak-detection/spa-routes
 lenses: []
 misconceptions: []
 ---
@@ -15,7 +15,7 @@ misconceptions: []
 
 ## Task
 
-A viewer slows after many finish swaps. Explain a repeatable check for a resource leak and one limit of the counters. No docs for this one. Write your answer in the box, then reveal the key points and compare. Nothing is graded.
+A viewer slows after entering and leaving the product route many times. Explain a repeatable check for resources retained across route changes and one limit of the counters. No docs for this one. Write your answer in the box, then reveal the key points and compare. Nothing is graded.
 
 <div data-teach-back>
 <ol>
@@ -29,4 +29,4 @@ A viewer slows after many finish swaps. Explain a repeatable check for a resourc
 
 ## Where else?
 
-How would you test whether a route change leaves old textures resident?
+How would the same baseline check reveal a leak during finish swaps?

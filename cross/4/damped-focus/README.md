@@ -2,9 +2,9 @@
 id: 4.camera.fit-to-bounds.cross.1
 loop: 4
 tier: core
-concepts: [camera.fit-to-bounds, scene-graph.world-bounds, interaction.frame-rate-independence]
+concepts: [camera.fit-to-bounds, scene-graph.world-bounds, interaction.frame-rate-independence, interaction.interpolation-toolbox]
 mode: cross-domain
-context: camera.fit-to-bounds/focus-part
+context: interaction.interpolation-toolbox/focus-animation
 lenses: [space]
 misconceptions: []
 ---

@@ -4,17 +4,17 @@ loop: 4
 tier: light
 concepts: [scene-graph.finding-objects]
 mode: ai-review
-context: scene-graph.finding-objects/find-node
+context: scene-graph.finding-objects/group-by-material
 lenses: []
 misconceptions: [scene-graph.finding-objects/names-unique]
 ---
-# AI review: finding one of several matching parts
+# AI review: a material group loses matching parts
 
-> **The job:** Collect every matching part in a product hierarchy.
+> **The job:** Collect every matching part before grouping product hardware by material.
 
 ## Task
 
-The generated helper returns the first bolt named "fastener". A product with several branches needs all of them. Return every descendant with the requested name in traversal order, without changing the hierarchy.
+Before grouping hardware by material, the viewer collects every bolt named "fastener" across the product. The generated helper returns only the first one, so later branches never reach the grouping step. Return every descendant with the requested name in traversal order, without changing the hierarchy.
 
 Review the proposed code in `drill.ts`. State the faulty assumption and its effect in `cause.md`, then repair the code. Run the acceptance check to prove the behavior.
 

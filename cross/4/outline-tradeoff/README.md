@@ -4,7 +4,7 @@ loop: 4
 tier: core
 concepts: [gpu.multi-pass, gpu.stencil, materials.materials-tour, shaders.built-in-functions]
 mode: cross-domain
-context: gpu.multi-pass/selection-outline
+context: gpu.multi-pass/fxaa
 lenses: [cost]
 misconceptions: []
 ---
@@ -15,7 +15,7 @@ misconceptions: []
 
 ## Task
 
-A selection outline can redraw selected objects with stencil, or draw a mask and inspect its edges in a full-screen post pass. Write `outlineWork(selectedDraws, width, height, dpr)` to return the extra draw calls for each method and the pixels touched by the post pass. Count two selected-object draws for stencil, one selected-object mask draw plus one full-screen draw for post. These are work counts, not a prediction of frame time.
+A viewer already runs FXAA, and a selection outline can add work by redrawing selected objects with stencil or by drawing a mask and inspecting its edges in another full-screen pass. Write `outlineWork(selectedDraws, width, height, dpr)` to return the outline's extra draw calls for each method and the pixels touched by its post pass. Count two selected-object draws for stencil, one selected-object mask draw plus one full-screen draw for post. These counts exclude the existing FXAA pass and do not predict frame time.
 
 <div data-scene="outline"></div>
 

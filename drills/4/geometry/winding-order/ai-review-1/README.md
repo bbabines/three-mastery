@@ -4,7 +4,7 @@ loop: 4
 tier: core
 concepts: [geometry.winding-order]
 mode: ai-review
-context: geometry.winding-order/mirrored
+context: geometry.winding-order/double-side
 lenses: []
 misconceptions: [geometry.winding-order/normals-flip-culling]
 ---
@@ -14,7 +14,7 @@ misconceptions: [geometry.winding-order/normals-flip-culling]
 
 ## Task
 
-The generated code transforms the positions and normals, yet front-face culling hides the mirrored part. Return a clone of an indexed triangle geometry. Preserve its outward winding under a negative-determinant transform.
+The generated code transforms the positions and normals, yet front-face culling hides the mirrored part. Setting the material to `DoubleSide` would only mask the defect and shade both sides. Return a clone of an indexed triangle geometry with outward winding under a negative-determinant transform.
 
 Review the proposed code in `drill.ts`. State the faulty assumption and its effect in `cause.md`, then repair the code. Run the acceptance check to prove the behavior.
 

@@ -4,7 +4,7 @@ loop: 4
 tier: core
 concepts: [assets.gltf-structure, materials.pbr, materials.color-spaces, shaders.debug-output]
 mode: cross-domain
-context: materials.pbr/brushed
+context: materials.pbr/steel-coat-rubber
 lenses: []
 misconceptions: []
 ---
@@ -15,7 +15,7 @@ misconceptions: []
 
 ## Task
 
-A packed material map stores roughness in the green channel, as linear data. Write `roughnessDebug(packed)` to return a `ShaderMaterial` that draws that green channel as a raw grayscale value. Set the map's color space for data, not color. Use a tiny fragment view so you can tell a channel problem from a lighting problem.
+A powder-coated steel finish looks too glossy after import. Its packed material map stores roughness in the green channel, as linear data. Write `roughnessDebug(packed)` to return a `ShaderMaterial` that draws that green channel as a raw grayscale value. Set the map's color space for data, not color. Use a tiny fragment view to separate a channel problem from a lighting problem.
 
 <div data-scene="channels"></div>
 
