@@ -11,7 +11,7 @@ misconceptions: []
 
 # Focus on a clicked part with damped motion
 
-> **The job:** combine ideas from several domains in one small piece of code.
+> **The job:** Move the camera toward a clicked part at the same pace across frame rates.
 
 ## Task
 
@@ -41,10 +41,16 @@ The check uses a nested, moved part and compares one long update with two half u
 
 <details><summary>Hint</summary>
 
-Use the relevant three.js methods shown on the concept pages. Make the result observable before trying to optimize it.
+Fit the whole part before choosing a target. A fixed blend per frame changes speed when the frame rate changes.
 
 </details>
 
 ## Where else?
 
-Where else would this choice appear in an interactive 3D tool?
+Where else do bounds and time-based damping work together?
+
+<details><summary>A few answers</summary>
+
+Focusing a selected bone, framing an exploded component, or returning from a close detail view.
+
+</details>

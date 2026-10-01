@@ -11,7 +11,7 @@ misconceptions: []
 
 # Constant-size labels that hide when occluded
 
-> **The job:** combine ideas from several domains in one small piece of code.
+> **The job:** Keep a label the same screen size and hide it behind nearer geometry.
 
 ## Task
 
@@ -42,10 +42,16 @@ The check covers a visible point, one behind the camera, and a near blocker. It 
 
 <details><summary>Hint</summary>
 
-Use the relevant three.js methods shown on the concept pages. Make the result observable before trying to optimize it.
+Projection gives the screen position; visibility also depends on what lies between the camera and the point.
 
 </details>
 
 ## Where else?
 
-Where else would this choice appear in an interactive 3D tool?
+What other overlay needs both projection and an occlusion check?
+
+<details><summary>A few answers</summary>
+
+Product hotspots, building annotations, or a measurement marker anchored to a hidden part.
+
+</details>

@@ -11,7 +11,7 @@ misconceptions: []
 
 # Place a marker flush on a clicked surface
 
-> **The job:** make one decision that needs ideas from several parts of 3D work.
+> **The job:** Keep a clicked marker perpendicular to the face under uneven parent scale.
 
 ## Task
 
@@ -41,10 +41,16 @@ The check builds a sloped triangle under non-uniform scale and rotation, then pr
 
 <details><summary>Hint</summary>
 
-Use the relevant three.js method from the concept pages. Keep every value in the same space before combining it.
+A surface normal must stay perpendicular to both face edges after the transform. A plain direction transform can fail that test.
 
 </details>
 
 ## Where else?
 
-Where else would this same decision appear in a product viewer or tool?
+Where else does a local surface normal need a world-space conversion?
+
+<details><summary>A few answers</summary>
+
+Decal placement, surface-aligned tools, and highlights that follow a stretched model.
+
+</details>

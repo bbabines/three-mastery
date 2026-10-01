@@ -11,7 +11,7 @@ misconceptions: []
 
 # Raycast cost: deep hierarchy vs high triangle count
 
-> **The job:** combine ideas from several domains in one small piece of code.
+> **The job:** Measure whether picking cost comes from tree depth or triangle density.
 
 ## Task
 
@@ -37,10 +37,16 @@ The check verifies both branches are actually raycast the requested number of ti
 
 <details><summary>Hint</summary>
 
-Use the relevant three.js methods shown on the concept pages. Make the result observable before trying to optimize it.
+Keep the same ray and repeat count for both workloads; report the measurements before choosing an acceleration strategy.
 
 </details>
 
 ## Where else?
 
-Where else would this choice appear in an interactive 3D tool?
+Where would this comparison change a picking design?
+
+<details><summary>A few answers</summary>
+
+A deep product assembly, a scanned mesh, or hover selection over hundreds of parts.
+
+</details>

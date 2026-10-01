@@ -11,7 +11,7 @@ misconceptions: []
 
 # Roughness looks wrong on a packed map
 
-> **The job:** combine ideas from several domains in one small piece of code.
+> **The job:** Show packed roughness as raw grayscale before changing the lighting.
 
 ## Task
 
@@ -33,10 +33,16 @@ A browser check renders a one-pixel packed map whose channels differ and reads t
 
 <details><summary>Hint</summary>
 
-Use the relevant three.js methods shown on the concept pages. Check the behavior rather than only the code shape.
+Roughness is data in one packed channel. Color conversion would change the value being inspected.
 
 </details>
 
 ## Where else?
 
-Where else would this choice appear in a product viewer or tool?
+Which other packed channels benefit from a direct debug view?
+
+<details><summary>A few answers</summary>
+
+Metalness, ambient occlusion, or an object-ID mask.
+
+</details>
