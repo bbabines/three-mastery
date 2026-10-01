@@ -38,7 +38,7 @@ npm run drill -- drills/2/shaders/attributes-uniforms-varyings/implement-1
 
 ## The check
 
-The Node test checks UV varying and time uniform wiring; the browser test checks compilation and drawing.
+The Node test checks UV varying and time uniform wiring. The browser test reads pixels across both axes to prove red and green change with UV position.
 
 <details><summary>Hint</summary> A uniform is one value for the draw; a varying carries UV through interpolation. </details>
 

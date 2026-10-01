@@ -38,7 +38,7 @@ npm run drill -- drills/2/shaders/fragment-coordinates/apply-1
 
 ## The check
 
-The Node test checks the DPR uniform and fragment-coordinate path; the browser test checks compilation and drawing.
+The Node test checks the DPR uniform and fragment-coordinate path. The browser test checks that two pixels one CSS cell apart have opposite checker colors.
 
 <details><summary>Hint</summary> Divide device pixel coordinates by DPR before choosing an eight-CSS-pixel cell. </details>
 

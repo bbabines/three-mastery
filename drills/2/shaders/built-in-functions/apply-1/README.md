@@ -38,7 +38,7 @@ npm run drill -- drills/2/shaders/built-in-functions/apply-1
 
 ## The check
 
-The Node test checks the `clamp` and `mix` data path; the browser test checks compilation and drawing.
+The Node test checks the `clamp` and `mix` data path. The browser test checks a warm center and a cooler outer pixel.
 
 <details><summary>Hint</summary> Clamp a radius-based factor to 0–1, then mix the endpoint colors. </details>
 

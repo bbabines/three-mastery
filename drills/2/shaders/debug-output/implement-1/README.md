@@ -38,7 +38,7 @@ npm run drill -- drills/2/shaders/debug-output/implement-1
 
 ## The check
 
-The Node test checks the UV output path; the browser test checks compilation and drawing.
+The Node test checks the UV output path. The browser test reads red and green bands at different horizontal and vertical pixels.
 
 <details><summary>Hint</summary> Intermediate UVs are valid visible output; they do not need final lighting. </details>
 

@@ -38,7 +38,7 @@ npm run drill -- drills/2/shaders/types-precision/apply-1
 
 ## The check
 
-The Node test checks the precision declaration and float path; the browser test checks compilation and drawing.
+The Node test checks the precision declaration and float path. The browser test checks that two local positions around a distant origin produce distinct gradient values.
 
 <details><summary>Hint</summary> GLSL float literals use decimal points; highp gives more useful range than mediump. </details>
 

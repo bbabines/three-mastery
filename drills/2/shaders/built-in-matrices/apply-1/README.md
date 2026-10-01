@@ -38,7 +38,7 @@ npm run drill -- drills/2/shaders/built-in-matrices/apply-1
 
 ## The check
 
-The Node test checks the resolution uniform and matrix path; the browser test checks compilation and drawing.
+The Node test checks the resolution uniform and matrix path. The browser test compares left and right pixels of the screen gradient.
 
 <details><summary>Hint</summary> `gl_Position` is clip space; `gl_FragCoord` is device pixels after rasterization. </details>
 

@@ -38,7 +38,7 @@ npm run drill -- drills/2/shaders/vertex-vs-fragment/implement-1
 
 ## The check
 
-The Node test checks UV interpolation wiring; the browser test checks compilation and drawing.
+The Node test checks UV interpolation wiring. The browser test reads red and green pixels across both axes to prove the gradient follows UVs.
 
 <details><summary>Hint</summary> Pass `uv` through a varying; the rasterizer fills in a different value for each fragment. </details>
 

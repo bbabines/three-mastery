@@ -38,7 +38,7 @@ npm run drill -- drills/2/shaders/debug-output/apply-1
 
 ## The check
 
-The Node test checks the raw depth output path; the browser test checks compilation and drawing.
+The Node test checks the raw depth output path. The browser test moves a plane farther from the camera and checks that its depth gray value rises.
 
 <details><summary>Hint</summary> `gl_FragCoord.z` is the post-projection depth in [0,1], not world distance. </details>
 

@@ -38,7 +38,7 @@ npm run drill -- drills/2/shaders/built-in-matrices/implement-1
 
 ## The check
 
-The Node test checks the normal-matrix path; the browser test checks compilation and drawing.
+The Node test checks the normal-matrix path. The browser test turns the same plane and checks that its view-facing rim brightens.
 
 <details><summary>Hint</summary> `normalMatrix` does not give world normals. Its output is in view space, where the camera looks down -Z. </details>
 

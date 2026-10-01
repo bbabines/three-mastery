@@ -38,7 +38,7 @@ npm run drill -- drills/2/shaders/derivatives/apply-1
 
 ## The check
 
-The Node test checks the derivative path; the browser test checks compilation and drawing.
+The Node test checks the derivative path. The browser test compares a bright wire line with the dark middle of a grid cell.
 
 <details><summary>Hint</summary> `fwidth` estimates a line width in fragment-space derivatives. </details>
 

@@ -42,7 +42,7 @@ npm run drill -- drills/2/shaders/branching-discard/apply-1
 
 ## The check
 
-The Node test checks the discard path; the browser test checks that the material compiles and draws.
+The Node test checks the discard path. The browser test sees an opaque colored center and a discarded transparent corner.
 
 <details><summary>Hint</summary> `discard` removes the fragment but can cost early-depth rejection. </details>
 

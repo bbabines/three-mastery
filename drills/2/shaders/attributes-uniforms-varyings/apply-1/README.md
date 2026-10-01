@@ -38,7 +38,7 @@ npm run drill -- drills/2/shaders/attributes-uniforms-varyings/apply-1
 
 ## The check
 
-The Node test checks the attribute and varying path; the browser test checks that the shader compiles and draws.
+The Node test checks the attribute and varying path. The browser test gives the plane barycentric corner values and checks that triangle edges are bright while the face stays dark.
 
 <details><summary>Hint</summary> Every triangle corner carries one coordinate of (1,0,0), (0,1,0), or (0,0,1). </details>
 

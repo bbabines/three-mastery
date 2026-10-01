@@ -38,7 +38,7 @@ npm run drill -- drills/2/shaders/swizzling/apply-1
 
 ## The check
 
-The Node test checks the component reorder; the browser test checks compilation and drawing.
+The Node test checks the component reorder. The browser test draws a Z-up triangle and checks that it stands upright after conversion.
 
 <details><summary>Hint</summary> A swizzle reorders components; the sign change is also needed to preserve handedness. </details>
 
