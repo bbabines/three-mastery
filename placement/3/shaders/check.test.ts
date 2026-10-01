@@ -1,0 +1,15 @@
+import {answered} from '@harness/check';
+import {Color,Matrix4,Vector2,Vector3} from 'three';
+import {describe,expect,it} from 'vitest';
+import {fragmentEstimate, interpolateVarying, worldPoint, zUpToYUp, softStep, floatLiteral, extensionRoute, pixelFootprint, cssCoord, insideMask, normalDebug} from './check';
+describe('shaders.vertex-vs-fragment',()=>{ it('Estimate fragment invocations.',()=>{ expect(answered(fragmentEstimate(100,2,3))).toBe(1200); }); });
+describe('shaders.attributes-uniforms-varyings',()=>{ it('Interpolate a varying across an edge.',()=>{ expect(answered(interpolateVarying(2,10,.25))).toBe(4); expect(answered(interpolateVarying(-1,1,.5))).toBe(0); }); });
+describe('shaders.built-in-matrices',()=>{ it('Transform a local vertex into world space.',()=>{ const local=new Vector3(1,2,3), model=new Matrix4().makeTranslation(4,-1,2); expect(answered(worldPoint(local,model)).equals(new Vector3(5,1,5))).toBe(true); expect(local.equals(new Vector3(1,2,3))).toBe(true); }); });
+describe('shaders.swizzling',()=>{ it('Convert a Z-up point to right-handed Y-up.',()=>{ expect(answered(zUpToYUp(new Vector3(1,2,3))).equals(new Vector3(1,3,-2))).toBe(true); }); });
+describe('shaders.built-in-functions',()=>{ it('Smoothly blend across an edge.',()=>{ expect(answered(softStep(0,1,.5))).toBeCloseTo(.5); expect(answered(softStep(0,1,-2))).toBe(0); expect(answered(softStep(0,1,2))).toBe(1); }); });
+describe('shaders.types-precision',()=>{ it('Write a GLSL float literal, including .0 for integers.',()=>{ expect(answered(floatLiteral(1))).toBe("1.0"); expect(answered(floatLiteral(-2))).toBe("-2.0"); expect(answered(floatLiteral(.25))).toBe("0.25"); }); });
+describe('shaders.extending-materials',()=>{ it('Choose the route that preserves built-in lighting when needed.',()=>{ expect(answered(extensionRoute(true))).toBe("onBeforeCompile"); expect(answered(extensionRoute(false))).toBe("ShaderMaterial"); }); });
+describe('shaders.derivatives',()=>{ it('Estimate fwidth from neighboring pixel derivatives.',()=>{ expect(answered(pixelFootprint(-.2,.3))).toBeCloseTo(.5); }); });
+describe('shaders.fragment-coordinates',()=>{ it('Convert a fragment coordinate from device to CSS pixels.',()=>{ const pixel=new Vector2(120,80); expect(answered(cssCoord(pixel,2)).equals(new Vector2(60,40))).toBe(true); expect(pixel.equals(new Vector2(120,80))).toBe(true); }); });
+describe('shaders.branching-discard',()=>{ it('Whether a UV fragment survives a centered circular mask.',()=>{ expect(answered(insideMask(new Vector2(.5,.5),.3))).toBe(true); expect(answered(insideMask(new Vector2(0,0),.3))).toBe(false); }); });
+describe('shaders.debug-output',()=>{ it('Encode a normalized direction as visible RGB.',()=>{ const n=new Vector3(0,2,0); const color=answered(normalDebug(n)); expect([color.r,color.g,color.b]).toEqual([.5,1,.5]); expect(n.equals(new Vector3(0,2,0))).toBe(true); }); });
