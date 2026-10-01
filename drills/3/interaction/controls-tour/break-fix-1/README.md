@@ -4,7 +4,7 @@ loop: 3
 tier: light
 concepts: [interaction.controls-tour, interaction.controls-coexistence]
 mode: break-and-fix
-context: interaction.controls-tour/product-orbit
+context: interaction.controls-coexistence/custom-drags
 lenses: []
 misconceptions: []
 ---

@@ -4,7 +4,7 @@ loop: 3
 tier: light
 concepts: [interaction.pointer-events, interaction.click-vs-drag]
 mode: break-and-fix
-context: interaction.pointer-events/click
+context: interaction.click-vs-drag/tap-vs-pan
 lenses: []
 misconceptions: []
 ---

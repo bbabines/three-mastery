@@ -4,7 +4,7 @@ loop: 3
 tier: light
 concepts: [camera.frustum, camera.aspect-resize]
 mode: break-and-fix
-context: camera.frustum/visibility-test
+context: camera.aspect-resize/thumbnail-size
 lenses: [space]
 misconceptions: []
 ---

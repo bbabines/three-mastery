@@ -4,7 +4,7 @@ loop: 3
 tier: light
 concepts: [scene-graph.scene-stats, scene-graph.visibility-layers]
 mode: break-and-fix
-context: scene-graph.scene-stats/asset-audit
+context: scene-graph.visibility-layers/per-view
 lenses: []
 misconceptions: []
 ---

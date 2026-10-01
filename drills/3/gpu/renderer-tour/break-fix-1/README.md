@@ -4,7 +4,7 @@ loop: 3
 tier: light
 concepts: [gpu.renderer-tour, gpu.state-sorting]
 mode: break-and-fix
-context: gpu.renderer-tour/first-setup
+context: gpu.state-sorting/renderorder-fix
 lenses: [cost]
 misconceptions: []
 ---

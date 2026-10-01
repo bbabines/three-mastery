@@ -4,7 +4,7 @@ loop: 3
 tier: light
 concepts: [gpu.stencil, gpu.multisampling]
 mode: break-and-fix
-context: gpu.stencil/outlines
+context: gpu.multisampling/thin-lines
 lenses: [cost]
 misconceptions: []
 ---

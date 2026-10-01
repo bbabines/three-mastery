@@ -4,7 +4,7 @@ loop: 3
 tier: light
 concepts: [queries.ray, queries.ray-sphere]
 mode: break-and-fix
-context: queries.ray/line-of-sight
+context: queries.ray-sphere/coarse-hit
 lenses: []
 misconceptions: []
 ---

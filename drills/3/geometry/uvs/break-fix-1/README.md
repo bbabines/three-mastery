@@ -4,7 +4,7 @@ loop: 3
 tier: light
 concepts: [geometry.uvs, geometry.groups]
 mode: break-and-fix
-context: geometry.uvs/texture-mapping
+context: geometry.groups/material-index
 lenses: []
 misconceptions: []
 ---

@@ -4,7 +4,7 @@ loop: 3
 tier: light
 concepts: [geometry.object-types-tour, geometry.instanced-mesh]
 mode: break-and-fix
-context: geometry.object-types-tour/rack-shelves
+context: geometry.instanced-mesh/select-instance
 lenses: []
 misconceptions: []
 ---
