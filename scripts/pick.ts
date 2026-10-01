@@ -16,33 +16,40 @@
 // domains that failed checkpoint parts.
 import { existsSync } from 'node:fs';
 import path from 'node:path';
-import { CORE_DOMAINS, LOOPS, teachingOrder } from './lib/domains';
+import { CORE_DOMAINS, DOMAINS, LOOPS, teachingOrder } from './lib/domains';
 import { appendLog, readLog, type DoneEntry, type StartEntry } from './lib/log';
 import { loadCards, loadCheckpoints, loadDrills, loadPlacements, ROOT, type Drill } from './lib/repo';
 import { runVitest } from './lib/vitest';
 
 interface Item {
-  kind: 'drill' | 'placement' | 'checkpoint';
+  kind: 'drill' | 'placement' | 'checkpoint' | 'elective';
   id: string;
   dir: string;
   loop: number;
   domain?: string;
   drill?: Drill;
+  concepts?: string[];
 }
 
 const HOURS_IF_NEVER = 10_000;
 const HOURS_PER_WEEK = 24 * 7;
 
-// Only the loops are picked from. Elective pages and builds (in /electives) are never loaded as
-// items, and their cards are left out too.
+// Elective concept pages and guided builds stay outside the core loop picker. After all six VFX
+// from-memory builds are complete, maintenance also rotates those six effects.
 const drills = loadDrills();
 const coreDomains = new Set(CORE_DOMAINS.map((domain) => domain.slug));
 const cards = new Map(loadCards().filter((card) => coreDomains.has(card.domain)).map((card) => [card.id, card]));
+const vfxEffects: Item[] = (DOMAINS.find((domain) => domain.slug === 'vfx')?.effects ?? []).map((effect) => ({
+  kind: 'elective', id: `vfx.effects.${effect.slug}.from-memory`,
+  dir: `electives/vfx/effects/${effect.slug}/from-memory`, loop: 0, domain: 'vfx',
+  concepts: effect.concepts.map((concept) => `vfx.${concept}`),
+}));
 
 const items: Item[] = [
   ...drills.map((drill): Item => ({ kind: 'drill', ...drill, drill })),
   ...loadPlacements().map((placement): Item => ({ kind: 'placement', ...placement })),
   ...loadCheckpoints().map((checkpoint): Item => ({ kind: 'checkpoint', ...checkpoint })),
+  ...vfxEffects,
 ];
 const itemsById = new Map(items.map((item) => [item.id, item]));
 
@@ -105,8 +112,8 @@ function itemOrder(item: Item) {
 }
 
 function maintenanceScore(item: Item) {
-  const concepts = item.drill?.concepts ?? [];
-  const conceptHours = hoursSinceLast((other) => other.drill?.concepts.some((id) => concepts.includes(id)) ?? false);
+  const concepts = item.drill?.concepts ?? item.concepts ?? [];
+  const conceptHours = hoursSinceLast((other) => (other.drill?.concepts ?? other.concepts ?? []).some((id) => concepts.includes(id)));
   const checkpointFailures = doneEntries.filter(
     (entry) => entry.id.endsWith('.checkpoint') && entry.failedParts?.includes(item.domain ?? ''),
   ).length;
@@ -130,7 +137,8 @@ function loopCandidates(loop: number): Item[] {
 function rankedSuggestions(): { items: Item[]; note?: string } {
   const loop = currentLoop();
   if (loop === 'maintenance') {
-    const pool = items.filter((item) => item.kind === 'drill');
+    const electiveReady = vfxEffects.every((item) => passedIds.has(item.id));
+    const pool = items.filter((item) => item.kind === 'drill' || (electiveReady && item.kind === 'elective'));
     return { items: pool.sort((a, b) => maintenanceScore(b) - maintenanceScore(a)) };
   }
 
@@ -160,7 +168,7 @@ function inProgress(): StartEntry | undefined {
 }
 
 function describe(item: Item) {
-  const label = item.drill ? `${item.drill.mode}, ${item.drill.context.split('/')[1]}` : item.kind;
+  const label = item.drill ? `${item.drill.mode}, ${item.drill.context.split('/')[1]}` : item.kind === 'elective' ? 'VFX from memory' : item.kind;
   return `${item.id}  (${label})\n    ${item.dir}/README.md`;
 }
 
@@ -198,7 +206,9 @@ function start(id: string | undefined) {
   appendLog({ type: 'start', id: item.id, at: new Date().toISOString() });
   console.log(`Working on ${item.id}.\n`);
   console.log(`  Open:  http://localhost:5173/harness/?drill=${item.dir}  (needs npm run dev)`);
-  if (item.kind !== 'drill' && !existsSync(path.join(ROOT, item.dir, 'check.test.ts'))) {
+  if (item.kind === 'elective') {
+    console.log('\nMatch the reference by eye. The page can log it, or finish with: npm run pick -- done --pass');
+  } else if (item.kind !== 'drill' && !existsSync(path.join(ROOT, item.dir, 'check.test.ts'))) {
     console.log('\nNo docs for this one. The page logs it when you answer its last question.');
   } else if (item.kind !== 'drill') {
     console.log('\nNo docs for this one.');
@@ -264,7 +274,7 @@ function done(flag: string | undefined) {
     process.exitCode = 1;
     return;
   }
-  if (item.kind === 'drill') finishDrill(item, flag);
+  if (item.kind === 'drill' || item.kind === 'elective') finishDrill(item, flag);
   else finishCheck(item);
 }
 
