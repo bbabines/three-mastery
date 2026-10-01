@@ -14,7 +14,7 @@ misconceptions: []
 
 ## Task
 
-The generated picker works until code moves a paintable object immediately before asking for a hit. The painter needs a current hit before it can use the hit's UV; this helper returns whether the ray reaches the object at its new position. Update its world transform before intersecting it.
+The generated picker works until code moves a paintable object immediately before asking for a hit. The painter needs a current hit before it can use the hit's UV; this helper returns whether the ray reaches the object at its new position.
 
 Review the proposed code in `drill.ts`. State the faulty assumption and its effect in `cause.md`, then repair the code. Run the acceptance check to prove the behavior.
 

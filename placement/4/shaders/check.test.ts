@@ -6,6 +6,7 @@ import * as check from './check';
 describe('shaders.vertex-vs-fragment', () => {
   it('makes the right judgment', () => {
     expect(answered(check.stageForPixelColor(true))).toBe('fragment');
+    expect(answered(check.stageForPixelColor(false))).toBe('vertex');
   });
 });
 
@@ -37,12 +38,14 @@ describe('shaders.swizzling', () => {
 describe('shaders.built-in-functions', () => {
   it('makes the right judgment', () => {
     expect(answered(check.clampedLighting(new THREE.Vector3(0,1,0),new THREE.Vector3(0,-2,0)))).toBe(0);
+    expect(answered(check.clampedLighting(new THREE.Vector3(0,2,0),new THREE.Vector3(0,3,0)))).toBeCloseTo(1);
   });
 });
 
 describe('shaders.types-precision', () => {
   it('makes the right judgment', () => {
     expect(answered(check.precisionForWorldPosition(true))).toBe('highp');
+    expect(answered(check.precisionForWorldPosition(false))).toBe('mediump');
   });
 });
 

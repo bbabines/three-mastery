@@ -41,7 +41,10 @@ describe('rotation.rotation-basis', () => {
 
 describe('rotation.lookat-up', () => {
   it('makes the right judgment', () => {
-    const o=new THREE.Object3D(); o.position.set(1,2,3); const target=new THREE.Vector3(4,2,0), up=new THREE.Vector3(0,0,1); const q=answered(check.aimWithUp(o,target,up)); expect(q.angleTo(o.quaternion)).toBeCloseTo(0); expect(o.up).toEqual(up);
+    const o=new THREE.Object3D(); o.position.set(1,2,3); const target=new THREE.Vector3(4,2,0), up=new THREE.Vector3(0,0,1);
+    const expected=new THREE.Object3D(); expected.position.copy(o.position); expected.up.copy(up); expected.lookAt(target);
+    const q=answered(check.aimWithUp(o,target,up));
+    expect(q.angleTo(expected.quaternion)).toBeCloseTo(0); expect(o.quaternion.angleTo(expected.quaternion)).toBeCloseTo(0); expect(o.up).toEqual(up);
   });
 });
 

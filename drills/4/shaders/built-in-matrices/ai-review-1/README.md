@@ -14,7 +14,7 @@ misconceptions: [shaders.built-in-matrices/world-normals]
 
 ## Task
 
-The generated uniform prep uses the combined model-view matrix. The effect changes when the camera moves, although the light is fixed in the world. Return the model matrix’s inverse-transpose 3×3 for world-space normals, including nonuniform scale.
+The generated uniform prep uses the combined model-view matrix. The effect changes when the camera moves, although the light is fixed in the world. Return a matrix that keeps the surface normal in world space, including under nonuniform scale.
 
 Review the proposed code in `drill.ts`. State the faulty assumption and its effect in `cause.md`, then repair the code. Run the acceptance check to prove the behavior.
 

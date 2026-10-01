@@ -7,5 +7,7 @@ describe('hitsNow', () => {
     box.updateMatrixWorld(true); box.position.set(3, 0, 0);
     const ray = new Raycaster(new Vector3(3, 0, 5), new Vector3(0, 0, -1));
     expect(hitsNow(ray, box)).toBe(true);
+    const oldPositionRay = new Raycaster(new Vector3(0, 0, 5), new Vector3(0, 0, -1));
+    expect(hitsNow(oldPositionRay, box)).toBe(false);
   });
 });

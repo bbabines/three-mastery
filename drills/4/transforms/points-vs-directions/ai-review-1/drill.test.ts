@@ -11,4 +11,16 @@ describe('worldDirection', () => {
     expectVector(worldDirection(object, local), expected, 'world direction');
     expectUnchanged(local, before, 'local direction');
   });
+  it('uses a parent rotation changed since the last world-matrix update', () => {
+    const parent = new Object3D();
+    const object = new Object3D();
+    parent.add(object);
+    parent.updateMatrixWorld(true);
+    parent.position.set(7, -3, 5);
+    parent.rotation.y = Math.PI / 2;
+    const local = new Vector3(0, 0, 1);
+    const expected = local.clone().applyQuaternion(parent.quaternion);
+    expectVector(worldDirection(object, local), expected, 'fresh parent rotation');
+    expectVector(local, new Vector3(0, 0, 1), 'unchanged local direction');
+  });
 });

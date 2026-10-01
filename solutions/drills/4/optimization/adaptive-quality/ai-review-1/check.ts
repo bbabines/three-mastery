@@ -8,5 +8,8 @@ export function checkDeadBand(nextDpr: Decide): void {
     dpr = nextDpr(dpr, frameMs);
     expect(dpr, 'each noisy frame must keep quality steady').toBe(1.5);
   }
-  expect(nextDpr(dpr, 22)).toBeLessThan(dpr);
+  expect(nextDpr(dpr, 22)).toBe(1.25);
+  expect(nextDpr(dpr, 12)).toBe(1.75);
+  expect(nextDpr(1, 22)).toBe(1);
+  expect(nextDpr(2, 12)).toBe(2);
 }
