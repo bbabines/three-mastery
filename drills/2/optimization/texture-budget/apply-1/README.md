@@ -21,13 +21,13 @@ Return the next power-of-two source width that covers the on-screen pixel need, 
 | --- | --- |
 | `sourceWidthForScreen(cssPixels: number, dpr: number, maxSize: number)` | A power-of-two source width within the device cap. |
 
-Try the scene. The readout changes when your function gives an answer.
+The preview chooses a source width for one thumbnail size.
 
 <div data-scene="practice"></div>
 
 ## Measure
 
-Run the Domain 10 resolution experiment at fixed visible thumbnail size. Record source texture width, estimated RGBA mip bytes, renderer.info.memory.textures, and frame time before and after right-sizing. Do not use frame time as a test threshold.
+Keep a thumbnail's on-screen size fixed while changing its source width. Record estimated RGBA mip bytes, `renderer.info.memory.textures`, and frame time. Use the source-size rule for the check; treat frame time as a measurement.
 
 ## Your code
 
@@ -39,7 +39,7 @@ npm run drill -- drills/2/optimization/texture-budget/apply-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The test checks power-of-two sizing, DPR need, and the device maximum.
 
 <details><summary>Hint</summary>
 
@@ -49,4 +49,6 @@ Size the source to projected screen pixels and DPR, not the original asset label
 
 ## Where else?
 
-Where else would the same code help? The concept card lists Swatch libraries, Thumbnail textures.
+Where can right-sized sources save texture memory?
+
+<details><summary>A few answers</summary> Swatch lists and small thumbnail grids rarely need each full-resolution product image. </details>

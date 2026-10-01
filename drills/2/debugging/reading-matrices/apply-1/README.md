@@ -21,7 +21,7 @@ Return true when a world transform mirrors an object. Include rotation and non-u
 | --- | --- |
 | `mirrorsSpace(matrix: THREE.Matrix4)` | Whether the world transform reverses handedness. |
 
-Try the scene. The readout changes when your function gives an answer.
+The preview checks one transform; the test covers odd and even axis flips.
 
 <div data-scene="practice"></div>
 
@@ -41,7 +41,7 @@ npm run drill -- drills/2/debugging/reading-matrices/apply-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The test checks a rotated, nonuniform transform with one negative axis and another with two.
 
 <details><summary>Hint</summary>
 
@@ -51,4 +51,6 @@ A negative determinant means one or three axes are flipped.
 
 ## Where else?
 
-Where else would the same code help? The concept card lists Console transform checks, Spotting scale.
+Why can one negative matrix element mislead a mirror check?
+
+<details><summary>A few answers</summary> Rotation changes individual element signs; the full matrix determinant tells whether handedness flipped. </details>

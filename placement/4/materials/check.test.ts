@@ -41,7 +41,12 @@ describe('materials.specular', () => {
 
 describe('materials.pbr', () => {
   it('makes the right judgment', () => {
-    expect(answered(check.metalNeedsEnvironment(new THREE.MeshStandardMaterial({metalness:1}),new THREE.Scene()))).toBe(true);
+    const scene=new THREE.Scene(), metal=new THREE.MeshStandardMaterial({metalness:1});
+    expect(answered(check.metalNeedsEnvironment(metal,scene))).toBe(true);
+    metal.envMap=new THREE.Texture();
+    expect(answered(check.metalNeedsEnvironment(metal,scene))).toBe(false);
+    metal.envMap=null; scene.environment=new THREE.Texture();
+    expect(answered(check.metalNeedsEnvironment(metal,scene))).toBe(false);
   });
 });
 

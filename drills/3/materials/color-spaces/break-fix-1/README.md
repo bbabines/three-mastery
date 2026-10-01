@@ -9,13 +9,13 @@ lenses: []
 misconceptions: [materials.color-spaces/all-srgb]
 ---
 
-# Color spaces: the normal map is tagged as display color, washing out the lighting response even though the color image looks right.
+# Color spaces: washed-out normal detail
 
 > **The job:** Keep the color photograph in sRGB and the normal map as linear data.
 
 ## Task
 
-The normal map is tagged as display color, washing out the lighting response even though the color image looks right. Fix `markMaps` without replacing unrelated objects or settings. The preview runs the current code; use its readout to check the repaired behavior.
+The base color looks right, but lighting detail is washed out after both maps load. Repair `markMaps` without replacing the textures. Watch the readout change.
 
 <div data-scene="preview"></div>
 

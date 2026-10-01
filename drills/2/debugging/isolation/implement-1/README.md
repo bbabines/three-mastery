@@ -21,7 +21,7 @@ Return the number of top-level branches hidden after making only the chosen dire
 | --- | --- |
 | `showOnlyBranch(root: THREE.Object3D, keep: THREE.Object3D)` | The number of sibling branches hidden for isolation. |
 
-Try the scene. The readout changes when your function gives an answer.
+The preview keeps one branch and hides its siblings.
 
 <div data-scene="practice"></div>
 
@@ -35,7 +35,7 @@ npm run drill -- drills/2/debugging/isolation/implement-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The test checks the hidden count, chosen branch visibility, and unchanged child structure.
 
 <details><summary>Hint</summary>
 
@@ -45,4 +45,6 @@ Hide one half at a time to narrow a fault, then restore visibility afterward.
 
 ## Where else?
 
-Where else would the same code help? The concept card lists Z-fighting source, Bad material.
+How could hiding one branch locate a bad material?
+
+<details><summary>A few answers</summary> Hide a branch, observe whether the artifact disappears, then narrow within the responsible branch. </details>

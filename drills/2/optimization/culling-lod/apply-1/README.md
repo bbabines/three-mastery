@@ -22,13 +22,13 @@ Return the LOD index from ascending world-distance thresholds. Configure a cutou
 | `lodLevel(distance: number, thresholds: number[])` | The detail level selected by distance. |
 | `makeCutout(material: THREE.MeshBasicMaterial, threshold: number)` | The alpha-tested, depth-writing panel material. |
 
-Try the scene. The readout changes when your function gives an answer.
+The preview shows one selected detail level and cutout setting.
 
 <div data-scene="practice"></div>
 
 ## Measure
 
-Run the Domain 10 vertex-load and shader-swap experiments with the same projected coverage. Record frame time and draw calls before and after distant LOD. For the panel, compare opaque or cutout coverage against blended overdraw; write down both frame times.
+Keep the part's on-screen size fixed while comparing detail levels. Record frame time and draw calls. For the panel, compare cutout rendering with blended transparency at the same coverage and record both frame times.
 
 ## Your code
 
@@ -40,7 +40,7 @@ npm run drill -- drills/2/optimization/culling-lod/apply-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The test checks distance boundaries and that the cutout keeps surviving pixels depth writing.
 
 <details><summary>Hint</summary>
 
@@ -50,4 +50,6 @@ LOD changes detail per object, not per triangle; an alpha-tested cutout can keep
 
 ## Where else?
 
-Where else would the same code help? The concept card lists Large scenes, Instanced bounds.
+Why does an instanced mesh need special culling care?
+
+<details><summary>A few answers</summary> One large batch has one bounds volume, so distant instances may keep the whole batch in view. </details>

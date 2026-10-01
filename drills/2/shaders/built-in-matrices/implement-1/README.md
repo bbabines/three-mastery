@@ -15,7 +15,7 @@ misconceptions: [shaders.built-in-matrices/world-normals]
 
 ## Task
 
-Compute a rim mask from a normal transformed by `normalMatrix`, which produces a view-space normal. Return a working `ShaderMaterial`. The scene renders the material on a plane; the tests inspect its inputs and compile it in Chromium.
+Compute a rim mask from a normal transformed by `normalMatrix`, which produces a view-space normal. Write `viewRim()` and transform the normal with `normalMatrix` before making the view-space rim.
 
 <div data-scene="preview"></div>
 
@@ -38,7 +38,7 @@ npm run drill -- drills/2/shaders/built-in-matrices/implement-1
 
 ## The check
 
-The Node check verifies the shader's data path. The browser check compiles and draws it on a WebGL canvas.
+The Node test checks the normal-matrix path; the browser test checks compilation and drawing.
 
 <details><summary>Hint</summary> `normalMatrix` does not give world normals. Its output is in view space, where the camera looks down -Z. </details>
 
@@ -46,4 +46,4 @@ The Node check verifies the shader's data path. The browser check compiles and d
 
 Would the same `normalMatrix` result be valid for a world-space height gradient?
 
-<details><summary>A starting point</summary> Visualize one intermediate value before restoring the finished fragment color. </details>
+<details><summary>A few answers</summary> No. A height gradient needs world position or world normal, not the camera-relative normal from `normalMatrix`. </details>

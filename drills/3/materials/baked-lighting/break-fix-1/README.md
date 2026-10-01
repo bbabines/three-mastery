@@ -9,7 +9,7 @@ lenses: []
 misconceptions: [materials.baked-lighting/reacts-to-moving]
 ---
 
-# Baked lighting: repair the preview
+# Baked lighting: misplaced crevice shading
 
 > **The job:** Sample baked crevice AO from the mesh second UV set.
 

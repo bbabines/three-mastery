@@ -7,6 +7,6 @@ describe('shaderRuns', () => {
   expect(answered(shaderRuns(1000, 10000, 2, 3, 1))).toEqual({vertex:1000,fragment:120000});
  });
  it('repeats vertex work in each pass independently of DPR', () => {
-  expect(answered(shaderRuns(240, 2000, 1.5, 2, 3))).toEqual({vertex:720,fragment:9000});
+  expect(answered(shaderRuns(240, 2000, 1.5, 2, 3))).toEqual({vertex:720,fragment:27000});
  });
 });

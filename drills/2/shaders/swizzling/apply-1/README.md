@@ -15,7 +15,7 @@ misconceptions: [shaders.swizzling/converts-axes]
 
 ## Task
 
-Convert Z-up local coordinates into Y-up by reordering axes and negating the former Y axis. Return a material that draws the effect on the preview plane. Use readable GLSL and keep the variable spaces explicit.
+Convert Z-up local coordinates into Y-up by reordering axes and negating the former Y axis. Write `zUpToYUp()` so each local `(x, y, z)` becomes `(x, z, -y)` in the vertex stage.
 
 <div data-scene="preview"></div>
 
@@ -38,10 +38,12 @@ npm run drill -- drills/2/shaders/swizzling/apply-1
 
 ## The check
 
-The Node test inspects the data path. The browser test compiles and draws it in WebGL.
+The Node test checks the component reorder; the browser test checks compilation and drawing.
 
 <details><summary>Hint</summary> A swizzle reorders components; the sign change is also needed to preserve handedness. </details>
 
 ## Where else?
 
 What sign change is needed when converting a Z-up vector to Y-up without mirroring?
+
+<details><summary>A few answers</summary> Negating the former Y axis preserves handedness when Z becomes the new up axis. </details>

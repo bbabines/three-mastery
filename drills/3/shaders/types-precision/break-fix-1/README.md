@@ -5,7 +5,7 @@ tier: light
 concepts: [shaders.types-precision]
 mode: break-and-fix
 context: shaders.types-precision/compile-errors
-lenses: [space]
+lenses: []
 misconceptions: [shaders.types-precision/int-is-float]
 ---
 
@@ -19,12 +19,6 @@ The generated shader fails to compile when an integer-valued parameter is insert
 
 <div data-scene="preview"></div>
 
-## Spaces
-
-| Value | Space |
-| --- | --- |
-| input position or pixel | local space or device pixels, as named in the function |
-| output | the space named in the return description |
 
 ## Your code
 

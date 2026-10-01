@@ -15,7 +15,7 @@ misconceptions: [shaders.derivatives/extra-geometry]
 
 ## Task
 
-Antialias UV grid lines by measuring neighboring pixel change with `fwidth`, without adding line geometry. Return a material that draws the effect on the preview plane. Use readable GLSL and keep the variable spaces explicit.
+Antialias UV grid lines by measuring neighboring pixel change with `fwidth`, without adding line geometry. Write `aaWireGrid()` and use `fwidth` on interpolated UVs to soften grid edges.
 
 <div data-scene="preview"></div>
 
@@ -38,10 +38,12 @@ npm run drill -- drills/2/shaders/derivatives/apply-1
 
 ## The check
 
-The Node test inspects the data path. The browser test compiles and draws it in WebGL.
+The Node test checks the derivative path; the browser test checks compilation and drawing.
 
 <details><summary>Hint</summary> `fwidth` estimates a line width in fragment-space derivatives. </details>
 
 ## Where else?
 
 Could `fwidth` soften a triangle wireframe without a separate line mesh?
+
+<details><summary>A few answers</summary> Yes. A barycentric edge distance can use `fwidth` to cover about one pixel without extra line geometry. </details>

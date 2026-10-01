@@ -21,13 +21,13 @@ Fill the supplied Box3 with a model's current world bounds and return that same 
 | --- | --- |
 | `boundsInto(root: THREE.Object3D, scratch: THREE.Box3)` | The same Box3 filled with current world bounds. |
 
-Try the scene. The readout changes when your function gives an answer.
+The preview fills one scratch box from the model's current world bounds.
 
 <div data-scene="practice"></div>
 
 ## Measure
 
-Run the Domain 10 skip-render experiment around repeated bounds checks. Record app-logic frame time and allocations in Chrome Performance before and after scratch reuse. Keep the model count fixed; the acceptance test checks the same Box3 identity.
+Repeat world-bounds checks on the same model set with and without a reusable Box3. In Chrome Performance, record allocations and CPU time for both runs.
 
 ## Your code
 
@@ -39,7 +39,7 @@ npm run drill -- drills/2/optimization/allocation-hygiene/apply-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The test checks current world bounds, hidden descendants, and reuse of the supplied Box3.
 
 <details><summary>Hint</summary>
 
@@ -49,4 +49,6 @@ Box3.setFromObject updates the supplied box instead of allocating a new one.
 
 ## Where else?
 
-Where else would the same code help? The concept card lists Raycast loops, Per-frame updates.
+Where else can a reusable Box3 avoid frame allocations?
+
+<details><summary>A few answers</summary> Update one scratch box in a per-frame culling or picking loop instead of making a new box each time. </details>

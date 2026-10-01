@@ -22,7 +22,7 @@ A ray direction arrow belongs under a transformed parent. Return its local direc
 | `worldArrowDirection(object: THREE.Object3D, local: THREE.Vector3)` | The unit direction for a world-space ArrowHelper. |
 | `finiteOrZero(vector: THREE.Vector3)` | The unchanged finite vector or a zero-vector fallback. |
 
-Try the scene. The readout changes when your function gives an answer.
+The preview shows one world-space arrow; the test also checks invalid vectors.
 
 <div data-scene="practice"></div>
 
@@ -42,7 +42,7 @@ npm run drill -- drills/2/debugging/visualizing-vectors/apply-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The test checks world rotation, unit length, unchanged local input, and a zero result for nonfinite values.
 
 <details><summary>Hint</summary>
 
@@ -52,4 +52,6 @@ A helper needs both the right direction and the right parent space; NaN can spre
 
 ## Where else?
 
-Where else would the same code help? The concept card lists Normal direction, Velocity.
+How would you draw a normal on a rotated part?
+
+<details><summary>A few answers</summary> Transform the local normal into world space before giving it to a world-space arrow helper. </details>

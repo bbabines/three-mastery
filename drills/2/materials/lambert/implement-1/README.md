@@ -15,9 +15,9 @@ misconceptions: [materials.lambert/depends-on-viewer]
 
 ## Task
 
-Compute the Lambert diffuse response from surface normal, light direction, albedo, and irradiance. Normalize directions, clamp the back side to zero, and return one channel of reflected light. Work from the input values; do not replace an input object when the task asks you to configure it.
+Compute the Lambert diffuse response from surface normal, light direction, albedo, and irradiance. Normalize directions, clamp the back side to zero, and return one channel of reflected light. Write `lambertResponse(normal, toLight, albedo, irradiance)` and return one channel of diffuse light. Do not change either direction.
 
-The preview calls your answer on a concrete scene. The readout stays at "not answered yet" until your function returns a value.
+The preview shows one matte-light value; the test also checks the unlit back side.
 
 <div data-scene="preview"></div>
 
@@ -31,7 +31,7 @@ npm run drill -- drills/2/materials/lambert/implement-1
 
 ## The check
 
-The acceptance test uses several inputs and checks both the intended result and settings that must be preserved. Read the failed assertion as a scene symptom, then adjust only your function.
+The test checks front, side, and back lighting with nonunit vectors and unchanged inputs.
 
 <details><summary>Hint</summary> The cosine comes from the angle between the surface normal and the direction toward the light. </details>
 
@@ -39,4 +39,4 @@ The acceptance test uses several inputs and checks both the intended result and 
 
 What happens when a viewer walks around a matte wall while its light stays still?
 
-<details><summary>A starting point</summary> Trace the same property from the three.js object through the material or light that consumes it. </details>
+<details><summary>A few answers</summary> Its diffuse brightness stays the same as the viewer walks around; only the surface-light angle matters. </details>

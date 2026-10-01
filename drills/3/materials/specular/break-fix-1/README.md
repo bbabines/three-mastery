@@ -9,7 +9,7 @@ lenses: []
 misconceptions: [materials.specular/highlights-stay]
 ---
 
-# Specular: the glint stays at the same strength when the camera shifts to the side of the polished panel.
+# Specular: a stationary glint
 
 > **The job:** Let a glossy highlight move as the viewer moves.
 

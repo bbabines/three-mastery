@@ -21,7 +21,7 @@ The render target already contains a frame. Read one RGBA pixel from it into a U
 | --- | --- |
 | `targetRedByte(renderer: Pick<THREE.WebGLRenderer, "readRenderTargetPixels">, target: THREE.WebGLRenderTarget, x: number, y: number)` | The red channel in the rendered target pixel. |
 
-Try the scene. The readout changes when your function gives an answer.
+The preview reads one target pixel; the test checks its coordinates and red byte.
 
 <div data-scene="practice"></div>
 
@@ -39,7 +39,7 @@ npm run drill -- drills/2/debugging/frame-capture/apply-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The test uses a render-target readback stub and checks the requested coordinates and red byte.
 
 <details><summary>Hint</summary>
 
@@ -49,4 +49,6 @@ A frame capture answers what a pass drew, including render targets.
 
 ## Where else?
 
-Where else would the same code help? The concept card lists Double rendering, Wrong texture bound.
+When would target pixels settle a dispute about a wrong texture?
+
+<details><summary>A few answers</summary> Capture the pass that fills the target and inspect the suspect pixel before blaming the final material. </details>

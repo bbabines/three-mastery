@@ -15,7 +15,7 @@ misconceptions: [shaders.vertex-vs-fragment/once-per-pixel]
 
 ## Task
 
-Write `shaderRuns(vertices, coveredCssPixels, dpr, overdraw, passes)`. Return the count of vertex and fragment invocations. Vertex work repeats in every pass. Fragment work scales with device pixel ratio squared and with overdraw. Do not treat a pixel as a single fragment.
+Write `shaderRuns(vertices, coveredCssPixels, dpr, overdraw, passes)`. Estimate vertex and fragment invocations when every pass covers the same CSS area. Both kinds of work repeat per pass; fragment work also scales with DPR squared and overlapping layers.
 
 <div data-scene="preview"></div>
 
@@ -33,10 +33,12 @@ npm run drill -- drills/2/shaders/vertex-vs-fragment/apply-1
 
 ## The check
 
-The tests change DPR, overdraw, and pass count independently so one mistaken multiplier cannot pass.
+The tests change DPR, overdraw, and pass count independently, including fragment work in repeated passes.
 
 <details><summary>Hint</summary> Device pixels are a two-dimensional grid. </details>
 
 ## Where else?
 
 How would transparent layers or a shadow pass change these counts?
+
+<details><summary>A few answers</summary> Extra transparent layers raise overdraw. A shadow pass adds work too, but its fragment area follows the shadow map rather than the canvas, so measure it separately. </details>

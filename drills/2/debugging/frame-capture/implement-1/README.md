@@ -21,7 +21,7 @@ A product shows the wrong texture even though its Mesh looks correct in the scen
 | --- | --- |
 | `captureFrameCounts(renderer: Pick<THREE.WebGLRenderer, "render" | "info">, scene: THREE.Scene, camera: THREE.Camera)` | Draw calls and triangles recorded after a render. |
 
-Try the scene. The readout changes when your function gives an answer.
+The preview reports draw and triangle counts from one rendered frame.
 
 <div data-scene="practice"></div>
 
@@ -39,7 +39,7 @@ npm run drill -- drills/2/debugging/frame-capture/implement-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The test checks that rendering happens before the counts are copied and that both counters come from the current frame.
 
 <details><summary>Hint</summary>
 
@@ -49,4 +49,6 @@ A GPU frame capture can show state and shader source that renderer.info does not
 
 ## Where else?
 
-Where else would the same code help? The concept card lists Double rendering, Render target contents.
+How could the same counts reveal duplicate rendering?
+
+<details><summary>A few answers</summary> Record the calls before and after a pass; an unexpected second increase points to another render. </details>

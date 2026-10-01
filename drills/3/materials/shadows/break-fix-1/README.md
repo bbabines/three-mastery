@@ -9,7 +9,7 @@ lenses: [cost]
 misconceptions: [materials.shadows/bigger-map]
 ---
 
-# Shadows: repair the preview
+# Shadows: blocky contact
 
 > **The job:** Fit a directional shadow camera around a product before spending more map pixels.
 

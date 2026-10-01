@@ -21,13 +21,13 @@ A kit has some parts that can share an instanced draw and others that cannot. Bu
 | --- | --- |
 | `batchMatchingParts(parts: { geometry: THREE.BufferGeometry; material: THREE.Material; world: THREE.Matrix4 }[])` | Instanced batches grouped by exact shared data. |
 
-Try the scene. The readout changes when your function gives an answer.
+The preview groups its fixed kit by exact geometry and material pairs.
 
 <div data-scene="practice"></div>
 
 ## Measure
 
-Run the Domain 10 draw-call experiment on the same kit. Record actual draw calls and frame time before and after batching. Keep object count and screen coverage fixed. The scene readout gives the live frame-time and draw-count measurements.
+Render the same kit before and after batching. Record `renderer.info.render.calls` and frame time while keeping part count and screen coverage fixed.
 
 ## Your code
 
@@ -39,7 +39,7 @@ npm run drill -- drills/2/optimization/draw-call-reduction/apply-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The test checks separate batches for unlike pairs and every preserved instance world matrix.
 
 <details><summary>Hint</summary>
 
@@ -49,4 +49,6 @@ Instancing needs one geometry and material per batch; unlike parts remain separa
 
 ## Where else?
 
-Where else would the same code help? The concept card lists Repeated hardware, Static environment.
+Which static environment parts can share one instanced draw?
+
+<details><summary>A few answers</summary> Repeated brackets or bolts with the same geometry and material can share a draw while keeping individual transforms. </details>

@@ -9,7 +9,7 @@ lenses: []
 misconceptions: [materials.tone-mapping/brand-colors]
 ---
 
-# Tone mapping: the product shifts hue under studio lights even with the correct source color and exposure.
+# Tone mapping: shifted product color
 
 > **The job:** Keep a color-critical product close to its source color while preserving HDR highlight compression.
 

@@ -21,13 +21,13 @@ A swatch library holds many textures. For one swatch, return the total raw RGBA8
 | --- | --- |
 | `rgbaMipBytes(width: number, height: number)` | Decoded RGBA8 bytes including the full mip chain. |
 
-Try the scene. The readout changes when your function gives an answer.
+The preview estimates decoded bytes for one full mip chain.
 
 <div data-scene="practice"></div>
 
 ## Measure
 
-Run the Domain 10 resolution experiment with the same on-screen swatch size. Compare a large and right-sized texture: record renderer.info.memory.textures, decoded byte estimates, and frame time. The byte estimate is the acceptance check; timing varies by device.
+Compare a large swatch with a right-sized one at the same on-screen size. Record each decoded mip-chain estimate, `renderer.info.memory.textures`, and frame time. The byte estimate is checked; frame time varies by device.
 
 ## Your code
 
@@ -39,7 +39,7 @@ npm run drill -- drills/2/optimization/texture-budget/implement-1
 
 ## The check
 
-The tests check the behavior on more than one input, including the edge case described in the task. A function left unanswered fails.
+The test checks the full RGBA8 mip chain for more than one texture size.
 
 <details><summary>Hint</summary>
 
@@ -49,4 +49,6 @@ Count decoded pixels, not the download bytes.
 
 ## Where else?
 
-Where else would the same code help? The concept card lists Mobile limits, Thumbnail textures.
+How would this estimate help set a mobile swatch limit?
+
+<details><summary>A few answers</summary> Multiply one swatch's decoded bytes by the number kept resident, then compare with the device budget. </details>

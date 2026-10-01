@@ -15,7 +15,7 @@ misconceptions: [materials.lights-tour/rectarea-any-material, materials.light-ty
 
 ## Task
 
-Configure a rectangular softbox and a physically sized point fill. The softbox must face the product, and the point fill must use the requested power in lumens. Use the supplied object or values; return the requested answer so the preview can run it. Keep unrelated settings intact.
+Write `studioLights(width, height, fillLumens)` and return `{ softbox, fill, surface }`. Size and aim the `RectAreaLight` at the product, set the `PointLight.power` in lumens, and use a `MeshStandardMaterial` surface. Initialize `RectAreaLightUniformsLib` before using the area light.
 
 <div data-scene="preview"></div>
 
@@ -29,7 +29,7 @@ npm run drill -- drills/2/materials/lights-tour/apply-1
 
 ## The check
 
-The test covers the intended behavior on more than one input and also checks settings that the function should leave alone.
+The test checks the area light's size and aim, the point light's power, the lit surface, and uniform-library initialization.
 
 <details><summary>Hint</summary> A RectAreaLight has width, height, and a direction; a PointLight exposes power in lumens. </details>
 
@@ -37,4 +37,4 @@ The test covers the intended behavior on more than one input and also checks set
 
 What changes if the product mesh uses `MeshBasicMaterial` under this softbox?
 
-<details><summary>A starting point</summary> Compare the material or light properties before and after your function returns. </details>
+<details><summary>A few answers</summary> `MeshBasicMaterial` ignores these lights. Use a lit material when the softbox should shade the product. </details>
