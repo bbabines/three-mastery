@@ -1,3 +1,5 @@
 {"type":"done","id":"1.math.point-vs-direction.read-the-code.1","at":"2026-09-28T20:03:27.602Z","passed":true}
 {"type":"done","id":"1.math.length.read-the-code.1","at":"2026-09-28T20:52:25.196Z","passed":true,"score":{"right":2,"total":3}}
 {"type":"done","id":"1.math.normalize.read-the-code.1","at":"2026-09-28T20:59:17.564Z","passed":true,"score":{"right":3,"total":3}}
+{"type":"done","id":"1.math.dot-product.read-the-code.1","at":"2026-09-29T17:56:24.400Z","passed":true,"score":{"right":5,"total":5}}
+{"type":"done","id":"1.math.cross-product.read-the-code.1","at":"2026-09-29T20:13:42.009Z","passed":true,"score":{"right":4,"total":4}}
