@@ -11,7 +11,7 @@ misconceptions: []
 
 # World bounds: explain the decision
 
-> **The job:** explain a real 3D decision in five plain sentences.
+> **The job:** place a nested, rotated product on the floor using current world bounds.
 
 ## Task
 

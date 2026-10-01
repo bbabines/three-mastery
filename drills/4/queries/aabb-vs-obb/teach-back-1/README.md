@@ -11,7 +11,7 @@ misconceptions: [queries.aabb-vs-obb/box3-tight]
 
 # Rotated parts: explain the bounds choice
 
-> **The job:** explain a real 3D decision in five plain sentences.
+> **The job:** choose a bound for two long rotated parts whose world boxes overlap.
 
 ## Task
 

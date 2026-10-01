@@ -11,7 +11,7 @@ misconceptions: [scene-graph.material-override/auto-restore]
 
 # Temporary highlight: explain the restore
 
-> **The job:** explain a real 3D decision in five plain sentences.
+> **The job:** highlight one selected mesh and restore its exact shared material.
 
 ## Task
 

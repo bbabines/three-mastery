@@ -11,7 +11,7 @@ misconceptions: []
 
 # Disposal ownership: explain the decision
 
-> **The job:** explain a real 3D decision in five plain sentences.
+> **The job:** release old finish resources without breaking a shared texture.
 
 ## Task
 

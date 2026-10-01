@@ -11,7 +11,7 @@ misconceptions: []
 
 # Drag on a plane: explain the decision
 
-> **The job:** explain a real 3D decision in five plain sentences.
+> **The job:** drag a wall handle without snapping its origin to the cursor.
 
 ## Task
 

@@ -11,7 +11,7 @@ misconceptions: []
 
 # Shader debug output: explain the decision
 
-> **The job:** explain a real 3D decision in five plain sentences.
+> **The job:** use shader output colors to locate a UV jump at a texture seam.
 
 ## Task
 

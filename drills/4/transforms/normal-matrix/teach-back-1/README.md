@@ -11,7 +11,7 @@ misconceptions: []
 
 # Normal matrix: explain the decision
 
-> **The job:** explain a real 3D decision in five plain sentences.
+> **The job:** restore a correct rim highlight after unevenly scaling a model.
 
 ## Task
 
