@@ -1,0 +1,48 @@
+---
+id: 2.rotation.lookat-up.implement.1
+loop: 2
+tier: core
+concepts: [rotation.lookat-up]
+mode: implement
+context: rotation.lookat-up/billboards
+lenses: []
+misconceptions: [rotation.lookat-up/same-facing]
+---
+
+# lookAt and up: aim an ordinary object’s +z at a target while keeping its +y as close as possible to a given up direction
+
+> **The job:** Aim an ordinary object’s +Z at a target while keeping its +Y as close as possible to a given up direction.
+
+## Task
+
+Aim an ordinary object’s +Z at a target while keeping its +Y as close as possible to a given up direction.
+
+Write `aimWithUp(from, target, up)` for the behavior above. Save the starter to update the scene.
+
+<div data-scene="demo"></div>
+
+## Your code
+
+Write it in `drills/2/rotation/lookat-up/implement-1/drill.ts`. Check it with:
+
+    npm run drill -- drills/2/rotation/lookat-up/implement-1
+
+## The check
+
+It passes when `aimWithUp` does the stated job for the scene and the other cases in the test. The test exercises the values and spaces named above.
+
+<details><summary>Hint</summary>
+
+Use the method from the lookat and up page, and check which space the result belongs to.
+
+</details>
+
+## Where else?
+
+Where else would the same operation help when a part moves or turns?
+
+<details><summary>A few answers</summary>
+
+Aiming a spotlight. Top-down camera.
+
+</details>
