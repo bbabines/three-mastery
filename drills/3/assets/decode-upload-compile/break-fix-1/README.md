@@ -4,7 +4,7 @@ loop: 3
 tier: core
 concepts: [assets.decode-upload-compile]
 mode: break-and-fix
-context: assets.decode-upload-compile/variant-switch
+context: assets.decode-upload-compile/prewarm
 lenses: [cost]
 misconceptions:
   - assets.decode-upload-compile/renders-instantly

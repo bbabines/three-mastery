@@ -4,7 +4,7 @@ loop: 3
 tier: core
 concepts: [assets.gltf-structure]
 mode: break-and-fix
-context: assets.gltf-structure/audit-materials
+context: assets.gltf-structure/unexpected-children
 lenses: []
 misconceptions:
   - assets.gltf-structure/one-mesh
