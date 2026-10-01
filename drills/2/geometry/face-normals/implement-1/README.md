@@ -9,40 +9,48 @@ lenses: []
 misconceptions: [geometry.face-normals/average-of-vertex]
 ---
 
-# Face normals: find a triangle face normal in world space after its model has been turned and unevenly stretched
+# Face normals: normal after stretch
 
-> **The job:** Find a triangle face normal in world space after its model has been turned and unevenly stretched.
+> **The job:** Turn a face normal into the world.
 
 ## Task
 
-Find a triangle face normal in world space after its model has been turned and unevenly stretched.
+Write `faceNormalWorld(a, b, c, modelToWorld)`. The corners are measured from the object itself; the saved transform may turn and unevenly stretch it. Return a new unit direction in the world, perpendicular to the transformed face. Leave all inputs unchanged.
 
-Write `faceNormalWorld(a, b, c, modelToWorld)` for the behavior above. Save the starter to update the scene.
+Save your code and inspect the scene; compare the blue result with the green reference.
 
 <div data-scene="demo"></div>
 
+## Spaces
+
+| Value | Space or units |
+| --- | --- |
+| `a, b, c` | Positions measured from object itself |
+| `modelToWorld` | Object space to world space |
+| Answer | Unit direction in the world |
+
 ## Your code
 
-Write it in `drills/2/geometry/face-normals/implement-1/drill.ts`. Check it with:
+Write it in `drills/2/geometry/face-normals/implement-1/drill.ts`. Save to update the scene. Check it with:
 
     npm run drill -- drills/2/geometry/face-normals/implement-1
 
 ## The check
 
-It passes when `faceNormalWorld` does the stated job for the scene and the other cases in the test. The test exercises the values and spaces named above.
+The result matches the transformed triangle’s face after a nonuniform scale and stays perpendicular.
 
 <details><summary>Hint</summary>
 
-Use the method from the face normals page, and check which space the result belongs to.
+A normal is a direction, not a point. For a stretched object, a plain direction transform does not keep it perpendicular.
 
 </details>
 
 ## Where else?
 
-Where else would the same operation help when a part moves or turns?
+Where else do world normals after stretch matter?
 
 <details><summary>A few answers</summary>
 
-Back-face test against a direction. Raycast face normal.
+Aim a surface marker or compare a ray hit with a world light direction.
 
 </details>

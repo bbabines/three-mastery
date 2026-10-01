@@ -11,18 +11,18 @@ No docs or solutions. Write every function in `placement/3/geometry/check.ts` fr
 
 | Function | Checks |
 | --- | --- |
-| `checkObjectTypesTour` | object types tour |
-| `checkBufferAttribute` | buffer attribute |
-| `checkInterleaved` | interleaved |
-| `checkIndexed` | indexed |
-| `checkWindingOrder` | winding order |
-| `checkFaceNormals` | face normals |
-| `checkVertexNormals` | vertex normals |
-| `checkUvs` | uvs |
-| `checkBoundingVolumes` | bounding volumes |
-| `checkUpdatingBuffers` | updating buffers |
-| `checkGroups` | groups |
-| `checkInstancedMesh` | instanced mesh |
-| `checkTangentSpace` | tangent space |
+| `checkObjectTypesTour` | Place repeated parts in one InstancedMesh with separate poses. |
+| `checkBufferAttribute` | Read XYZ by vertex number from a position attribute. |
+| `checkInterleaved` | Move one interleaved vertex and mark its shared buffer for upload. |
+| `checkIndexed` | Read a triangle’s positions using its index list when present. |
+| `checkWindingOrder` | Test whether corner order faces a view direction. |
+| `checkFaceNormals` | Turn a face normal into the world after uneven stretch. |
+| `checkVertexNormals` | Rebuild normals on a copy after positions change. |
+| `checkUvs` | Shift only the first triangle’s UVs without moving a shared adjacent face. |
+| `checkBoundingVolumes` | Refresh the local bounding sphere after a vertex edit. |
+| `checkUpdatingBuffers` | Write a position and mark its attribute for upload. |
+| `checkGroups` | Assign a triangle range to a material slot. |
+| `checkInstancedMesh` | Update one instance transform and mark it for upload. |
+| `checkTangentSpace` | Turn a normal-map sample into a world normal. |
 
 Run `npm run drill -- placement/3/geometry` as you work. When all parts pass, run `npm run pick -- done` once. A miss suggests practicing the repair drills for that concept; it is not a gate.

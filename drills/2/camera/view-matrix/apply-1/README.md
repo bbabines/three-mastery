@@ -9,15 +9,15 @@ lenses: [space]
 misconceptions: [camera.view-matrix/inverse]
 ---
 
-# View matrix: find how far a world point lies in front of the camera along its viewing axis, rather than its straight-line distance
+# View matrix: depth along the lens
 
-> **The job:** Find how far a world point lies in front of the camera along its viewing axis, rather than its straight-line distance.
+> **The job:** Measure how far ahead a world point lies.
 
 ## Task
 
-Find how far a world point lies in front of the camera along its viewing axis, rather than its straight-line distance.
+Write `viewDepth(camera, worldPoint)`. Return positive distance along the camera’s forward axis for a point in front; points behind give negative values. This is not the straight-line distance to a point off to the side. Leave the point and camera unchanged.
 
-Write `viewDepth(camera, worldPoint)` for the behavior above. Save the starter to update the scene.
+Save your code and inspect the scene; compare the blue result with the green reference.
 
 <div data-scene="demo"></div>
 
@@ -25,32 +25,32 @@ Write `viewDepth(camera, worldPoint)` for the behavior above. Save the starter t
 
 | Value | Space or units |
 | --- | --- |
-| `camera` | Camera pose and lens in world space |
-| `worldPoint` | World space |
-| Answer | World space |
+| `camera` | Pose in the world |
+| `worldPoint` | World position |
+| Answer | Signed world units along camera forward |
 
 ## Your code
 
-Write it in `drills/2/camera/view-matrix/apply-1/drill.ts`. Check it with:
+Write it in `drills/2/camera/view-matrix/apply-1/drill.ts`. Save to update the scene. Check it with:
 
     npm run drill -- drills/2/camera/view-matrix/apply-1
 
 ## The check
 
-It passes when `viewDepth` does the stated job for the scene and the other cases in the test. The test exercises the values and spaces named above.
+A point five units ahead returns 5, even when the camera moves and turns; side offset does not change that depth.
 
 <details><summary>Hint</summary>
 
-Use the method from the view matrix page, and check which space the result belongs to.
+First express the point measured from the camera. A camera faces its own −Z direction.
 
 </details>
 
 ## Where else?
 
-Where else would the same operation help when a part moves or turns?
+What else needs view depth rather than straight-line distance?
 
 <details><summary>A few answers</summary>
 
-View-space depth. Camera-relative UI.
+Size a constant-pixel gizmo or sort camera-facing labels.
 
 </details>

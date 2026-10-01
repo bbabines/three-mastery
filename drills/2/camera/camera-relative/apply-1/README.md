@@ -9,15 +9,15 @@ lenses: [space]
 misconceptions: [camera.camera-relative/forward-plus-z]
 ---
 
-# Camera directions: read the world directions of a camera’s screen right, screen up, and forward, even when it looks straight up
+# Camera relative: screen axes
 
-> **The job:** Read the world directions of a camera’s screen right, screen up, and forward, even when it looks straight up.
+> **The job:** Read the camera’s screen directions in the world.
 
 ## Task
 
-Read the world directions of a camera’s screen right, screen up, and forward, even when it looks straight up.
+A camera may look straight up, where a ground-plane cross product cannot define screen right. Write `screenAxes(camera)` to return new unit vectors for screen right, screen up, and forward in the world. Forward means the direction the camera looks, its own −Z. Leave the camera unchanged.
 
-Write `screenAxes(camera)` for the behavior above. Save the starter to update the scene.
+Save your code and inspect the scene; compare the blue result with the green reference.
 
 <div data-scene="demo"></div>
 
@@ -25,31 +25,31 @@ Write `screenAxes(camera)` for the behavior above. Save the starter to update th
 
 | Value | Space or units |
 | --- | --- |
-| `camera` | Camera pose and lens in world space |
-| Answer | CSS pixels, with NDC depth where stated |
+| `camera` | Pose in the world |
+| Answer | Three directions in the world |
 
 ## Your code
 
-Write it in `drills/2/camera/camera-relative/apply-1/drill.ts`. Check it with:
+Write it in `drills/2/camera/camera-relative/apply-1/drill.ts`. Save to update the scene. Check it with:
 
     npm run drill -- drills/2/camera/camera-relative/apply-1
 
 ## The check
 
-It passes when `screenAxes` does the stated job for the scene and the other cases in the test. The test exercises the values and spaces named above.
+The axes remain perpendicular, keep unit length, and match the camera’s turn even while it points upward.
 
 <details><summary>Hint</summary>
 
-Use the method from the camera directions page, and check which space the result belongs to.
+Start with the camera’s own +X, +Y, and −Z directions. Which stored part of its pose turns all three?
 
 </details>
 
 ## Where else?
 
-Where else would the same operation help when a part moves or turns?
+Where else do camera-facing axes help?
 
 <details><summary>A few answers</summary>
 
-Screen-aligned panning. WASD movement.
+Place a HUD marker in front of the lens or orient a billboard.
 
 </details>

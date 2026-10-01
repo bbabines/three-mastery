@@ -9,15 +9,15 @@ lenses: [space]
 misconceptions: [camera.view-matrix/inverse]
 ---
 
-# View matrix: turn a world point into a camera-space point using the current inverse camera transform
+# View matrix: world to camera
 
-> **The job:** Turn a world point into a camera-space point using the current inverse camera transform.
+> **The job:** Express a fixed world point from the camera.
 
 ## Task
 
-Turn a world point into a camera-space point using the current inverse camera transform.
+Write `worldToView(camera, worldPoint)` to return a new camera-space point using the camera’s current pose. A camera moved right makes a fixed world marker appear left in view space. Do not change the camera or input point.
 
-Write `worldToView(camera, worldPoint)` for the behavior above. Save the starter to update the scene.
+Save your code and inspect the scene; compare the blue result with the green reference.
 
 <div data-scene="demo"></div>
 
@@ -25,32 +25,32 @@ Write `worldToView(camera, worldPoint)` for the behavior above. Save the starter
 
 | Value | Space or units |
 | --- | --- |
-| `camera` | Camera pose and lens in world space |
-| `worldPoint` | World space |
-| Answer | World space |
+| `camera` | Pose in the world |
+| `worldPoint` | World position |
+| Answer | Position measured from the camera |
 
 ## Your code
 
-Write it in `drills/2/camera/view-matrix/implement-1/drill.ts`. Check it with:
+Write it in `drills/2/camera/view-matrix/implement-1/drill.ts`. Save to update the scene. Check it with:
 
     npm run drill -- drills/2/camera/view-matrix/implement-1
 
 ## The check
 
-It passes when `worldToView` does the stated job for the scene and the other cases in the test. The test exercises the values and spaces named above.
+Moved, turned, and parented cameras all give coordinates that transform back to the original world point. The input stays unchanged.
 
 <details><summary>Hint</summary>
 
-Use the method from the view matrix page, and check which space the result belongs to.
+The camera’s world transform goes from camera space to world space. Which direction is needed here?
 
 </details>
 
 ## Where else?
 
-Where else would the same operation help when a part moves or turns?
+What else must be measured from the camera?
 
 <details><summary>A few answers</summary>
 
-View-space depth. Billboards.
+Compute view depth or position a camera-space effect.
 
 </details>

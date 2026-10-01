@@ -9,15 +9,15 @@ lenses: [space]
 misconceptions: [camera.depth-precision/far-plane]
 ---
 
-# Depth precision: compare depth separation at a distant surface before and after moving the near plane outward
+# Depth precision: near-plane gain
 
-> **The job:** Compare depth separation at a distant surface before and after moving the near plane outward.
+> **The job:** Compare depth separation after changing the near plane.
 
 ## Task
 
-Compare depth separation at a distant surface before and after moving the near plane outward.
+Write `nearPlaneGain(viewDepth, oldNear, newNear, far)`. Place two surfaces at `viewDepth` and 0.01 world units farther along the viewing axis. Return the ratio of their depth-buffer separation with `newNear` to that with `oldNear`. A ratio above 1 means more separation.
 
-Write `nearPlaneGain(viewDepth, oldNear, newNear, far)` for the behavior above. Save the starter to update the scene.
+Save your code and inspect the scene; compare the blue result with the green reference.
 
 <div data-scene="demo"></div>
 
@@ -25,34 +25,31 @@ Write `nearPlaneGain(viewDepth, oldNear, newNear, far)` for the behavior above. 
 
 | Value | Space or units |
 | --- | --- |
-| `viewDepth` | World units along the camera view axis |
-| `oldNear` | Value in the units named in the Task |
-| `newNear` | Value in the units named in the Task |
-| `far` | World units along the camera view axis |
-| Answer | Scalar or object described in the Task |
+| `viewDepth, oldNear, newNear, far` | World units along the camera viewing axis |
+| Answer | Unitless ratio of depth-buffer gaps |
 
 ## Your code
 
-Write it in `drills/2/camera/depth-precision/apply-1/drill.ts`. Check it with:
+Write it in `drills/2/camera/depth-precision/apply-1/drill.ts`. Save to update the scene. Check it with:
 
     npm run drill -- drills/2/camera/depth-precision/apply-1
 
 ## The check
 
-It passes when `nearPlaneGain` does the stated job for the scene and the other cases in the test. The test exercises the values and spaces named above.
+Moving a very close near plane outward yields a large gain at a distant surface; keeping it fixed yields 1.
 
 <details><summary>Hint</summary>
 
-Use the method from the depth precision page, and check which space the result belongs to.
+Use the same two surface depths with each near plane. Compare the gap between their projected depth-buffer values.
 
 </details>
 
 ## Where else?
 
-Where else would the same operation help when a part moves or turns?
+When would this comparison matter?
 
 <details><summary>A few answers</summary>
 
-Coplanar decals. Large scenes.
+Diagnose distant surface flicker or choose a tighter camera depth range.
 
 </details>

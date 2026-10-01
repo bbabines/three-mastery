@@ -1,18 +1,29 @@
-import { attempt, ball, COLORS, overlay } from '@harness/lesson';
+import { attempt, ball, COLORS, overlay, showCamera, slider } from '@harness/lesson';
 import type { SceneSetup } from '@harness/scene';
 import * as THREE from 'three';
+import { comparison } from '../../compare';
 import { visibleAfterResize } from './drill';
 
 export const demo: SceneSetup = ({ scene, camera, controls, container }) => {
-  camera.position.set(3.5, 3, 5);
-  controls.target.set(0, 0.5, 0);
-  const subject = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.8, 0.8), new THREE.MeshStandardMaterial({ color: COLORS.blue }));
-  const marker = ball(COLORS.yellow);
-  subject.position.y = 0.5;
-  marker.position.set(1.5, 0.5, 0);
-  scene.add(subject, marker);
-  const readout = overlay(container, 'readout');
-  const viewCamera=new THREE.PerspectiveCamera(60,1,0.1,100); viewCamera.position.z=5; scene.add(viewCamera);
-  const result = attempt('visibleAfterResize', () => visibleAfterResize(viewCamera, 800, 400, new THREE.Vector3(3,0,0)));
-  readout.textContent = result.ok ? `visibleAfterResize: ${JSON.stringify(result.value)?.slice(0, 160)}` : result.note;
+  camera.position.set(7, 4, 7); controls.target.set(0, 0.7, 0);
+  const lens = new THREE.PerspectiveCamera(60, 2, 0.1, 20);
+  lens.position.set(0, 0.7, 5); lens.lookAt(0, 0.7, 0);
+  const helper = showCamera(lens);
+  const target = ball(COLORS.yellow, 1, 0.18);
+  target.position.set(3, 0.7, 0);
+  scene.add(lens, helper, target);
+  const controlsBar = overlay(container, 'controls');
+  const show = comparison(container, 'Side marker and resized view frustum');
+  let width = 800;
+  const update = () => {
+    lens.aspect = width / 400; lens.updateProjectionMatrix(); lens.updateMatrixWorld(true); helper.update();
+    const expected = new THREE.Frustum().setFromProjectionMatrix(
+      new THREE.Matrix4().multiplyMatrices(lens.projectionMatrix, lens.matrixWorldInverse)).containsPoint(target.position);
+    const result = attempt('visibleAfterResize', () => visibleAfterResize(lens, width, 400, target.position.clone()));
+    show(`viewport ${width} × 400 CSS px`,
+      result.ok ? `marker ${result.value ? 'inside' : 'outside'}` : result.note,
+      `marker ${expected ? 'inside' : 'outside'}`);
+  };
+  slider(controlsBar, 'width', { min: 200, max: 900, step: 100, value: width }, value => { width = value; update(); });
+  update();
 };

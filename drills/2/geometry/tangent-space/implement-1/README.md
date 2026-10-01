@@ -9,40 +9,48 @@ lenses: []
 misconceptions: [geometry.tangent-space/world-directions]
 ---
 
-# Tangent space: turn a tangent-space normal-map sample from 0–1 colors into a world-space unit normal using the surface tbn basis
+# Tangent space: turn a map normal
 
-> **The job:** Turn a tangent-space normal-map sample from 0–1 colors into a world-space unit normal using the surface TBN basis.
+> **The job:** Combine a normal-map sample with a surface basis.
 
 ## Task
 
-Turn a tangent-space normal-map sample from 0–1 colors into a world-space unit normal using the surface TBN basis.
+Write `normalFromMap(sample, tangent, bitangent, normal)`. `sample` is 0–1 RGB from a normal map; the other vectors are world directions for the surface’s tangent, bitangent, and normal axes. Return a unit normal in the world. Leave all four inputs unchanged.
 
-Write `normalFromMap(sample, tangent, bitangent, normal)` for the behavior above. Save the starter to update the scene.
+Save your code and inspect the scene; compare the blue result with the green reference.
 
 <div data-scene="demo"></div>
 
+## Spaces
+
+| Value | Space or units |
+| --- | --- |
+| `sample` | RGB values in tangent space |
+| `tangent, bitangent, normal` | Directions in the world |
+| Answer | Unit normal direction in the world |
+
 ## Your code
 
-Write it in `drills/2/geometry/tangent-space/implement-1/drill.ts`. Check it with:
+Write it in `drills/2/geometry/tangent-space/implement-1/drill.ts`. Save to update the scene. Check it with:
 
     npm run drill -- drills/2/geometry/tangent-space/implement-1
 
 ## The check
 
-It passes when `normalFromMap` does the stated job for the scene and the other cases in the test. The test exercises the values and spaces named above.
+Samples along each texture axis follow the matching world basis direction and the result has unit length.
 
 <details><summary>Hint</summary>
 
-Use the method from the tangent space page, and check which space the result belongs to.
+First recenter each color component from 0–1 to −1–+1. Each resulting component weighs one surface axis.
 
 </details>
 
 ## Where else?
 
-Where else would the same operation help when a part moves or turns?
+Where else must a surface-space direction enter the world?
 
 <details><summary>A few answers</summary>
 
-Surface detail on low-poly meshes. Importing maps from Substance or Unreal.
+Orient decals or compare a normal-map bump with world lighting.
 
 </details>
