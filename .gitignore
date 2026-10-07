@@ -3,4 +3,3 @@ dist/
 .DS_Store
 .pick/
 # Third-party reference assets for study only (iJewel playground). Never commit or ship.
-assets/reference/

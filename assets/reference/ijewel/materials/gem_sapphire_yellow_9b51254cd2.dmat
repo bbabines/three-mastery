@@ -1,0 +1,35 @@
+{
+  "metadata": {
+    "version": 4.6,
+    "type": "DiamondMaterial",
+    "generator": "DiamondMaterial.toJSON"
+  },
+  "name": "yellow sapphire",
+  "uuid": "5b972894-ce94-474a-86c7-283d5d6c5858",
+  "color": 16048814,
+  "envMapIntensity": 1.03,
+  "envMapIndex": 0,
+  "envMapRotationOffset": 0,
+  "dispersion": 0,
+  "squashFactor": 0.98,
+  "geometryFactor": 0.5,
+  "gammaFactor": 1,
+  "absorptionFactor": 1.3,
+  "reflectivity": 0.3,
+  "refractiveIndex": 1.7700000000000002,
+  "rayBounces": 5,
+  "diamondOrientedEnvMap": 0,
+  "boostFactors": {
+    "x": 1.9,
+    "y": 1.8,
+    "z": 0.5,
+    "isVector3": true
+  },
+  "transmission": 0,
+  "isDiamondMaterialParameters": true,
+  "type": "DiamondMaterial",
+  "userData": {
+    "separateEnvMapIntensity": true,
+    "uuid": "5b972894-ce94-474a-86c7-283d5d6c5858"
+  }
+}
