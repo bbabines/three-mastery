@@ -37,8 +37,8 @@ When a viewer looks off, the fastest way to find out why is to take the pieces a
 
 - **Gems as glass** (`transmission`): the stones go see-through and flat; you see the room behind them, not sparkle.
 - **Gems as mirrors**: crisp, but metallic and gray, with no color and no depth.
-- **One lighting file**: the metal barely changes, and the stones go dull, because the studio has only three bright lights to flash in them.
-- **No tone mapping**: highlights clip to flat white and the gold turns harsh and yellow.
+- **One lighting file**: the metal barely changes, but the stones go pale and milky. The studio is bright almost everywhere, so the facets have no dark areas for contrast, and the center diamond blows out to a white blob.
+- **No tone mapping**: colors turn stronger and harsher (the pink ceramic goes salmon, the gold more saturated), and the brightest highlights cut off at white instead of rolling off softly. ACES calms and slightly pales everything, which is much of the playground's soft, expensive look.
 - **Wood on its UVs**: the grain stretches into streaks along the band.
 
 **Analogy: a mixing desk.** A band's sound is a dozen instruments on separate faders. When something sounds wrong, the engineer mutes one channel at a time until the problem goes away. Each switch here is a fader.
@@ -98,14 +98,15 @@ Start from the symptom and switch off the piece it points to.
 | What you see | The piece to check | Unit |
 | --- | --- | --- |
 | Stones look like glass, plastic, or frosted blobs | The gem shader; flat normals; closed meshes | The gem shader; What's in a pro jewelry file |
-| Stones look gray and dull | The stones' own environment, in HDR | Two lighting files |
+| Stones look pale and milky, gray, or dull | The stones' own environment, in HDR | Two lighting files |
 | Metal looks like plastic, or black | Metalness 1, roughness 0, an environment | Polished metal and tone mapping |
-| Highlights clip and the darks look muddy | Tone mapping and exposure | Polished metal and tone mapping |
+| Colors look harsh and oversaturated, highlights cut off at white | Tone mapping and exposure | Polished metal and tone mapping |
 | Ceramic looks like plastic | Roughness 0 and a good environment, not textures | Ceramic and pearl from lighting alone |
 | Wood is stretched, smeared, or pale | Triplanar projection; color spaces | Small tiling textures and triplanar mapping |
 | The ring floats or looks like a cheap render | Ground shadow, lens, background | Shadows, glow, and smooth edges |
 | Sparkles crawl when the camera stops | Averaged frames | Shadows, glow, and smooth edges |
 
+- **Every stone turns into a white diamond after a configurator change.** The code worked out each stone's kind (ruby, emerald) from its current material, which after the first change is the gem shader, with no tag left on it. Read the kind once, from the material the file loaded, and keep it with the part.
 - **"One setting will make it look real."** Each piece fixes one thing, and switching off any one of them is visible. That's why AI fixes that change many settings at once are hard to learn from.
 - **"If it looks off, the model is bad."** Spring's own metal and ceramic are plain colors. Most of the look is lighting, the gem shader, and finishing, all of which live in code.
 

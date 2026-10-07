@@ -122,7 +122,7 @@ scene.background = new THREE.Color('#ffffff'); // a plain color: not tone mapped
 
 ## How it goes wrong
 
-- **"One HDR lights everything."** Gems look like gray glass, or the metal looks like a dim photo of a room. Give the gems' material its own `envMap`, as above. A Blender scene has one World, so its previews light everything with one HDR, and the `.glb` carries no lighting at all: the viewer's code loads both files.
+- **"One HDR lights everything."** Gems look pale and milky, like gray glass, or the metal looks like a dim photo of a room. Give the gems' material its own `envMap`, as above. A Blender scene has one World, so its previews light everything with one HDR, and the `.glb` carries no lighting at all: the viewer's code loads both files.
 - **"A JPG or PNG environment is good enough."** Stones never flash and the metal looks flat. It tops out at 1.0, so every lamp is as bright as a wall. Use the `.exr` or `.hdr`, and check it: a brightest spot of exactly 1.0 means it was clipped.
 - **An outdoor sky HDR.** The metal turns bluish, and a sharp horizon line, where sky meets ground, runs across every curve. Use a studio file: neutral, with soft panels and no horizon.
 - **"The lighting file has to be the background too."** The room shows up behind the ring as a blurry smear: with iJewel's 15° lens, the screen shows about 85 of the file's 1,024 rows from top to bottom. The environment lights the piece whether or not it's shown. Set `scene.background` to a plain color, as iJewel does.

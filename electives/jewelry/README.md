@@ -32,11 +32,11 @@ Measured from the files on Oct 7, 2026. Pages quote these numbers, so measure ag
 | Anti-aliasing | Progressive: 32 frames with sub-pixel jitter, averaged once the camera stops; TAA while it moves |
 | Screen-space reflections | On: 16 steps, intensity 1 |
 | Ambient occlusion | SSAO, intensity 0.25 |
-| Bloom | Threshold 2, intensity 0.2, 4 iterations, radius 0.6 |
+| Bloom | Threshold 2, intensity 0.2, 4 iterations, radius 0.6 (three.js's `UnrealBloomPass` needs a strength near 0.03 for the same faint glow) |
 | Ground | Baked soft shadow (a randomized light, up to 400 frames) on a white ground 8 units across, roughness 1, opacity 0.95 |
-| Background | White, not tone mapped |
+| Background | White, not tone mapped; the ground isn't tone mapped either (`tonemapGround: false`) |
 | Environment | Intensity 1, fixed direction; the gems get their own environment (the `Diamond` plugin's `envMap`) |
-| Camera | 15° field of view, a long product-photo lens; orbit only above the ground |
+| Camera | 15° field of view, a long product-photo lens; orbit only above the ground; opens on the view from above. The four saved views are too close to fit the ring at 15°, so the viewer must fit the model to them |
 | Off | Chromatic aberration, vignette, LUT, film grain, depth of field, SSGI, contact shadows |
 
 **The environments** (`tools/exr-peek.mjs`; 1.0 is white paper): both 2048 × 1024.

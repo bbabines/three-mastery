@@ -73,13 +73,15 @@ export async function assemble(model: THREE.Object3D, renderer: THREE.WebGLRende
 
   // The gem shader: one material per stored shape and kind, for each environment it might trace.
   const traced = new Map<string, THREE.ShaderMaterial>();
-  const tracedFor = (mesh: THREE.Mesh, panorama: THREE.Texture) => {
-    const key = `${mesh.geometry.uuid} ${gemKind(mesh)} ${panorama.uuid}`;
-    if (!traced.has(key)) traced.set(key, make(gemMaterial(mesh.geometry, panorama, GEMS[gemKind(mesh)])));
+  const tracedFor = (mesh: THREE.Mesh, kind: string, panorama: THREE.Texture) => {
+    const key = `${mesh.geometry.uuid} ${kind} ${panorama.uuid}`;
+    if (!traced.has(key)) traced.set(key, make(gemMaterial(mesh.geometry, panorama, GEMS[kind])));
     return traced.get(key)!;
   };
 
-  const parts: { mesh: THREE.Mesh; role: Role; original: THREE.Material }[] = [];
+  // A stone's kind is read once, from the material it was loaded with: after `apply`, its material
+  // is one of ours, which no longer names a ruby or an emerald.
+  const parts: { mesh: THREE.Mesh; role: Role; kind: string }[] = [];
   const counts: Record<Role, number> = { gem: 0, metal: 0, ceramic: 0, 'red ceramic': 0, pearl: 0, wood: 0, other: 0 };
   model.traverse((child) => {
     if (!(child instanceof THREE.Mesh)) return;
@@ -93,7 +95,7 @@ export async function assemble(model: THREE.Object3D, renderer: THREE.WebGLRende
       child.quaternion.identity();
       child.scale.set(1, 1, 1);
     }
-    parts.push({ mesh: child, role, original: child.material as THREE.Material });
+    parts.push({ mesh: child, role, kind: role === 'gem' ? gemKind(child) : '' });
   });
   // The wood's tiles per unit, in its parent's units: one tile per unit of the finished piece.
   const woodParent = parts.find((part) => part.role === 'wood')?.mesh.parent;
@@ -115,10 +117,10 @@ export async function assemble(model: THREE.Object3D, renderer: THREE.WebGLRende
       metal.metalness = preset.metalness;
       metal.roughness = preset.roughness;
       mirror.envMap = glass.envMap = gemLighting;
-      for (const { mesh, role } of parts) {
+      for (const { mesh, role, kind } of parts) {
         if (role === 'gem') {
           mesh.material =
-            recipe.gems === 'traced' ? tracedFor(mesh, recipe.lighting === 'split' ? gemImage : metalImage) : recipe.gems === 'glass' ? glass : mirror;
+            recipe.gems === 'traced' ? tracedFor(mesh, kind, recipe.lighting === 'split' ? gemImage : metalImage) : recipe.gems === 'glass' ? glass : mirror;
         } else if (role === 'metal') mesh.material = metal;
         else if (role === 'ceramic') mesh.material = ceramic;
         else if (role === 'red ceramic') mesh.material = redCeramic;

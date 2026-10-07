@@ -55,7 +55,7 @@ Three settings decide most of the look:
 
 ### Color comes from distance
 
-A ruby isn't painted red. White light goes in, and the longer it travels inside, the more of its green and blue the stone absorbs, so light that took a long path comes out a deeper red than light that took a short one. That's why a colored stone has dark and bright red facets instead of one flat red. **Absorption** sets how fast the color deepens with distance, and iJewel's **boost** multiplies each color channel on top (the emerald's −0.3 removes red entirely). Distance is measured in stone widths here, so a small ruby and a big one get the same color; a real big ruby would come out darker.
+A ruby isn't painted red. White light goes in, and the longer it travels inside, the more of its green and blue the stone absorbs, so light that took a long path comes out a deeper red than light that took a short one. That's why a colored stone has dark and bright red facets instead of one flat red. **Absorption** sets how fast the color deepens with distance, and iJewel's **boost** multiplies each color channel on top (the emerald's −0.3 removes red entirely). Distance is measured in stone widths here, so a small ruby and a big one get the same color; a real big ruby would come out darker. The shader also uses the color's hex digits as they are, rather than converting them to linear the way a material's `color` is. Converted, a ruby keeps so little blue that it comes out orange; as is, it comes out the playground's pinker red. iJewel's files don't say which they do, so this is a choice made by eye.
 
 <div data-scene="color"></div>
 
@@ -130,7 +130,7 @@ The shader reads exact directions from the panorama, so it takes the raw `.exr`,
 
 - **"Transmission makes a convincing diamond."** It bends light once and shows the room behind the stone, like glass. A diamond's look comes from light bouncing inside, which only a traced shader gives.
 - **"More bounces always look better."** Past about five, almost no light is still inside, so more bounces add cost and change nothing you can see. Too few (0–2) leaves dark or see-through patches.
-- **Stones look dull and gray.** They're reflecting the metal's soft studio, or a JPG environment with no bright lights. Give them the gem environment, in HDR.
+- **Stones look pale and milky, or flat gray.** They're tracing the metal's studio, which is bright almost everywhere, so the facets have no dark areas for contrast; or a JPG environment, which has no bright lights to flash. Give them the gem environment, in HDR.
 - **Stones look like frosted blobs.** Smoothed normals, from the first unit: the surface bends the light at the wrong angles. Make the facets flat.
 - **Light leaks out of a stone, or a stone shows streaks.** The mesh has holes, so a ray finds no back facet. Close the mesh.
 - **The page slows down with many stones on screen.** Each pixel a stone covers runs up to five BVH searches, three times that with dispersion. On phones, lower the bounces, leave dispersion off, and keep the pixel ratio at 2 or less.

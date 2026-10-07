@@ -557,7 +557,7 @@ A working scene from an empty file, after Loop 4. Setting up a project from scra
 
 ## 17. Jewelry look-dev (elective)
 
-Brad added this on Oct 7, 2026. His Shopify jewelry viewer looked off, and AI fixes made it better without teaching him why. The elective is a teardown: it takes apart how the iJewel playground (`playground.ijewel3d.com/v2/`, the gold standard) gets its look from its `Spring.glb`, its two environment files, and its material files. Then you rebuild each piece in your own code. It builds on Domains 5, 6, 11, and 12, and on `three-mesh-bvh` for the gem shader.
+Brad added this on Oct 7, 2026. His Shopify jewelry viewer looked off, and AI fixes made it better without teaching him why. The elective is a teardown: it takes apart how the iJewel playground (`playground.ijewel3d.com/v2/`, the gold standard) gets its look from its `Spring.glb`, its two environment files, and its material files. Then each page shows and runs the code that builds that piece. It builds on Domains 5, 6, 11, and 12, and on `three-mesh-bvh` for the gem shader.
 
 - **Language:** GLSL on WebGLRenderer, so it carries over to the Shopify app.
 - **Format:** no four-loop pass, and tiers don't apply. Each unit is one page in four parts: **Evidence** (what the reference does, with the actual values from its files), **Why it works** (plain words and live A/B scenes that switch one thing off), **The code** (the finished code a developer types to diagnose or build it, shown and run on the page; there's no coding exercise, Brad's call on Oct 7, 2026), and **How it goes wrong** (the common mistake, what it looks like, and the fix).
@@ -566,13 +566,13 @@ Brad added this on Oct 7, 2026. His Shopify jewelry viewer looked off, and AI fi
 | Unit | What it takes apart | Misconceptions to expose |
 | --- | --- | --- |
 | What's in a pro jewelry file | Triangle budget by part, flat-faceted gems, closed shapes, UVs, shared shapes, tags that pick the shader | "More triangles make a gem look more real." "Smooth shading makes a stone look polished." |
-| Two lighting files | A fake studio with black panels for metal; a real room with tiny bright lights for gems | "One HDR lights everything." |
-| Polished metal and tone mapping | Metal is a tinted mirror; color, metalness 1, roughness 0; tone mapping and exposure decide the darks | "Metal looks real because of its textures." |
-| Ceramic and pearl from lighting alone | A plain color and roughness 0 reflecting a good environment; iridescence for the pearl | "Glossy materials need texture maps." |
-| Small tiling textures and triplanar mapping | Two 1024² seamless maps (color, and a grayscale copy as roughness), projected from three sides; color map sRGB, data map linear; where convincing textures come from | "Realistic textures have to be 4K." |
-| The gem shader | Rays traced inside the stone with a BVH: refraction, internal bounces, absorption, color boost | "Transmission makes a convincing diamond." |
-| Shadows, glow, and smooth edges | Ground shadow, bloom on highlights, anti-aliasing for thin sparkles | |
-| The whole piece in your own code | Spring rebuilt end to end, next to a playground screenshot | |
+| Two lighting files | A fake studio with black panels for metal; a real room with tiny bright lights for gems | "One HDR lights everything." "A JPG or PNG environment is good enough." "The lighting file has to be the background too." |
+| Polished metal and tone mapping | Metal is a tinted mirror; color, metalness 1, roughness 0; tone mapping and exposure decide the darks | "Metal looks real because of its textures." "Leaving tone mapping off keeps colors true." "Point lights make metal shine." |
+| Ceramic and pearl from lighting alone | A plain color and roughness 0 reflecting a good environment; iridescence for the pearl | "Glossy materials need texture maps." "More lights make a glossy surface look shinier." "A pearl is a white ball." |
+| Small tiling textures and triplanar mapping | Two 1024² seamless maps (color, and a grayscale copy as roughness), projected from three sides; color map sRGB, data map linear; where convincing textures come from | "Realistic textures have to be 4K." "Every texture should be marked sRGB." "A texture needs the mesh's UVs." |
+| The gem shader | Rays traced inside the stone with a BVH: refraction, internal bounces, absorption, color boost | "Transmission makes a convincing diamond." "More bounces always look better." |
+| Shadows, glow, and smooth edges | A 15° lens, a baked soft ground shadow, faint bloom on the hottest highlights, averaged frames for thin sparkles, white laid in after tone mapping | "Bloom makes everything look expensive." "antialias: true smooths every edge." "A white background color always shows as white." "A sharp shadow looks more real than a soft one." |
+| The whole piece in your own code | Spring assembled from every unit's code at the playground's camera views; each piece switchable to its common shortcut; your own `.glb` through the same recipe | "One setting will make it look real." "If it looks off, the model is bad." |
 
 ## Cross-domain drills
 

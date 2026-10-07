@@ -12,9 +12,10 @@ import { assemble, type Assembled, PLAYGROUND, type Recipe } from './assemble';
 // units: the ring stands 3 units tall, centered on the origin. The views' tilted "up" is left out;
 // the orbit controls keep the camera upright.
 type Vec3 = [number, number, number];
+// 'from above' is the one the playground opens on (its default camera).
 const VIEWS: Record<string, { position: Vec3; target: Vec3 }> = {
-  'three quarter': { position: [3.77, 2.036, 4.687], target: [0.01, 0.752, -0.215] },
   'from above': { position: [1.482, 7.731, -3.278], target: [-0.014, 0.024, 0.049] },
+  'three quarter': { position: [3.77, 2.036, 4.687], target: [0.01, 0.752, -0.215] },
   side: { position: [-13.233, 0.041, 0.091], target: [0.04, 0.038, 0.06] },
   'far above': { position: [0.576, 6.241, -9.53], target: [-0.015, 0.057, 0.07] },
 };
@@ -148,7 +149,7 @@ export const layers: SceneSetup = (harness) => {
   const bar = overlay(container, 'controls');
   whenAssembled(harness, stage.world, readout, loadSpring(), (assembled) => {
     stage.place(assembled.model);
-    look(harness, 'three quarter', assembled.model);
+    look(harness, 'from above', assembled.model);
     const recipe: Recipe = { ...PLAYGROUND };
     let finished = true;
     const update = () => {
@@ -207,7 +208,7 @@ export const yours: SceneSetup = (harness) => {
       current?.dispose();
       current = assembled;
       assembled.apply(PLAYGROUND);
-      look(harness, 'three quarter', assembled.model);
+      look(harness, 'from above', assembled.model);
       const { gem, metal, other } = assembled.counts;
       readout.innerHTML = [
         `${file.name}: ${gem} parts treated as stones, ${metal} as metal, ${other} left as loaded`,
