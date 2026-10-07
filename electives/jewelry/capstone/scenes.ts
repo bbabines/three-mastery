@@ -3,7 +3,7 @@ import { gltfLoader } from '@harness/models';
 import type { Harness, SceneSetup } from '@harness/scene';
 import { onLeave } from '@harness/teardown';
 import * as THREE from 'three';
-import { bakedGroundShadow, finishingComposer, type GroundShadow, productCamera } from '../finishing/finishing';
+import { bakedGroundShadow, finishingComposer, type GroundShadow, PLAYGROUND_CONTRAST, productCamera, SUBTLE_AO } from '../finishing/finishing';
 import { METAL_NAMES } from '../polished-metal/metal';
 import { jewelryStage, loadSpring, MISSING_REFERENCE } from '../shared';
 import { assemble, type Assembled, PLAYGROUND, type Recipe } from './assemble';
@@ -31,7 +31,7 @@ function playgroundStage(harness: Harness) {
   productCamera(camera, controls);
   camera.far = 100;
   camera.updateProjectionMatrix();
-  const finishing = finishingComposer(renderer, world, camera);
+  const finishing = finishingComposer(renderer, world, camera, { ao: SUBTLE_AO, contrast: PLAYGROUND_CONTRAST });
   controls.addEventListener('change', () => finishing.restart());
   let shadow: GroundShadow | undefined;
   onFrame(() => {
@@ -121,7 +121,8 @@ export const whole: SceneSetup = (harness) => {
     const show = () => {
       readout.innerHTML = [
         `${assembled.counts.gem} stones traced, ${assembled.counts.metal} metal parts in ${recipe.metal}`,
-        'two environments, ACES Filmic, a 15° lens, a baked shadow, faint bloom, averaged frames',
+        'two lighting files, ACES Filmic with contrast 1.1, a 15° lens',
+        'a baked shadow, ambient occlusion, faint bloom, averaged frames',
       ].join('<br>');
     };
     choiceButtons(buttonGroup(bar, 'view'), Object.keys(VIEWS).map((view) => ({ html: view, select: () => look(harness, view, assembled.model) })));
@@ -154,10 +155,12 @@ export const layers: SceneSetup = (harness) => {
     let finished = true;
     const update = () => {
       assembled.apply(recipe);
-      // Without the finish: no ground shadow, no bloom, and one multisampled frame, like a plain
-      // renderer with antialias: true.
+      // Without the finish: no ground shadow, bloom, ambient occlusion, or contrast, and one
+      // multisampled frame, like a plain renderer with antialias: true.
       if (stage.shadow) stage.shadow.ground.visible = finished;
       if (stage.finishing.bloom) stage.finishing.bloom.enabled = finished;
+      if (stage.finishing.ao) stage.finishing.ao.enabled = finished;
+      stage.finishing.contrast = finished ? PLAYGROUND_CONTRAST : 1;
       stage.finishing.antialias = finished ? 'progressive' : 'msaa';
       stage.finishing.restart();
       const shortcuts = [

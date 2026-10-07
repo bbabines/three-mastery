@@ -59,13 +59,29 @@ Each mistake has its own look. Try both.
 
 <div data-scene="colorSpaces"></div>
 
-### Small is enough
+### Texel density: small is enough
 
-**Texel density** is how many texture pixels (texels) land on each screen pixel. Past one, the extra detail is averaged away: the GPU reads a smaller copy of the texture, a **mipmap**, made when it's uploaded. Say the ring fills 1,000 device pixels across and the tile repeats twice across it. Each copy covers about 500 pixels, so a 1024² tile already gives two texels per pixel. A 4K tile would give eight, all averaged away, and it costs 16 times the GPU memory: 89 MB with mipmaps instead of 5.6 MB.
+**Texel density** is how many texture pixels (texels) land on each centimeter of the part: the tile's width in pixels over the centimeters it covers. It's the number game artists quote. Spring doesn't say what its units are, but read as centimeters it's a real ring, 2.2 cm across with a 5.6 mm band, so this page takes one unit as 1 cm. iJewel's wood is a 1024-pixel tile covering 1 cm: **1,024 px/cm**.
+
+The screen has a density too: how many of its pixels land on each centimeter of the ring right now. Zooming in raises it. Compare the two:
+
+- **Texture below the screen:** each texel is spread over several screen pixels. Blurry.
+- **About equal, up to twice:** as sharp as the screen can show.
+- **Texture well above the screen:** the extra can't fit, so the GPU reads a smaller copy of the texture, a **mipmap**, made when it's uploaded. The rest of the file was downloaded and stored for nothing.
+
+So the density you need is the screen's at the closest view you allow. More only costs memory: a 1024² map takes 5.6 MB on the GPU with its mipmaps, a 4096² one 89 MB.
+
+**Why game artists say 10 and a ring needs 1,000.** Games often settle on 10.24 px/cm (a 1024 texture per meter) because the camera stands meters away: a 4K screen showing 2 m of wall, top to bottom, is about 11 px/cm. The same screen showing a 2.2 cm ring is about 1,000 px/cm. The rule is the same; the camera is a hundred times closer. A game's number on a ring is blurry.
+
+Pick a file size and how much of the ring one tile covers, then zoom. **texels** turns off the smoothing between texels, so each shows as a square. **sharp enough?** colors every spot: red where the texture is below the screen, green where it matches, blue where the GPU reads a smaller copy.
+
+<div data-scene="density"></div>
+
+Size and coverage trade the same way: a 512² tile over 0.5 cm is the same 1,024 px/cm as a 1024² over 1 cm, but its knots repeat twice as often. How often it repeats is a choice about looks: set the tile so the grain is the size it would be on a real wooden ring, then pick the file size that matches your closest zoom. The band's sides are always a step bluer than its front, and the last to go red: they turn away from you, so a lot of wood is squeezed into few pixels.
 
 <details><summary>The math, if you're curious</summary>
 
-The copy the GPU reads is picked by the **mip level** (also called the level of detail, LOD): about log₂ of the texels per screen pixel. A 4096 tile over 500 pixels is about 8 texels per pixel, log₂ 8 = 3, so the GPU reads level 3, which is 512². The 4K file is drawn as a 512 one.
+The copy the GPU reads is picked by the **mip level** (also called the level of detail, LOD): log₂ of the texture's density over the screen's. 1,024 px/cm on a screen showing 256 px/cm is log₂ 4 = 2, so the GPU reads level 2, the 256² copy. Level 0 is the file itself; each level halves it.
 
 </details>
 
@@ -127,6 +143,19 @@ band.material = wood;
 wood.userData.triplanar.scale.value = 2; // a uniform: changes live, same shader
 ```
 
+### Pick a texture size
+
+Set the camera to the closest view your viewer allows, then ask what the screen needs there:
+
+```js
+const distance = camera.position.distanceTo(controls.target);
+const visible = 2 * distance * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)); // cm in view, top to bottom
+const screenDensity = renderer.domElement.height / visible;   // device pixels per cm
+const tilePixels = screenDensity * tileCoversCm;              // round up to 512, 1024, or 2048
+```
+
+`controls.minDistance` sets that closest view, so the two decisions are tied: allow a closer zoom and you need a bigger file.
+
 ### Change a map after it's in use
 
 ```js
@@ -139,6 +168,7 @@ material.needsUpdate = true;     // adding or removing a map builds a different 
 ## How it goes wrong
 
 - **"Realistic textures have to be 4K."** Big downloads, phones short on GPU memory, and nothing sharper on screen, because the GPU averages the extra texels away. What makes the wood look real is a photographed source, laid on without stretching, at the right gloss. Use a 1K tile and repeat it.
+- **Blurry wood up close, at a "standard" texel density.** 10.24 px/cm is a game's number, for a camera meters away. Work it out from your closest zoom instead: the screen's pixels per centimeter there. **sharp enough?** shows red where a texture falls short.
 - **Stretched or seamed wood on a CAD part.** Its UVs came from an automatic unwrap. Project the texture instead, or unwrap it properly in Blender (mark seams, then Unwrap).
 - **Pale, washed-out wood.** The color map was left at `NoColorSpace`, the default for a texture loaded by hand with TextureLoader. GLTFLoader marks a model's base color map sRGB itself. Set `map.colorSpace = THREE.SRGBColorSpace`.
 - **"Every texture should be marked sRGB."** Then the wood is too glossy: the roughness map was marked sRGB, so its numbers were decoded as if they were color, and every value dropped. Leave data maps at `NoColorSpace`; in Blender, set their image node to Non-Color.

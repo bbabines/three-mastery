@@ -5,6 +5,7 @@
 import * as THREE from 'three';
 import type { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { GTAOPass } from 'three/addons/postprocessing/GTAOPass.js';
 import { FullScreenQuad } from 'three/addons/postprocessing/Pass.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
@@ -26,6 +27,22 @@ export const PLAYGROUND = {
 // before tone mapping, where 1.0 is white paper. The strength doesn't: UnrealBloomPass multiplies it
 // by 3 and always blurs at 5 sizes, so a strength of 0.2 covers the ring in haze. 0.03 was picked by eye.
 export const FAINT_BLOOM = { threshold: 2, strength: 0.03, radius: 0.6 };
+
+// GTAOPass settings for the playground's subtle contact darkness. The playground's SSAO intensity of
+// 0.25 is a different method's number, so these were picked by eye: `radius` is how far, in the
+// world, a point looks for nearby surfaces (Spring is 3 units tall, its prongs about 0.2), `scale`
+// deepens the darkening (it's raised to that power), and `intensity` is how much is blended in.
+export interface AOSettings {
+  radius: number;
+  scale: number;
+  intensity: number;
+}
+export const SUBTLE_AO: AOSettings = { radius: 0.2, scale: 2, intensity: 1 };
+
+// The playground's contrast, from its Tonemap settings. three.js's renderer has no contrast setting,
+// and iJewel's file doesn't say how it computes it; here it stretches the tone-mapped colors away
+// from middle gray, our guess at what "contrast 1.1" means.
+export const PLAYGROUND_CONTRAST = 1.1;
 
 // A long product-photo lens, and an orbit that stops at the target's height so the camera never
 // looks up from under the ground. Keeps the camera's distance to the target.
@@ -231,9 +248,11 @@ export function bakedGroundShadow(
 // Colors arrive scaled by how much of the pixel is covered (premultiplied); dividing that back out
 // first keeps the edges of the ring from turning pale. It must be the last pass: three.js only
 // adds tone mapping to a ShaderMaterial when it draws to the screen.
+// `contrast` stretches the finished colors away from middle gray (1 leaves them alone), after tone
+// mapping and before the white goes in, so the background stays 255.
 const OutputOnWhiteShader = {
   name: 'OutputOnWhiteShader',
-  uniforms: { tDiffuse: { value: null } },
+  uniforms: { tDiffuse: { value: null }, contrast: { value: 1 } },
   vertexShader: /* glsl */ `
     varying vec2 vUv;
     void main() {
@@ -242,6 +261,7 @@ const OutputOnWhiteShader = {
     }`,
   fragmentShader: /* glsl */ `
     uniform sampler2D tDiffuse;
+    uniform float contrast;
     varying vec2 vUv;
     void main() {
       vec4 color = texture2D(tDiffuse, vUv);
@@ -249,6 +269,7 @@ const OutputOnWhiteShader = {
       gl_FragColor = vec4(covered > 0.0 ? color.rgb / covered : color.rgb, 1.0);
       #include <tonemapping_fragment>
       #include <colorspace_fragment>
+      gl_FragColor.rgb = clamp((gl_FragColor.rgb - 0.5) * contrast + 0.5, 0.0, 1.0);
       gl_FragColor.rgb = mix(vec3(1.0), gl_FragColor.rgb, covered);
     }`,
 };
@@ -258,6 +279,8 @@ export type Antialias = 'none' | 'msaa' | 'progressive';
 interface FinishingOptions {
   antialias?: Antialias;
   bloom?: { threshold: number; strength: number; radius: number } | null; // null: no bloom pass
+  ao?: AOSettings | null; // null: no ambient occlusion pass
+  contrast?: number; // 1 leaves the colors alone
 }
 
 export interface Finishing {
@@ -265,8 +288,13 @@ export interface Finishing {
   renderPass: RenderPass;
   progressive: TAARenderPass;
   bloom: UnrealBloomPass | null;
+  /** The ambient occlusion pass. Turn it off with ao.enabled = false; change it with setAO. */
+  ao: GTAOPass | null;
   outputOnWhite: ShaderPass;
   antialias: Antialias;
+  contrast: number;
+  /** Sets the ambient occlusion's reach in world units, depth, and how strongly it's blended in. */
+  setAO(settings: AOSettings): void;
   /** How many jittered frames are in the average now: 0 while the view is changing. */
   readonly framesAveraged: number;
   /** Call when the picture changes (the camera or the model moved) so the average starts again. */
@@ -278,8 +306,9 @@ export interface Finishing {
 
 type Accumulating = TAARenderPass & { accumulateIndex: number };
 
-// RenderPass (or TAARenderPass once the view stops) → UnrealBloomPass → tone mapping over white.
-// The scene needs scene.background = null, so what's behind the ring stays empty until the last pass.
+// RenderPass (or TAARenderPass once the view stops) → GTAOPass → UnrealBloomPass → tone mapping,
+// contrast, and white. The scene needs scene.background = null, so what's behind the ring stays empty
+// until the last pass.
 //   none:        one plain frame each time.
 //   msaa:        each pixel's edges sampled 4 times (multisampling), shaded once.
 //   progressive: msaa while the view changes; once it stops, TAARenderPass averages 32 frames,
@@ -288,7 +317,7 @@ export function finishingComposer(
   renderer: THREE.WebGLRenderer,
   scene: THREE.Scene,
   camera: THREE.PerspectiveCamera,
-  { antialias = 'progressive', bloom = FAINT_BLOOM }: FinishingOptions = {},
+  { antialias = 'progressive', bloom = FAINT_BLOOM, ao = null, contrast = 1 }: FinishingOptions = {},
 ): Finishing {
   const cssSize = renderer.getSize(new THREE.Vector2());
   let ratio = renderer.getPixelRatio();
@@ -316,8 +345,22 @@ export function finishingComposer(
       blendDstAlpha: THREE.OneFactor,
     });
   }
+  // Ambient occlusion: draws the scene's normals and depth again every frame, works out how hidden
+  // each point is from its surroundings, and multiplies the picture by it. Like the bloom, its blend
+  // is set to leave alpha alone, so it can't darken the empty background.
+  const aoPass = ao ? new GTAOPass(scene, camera, cssSize.x * ratio, cssSize.y * ratio) : null;
+  const setAO = (settings: AOSettings) => {
+    if (!aoPass) return;
+    aoPass.updateGtaoMaterial({ radius: settings.radius, scale: settings.scale });
+    aoPass.blendIntensity = settings.intensity;
+  };
+  if (aoPass && ao) {
+    setAO(ao);
+    Object.assign(aoPass.blendMaterial, { blendSrcAlpha: THREE.ZeroFactor, blendDstAlpha: THREE.OneFactor });
+  }
   const outputOnWhite = new ShaderPass(OutputOnWhiteShader);
-  for (const pass of [renderPass, progressive, bloomPass, outputOnWhite]) if (pass) composer.addPass(pass);
+  outputOnWhite.uniforms.contrast.value = contrast;
+  for (const pass of [renderPass, progressive, aoPass, bloomPass, outputOnWhite]) if (pass) composer.addPass(pass);
 
   let changed = true;
   let mode = antialias;
@@ -328,7 +371,15 @@ export function finishingComposer(
     renderPass,
     progressive,
     bloom: bloomPass,
+    ao: aoPass,
     outputOnWhite,
+    setAO,
+    get contrast() {
+      return outputOnWhite.uniforms.contrast.value;
+    },
+    set contrast(value: number) {
+      outputOnWhite.uniforms.contrast.value = value;
+    },
     get antialias() {
       return mode;
     },

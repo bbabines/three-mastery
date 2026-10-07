@@ -23,7 +23,7 @@ Every piece below is the code from an earlier unit, assembled in one file, `elec
 | Ceramic and pearl | A color and roughness 0; the pearl adds a thin-film shimmer | Ceramic and pearl from lighting alone |
 | The wood | Two 1024² tiles projected from three sides | Small tiling textures and triplanar mapping |
 | The stones | Light traced inside each stone, with iJewel's settings per kind | The gem shader |
-| The finish | A 15° lens, a white background, a soft ground shadow, light bloom, averaged frames | Shadows, glow, and smooth edges |
+| The finish | A 15° lens and chosen views, a white background, a soft ground shadow, ambient occlusion, contrast 1.1, light bloom, averaged frames | Shadows, glow, and smooth edges |
 
 Switch views and metals. The metal buttons are iJewel's five presets, the way a configurator would offer them.
 
@@ -40,6 +40,7 @@ When a viewer looks off, the fastest way to find out why is to take the pieces a
 - **One lighting file**: the metal barely changes, but the stones go pale and milky. The studio is bright almost everywhere, so the facets have no dark areas for contrast, and the center diamond blows out to a white blob.
 - **No tone mapping**: colors turn stronger and harsher (the pink ceramic goes salmon, the gold more saturated), and the brightest highlights cut off at white instead of rolling off softly. ACES calms and slightly pales everything, which is much of the playground's soft, expensive look.
 - **Wood on its UVs**: the grain stretches into streaks along the band.
+- **No finish**: no ground shadow, contact darkness, contrast, or glow, and only plain multisampled edges. The ring floats, the parts look pasted together, and it reads as a quick render.
 
 **Analogy: a mixing desk.** A band's sound is a dozen instruments on separate faders. When something sounds wrong, the engineer mutes one channel at a time until the problem goes away. Each switch here is a fader.
 

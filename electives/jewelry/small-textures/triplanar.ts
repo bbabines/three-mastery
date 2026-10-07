@@ -26,13 +26,18 @@ export interface TriplanarOptions {
   roughness?: number; // multiplies the roughness map
   metalness?: number;
   side?: THREE.Side;
-  debug?: boolean; // paint each projector's share as red (from the side, x), green (from above, y), blue (from the front, z)
+  // A flat, unlit view instead of the material. 'projectors': each projector's share as red (from the
+  // side, x), green (from above, y), blue (from the front, z). 'density': texels per screen pixel, as
+  // red (under 1, blurry), green (1 to 2, sharp), blue (over 2, the GPU reads a smaller copy).
+  debug?: 'projectors' | 'density';
+  texels?: number; // the tile's width in texels, for the density view. Default 1024.
 }
 
 // The uniforms a scene changes live, without a recompile: material.userData.triplanar.scale.value = 2.
 export interface TriplanarUniforms {
   scale: { value: number };
   blend: { value: number };
+  texels: { value: number };
 }
 
 const VERTEX_DECLARATIONS = /* glsl */ `
@@ -50,6 +55,7 @@ vTriplanarNormal = objectNormal;
 const FRAGMENT_DECLARATIONS = /* glsl */ `
 uniform float triplanarScale;
 uniform float triplanarBlend;
+uniform float triplanarTexels;
 varying vec3 vTriplanarPosition;
 varying vec3 vTriplanarNormal;
 
@@ -78,9 +84,22 @@ vec3 triplanarWeight = triplanarWeights();
 #endif
 `;
 
-// The debug view: each projector's share as a flat, unlit color.
-const DEBUG_FRAGMENT = /* glsl */ `
+// The projectors view: each projector's share as a flat, unlit color.
+const PROJECTORS_FRAGMENT = /* glsl */ `
 gl_FragColor = vec4( triplanarWeight, 1.0 );
+`;
+
+// The density view: texels per screen pixel. dFdx and dFdy say how far the surface moves (measured
+// from the object itself, in units) from this pixel to the next one across and down; the longer
+// step is the surface one pixel covers. Times tiles per unit times texels per tile: texels per pixel.
+// It's what the GPU works out to pick a mipmap. Shaded by the facing, so the band's shape still shows.
+const DENSITY_FRAGMENT = /* glsl */ `
+float surfacePerPixel = max( length( dFdx( vTriplanarPosition ) ), length( dFdy( vTriplanarPosition ) ) );
+float level = log2( surfacePerPixel * triplanarScale * triplanarTexels );
+vec3 blurry = vec3( 0.9, 0.2, 0.2 ), sharp = vec3( 0.25, 0.8, 0.35 ), extra = vec3( 0.25, 0.45, 0.95 );
+vec3 shade = level < 0.0 ? mix( sharp, blurry, clamp( -level * 2.0, 0.0, 1.0 ) )
+           : mix( sharp, extra, clamp( level - 1.0, 0.0, 1.0 ) );
+gl_FragColor = vec4( shade * ( 0.55 + 0.45 * abs( normal.z ) ), 1.0 );
 `;
 
 // Replaces roughnessmap_fragment, which reads `roughnessMap` once at vRoughnessMapUv and keeps green.
@@ -96,7 +115,7 @@ float roughnessFactor = roughness;
 // and wrapping, and needs material.needsUpdate = true when one is added or removed. The texture's own
 // repeat and offset are ignored; `scale` replaces them.
 export function triplanarMaterial(options: TriplanarOptions = {}) {
-  const { map = null, roughnessMap = null, scale = 1, blend = 6, debug = false } = options;
+  const { map = null, roughnessMap = null, scale = 1, blend = 6, debug, texels = 1024 } = options;
   const material = new THREE.MeshStandardMaterial({
     map,
     roughnessMap,
@@ -105,14 +124,18 @@ export function triplanarMaterial(options: TriplanarOptions = {}) {
     metalness: options.metalness ?? 0,
     side: options.side ?? THREE.FrontSide,
   });
-  const uniforms: TriplanarUniforms = { scale: { value: scale }, blend: { value: blend } };
+  const uniforms: TriplanarUniforms = { scale: { value: scale }, blend: { value: blend }, texels: { value: texels } };
   material.userData.triplanar = uniforms;
   if (debug) material.toneMapped = false; // pure red, green, and blue stay pure
 
   material.onBeforeCompile = (shader) => {
     shader.uniforms.triplanarScale = uniforms.scale;
     shader.uniforms.triplanarBlend = uniforms.blend;
-    if (debug) shader.fragmentShader = shader.fragmentShader.replace('#include <opaque_fragment>', DEBUG_FRAGMENT);
+    shader.uniforms.triplanarTexels = uniforms.texels;
+    if (debug) {
+      const view = debug === 'projectors' ? PROJECTORS_FRAGMENT : DENSITY_FRAGMENT;
+      shader.fragmentShader = shader.fragmentShader.replace('#include <opaque_fragment>', view);
+    }
     shader.vertexShader = shader.vertexShader
       .replace('#include <common>', `#include <common>\n${VERTEX_DECLARATIONS}`)
       .replace('#include <project_vertex>', VERTEX_PASS);
@@ -121,8 +144,8 @@ export function triplanarMaterial(options: TriplanarOptions = {}) {
       .replace('#include <map_fragment>', MAP_FRAGMENT)
       .replace('#include <roughnessmap_fragment>', ROUGHNESS_FRAGMENT);
   };
-  // Every triplanar material shares one onBeforeCompile source, so the debug view needs its own key.
-  material.customProgramCacheKey = () => `triplanar${debug ? '-debug' : ''}`;
+  // Every triplanar material shares one onBeforeCompile source, so each debug view needs its own key.
+  material.customProgramCacheKey = () => `triplanar${debug ? `-${debug}` : ''}`;
   return material;
 }
 

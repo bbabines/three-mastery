@@ -322,7 +322,7 @@ electives/jewelry/shared.ts          the reference files and the stage every jew
 
 Scenes load iJewel's files through `shared.ts` and show `MISSING_REFERENCE` when they aren't on the machine.
 
-**Wording:** the two `.exr` files are "the metal file" (a studio) and "the gem file" (a room), together "lighting files"; "environment" keeps Domain 11's meaning. A mirror material standing in for the gem shader is "the stand-in". Triplanar mapping is "three projectors" (from the side, above, and the front), and texel density is "how many texture pixels land on each screen pixel". The capstone's switchable pieces are "shortcuts" (the common way people skip a piece). Where a reference number doesn't carry over to three.js, the page says it was picked by eye.
+**Wording:** the two `.exr` files are "the metal file" (a studio) and "the gem file" (a room), together "lighting files"; "environment" keeps Domain 11's meaning. A mirror material standing in for the gem shader is "the stand-in". Triplanar mapping is "three projectors" (from the side, above, and the front), and texel density is "texture pixels per centimeter of the part" (px/cm, as game artists quote it), compared against the screen's own pixels per centimeter; Spring's units are read as centimeters. The capstone's switchable pieces are "shortcuts" (the common way people skip a piece). Where a reference number doesn't carry over to three.js, the page says it was picked by eye.
 
 ## Before you call it done
 

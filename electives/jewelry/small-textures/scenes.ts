@@ -1,4 +1,4 @@
-import { buttonGroup, choiceButtons, formatNumber, overlay, slider } from '@harness/lesson';
+import { buttonGroup, choiceButtons, formatBytes, formatNumber, overlay, slider } from '@harness/lesson';
 import type { Harness, SceneSetup } from '@harness/scene';
 import { onLeave } from '@harness/teardown';
 import * as THREE from 'three';
@@ -90,7 +90,7 @@ export const band: SceneSetup = (harness) => {
     harness.scene.environment = env;
     const uvMapped = new THREE.MeshStandardMaterial({ ...textures, color: WOOD.color, roughness: WOOD.roughness, metalness: WOOD.metalness, side: THREE.DoubleSide });
     const projected = wood(textures);
-    const projectors = triplanarMaterial({ debug: true, roughness: 0.6, side: THREE.DoubleSide });
+    const projectors = triplanarMaterial({ debug: 'projectors', roughness: 0.6, side: THREE.DoubleSide });
     const mesh = standBand(harness, geometry, uvMapped);
     const { spread, empty } = uvSpread(geometry);
 
@@ -264,5 +264,103 @@ export const grain: SceneSetup = (harness) => {
         URL.revokeObjectURL(url);
       }
     });
+  });
+};
+
+// Why it works: texel density. Spring's units read as centimeters (a ring 2.2 cm across with a
+// 5.6 mm band, a real ring's size), so the texture's density and the screen's are both pixels per cm.
+const SIZES = [1024, 512, 256, 128, 64, 32, 16];
+
+// The same tile stored smaller, each halved from the one before, the way mipmaps are made.
+function shrunk(texture: THREE.Texture) {
+  const copies = new Map<number, THREE.Texture>([[SIZES[0], texture]]);
+  let source = texture.image as CanvasImageSource; // an <img>, from TextureLoader
+  for (const size of SIZES.slice(1)) {
+    const canvas = document.createElement('canvas');
+    canvas.width = canvas.height = size;
+    const context = canvas.getContext('2d')!;
+    context.imageSmoothingQuality = 'high';
+    context.drawImage(source, 0, 0, size, size);
+    const copy = new THREE.CanvasTexture(canvas);
+    copy.colorSpace = texture.colorSpace;
+    copy.wrapS = copy.wrapT = THREE.RepeatWrapping;
+    copy.flipY = texture.flipY;
+    copies.set(size, copy);
+    source = canvas;
+  }
+  return copies;
+}
+
+export const density: SceneSetup = (harness) => {
+  const { camera, controls, container, renderer, onFrame } = harness;
+  jewelryStage(harness);
+  camera.position.set(2.6, 2.1, 2.6);
+  controls.target.set(0, 1.25, 0);
+  controls.minDistance = 0.5;
+  const readout = overlay(container, 'readout');
+  const bar = overlay(container, 'controls');
+
+  whenLoaded(container, readout, loadWood(harness), ([geometry, textures, env]) => {
+    harness.scene.environment = env;
+    const maps = shrunk(textures.map);
+    const roughnessMaps = shrunk(textures.roughnessMap);
+    const material = wood(textures);
+    const colored = triplanarMaterial({ debug: 'density', side: THREE.DoubleSide });
+    const mesh = standBand(harness, geometry, material);
+
+    let size = SIZES[0];
+    let covers = 1; // cm of ring one tile covers
+    let view: 'wood' | 'texels' | 'colored' = 'wood';
+    const update = () => {
+      material.map = maps.get(size)!;
+      material.roughnessMap = roughnessMaps.get(size)!;
+      for (const uniforms of [material.userData.triplanar, colored.userData.triplanar]) uniforms.scale.value = 1 / covers;
+      colored.userData.triplanar.texels.value = size;
+      // Nearest skips the smoothing between texels, so each one shows as a square. A filter applies
+      // when the texture is uploaded, so changing it needs needsUpdate.
+      const filter = view === 'texels' ? THREE.NearestFilter : THREE.LinearFilter;
+      for (const texture of [...maps.values(), ...roughnessMaps.values()]) {
+        if (texture.magFilter === filter) continue;
+        texture.magFilter = filter;
+        texture.needsUpdate = true;
+      }
+      mesh.material = view === 'colored' ? colored : material;
+    };
+
+    // What the screen shows right now: its height in device pixels over the centimeters it spans at
+    // the ring's middle. Nearer parts of the ring get more; the colored view shows every spot.
+    let shown = '';
+    onFrame(() => {
+      const distance = camera.position.distanceTo(controls.target);
+      const visible = 2 * distance * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
+      const screen = renderer.domElement.height / visible;
+      const texture = size / covers;
+      const ratio = texture / screen;
+      const verdict =
+        ratio < 1 ? `texture below the screen: each texel spread over ${formatNumber(1 / ratio, 1)} screen pixels, so blurry`
+        : ratio < 2 ? 'about one texel per screen pixel: as sharp as this screen shows, nothing wasted'
+        : `texture above the screen: the GPU reads about the ${size / 2 ** Math.floor(Math.log2(ratio))}² copy; the rest is never seen`;
+      const html = [
+        `texel density: ${formatNumber(texture, 1)} px/cm (a ${size}² tile covering ${formatNumber(covers)} cm)`,
+        `screen right now: ${Math.round(screen)} px/cm at the ring's middle; zoom to change it`,
+        verdict,
+        `GPU memory: ${formatBytes((size * size * 4 * 4) / 3)} per map, mipmaps included`,
+      ].join('<br>');
+      if (html !== shown) readout.innerHTML = shown = html;
+    });
+
+    choiceButtons(
+      buttonGroup(bar, 'file'),
+      SIZES.map((s) => ({ html: `${s}²`, select: () => ((size = s), update()) })),
+    );
+    slider(bar, 'tile covers (cm)', { min: 0.25, max: 4, step: 0.25, value: covers }, (value) => {
+      covers = value;
+      update();
+    });
+    choiceButtons(buttonGroup(bar, 'view'), [
+      { html: 'wood', select: () => ((view = 'wood'), update()) },
+      { html: 'texels', select: () => ((view = 'texels'), update()) },
+      { html: 'sharp enough?', select: () => ((view = 'colored'), update()) },
+    ]);
   });
 };

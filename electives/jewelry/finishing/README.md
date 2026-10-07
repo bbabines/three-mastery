@@ -7,7 +7,7 @@ concepts: [jewelry.finishing]
 
 # Shadows, glow, and smooth edges
 
-> **In short:** Around the materials, the playground adds a long lens, a soft shadow baked once, a faint glow on only the brightest sparkles, and edges averaged smooth.
+> **In short:** Around the materials, the playground adds a long lens and chosen views, a soft shadow baked once, contact darkness, a faint glow on only the brightest sparkles, and edges averaged smooth.
 >
 > **Used for:** Product viewers, still product shots, matching a reference render, and grounding any object on a plain background.
 
@@ -24,10 +24,12 @@ Spring's file saves the playground's whole render setup alongside the ring. The 
 | Smooth edges | `Progressive`: 32 frames, each shifted by part of a pixel, averaged once the camera stops; `TAA` while it moves |
 | Screen-space reflections | On: 16 steps, intensity 1 |
 | Ambient occlusion | SSAO, intensity 0.25 |
+| Tone mapping | ACES Filmic, exposure 1, plus contrast 1.1 |
+| Saved views | Four, each a position and a target; it opens on the one looking down from above. The environment stays fixed while the camera moves |
 
 Switched off: chromatic aberration, vignette, color grading (LUT), film grain, depth of field, screen-space global illumination, and contact shadows. Nothing here changes the ring's materials. It's the photography around them.
 
-This is Spring with all of it rebuilt in three.js, except the reflections and occlusion (see the end of the next part), and with mirror stand-ins for the stones until the gem shader unit. Orbit it: the edges go rough while it moves and settle once it stops. Pick one of your own `.glb` files to see it in the same setup.
+This is Spring with all of it rebuilt in three.js except the screen-space reflections (see "Reflections" below), and with mirror stand-ins for the stones. Orbit it: the edges go rough while it moves and settle once it stops. Pick one of your own `.glb` files to see it in the same setup.
 
 <div data-scene="playground"></div>
 
@@ -81,9 +83,35 @@ Switch modes and look at the gold edges, then let the camera turn.
 
 Once 32 frames are in, the scene isn't drawn again until the view changes. That takes the draws from about 150 a frame to 15.
 
-### Reflections and contact darkness
+### Contact darkness and contrast
 
-The playground also has two effects worked out from the finished picture. **Screen-space reflections** let polished metal reflect things that are on screen: for each shiny pixel, the playground steps along the reflected direction through the picture's depth, 16 steps, to find what's there. That's how a prong can reflect the stone beside it, which the environment can't show. **Ambient occlusion** darkens tight gaps, between prongs and under stones, where less of the surrounding light reaches; the playground's 0.25 is subtle. three.js has `SSRPass` for the first and `SSAOPass`, `SAOPass`, and `GTAOPass` for the second (the last two look better and cost more). Each draws the scene again every frame, for its normals and depth, so they aren't in the module here.
+**Ambient occlusion** darkens the tight gaps between parts (between petals, around prongs, under stones), where less of the surrounding light can reach. The environment lights everything as if nothing blocked it, so without it the gaps are as bright as open surfaces, and the parts look pasted together rather than tucked into each other. Here it's three.js's `GTAOPass`: each frame it draws the scene's surfaces again, works out how hidden each point is from what's around it, and darkens the picture by that much. The playground's "0.25" belongs to a different method, so the setting here was picked by eye.
+
+**Contrast** stretches the finished colors away from middle gray, so darks get a little darker and lights a little lighter. The playground's tone mapping adds 1.1. three.js's renderer has no contrast setting, and iJewel's file doesn't say how it's computed, so here it's one line in the last pass, after tone mapping and before the white goes in: our guess at their 1.1.
+
+Look at the gaps between the petals and around the prongs as you switch. "Strong" shows what overdone occlusion looks like.
+
+<div data-scene="aoContrast"></div>
+
+### The camera decides what the stones show
+
+The same ring gives a different picture from every angle, and not just because it's turned. Three things change:
+
+- **What the stones send back.** A cut stone returns most of its light up through its top. From above, you look straight into that light and the stones sparkle most. From low down you look across them, less of that light comes your way, and colored stones darken (the rubies show it most). Below the stones you'd see their undersides, where light leaks out. That's one reason jewelry is shot face-up, and why the playground never lets the camera go below the ground.
+- **What the metal reflects.** The environment stays put while the camera moves, so each angle lines up different panels of the studio across the metal. The dark bands that show a band's shape appear only from some directions. The playground's saved views are angles where they look right, the way a photographer moves until the reflections do.
+- **How big the stones are on screen.** Far away, facets shrink below a pixel and their sparkle turns into flicker, which only averaged frames calm down. Close up, every facet is sharp, but the gem shader runs on far more of the picture, so it costs more.
+
+This scene uses the real gem shader. Pick **close-up**, then step through the heights; then try each distance and watch the readout's cost.
+
+<div data-scene="angles"></div>
+
+Measured here: from far away the stones cover 0.2% of the picture, the whole ring 1.5%, and a close-up 10%. That's about 40 times more gem shader work for the close-up, from the camera alone.
+
+So to compare a viewer against the playground, match the camera first: the same view, the same 15° lens, the same window size, and still frames. Otherwise the camera explains most of the difference.
+
+### Reflections
+
+**Screen-space reflections** let polished metal reflect things that are on screen: for each shiny pixel, the playground steps along the reflected direction through the picture's depth, 16 steps, to find what's there. That's how a prong can reflect the stone beside it, which the environment can't show. three.js has `SSRPass` for it. It costs a lot every frame, and on a ring this small the gain is modest, so it isn't in the module here.
 
 ## The code
 
@@ -127,6 +155,17 @@ composer.addPass(new ShaderPass(OutputOnWhiteShader)); // tone mapping and sRGB,
 
 The multi-pass page shows how each pass reads the picture the one before it drew.
 
+### Add ambient occlusion and contrast
+
+```js
+const ao = new GTAOPass(scene, camera, width, height);  // after the render pass, before bloom
+ao.updateGtaoMaterial({ radius: 0.2, scale: 2 });       // how far, in the world, it looks; how deep it darkens
+ao.blendIntensity = 1;                                  // how much of the darkening is blended in
+gl_FragColor.rgb = (gl_FragColor.rgb - 0.5) * contrast + 0.5; // in the last pass, after tone mapping
+```
+
+`finishingComposer(renderer, scene, camera, { ao: SUBTLE_AO, contrast: 1.1 })` adds both. Set the radius in your model's units: Spring is 3 units tall and its prongs about 0.2.
+
 ### Average frames while the view is still
 
 ```js
@@ -147,5 +186,9 @@ if (!averaging) progressive.accumulateIndex = -1; // so the next still frame sta
 - **The ring looks distorted, like a toy.** A wide lens up close. Use a long one, around 15°, and move back.
 - **"A white background color always shows as white."** Through a composer, `OutputPass` tone maps every pixel, background included, so white comes out 226 of 255. The same happens to an unlit white ground plane unless its material sets `toneMapped: false`.
 - **The camera dips under the ground.** Without `maxPolarAngle`, the orbit goes below the floor and shows the ring from underneath.
+- **"If it looks good from one view, it looks good from every view."** Colored stones darken from low angles, metal bands come and go with the angle, and far views flicker. Check the views shoppers will actually see, and pick the opening view the way a photographer would.
+- **Two viewers compared at different angles or sizes.** Most of the difference is then the camera. Match the view, the lens, the window size, and compare still frames.
+- **Dark halos and grain around every part.** Ambient occlusion with too big a radius or too deep a scale. It's also worked out fresh each frame, not averaged, so overdone it shows speckles. Keep the radius near the size of the gaps and the darkening light.
+- **Black, crushed darks.** Contrast pushed too far. A little goes a long way: 1.1 is already visible.
 
 <div data-mark-done></div>

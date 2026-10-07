@@ -31,7 +31,7 @@ Measured from the files on Oct 7, 2026. Pages quote these numbers, so measure ag
 | Tone mapping | ACES Filmic (`toneMapping: 4`), exposure 1, contrast 1.1, saturation 1 |
 | Anti-aliasing | Progressive: 32 frames with sub-pixel jitter, averaged once the camera stops; TAA while it moves |
 | Screen-space reflections | On: 16 steps, intensity 1 |
-| Ambient occlusion | SSAO, intensity 0.25 |
+| Ambient occlusion | SSAO, intensity 0.25 (rebuilt with three.js's `GTAOPass` at radius 0.2, scale 2, picked by eye) |
 | Bloom | Threshold 2, intensity 0.2, 4 iterations, radius 0.6 (three.js's `UnrealBloomPass` needs a strength near 0.03 for the same faint glow) |
 | Ground | Baked soft shadow (a randomized light, up to 400 frames) on a white ground 8 units across, roughness 1, opacity 0.95 |
 | Background | White, not tone mapped; the ground isn't tone mapped either (`tonemapGround: false`) |
