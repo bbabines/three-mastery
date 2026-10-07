@@ -2,7 +2,7 @@
 id: vfx.blending-modes
 name: Additive vs alpha blending
 domain: vfx
-prerequisites: [gpu.blending, materials.transparency]
+prerequisites: [gpu.blending]
 misconceptions:
   additive-free: '"Additive glow is free." It still shades and blends every covered pixel.'
 contexts:

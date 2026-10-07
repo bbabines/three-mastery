@@ -20,9 +20,18 @@ export interface DoneEntry {
   score?: { right: number; total: number };
   // Placement checks and checkpoints: the parts (concepts or domains) that failed.
   failedParts?: string[];
+  // Checkpoints: the domains its questions covered, which depend on the track. Absent means all.
+  parts?: string[];
 }
 
-export type LogEntry = StartEntry | DoneEntry;
+// The track chosen in the viewer or with `pick -- track`. The latest one is the active track.
+export interface TrackEntry {
+  type: 'track';
+  track: string;
+  at: string;
+}
+
+export type LogEntry = StartEntry | DoneEntry | TrackEntry;
 
 export function readLog(): LogEntry[] {
   if (!existsSync(LOG_FILE)) return [];

@@ -12,7 +12,7 @@ Each concept gets one page. It opens with the concept in one sentence and a list
 - **B · Working knowledge** for a working developer: the code you'd write, the mistakes people make, and which methods want which kind of value. No theory.
 - **Drill · Read the code**: short snippets with multiple-choice questions, graded when you click.
 
-Run `npm run dev` and open `/harness/` to read them. The sidebar shows the whole curriculum: every loop and domain, with built pages as links and the rest greyed out. Groups collapse, and the viewer remembers which ones you left open. Click a section heading on a page to collapse it too.
+Run `npm run dev` and open `/harness/` to read them. The sidebar shows the active track's curriculum, every loop and domain, with built pages as links and your progress beside each group. Opening a group closes the ones beside it, and the viewer remembers which ones you left open. Click a section heading on a page to collapse it too.
 
 The concept list and its teaching order live in `scripts/lib/domains.ts`, copied from the inventory. The sidebar and `pick` both follow it.
 
@@ -29,6 +29,16 @@ The concept list and its teaching order live in `scripts/lib/domains.ts`, copied
 npm install
 ```
 
+## Tracks
+
+The main screen opens the viewer on a track, and the sidebar can switch between them:
+
+- **Rogue:** math, transforms, rotation, camera, geometry, scene graph, assets, spatial queries, interaction.
+- **Tech art:** geometry, GPU, materials, shaders, and the Procedural & VFX elective, plus the foundations those pages need from other domains.
+- **Everything:** the whole curriculum, including debugging and optimization.
+
+The plan is Rogue, then Tech art, then Everything. A track hides what's outside it, in the sidebar and in `pick`, and keeps its own loop. Progress is shared: a page done in one track is done in all of them, and a checkpoint only asks about the track's domains that haven't been taken yet. The active track is saved in the progress log, so it follows you between machines; `npm run pick -- track` shows or switches it.
+
 ## Practice loop
 
 ```bash
@@ -41,16 +51,19 @@ Suggests what to do next. Then:
 2. Work through the page. For drills you solve in code, `npm run drill -- <drill folder>` runs the check in watch mode.
 3. Loop 1 pages log themselves: answering a page's last question marks it done, with your score kept for reference. For code drills, `npm run pick -- done` runs the check first and logs the date if it passes.
 
-`npm run pick -- status` shows where you are in the current loop.
+`npm run pick -- status` shows where you are in the current loop. `npm run pick -- track` shows the active track; `npm run pick -- track rogue` (or `tech-art`, `all`) switches it.
 
 How `pick` chooses:
 
-- In Loops 2–4, each domain opens with its placement check. Passing every part suggests skipping that domain's drills for the loop. The first attempt counts. Loop 1 has no placement checks; to skip a page you already know, collapse A and B and do the drill.
+- It suggests only what's in the active track.
+- In Loops 2–4, each of the track's domains opens with its placement check. Passing every part suggests skipping that domain's drills for the loop. The first attempt counts. Loop 1 has no placement checks; to skip a page you already know, collapse A and B and do the drill.
 - After that, drills are ranked by how long ago you practiced their domain, then their mode, so domains interleave.
-- A drill waits until its concepts' prerequisites are covered in the current loop.
-- A loop ends when its checkpoint passes. After Loop 4, `pick` rotates drills from every loop, weighted toward stale concepts and domains that missed checkpoint parts.
+- A drill waits until its concepts' prerequisites are covered in the current loop, unless nothing else is ready.
+- From the track's Loop 3 on, a track with the Procedural & VFX elective also suggests its pages and effect builds.
+- A loop ends for the track once its checkpoint is taken. After Loop 4, `pick` rotates the track's drills, weighted toward stale concepts and domains that missed checkpoint parts.
+- Once a track is finished, a drill from it comes first whenever none of its drills has been done for a week.
 
-**Progress** lives in `progress/log.jsonl`, one line per finished drill with its date. The drill viewer writes to it through the dev server, so it needs `npm run dev` running, and the sidebar shows a ✓ next to finished pages. Commit the log to carry your progress between machines. `.gitattributes` tells git to keep both machines' lines when you merge, so it never conflicts.
+**Progress** lives in `progress/log.jsonl`, one line per finished drill with its date, plus a line each time you switch tracks. The drill viewer writes to it through the dev server, so it needs `npm run dev` running, and the sidebar shows a ✓ next to finished pages. Commit the log to carry your progress between machines. `.gitattributes` tells git to keep both machines' lines when you merge, so it never conflicts.
 
 ## A drill folder
 

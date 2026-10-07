@@ -76,6 +76,13 @@ function frontmatterProblems(): string[] {
   });
 }
 
+// Tracks follow prerequisites to find the foundations they need, so one naming no card goes unseen.
+function unknownPrerequisites(): string[] {
+  const allCards = loadCards();
+  const ids = new Set(allCards.map((card) => card.id));
+  return allCards.flatMap((card) => (card.prerequisites ?? []).filter((id) => !ids.has(id)).map((id) => `${card.id} → ${id}`));
+}
+
 function consecutiveContextRepeats(): string[] {
   return cards.flatMap((card) => {
     const ordered = drillsFor(card).sort(drillOrder);
@@ -192,6 +199,7 @@ function checks(): Check[] {
   const placementTarget = placementLoops.length * CORE_DOMAINS.length;
   const noSolution = missingSolutions();
   const problems = frontmatterProblems();
+  const badPrerequisites = unknownPrerequisites();
   const threeVersion = JSON.parse(readFileSync(path.join(ROOT, 'package.json'), 'utf8')).dependencies.three as string;
   const tells = answerTells();
   const style = styleReport();
@@ -221,6 +229,7 @@ function checks(): Check[] {
       detail: `three ${threeVersion}; proved by \`npm run typecheck\``,
     },
     { name: 'Drill frontmatter matches the concept cards', ok: problems.length === 0, detail: list(problems) },
+    { name: 'Every prerequisite names a concept card', ok: badPrerequisites.length === 0, detail: list(badPrerequisites) },
     {
       name: "Read-the-code answers don't give themselves away",
       ok: tells.longest <= tells.total * 0.4 && tells.mixedStyle.length === 0,

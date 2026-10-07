@@ -297,6 +297,31 @@ renderer: webgpu                          # scenes mount on harness/tsl.ts (WebG
 
 **An effect build** (`electives/vfx/effects/selection-ring/` is the model) runs Brad's rack model twice, his version beside the reference, with `<div data-effect="hookName"></div>`. Its `drill.ts` exports the scene wiring as `effect` (an `EffectSetup`) plus the one hook Brad writes. The guided build's README walks through numbered steps, each naming the concept page it comes from; the from-memory build has only a description and a checklist. Both are checked by eye and end with `<div data-mark-done></div>`, a button that logs them as done.
 
+## Elective pages (Jewelry look-dev)
+
+The Jewelry look-dev elective takes apart how the iJewel playground gets its look, one unit per page. Brad approved the outline on Oct 7, 2026, and the first unit, `electives/jewelry/pro-file/`, is the model, waiting on his review. It uses WebGL and GLSL, so it mounts on the same harness as Loop 1 (`createHarness`), not the TSL one.
+
+**Files**
+
+```
+electives/jewelry/<unit>/            README.md, scenes.ts, and any code the page shows and runs (audit.ts)
+concepts/jewelry/<unit>.md           the card, as for any concept, without `tier`
+electives/jewelry/shared.ts          the reference files and the stage every jewelry scene uses
+```
+
+**Frontmatter**: `id: jewelry.<unit>.page`, `elective: jewelry`, `kind: page`, `concepts: [jewelry.<unit>]`, and no `renderer`.
+
+**No coding exercises.** Brad decided on Oct 7, 2026, after the first unit, that he doesn't have time at work to write this code himself. Each page shows the finished code a developer types to diagnose the look or build it, and runs it.
+
+**The page** has the Loop 1 opening block, then four `##` parts:
+
+- **Evidence:** what the reference does, with the real numbers and settings from its files, measured in three.js, not guessed. At least one scene shows the reference itself.
+- **Why it works:** plain words, one analogy, and A/B scenes that switch one thing off or swap in the bad version. When something is computed rather than modeled (the light inside a gem), say so, and show it.
+- **The code:** a `###` per job ("Check a model", "Make smoothed stones flat"), each a short block of the exact lines with a comment on what each does. A runnable version lives in the unit's folder, and a tool can run it on the reference and on a `.glb` Brad picks: `<div data-tool="name">`, where `scenes.ts` exports a `PageTool` (`harness/scene.ts`).
+- **How it goes wrong:** the mistakes as symptom, cause, and fix, in Blender and in code. Each card misconception appears here or in Why it works. The page ends with `<div data-mark-done></div>`.
+
+Scenes load iJewel's files through `shared.ts` and show `MISSING_REFERENCE` when they aren't on the machine.
+
 ## Before you call it done
 
 1. Check every claim against three.js r186. Don't state three.js behavior from memory.

@@ -33,6 +33,14 @@ export interface Checkpoint {
   dir: string;
 }
 
+export interface ElectiveItem {
+  id: string; // vfx.sdf.page, or vfx.effects.dissolve.guided
+  elective: string;
+  kind: 'page' | 'guided' | 'from-memory';
+  concepts: string[];
+  dir: string;
+}
+
 export interface Card {
   id: string;
   name: string;
@@ -90,6 +98,13 @@ export function loadPlacements(): Placement[] {
 export function loadCheckpoints(): Checkpoint[] {
   return readDocuments('checkpoints', isReadme).map(({ data, file }) => ({
     ...(data as unknown as Checkpoint),
+    dir: relativeDir(file),
+  }));
+}
+
+export function loadElectives(): ElectiveItem[] {
+  return readDocuments('electives', isReadme).map(({ data, file }) => ({
+    ...(data as unknown as ElectiveItem),
     dir: relativeDir(file),
   }));
 }

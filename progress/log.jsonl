@@ -3,3 +3,13 @@
 {"type":"done","id":"1.math.normalize.read-the-code.1","at":"2026-09-28T20:59:17.564Z","passed":true,"score":{"right":3,"total":3}}
 {"type":"done","id":"1.math.dot-product.read-the-code.1","at":"2026-09-29T17:56:24.400Z","passed":true,"score":{"right":5,"total":5}}
 {"type":"done","id":"1.math.cross-product.read-the-code.1","at":"2026-09-29T20:13:42.009Z","passed":true,"score":{"right":4,"total":4}}
+{"type":"track","track":"rogue","at":"2026-10-01T20:40:09.754Z"}
+{"type":"done","id":"1.math.projection-rejection.read-the-code.1","at":"2026-10-05T13:16:39.746Z","passed":true,"score":{"right":3,"total":4}}
+{"type":"done","id":"1.math.reflection.read-the-code.1","at":"2026-10-05T13:36:38.537Z","passed":true,"score":{"right":3,"total":3}}
+{"type":"done","id":"1.math.lerp.read-the-code.1","at":"2026-10-05T14:39:08.151Z","passed":true,"score":{"right":3,"total":3}}
+{"type":"done","id":"1.math.angle-between.read-the-code.1","at":"2026-10-06T13:57:29.104Z","passed":true,"score":{"right":2,"total":4}}
+{"type":"done","id":"1.math.spherical-coords.read-the-code.1","at":"2026-10-06T14:14:47.226Z","passed":true,"score":{"right":3,"total":3}}
+{"type":"done","id":"1.math.triple-product.read-the-code.1","at":"2026-10-06T14:31:12.474Z","passed":true,"score":{"right":1,"total":2}}
+{"type":"done","id":"1.math.float-tolerance.read-the-code.1","at":"2026-10-06T21:41:14.183Z","passed":true,"score":{"right":3,"total":4}}
+{"type":"track","track":"all","at":"2026-10-07T14:16:15.420Z"}
+{"type":"done","id":"jewelry.pro-file.page","at":"2026-10-07T15:02:38.361Z","passed":true}

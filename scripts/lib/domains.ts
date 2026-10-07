@@ -328,6 +328,23 @@ export const DOMAINS: Domain[] = [
       { slug: 'teardown', name: 'Disposal and teardown' },
     ],
   },
+  {
+    n: 17,
+    slug: 'jewelry',
+    name: 'Jewelry look-dev',
+    elective: true,
+    note: 'A teardown of the iJewel playground: each unit takes one piece of its look apart, then shows and runs the code that builds it. WebGL and GLSL.',
+    concepts: [
+      { slug: 'pro-file', name: "What's in a pro jewelry file" },
+      { slug: 'two-environments', name: 'Two lighting files' },
+      { slug: 'polished-metal', name: 'Polished metal and tone mapping' },
+      { slug: 'ceramic-pearl', name: 'Ceramic and pearl from lighting alone' },
+      { slug: 'small-textures', name: 'Small tiling textures and triplanar mapping' },
+      { slug: 'gem-shader', name: 'The gem shader' },
+      { slug: 'finishing', name: 'Shadows, glow, and smooth edges' },
+      { slug: 'capstone', name: 'The whole piece in your own code' },
+    ],
+  },
 ];
 
 export const CORE_DOMAINS = DOMAINS.filter((domain) => !domain.elective);
@@ -343,8 +360,53 @@ export interface Track {
 export const TRACKS: Track[] = [
   { slug: 'all', name: 'Everything', domains: DOMAINS.map((domain) => domain.slug) },
   { slug: 'rogue', name: 'Rogue', domains: ['math', 'transforms', 'rotation', 'camera', 'geometry', 'scene-graph', 'assets', 'queries', 'interaction'] },
-  { slug: 'tech-art', name: 'Tech art', domains: ['geometry', 'gpu', 'materials', 'shaders', 'vfx'] },
+  { slug: 'tech-art', name: 'Tech art', domains: ['geometry', 'gpu', 'materials', 'shaders', 'vfx', 'jewelry'] },
 ];
+
+// The core domains a track takes whole. Checkpoint questions and placement checks each cover a whole
+// domain, so a domain the track only borrows foundations from has neither.
+export const trackCoreDomains = (track: Track) =>
+  CORE_DOMAINS.filter((domain) => track.domains.includes(domain.slug)).map((domain) => domain.slug);
+
+// The log lines tracks are worked out from. Lines from two machines merge in any order, so the
+// latest line is the one with the latest `at`, not the last one in the file.
+export interface TrackLogEntry {
+  type: string;
+  id?: string;
+  at: string;
+  track?: string; // a track line: the track chosen in the viewer or with `pick -- track`
+  parts?: string[]; // a checkpoint: the domains its questions covered
+}
+
+export function trackFromLog(entries: TrackLogEntry[]) {
+  let latest: TrackLogEntry | undefined;
+  for (const entry of entries) {
+    if (entry.type === 'track' && (!latest || entry.at > latest.at)) latest = entry;
+  }
+  return TRACKS.find((track) => track.slug === latest?.track);
+}
+
+// A loop's checkpoint domains taken so far, in any track. An entry from before tracks has no
+// `parts`: it covered every domain.
+function checkpointTaken(loop: number, entries: TrackLogEntry[]) {
+  const taken = new Set<string>();
+  for (const entry of entries) {
+    if (entry.type !== 'done' || entry.id !== `${loop}.checkpoint`) continue;
+    for (const part of entry.parts ?? CORE_DOMAINS.map((domain) => domain.slug)) taken.add(part);
+  }
+  return taken;
+}
+
+// The track's checkpoint domains not yet taken in a loop. None left means the loop is done for the track.
+export function checkpointPartsLeft(loop: number, track: Track, entries: TrackLogEntry[]) {
+  const taken = checkpointTaken(loop, entries);
+  return trackCoreDomains(track).filter((slug) => !taken.has(slug));
+}
+
+// A track's current loop: the first whose checkpoint it hasn't fully taken.
+export function trackLoop(track: Track, entries: TrackLogEntry[]): number | 'maintenance' {
+  return LOOPS.find((loop) => checkpointPartsLeft(loop.n, track, entries).length > 0)?.n ?? 'maintenance';
+}
 
 // Every concept id a track shows: its domains' concepts, plus the foundations they need from other
 // domains, followed through each card's prerequisites (concept id → that card's list).

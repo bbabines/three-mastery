@@ -1,24 +1,43 @@
-// Loop-aware drill picker and practice log.
+// Loop-aware drill picker and practice log, following the active track.
 //
 //   npm run pick                 suggest what to do next
 //   npm run pick -- start [id]   mark what you're working on (defaults to the suggestion)
 //   npm run pick -- done         run its check and log the date you finished
 //                                (add --pass for a drill checked on the page or by eye)
 //   npm run pick -- status       progress in the current loop
+//   npm run pick -- track [slug] show the active track, or switch to rogue, tech-art, or all
 //
 // Nothing is timed. The log records when each drill was finished, never how long it took.
 //
-// In Loops 2–4, each domain opens with its placement check. Passing it suggests skipping that
-// domain's drills for the loop. Drills are ranked by how long ago their domain, then their mode,
-// was practiced; ties go to the concept's teaching order in lib/domains.ts. A drill waits until
-// its concepts' prerequisites are covered in the loop. A loop ends once its checkpoint is taken.
-// After Loop 4, maintenance rotates drills from every loop, weighted toward stale concepts and
-// domains that failed checkpoint parts.
+// The active track is the latest one chosen here or in the viewer. Suggestions stay inside its
+// domains and the foundations they need, and it keeps its own loop: a loop ends for a track once
+// the checkpoint questions for its domains have been taken, in any track.
+//
+// In Loops 2–4, each of the track's domains opens with its placement check. Passing it suggests
+// skipping that domain's drills for the loop. Drills are ranked by how long ago their domain, then
+// their mode, was practiced; ties go to the concept's teaching order in lib/domains.ts. A drill
+// waits until its concepts' prerequisites are covered in the loop, unless nothing else is ready.
+// From the track's Loop 3 on, a track with the Procedural & VFX elective also suggests its pages
+// and effect builds. After Loop 4, maintenance rotates the track's drills, weighted toward stale
+// concepts and domains that failed checkpoint parts. Once another track is finished, a drill from
+// it comes up for review whenever none has been practiced for a week.
 import { existsSync } from 'node:fs';
 import path from 'node:path';
-import { CORE_DOMAINS, DOMAINS, LOOPS, teachingOrder } from './lib/domains';
+import {
+  checkpointPartsLeft,
+  CORE_DOMAINS,
+  DOMAINS,
+  LOOPS,
+  teachingOrder,
+  trackConcepts,
+  trackCoreDomains,
+  trackFromLog,
+  trackLoop,
+  TRACKS,
+  type Track,
+} from './lib/domains';
 import { appendLog, readLog, type DoneEntry, type StartEntry } from './lib/log';
-import { loadCards, loadCheckpoints, loadDrills, loadPlacements, ROOT, type Drill } from './lib/repo';
+import { loadCards, loadCheckpoints, loadDrills, loadElectives, loadPlacements, ROOT, type Drill } from './lib/repo';
 import { runVitest } from './lib/vitest';
 
 interface Item {
@@ -29,27 +48,44 @@ interface Item {
   domain?: string;
   drill?: Drill;
   concepts?: string[];
+  electiveKind?: 'page' | 'guided' | 'from-memory';
+  order?: number; // elective items: their place in the elective's plan
 }
 
 const HOURS_IF_NEVER = 10_000;
 const HOURS_PER_WEEK = 24 * 7;
 
-// Elective concept pages and guided builds stay outside the core loop picker. After all six VFX
-// from-memory builds are complete, maintenance also rotates those six effects.
 const drills = loadDrills();
+const allCards = loadCards();
 const coreDomains = new Set(CORE_DOMAINS.map((domain) => domain.slug));
-const cards = new Map(loadCards().filter((card) => coreDomains.has(card.domain)).map((card) => [card.id, card]));
-const vfxEffects: Item[] = (DOMAINS.find((domain) => domain.slug === 'vfx')?.effects ?? []).map((effect) => ({
-  kind: 'elective', id: `vfx.effects.${effect.slug}.from-memory`,
-  dir: `electives/vfx/effects/${effect.slug}/from-memory`, loop: 0, domain: 'vfx',
-  concepts: effect.concepts.map((concept) => `vfx.${concept}`),
-}));
+const cards = new Map(allCards.filter((card) => coreDomains.has(card.domain)).map((card) => [card.id, card]));
+const prerequisites = new Map(allCards.map((card) => [card.id, card.prerequisites ?? []]));
+
+// The VFX elective in its plan's order: the concept pages, then each effect built guided and then
+// from memory. After all six from-memory builds are done, maintenance also rotates those six.
+const vfx = DOMAINS.find((domain) => domain.slug === 'vfx');
+const electiveDirs = new Map(loadElectives().map((item) => [item.id, item.dir]));
+const vfxPlan = [
+  ...(vfx?.concepts ?? []).map((concept) => ({ id: `vfx.${concept.slug}.page`, kind: 'page' as const, concepts: [`vfx.${concept.slug}`] })),
+  ...(vfx?.effects ?? []).flatMap((effect) =>
+    (['guided', 'from-memory'] as const).map((kind) => ({
+      id: `vfx.effects.${effect.slug}.${kind}`,
+      kind,
+      concepts: effect.concepts.map((concept) => `vfx.${concept}`),
+    })),
+  ),
+];
+const vfxItems: Item[] = vfxPlan.flatMap((planned, order) => {
+  const dir = electiveDirs.get(planned.id);
+  return dir ? [{ kind: 'elective', id: planned.id, dir, loop: 0, domain: 'vfx', concepts: planned.concepts, electiveKind: planned.kind, order }] : [];
+});
+const vfxEffects = vfxItems.filter((item) => item.electiveKind === 'from-memory');
 
 const items: Item[] = [
   ...drills.map((drill): Item => ({ kind: 'drill', ...drill, drill })),
   ...loadPlacements().map((placement): Item => ({ kind: 'placement', ...placement })),
   ...loadCheckpoints().map((checkpoint): Item => ({ kind: 'checkpoint', ...checkpoint })),
-  ...vfxEffects,
+  ...vfxItems,
 ];
 const itemsById = new Map(items.map((item) => [item.id, item]));
 
@@ -57,14 +93,31 @@ const log = readLog();
 const doneEntries = log.filter((entry): entry is DoneEntry => entry.type === 'done');
 const passedIds = new Set(doneEntries.filter((entry) => entry.passed).map((entry) => entry.id));
 
+// ---- Tracks ----
+
+const viewOf = (track: Track) => ({
+  track,
+  concepts: trackConcepts(track, prerequisites),
+  wholeDomains: new Set(trackCoreDomains(track)),
+});
+const active = viewOf(trackFromLog(log) ?? TRACKS[0]);
+
+// A domain drill is in a track when it touches one of the track's concepts, and a cross-domain
+// drill when it uses only the track's concepts. Placement checks cover whole domains.
+function inTrack(item: Item, view = active) {
+  if (item.kind === 'checkpoint') return true;
+  if (item.kind === 'placement') return view.wholeDomains.has(item.domain ?? '');
+  if (item.kind === 'elective') return view.track.domains.includes(item.domain ?? '');
+  const ids = item.drill?.concepts ?? [];
+  return item.dir.startsWith('cross/') ? ids.every((id) => view.concepts.has(id)) : ids.some((id) => view.concepts.has(id));
+}
+
+const unfinishedTracks = () => TRACKS.filter((track) => trackLoop(track, log) !== 'maintenance');
+
 // ---- Loop state ----
 
-// A checkpoint is a self-check, not a gate: taking it moves you to the next loop, whatever the score.
-function currentLoop(): number | 'maintenance' {
-  const taken = new Set(doneEntries.map((entry) => entry.id));
-  const open = LOOPS.find((loop) => !taken.has(`${loop.n}.checkpoint`));
-  return open ? open.n : 'maintenance';
-}
+// A checkpoint is a self-check, not a gate: taking it moves the track to its next loop, whatever the score.
+const currentLoop = () => trackLoop(active.track, log);
 
 // The first attempt counts, so a failed placement can't be retaken until it passes.
 function placementResult(loop: number, domain: string) {
@@ -84,9 +137,11 @@ function conceptCovered(conceptId: string, loop: number) {
   return conceptDrills.some((drill) => passedIds.has(drill.id));
 }
 
+// A prerequisite the drill covers itself, as a light pair often does, doesn't hold it back, and
+// one outside the track counts as covered, since the track never suggests its drills.
 function prerequisitesMet(drill: Drill) {
-  const prerequisites = drill.concepts.flatMap((id) => cards.get(id)?.prerequisites ?? []);
-  return prerequisites.every((id) => conceptCovered(id, drill.loop));
+  const needed = drill.concepts.flatMap((id) => cards.get(id)?.prerequisites ?? []);
+  return needed.every((id) => drill.concepts.includes(id) || !active.concepts.has(id) || conceptCovered(id, drill.loop));
 }
 
 // ---- Ranking ----
@@ -108,7 +163,7 @@ function loopScore(item: Item) {
 }
 
 function itemOrder(item: Item) {
-  return teachingOrder(item.drill?.concepts[0] ?? '');
+  return item.order ?? teachingOrder(item.drill?.concepts[0] ?? '');
 }
 
 function maintenanceScore(item: Item) {
@@ -120,29 +175,65 @@ function maintenanceScore(item: Item) {
   return conceptHours + checkpointFailures * HOURS_PER_WEEK;
 }
 
+const byMaintenance = (a: Item, b: Item) => maintenanceScore(b) - maintenanceScore(a);
+
+// Prerequisites order a loop's drills; they never keep one from it. Shared drills can wait on each
+// other in a circle, so when nothing is ready, the waiting drills are suggested anyway.
 function loopCandidates(loop: number): Item[] {
-  const inLoop = items.filter((item) => item.loop === loop && item.domain && coreDomains.has(item.domain));
+  const inLoop = items.filter((item) => item.loop === loop && item.domain && coreDomains.has(item.domain) && inTrack(item));
   const domains = [...new Set(inLoop.map((item) => item.domain as string))];
 
-  return domains.flatMap((domain) => {
+  const open = domains.flatMap((domain) => {
     const placement = inLoop.find((item) => item.kind === 'placement' && item.domain === domain);
     if (placement && !placementResult(loop, domain)) return [placement];
     if (domainSkipped(loop, domain)) return [];
-    return inLoop.filter(
-      (item) => item.domain === domain && item.drill && !passedIds.has(item.id) && prerequisitesMet(item.drill),
-    );
+    return inLoop.filter((item) => item.domain === domain && item.drill && !passedIds.has(item.id));
   });
+  const ready = open.filter((item) => !item.drill || prerequisitesMet(item.drill));
+  return ready.length > 0 ? ready : open;
 }
 
-function rankedSuggestions(): { items: Item[]; note?: string } {
+// An elective page waits for the elective pages it builds on; a guided effect waits for its
+// concepts' pages, and a from-memory effect for its guided build.
+function electiveReady(item: Item) {
+  const concepts = item.concepts ?? [];
+  if (item.electiveKind === 'page') {
+    return (prerequisites.get(concepts[0]) ?? []).filter((id) => id.startsWith('vfx.')).every((id) => passedIds.has(`${id}.page`));
+  }
+  if (item.electiveKind === 'guided') return concepts.every((id) => passedIds.has(`${id}.page`));
+  return passedIds.has(item.id.replace(/from-memory$/, 'guided'));
+}
+
+// The elective opens after the track's Loop 2, as the inventory plans it.
+function electiveCandidates(loop: number | 'maintenance') {
+  if (loop !== 'maintenance' && loop <= 2) return [];
+  return vfxItems.filter((item) => inTrack(item) && !passedIds.has(item.id) && electiveReady(item));
+}
+
+// Once another track is finished, its drills outside this track come back for review when none
+// of them has been practiced for a week.
+function dueReview(): Item | undefined {
+  const finished = TRACKS.filter((track) => track !== active.track && trackLoop(track, log) === 'maintenance').map(viewOf);
+  const pool = items.filter((item) => item.kind === 'drill' && !inTrack(item) && finished.some((view) => inTrack(item, view)));
+  if (pool.length === 0) return undefined;
+  const ids = new Set(pool.map((item) => item.id));
+  if (hoursSinceLast((item) => ids.has(item.id)) < HOURS_PER_WEEK) return undefined;
+  return pool.sort(byMaintenance)[0];
+}
+
+function trackSuggestions(): { items: Item[]; note?: string } {
   const loop = currentLoop();
   if (loop === 'maintenance') {
-    const electiveReady = vfxEffects.every((item) => passedIds.has(item.id));
-    const pool = items.filter((item) => item.kind === 'drill' || (electiveReady && item.kind === 'elective'));
-    return { items: pool.sort((a, b) => maintenanceScore(b) - maintenanceScore(a)) };
+    const fresh = electiveCandidates(loop);
+    if (fresh.length > 0) return { items: fresh.sort((a, b) => itemOrder(a) - itemOrder(b)) };
+    const electiveDone = vfxEffects.every((item) => passedIds.has(item.id));
+    const pool = items.filter(
+      (item) => inTrack(item) && (item.kind === 'drill' || (electiveDone && item.kind === 'elective' && item.electiveKind === 'from-memory')),
+    );
+    return { items: pool.sort(byMaintenance) };
   }
 
-  const candidates = loopCandidates(loop);
+  const candidates = [...loopCandidates(loop), ...electiveCandidates(loop)];
   if (candidates.length > 0) {
     return {
       items: candidates.sort(
@@ -156,20 +247,39 @@ function rankedSuggestions(): { items: Item[]; note?: string } {
   return { items: [], note: `Every built drill in Loop ${loop} is done. Its checkpoint isn't built yet.` };
 }
 
+// A review that's due goes first.
+function rankedSuggestions() {
+  const review = dueReview();
+  const { items: ranked, note } = trackSuggestions();
+  return { items: review ? [review, ...ranked] : ranked, note, review };
+}
+
 // ---- Commands ----
 
 function inProgress(): StartEntry | undefined {
   let current: StartEntry | undefined;
   for (const entry of log) {
     if (entry.type === 'start') current = entry;
-    else if (entry.id === current?.id) current = undefined;
+    else if (entry.type === 'done' && entry.id === current?.id) current = undefined;
   }
   return current;
 }
 
 function describe(item: Item) {
-  const label = item.drill ? `${item.drill.mode}, ${item.drill.context.split('/')[1]}` : item.kind === 'elective' ? 'VFX from memory' : item.kind;
+  const label = item.drill
+    ? `${item.drill.mode}, ${item.drill.context.split('/')[1]}`
+    : item.kind === 'elective'
+      ? `VFX ${item.electiveKind === 'page' ? 'page' : item.electiveKind === 'guided' ? 'guided build' : 'from memory'}`
+      : item.kind;
   return `${item.id}  (${label})\n    ${item.dir}/README.md`;
+}
+
+// Everything comes last in the plan, after Rogue and Tech art.
+function trackHint() {
+  const next = unfinishedTracks()
+    .filter((track) => track !== active.track)
+    .sort((a, b) => Number(a.slug === 'all') - Number(b.slug === 'all'));
+  if (next.length > 0) console.log(`\nStill to finish: ${next.map((track) => track.name).join(', ')}. Switch with: npm run pick -- track ${next[0].slug}`);
 }
 
 function suggest() {
@@ -181,18 +291,20 @@ function suggest() {
   }
 
   const loop = currentLoop();
-  console.log(loop === 'maintenance' ? 'Maintenance rotation' : `Loop ${loop}: ${LOOPS[loop - 1].name}`);
-  const { items: ranked, note } = rankedSuggestions();
+  console.log(`${active.track.name} track · ${loop === 'maintenance' ? 'Maintenance rotation' : `Loop ${loop}: ${LOOPS[loop - 1].name}`}`);
+  const { items: ranked, note, review } = rankedSuggestions();
   if (ranked.length === 0) {
     console.log(note ?? 'Nothing to suggest.');
     return;
   }
 
-  console.log(`\nNext:\n  ${describe(ranked[0])}`);
+  const heading = review ? 'Next, a review from a finished track (none practiced for a week)' : 'Next';
+  console.log(`\n${heading}:\n  ${describe(ranked[0])}`);
   if (ranked.length > 1) {
     console.log(`\nAlso available:\n${ranked.slice(1, 3).map((item) => `  ${describe(item)}`).join('\n')}`);
   }
   console.log('\nStart it with: npm run pick -- start');
+  if (loop === 'maintenance') trackHint();
 }
 
 function start(id: string | undefined) {
@@ -206,7 +318,9 @@ function start(id: string | undefined) {
   appendLog({ type: 'start', id: item.id, at: new Date().toISOString() });
   console.log(`Working on ${item.id}.\n`);
   console.log(`  Open:  http://localhost:5173/harness/?drill=${item.dir}  (needs npm run dev)`);
-  if (item.kind === 'elective') {
+  if (item.kind === 'elective' && item.electiveKind === 'page') {
+    console.log('\nThe page logs it when your exercise matches the reference.');
+  } else if (item.kind === 'elective') {
     console.log('\nMatch the reference by eye. The page can log it, or finish with: npm run pick -- done --pass');
   } else if (item.kind !== 'drill' && !existsSync(path.join(ROOT, item.dir, 'check.test.ts'))) {
     console.log('\nNo docs for this one. The page logs it when you answer its last question.');
@@ -244,7 +358,7 @@ function finishDrill(item: Item, flag: string | undefined) {
 
 // Placement checks and checkpoints: the result is logged either way, with the parts that missed.
 function finishCheck(item: Item) {
-  // Loop 1's checkpoint is a quiz: the page logged it, with the domains that had misses.
+  // A quiz checkpoint is logged by its page, with the domains it covered and the ones with misses.
   if (!existsSync(path.join(ROOT, item.dir, 'check.test.ts'))) {
     const logged = doneEntries.some((entry) => entry.id === item.id);
     console.log(logged ? `\n${item.id} is already logged from its page.` : '\nThis one logs itself when you answer its last question on the page.');
@@ -281,24 +395,46 @@ function done(flag: string | undefined) {
 function status() {
   const loop = currentLoop();
   if (loop === 'maintenance') {
-    console.log(`Maintenance rotation. ${doneEntries.length} completions logged.`);
+    console.log(`${active.track.name} track · maintenance rotation. ${doneEntries.length} completions logged.`);
+    trackHint();
     return;
   }
 
-  console.log(`Loop ${loop}: ${LOOPS[loop - 1].name}\n`);
+  console.log(`${active.track.name} track · Loop ${loop}: ${LOOPS[loop - 1].name}\n`);
   for (const domain of CORE_DOMAINS) {
-    const domainDrills = drills.filter((drill) => drill.loop === loop && drill.domain === domain.slug);
-    const placement = itemsById.get(`${loop}.${domain.slug}.placement`);
+    const domainDrills = items.filter((item) => item.kind === 'drill' && item.loop === loop && item.domain === domain.slug && inTrack(item));
+    const whole = active.wholeDomains.has(domain.slug);
+    const placement = whole ? itemsById.get(`${loop}.${domain.slug}.placement`) : undefined;
     if (domainDrills.length === 0 && !placement) continue;
 
     const result = placementResult(loop, domain.slug);
-    const placementText = !placement ? 'no placement' : !result ? 'placement not taken' : result.passed ? 'placement passed' : 'placement missed';
-    const passed = domainDrills.filter((drill) => passedIds.has(drill.id)).length;
+    const placementText = !whole
+      ? 'foundations'
+      : !placement ? 'no placement' : !result ? 'placement not taken' : result.passed ? 'placement passed' : 'placement missed';
+    const passed = domainDrills.filter((item) => passedIds.has(item.id)).length;
     console.log(`  ${domain.slug.padEnd(14)} ${placementText.padEnd(20)} drills ${passed}/${domainDrills.length}`);
   }
 
   const checkpoint = itemsById.get(`${loop}.checkpoint`);
-  console.log(`\nCheckpoint: ${!checkpoint ? 'not built yet' : passedIds.has(checkpoint.id) ? 'passed' : 'not passed'}`);
+  const total = active.wholeDomains.size;
+  const taken = total - checkpointPartsLeft(loop, active.track, log).length;
+  console.log(`\nCheckpoint: ${!checkpoint ? 'not built yet' : `${taken}/${total} domains taken`}`);
+}
+
+function track(slug: string | undefined) {
+  const slugs = TRACKS.map((item) => item.slug).join(', ');
+  if (slug === undefined) {
+    console.log(`Active track: ${active.track.name} (${active.track.slug}). Switch with: npm run pick -- track <${slugs}>`);
+    return;
+  }
+  const chosen = TRACKS.find((item) => item.slug === slug);
+  if (!chosen) {
+    console.log(`No track ${slug}. Use one of: ${slugs}.`);
+    process.exitCode = 1;
+    return;
+  }
+  appendLog({ type: 'track', track: chosen.slug, at: new Date().toISOString() });
+  console.log(`Switched to ${chosen.name}. The viewer follows it when it next loads a page without ?track=.`);
 }
 
 const [command, argument] = process.argv.slice(2);
@@ -306,7 +442,8 @@ if (command === undefined) suggest();
 else if (command === 'start') start(argument);
 else if (command === 'done') done(argument);
 else if (command === 'status') status();
+else if (command === 'track') track(argument);
 else {
-  console.log(`Unknown command: ${command}. Use start, done, or status.`);
+  console.log(`Unknown command: ${command}. Use start, done, status, or track.`);
   process.exitCode = 1;
 }

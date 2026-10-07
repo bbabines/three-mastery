@@ -22,19 +22,6 @@ export interface TrackView {
   concepts: Set<string>;
 }
 
-const TRACK_KEY = 'drill-viewer:track';
-
-// The track named in the URL, which is then remembered, or else the remembered one.
-export function readTrack(): Track {
-  const asked = TRACKS.find((track) => track.slug === new URLSearchParams(location.search).get('track'));
-  try {
-    if (asked) localStorage.setItem(TRACK_KEY, asked.slug);
-    return asked ?? TRACKS.find((track) => track.slug === localStorage.getItem(TRACK_KEY)) ?? TRACKS[0];
-  } catch {
-    return asked ?? TRACKS[0]; // storage blocked: the track lasts only while it's in the URL
-  }
-}
-
 // A domain's concepts that the track shows, in teaching order, as a domain the planners can count.
 export const shownPart = (domain: Domain, view: TrackView): Domain => ({
   ...domain,

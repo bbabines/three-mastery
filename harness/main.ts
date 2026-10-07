@@ -4,11 +4,21 @@
 // viewer (<div data-effect>), and a "Mark done" button (<div data-mark-done>).
 import { marked } from 'marked';
 import { parse } from 'yaml';
-import { DOMAINS, MODE_LABELS, trackConcepts, type Track } from '../scripts/lib/domains';
+import {
+  checkpointPartsLeft,
+  DOMAINS,
+  MODE_LABELS,
+  trackConcepts,
+  trackCoreDomains,
+  trackFromLog,
+  TRACKS,
+  type Track,
+  type TrackLogEntry,
+} from '../scripts/lib/domains';
 import type { EffectSetup, MaskExercise } from './exercise';
-import { readTrack, renderNav, renderPace, shownPart } from './nav';
+import { renderNav, renderPace, shownPart } from './nav';
 import { renderQuiz, type Question } from './quiz';
-import { createHarness, type SceneSetup } from './scene';
+import { createHarness, type PageTool, type SceneSetup } from './scene';
 import { leavePage } from './teardown';
 import type { TslSceneSetup } from './tsl';
 
@@ -73,46 +83,72 @@ const prerequisites = new Map(
   }),
 );
 const viewFor = (track: Track) => ({ track, concepts: trackConcepts(track, prerequisites) });
-let view = viewFor(readTrack());
 
-interface LogEntry {
-  type: string;
-  id: string;
-  at: string;
+interface LogEntry extends TrackLogEntry {
   passed?: boolean;
 }
 
-// When each drill was last finished, from progress/log.jsonl through the dev server's
-// /api/progress (see vite.config.ts). Empty when there's no dev server to ask.
-async function loadFinished() {
+// progress/log.jsonl through the dev server's /api/progress (see vite.config.ts). Empty when
+// there's no dev server to ask.
+async function loadLog() {
   try {
     const response = await fetch('/api/progress');
-    if (!response.ok) return new Map<string, string>();
-    const entries = (await response.json()) as LogEntry[];
-    return new Map(entries.filter((entry) => entry.type === 'done' && entry.passed).map((entry) => [entry.id, entry.at]));
+    return response.ok ? ((await response.json()) as LogEntry[]) : [];
   } catch {
-    return new Map<string, string>();
+    return [];
   }
 }
 
-// Returns when the drill was logged, or undefined if it couldn't be saved.
-// `failedParts` names the domains a checkpoint's missed questions came from.
-async function logFinished(drill: Drill, score?: { right: number; total: number }, failedParts?: string[]) {
+const logEntries = await loadLog();
+// When each drill was last finished.
+const finished = new Map(logEntries.flatMap((entry) => (entry.type === 'done' && entry.passed && entry.id ? [[entry.id, entry.at] as const] : [])));
+
+// Returns when the drill was logged, or undefined if it couldn't be saved. A checkpoint sends
+// `parts`, the domains its questions covered, and `failedParts`, the ones with misses.
+async function logFinished(drill: Drill, score?: { right: number; total: number }, failedParts?: string[], parts?: string[]) {
   try {
     const response = await fetch('/api/progress', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id: drill.meta.id, score, failedParts }),
+      body: JSON.stringify({ id: drill.meta.id, score, failedParts, parts }),
     });
-    return response.ok ? ((await response.json()) as { at: string }).at : undefined;
+    if (!response.ok) return undefined;
+    const { at } = (await response.json()) as { at: string };
+    logEntries.push({ type: 'done', id: drill.meta.id, at, passed: true, parts });
+    return at;
   } catch {
     return undefined;
   }
 }
 
+// The active track, from the log, shared with `npm run pick`.
+let savedTrack = trackFromLog(logEntries);
+
+function saveTrack(track: Track) {
+  savedTrack = track;
+  logEntries.push({ type: 'track', track: track.slug, at: new Date().toISOString() });
+  fetch('/api/track', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ track: track.slug }) })
+    .catch(() => undefined); // no dev server: the track lasts until the page is reloaded
+}
+
+// The track a page shows: one picked by a link (?track=), the one a history entry was in when you
+// go Back or Forward, or else the active track. Picking one makes it active, and ?track= is then
+// dropped from the URL, so reloading an old tab can't undo a switch made in pick or elsewhere.
+function resolveTrack(fromHistory: boolean): Track {
+  const params = new URLSearchParams(location.search);
+  const historyTrack = fromHistory ? (history.state as { track?: string } | null)?.track : undefined;
+  const picked = TRACKS.find((track) => track.slug === (params.get('track') ?? historyTrack));
+  if (picked && picked !== savedTrack) saveTrack(picked);
+  const track = picked ?? savedTrack ?? TRACKS[0];
+  params.delete('track');
+  history.replaceState({ track: track.slug }, '', params.size ? `?${params}` : location.pathname);
+  return track;
+}
+
+let view = viewFor(resolveTrack(false));
+
 const formatDate = (iso: string) => new Date(iso).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
 
-const finished = await loadFinished();
 let selected = new URLSearchParams(location.search).get('drill');
 const sidebar = document.querySelector<HTMLElement>('nav')!;
 const nav = document.querySelector<HTMLDivElement>('#drills')!;
@@ -145,7 +181,10 @@ function renderSidebar() {
       check: checkKind(drill),
       domain: drill.meta.domain,
       title: drill.title,
-      done: finished.has(drill.meta.id),
+      // A checkpoint is done for the track once its domains' questions have been taken, in any track.
+      done: checkKind(drill) === 'checkpoint'
+        ? checkpointPartsLeft(drill.meta.loop, view.track, logEntries).length === 0
+        : finished.has(drill.meta.id),
     })),
     selected,
     view,
@@ -233,7 +272,6 @@ async function renderDrill(drill: Drill) {
       const at = await logFinished(drill);
       if (at) {
         showDone(at);
-        finished.set(drill.meta.id, at);
         status.textContent = 'Compare your answer with the key points. Logged as done.';
       } else status.textContent = "Key points revealed. Couldn't save progress; is the dev server running?";
     });
@@ -257,12 +295,7 @@ async function renderDrill(drill: Drill) {
   }
 
   if (drill.meta.elective) {
-    const recordDone = (at: string) => {
-      showDone(at);
-      finished.set(drill.meta.id, at);
-      renderPace(pace, finished, view);
-    };
-    const backend = await mountElective(drill, content, recordDone);
+    const backend = await mountElective(drill, content, showDone);
     if (backend) {
       backendText = ` · ${backend}`;
       paintMeta();
@@ -297,15 +330,37 @@ async function renderDrill(drill: Drill) {
   const quizPlaceholder = content.querySelector<HTMLElement>('[data-quiz]');
   const quiz = quizPlaceholder ? await questionModules[`/${drill.folder}/questions.ts`]?.() : undefined;
   if (quizPlaceholder && quiz) {
-    renderQuiz(quizPlaceholder, quiz.questions, async (right, total, missedDomains) => {
-      const at = await logFinished(drill, { right, total }, missedDomains.length ? missedDomains : undefined);
+    const parts = checkKind(drill) === 'checkpoint' ? checkpointParts(drill, quizPlaceholder) : undefined;
+    const questions = parts ? quiz.questions.filter((question) => parts.includes(question.domain ?? '')) : quiz.questions;
+    renderQuiz(quizPlaceholder, questions, async (right, total, missedDomains) => {
+      const at = await logFinished(drill, { right, total }, missedDomains.length ? missedDomains : undefined, parts);
       if (!at) return "Couldn't save your progress. Is npm run dev running?";
       showDone(at);
-      finished.set(drill.meta.id, at);
-      renderPace(pace, finished, view);
       return 'Logged as done.';
     });
   }
+}
+
+// Semicolons, since names like "Materials, Lighting & Color" have commas of their own.
+const domainNames = (slugs: string[]) =>
+  slugs.map((slug) => DOMAINS.find((domain) => domain.slug === slug)?.name ?? slug).join('; ');
+
+// A checkpoint asks about the track's domains not yet taken in this loop, in any track, so no
+// domain is asked twice. Once all are taken, it's a retake of the track's domains. Says which
+// above the questions, and returns them.
+function checkpointParts(drill: Drill, quizPlaceholder: HTMLElement) {
+  const left = checkpointPartsLeft(drill.meta.loop, view.track, logEntries);
+  const parts = left.length > 0 ? left : trackCoreDomains(view.track);
+  const all = trackCoreDomains(view.track).length;
+  const scope = document.createElement('p');
+  scope.className = 'meta';
+  scope.textContent = left.length === 0
+    ? `You've taken every part of this checkpoint for ${view.track.name}, so this is a retake of its ${all} domains.`
+    : left.length === all
+      ? `${view.track.name}: questions from each of its ${all} domains.`
+      : `${view.track.name}: questions from the ${left.length} of its ${all} domains not taken yet: ${domainNames(parts)}.`;
+  quizPlaceholder.before(scope);
+  return parts;
 }
 
 const message = (error: unknown) => (error instanceof Error ? error.message : String(error));
@@ -321,14 +376,26 @@ async function loadDrillModule(path: string) {
   }
 }
 
-// Mounts an elective page's scenes, exercise, effect viewer, and "Mark done" button. The TSL code
-// loads only here, so Loop 1 pages never load three/webgpu. Returns the backend the scenes ran on.
+// Mounts an elective page's scenes, exercise, tools, effect viewer, and "Mark done" button. The TSL
+// code loads only here, so Loop 1 pages never load three/webgpu. Returns the backend the scenes ran
+// on. Pages without `renderer: webgpu` (the jewelry elective) use the WebGL harness, like Loop 1.
 async function mountElective(drill: Drill, content: HTMLElement, recordDone: (at: string) => void) {
   const webgpu = drill.meta.renderer === 'webgpu';
   let backend: string | undefined;
   const scenes = await electiveSceneModules[`/${drill.folder}/scenes.ts`]?.();
 
   const scenePlaceholders = content.querySelectorAll<HTMLElement>('[data-scene]');
+  if (scenePlaceholders.length && !webgpu) {
+    for (const placeholder of scenePlaceholders) {
+      const setup = scenes?.[placeholder.dataset.scene ?? ''] as SceneSetup | undefined;
+      if (!setup) {
+        placeholder.textContent = `No scene named "${placeholder.dataset.scene}" in scenes.ts.`;
+        continue;
+      }
+      placeholder.className = 'scene';
+      setup(createHarness(placeholder));
+    }
+  }
   if (scenePlaceholders.length && webgpu) {
     const { createTslHarness } = await import('./tsl');
     for (const placeholder of scenePlaceholders) {
@@ -365,6 +432,14 @@ async function mountElective(drill: Drill, content: HTMLElement, recordDone: (at
         return 'Logged as done.';
       });
     }
+  }
+
+  for (const placeholder of content.querySelectorAll<HTMLElement>('[data-tool]')) {
+    const tool = scenes?.[placeholder.dataset.tool ?? ''] as PageTool | undefined;
+    if (tool) {
+      placeholder.className = 'tool';
+      tool(placeholder);
+    } else placeholder.textContent = `No tool named "${placeholder.dataset.tool}" in scenes.ts.`;
   }
 
   const effectPlaceholder = content.querySelector<HTMLElement>('[data-effect]');
@@ -418,25 +493,18 @@ function showPage() {
   }
 }
 
-// Sidebar links leave the track out, so it's written into each URL the viewer lands on. Back then
-// returns to the track you were in, not the one last remembered.
-function rememberTrackInUrl(track: Track) {
-  const params = new URLSearchParams(location.search);
-  if (params.get('track') === track.slug) return;
-  params.set('track', track.slug);
-  history.replaceState(null, '', `?${params}`);
-}
-
 // Follows the URL: a new track redraws the sidebar, a new drill swaps the page, neither reloads.
-function route() {
-  const track = readTrack();
-  rememberTrackInUrl(track);
+// A checkpoint's questions depend on the track, so switching tracks on one redraws it too.
+function route(fromHistory: boolean) {
+  const track = resolveTrack(fromHistory);
   const drill = new URLSearchParams(location.search).get('drill');
+  const trackChanged = track !== view.track;
   const pageChanged = drill !== selected;
-  if (track !== view.track) view = viewFor(track);
+  if (trackChanged) view = viewFor(track);
   selected = drill;
   renderSidebar();
-  if (pageChanged) showPage();
+  const onCheckpoint = drills.find((item) => item.folder === selected && checkKind(item) === 'checkpoint');
+  if (pageChanged || (trackChanged && onCheckpoint)) showPage();
   else repaintMeta?.();
 }
 
@@ -452,10 +520,9 @@ document.addEventListener('click', (event) => {
   const next = url.searchParams;
   if (next.get('drill') === selected && (next.get('track') ?? view.track.slug) === view.track.slug) return; // already here
   history.pushState(null, '', url);
-  route();
+  route(false);
 });
-window.addEventListener('popstate', route);
+window.addEventListener('popstate', () => route(true));
 
-rememberTrackInUrl(view.track);
 renderSidebar();
 showPage();

@@ -17,6 +17,10 @@ export interface Harness {
 // A drill's scenes.ts exports these by name; the viewer mounts each where the README says.
 export type SceneSetup = (harness: Harness) => void;
 
+// A tool on an elective page, like the jewelry pages' model audit: plain HTML, no renderer. scenes.ts
+// exports it by name, and the README places it with <div data-tool="name">.
+export type PageTool = (container: HTMLElement) => void;
+
 export function createHarness(container: HTMLElement): Harness {
   // stencil: true because three.js leaves the stencil buffer off by default, and the stencil page's
   // scenes need one.
