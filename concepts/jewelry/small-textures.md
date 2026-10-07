@@ -7,7 +7,6 @@ misconceptions:
   need-4k: '"Realistic textures have to be 4K."'
   roughness-is-color: '"Every texture should be marked sRGB."'
   needs-uvs: '"A texture needs the mesh''s UVs."'
-  color-is-enough: '"The color map is what makes it look real."'
 contexts:
   wood-inlay: Wood or stone inlays on a ring
   cad-no-uvs: CAD exports with no usable UVs

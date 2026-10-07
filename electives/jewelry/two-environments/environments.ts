@@ -12,29 +12,45 @@ function reader(data: ArrayLike<number>) {
   return data instanceof Uint16Array ? (i: number) => THREE.DataUtils.fromHalfFloat(data[i]) : (i: number) => data[i];
 }
 
+/** A loaded panorama's pixels: `texture.image` of what EXRLoader or HDRLoader returns. */
+export type PanoramaPixels = { data: ArrayLike<number>; width: number; height: number };
+
 export interface PanoramaStats {
   width: number;
   height: number;
   median: number;
   p99: number;
   max: number;
+  /** The room's average color: 'neutral', or the channel it leans toward ('blue', 'warm', 'green'). */
+  tint: string;
   /** The share of pixels brighter than `level`, from 0 to 1. 1.0 is white paper. */
   shareAbove(level: number): number;
+  /** How many separate bright spots (lamps, windows) are brighter than `level`, ignoring specks under 4 pixels. */
+  lightsAbove(level: number): number;
 }
 
-// Measures a loaded equirect panorama (an .exr or .hdr DataTexture): its brightness median, 99th
-// percentile, and brightest pixel, where 1.0 is white paper. Brightness is luminance, the way the
-// eye weighs red, green, and blue. Runs on the CPU, about a tenth of a second for a 2048 × 1024 file.
-export function measurePanorama(equirect: THREE.DataTexture): PanoramaStats {
-  const { data, width, height } = equirect.image as { data: ArrayLike<number>; width: number; height: number };
+// Measures a loaded equirect panorama (an .exr or .hdr file): its brightness median, 99th
+// percentile, and brightest pixel, where 1.0 is white paper, plus its tint and how many separate
+// lights it holds. Brightness is luminance, the way the eye weighs red, green, and blue. Runs on the
+// CPU, a fraction of a second for a 2048 × 1024 file.
+export function measurePanorama(image: PanoramaPixels): PanoramaStats {
+  const { data, width, height } = image;
   const channels = data.length / (width * height);
   const value = reader(data);
-  const sorted = new Float32Array(width * height);
-  for (let i = 0; i < sorted.length; i++) {
+  const brightness = new Float32Array(width * height);
+  const average = [0, 0, 0];
+  for (let i = 0; i < brightness.length; i++) {
     const at = i * channels;
-    sorted[i] = 0.2126 * value(at) + 0.7152 * value(at + 1) + 0.0722 * value(at + 2);
+    const [r, g, b] = channels >= 3 ? [value(at), value(at + 1), value(at + 2)] : [value(at), value(at), value(at)];
+    brightness[i] = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+    average[0] += r;
+    average[1] += g;
+    average[2] += b;
   }
-  sorted.sort();
+  const strongest = Math.max(...average);
+  const weakest = Math.min(...average);
+  const tint = strongest <= weakest * 1.05 ? 'neutral' : ['warm', 'green', 'blue'][average.indexOf(strongest)];
+  const sorted = brightness.slice().sort();
   const percentile = (share: number) => sorted[Math.floor(share * (sorted.length - 1))];
   return {
     width,
@@ -42,6 +58,35 @@ export function measurePanorama(equirect: THREE.DataTexture): PanoramaStats {
     median: percentile(0.5),
     p99: percentile(0.99),
     max: sorted[sorted.length - 1],
+    tint,
+    lightsAbove(level) {
+      // Flood-fills each bright spot once; the picture wraps around left to right.
+      const seen = new Uint8Array(brightness.length);
+      const stack: number[] = [];
+      let lights = 0;
+      for (let start = 0; start < brightness.length; start++) {
+        if (seen[start] || brightness[start] <= level) continue;
+        seen[start] = 1;
+        stack.push(start);
+        let size = 0;
+        while (stack.length) {
+          const pixel = stack.pop()!;
+          size++;
+          const x = pixel % width;
+          const y = (pixel - x) / width;
+          for (const [nx, ny] of [[(x + 1) % width, y], [(x + width - 1) % width, y], [x, y + 1], [x, y - 1]]) {
+            if (ny < 0 || ny >= height) continue;
+            const next = ny * width + nx;
+            if (!seen[next] && brightness[next] > level) {
+              seen[next] = 1;
+              stack.push(next);
+            }
+          }
+        }
+        if (size >= 4) lights++;
+      }
+      return lights;
+    },
     shareAbove(level) {
       let low = 0;
       let high = sorted.length;
@@ -59,7 +104,7 @@ export function measurePanorama(equirect: THREE.DataTexture): PanoramaStats {
 // same room holds, since 8-bit images top out at white. The original is left alone. Dispose the copy
 // once it has been prefiltered.
 export function clipAtWhite(equirect: THREE.DataTexture) {
-  const { data, width, height } = equirect.image as { data: Uint16Array | Float32Array; width: number; height: number };
+  const { data, width, height } = equirect.image as unknown as { data: Uint16Array | Float32Array; width: number; height: number };
   const channels = data.length / (width * height);
   const clipped = data.slice();
   // Positive half floats sort like plain integers, so 1.0 is the cap; a set sign bit is negative.
@@ -70,7 +115,7 @@ export function clipAtWhite(equirect: THREE.DataTexture) {
   for (let i = 0; i < clipped.length; i++) {
     if (i % channels !== 3) clipped[i] = clip(clipped[i]); // leaves alpha alone
   }
-  const copy = new THREE.DataTexture(clipped, width, height, equirect.format, equirect.type);
+  const copy = new THREE.DataTexture(clipped, width, height, equirect.format as THREE.PixelFormat, equirect.type);
   copy.mapping = THREE.EquirectangularReflectionMapping;
   copy.colorSpace = equirect.colorSpace;
   copy.flipY = equirect.flipY;

@@ -18,11 +18,11 @@ Spring's pink flowers and its red inner band are ceramic, and three pearls sit a
 | Material | Color | Metalness | Roughness | Texture maps |
 | --- | --- | --- | --- | --- |
 | `ceramic_rosa` (the flowers) | `#cf7c7c` | 0 | 0 | none |
-| `ceramic_red_2` (the inner band) | `#8d2727` | 0 | 0 | none |
+| `ceramic_red_2` (the inner band, "Metal 03" in the file) | `#8d2727` | 0 | 0 | none |
 | `pearl_rose_2` (the pearls) | `#ba7547` | 0.967 | 0.25 | none |
 
 - **No textures at all.** No color map, no bump map, no normal map. Each ceramic is a color and two zeros.
-- **The pearl has one extra:** iJewel's own thin-film layer, stored as `WEBGI_materials_thin_film_layer`, with `hasThinFilm: true`, a `filmFactor` of 0.315, and three sets of four numbers. iJewel doesn't document them, so this page doesn't guess what each one does. A thin film is what gives a soap bubble its colors.
+- **The pearl has one extra:** iJewel's own thin-film layer, stored as `WEBGI_materials_thin_film_layer`, with `hasThinFilm: true`, a `filmFactor` of 0.315, and three sets of four numbers. iJewel doesn't document what each one does. A thin film is what gives a soap bubble its colors.
 - **three.js loads the pearl without it.** GLTFLoader keeps extensions it doesn't know in `material.userData.gltfExtensions`, so the pearl arrives with `iridescence` 0.
 - **The shapes are plain too.** The 20 petals are one 1,984-triangle shape, and the 3 pearls one 1,280-triangle sphere.
 
@@ -73,7 +73,7 @@ The film matters more than it sounds. Loaded without it, Spring's pearl looks li
 
 ## The code
 
-What a developer types to build these looks. The scenes above run the same materials, from `electives/jewelry/ceramic-pearl/materials.ts`.
+What a developer types to build these looks. The same materials, ready to import, are in `electives/jewelry/ceramic-pearl/materials.ts`.
 
 ### Glazed ceramic
 

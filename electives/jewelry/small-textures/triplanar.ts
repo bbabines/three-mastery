@@ -73,11 +73,14 @@ vec4 triplanarSample( sampler2D tile, vec3 weight ) {
 // Replaces three.js's map_fragment chunk, which reads `map` once at vMapUv.
 const MAP_FRAGMENT = /* glsl */ `
 vec3 triplanarWeight = triplanarWeights();
-#ifdef TRIPLANAR_DEBUG
-  diffuseColor.rgb = triplanarWeight;
-#elif defined( USE_MAP )
+#ifdef USE_MAP
   diffuseColor *= triplanarSample( map, triplanarWeight );
 #endif
+`;
+
+// The debug view: each projector's share as a flat, unlit color.
+const DEBUG_FRAGMENT = /* glsl */ `
+gl_FragColor = vec4( triplanarWeight, 1.0 );
 `;
 
 // Replaces roughnessmap_fragment, which reads `roughnessMap` once at vRoughnessMapUv and keeps green.
@@ -104,11 +107,12 @@ export function triplanarMaterial(options: TriplanarOptions = {}) {
   });
   const uniforms: TriplanarUniforms = { scale: { value: scale }, blend: { value: blend } };
   material.userData.triplanar = uniforms;
+  if (debug) material.toneMapped = false; // pure red, green, and blue stay pure
 
   material.onBeforeCompile = (shader) => {
     shader.uniforms.triplanarScale = uniforms.scale;
     shader.uniforms.triplanarBlend = uniforms.blend;
-    if (debug) shader.defines = { ...shader.defines, TRIPLANAR_DEBUG: '' };
+    if (debug) shader.fragmentShader = shader.fragmentShader.replace('#include <opaque_fragment>', DEBUG_FRAGMENT);
     shader.vertexShader = shader.vertexShader
       .replace('#include <common>', `#include <common>\n${VERTEX_DECLARATIONS}`)
       .replace('#include <project_vertex>', VERTEX_PASS);

@@ -24,7 +24,7 @@ Spring's only textured part is its wood band: one mesh, `Tube005`, 42,112 triang
 
 - **The two maps are one picture.** The roughness map is pure gray, and pixel by pixel its brightness follows the color map's (a correlation of 0.997, measured in a browser canvas). Its file name says "bump", but the material uses it as roughness.
 - **Both tiles are seamless.** Going off the right edge and back in at the left is no bigger a jump than between any two neighboring pixels (8.8 against 8.1 steps out of 255, on average), and the same top to bottom.
-- **The band has UVs, and iJewel doesn't use them.** With triplanar on, the texture is projected instead. The band's own UVs spread one tile over the whole band unevenly.
+- **The band has UVs, and iJewel doesn't use them.** With triplanar on, the texture is projected instead. The band's own UVs spread one tile over the whole band unevenly: with them, the grain stretches into thin streaks along the band, and the knots disappear.
 - **What the files don't say:** whether iJewel projects measured from the object itself or in the world, what unit its scale uses, or how its shader copes with a roughness map set to clamp. The code below makes its own choices and says why.
 
 The band as iJewel draws it, then with its own UVs instead. Switch between them, and orbit.
@@ -35,15 +35,17 @@ The band as iJewel draws it, then with its own UVs instead. Switch between them,
 
 ### Three projectors instead of a sewing pattern
 
-**UV mapping** gives every corner of the mesh a spot on the image (its UVs), so the image is laid on like fabric cut from a sewing pattern. Someone has to cut the pattern, an **unwrap**: where it's cut there's a seam, and where it's stretched the texture stretches. CAD exports come with patterns nobody cut by hand, like the band's.
+**UV mapping** gives every corner of the mesh a spot on the image (its UVs), so the image is laid on like fabric cut from a sewing pattern. Someone has to cut the pattern, an **unwrap**: where it's cut there's a seam, and where it's stretched the texture stretches. CAD exports often come with patterns nobody cut by hand, and the band's is uneven: its readout shows how much.
 
 **Triplanar mapping** skips the pattern. **Analogy: three slide projectors**, aimed at the part from the side, from above, and from the front, all showing the same tile. Each spot takes its color mostly from the projector it faces most squarely, and where the surface turns from one to the next, it mixes the two. The tile is seamless, so each projector's picture repeats forever without an edge, and any shape is covered.
 
 **Blend** sets how quickly one projector hands over to the next. In the scene above, pick **projectors** to see each one's share as a color, and drag **blend**: low smears the pictures together on every curve, and very high turns the handover into a line.
 
-### The roughness map is what reads as wood
+### What the roughness map adds
 
-The color map gives the pattern, but under a studio environment, wood is sold by its reflections. The roughness map is the color map's gray copy, so it's darkest on the grain: roughness 0.297 times the gray makes the grain 0.13 and the pale wood between it 0.22. Lower roughness is glossier, so the studio's lights and black panels reflect sharper on the grain and blurrier between, and as the ring turns the highlights break up along the grain. Turn the map off, keeping the same average roughness everywhere, and the grain looks printed on.
+The roughness map is the color map's gray copy, so it's darkest on the grain: roughness 0.297 times the gray makes the grain 0.13 and the pale wood between it 0.22, with 0.18 in the middle. Lower roughness is glossier.
+
+Mostly, the map makes the whole band glossier than 0.297 alone. Delete it and the band goes duller: in the close-up below, about 40% of the band's pixels change. The grain-by-grain variation is a much smaller part. Swap the map for one flat roughness at its middle value, 0.18, and only about 3% change, all inside highlights, where the grain catches the light a little sharper than the wood around it. (Counting pixels that change by more than 2 steps out of 255.) Most of the look is the color map, laid on without stretching.
 
 <div data-scene="grain"></div>
 
@@ -136,14 +138,14 @@ material.needsUpdate = true;     // adding or removing a map builds a different 
 
 ## How it goes wrong
 
-- **"Realistic textures have to be 4K."** Big downloads, phones running out of memory, and nothing sharper on screen, because the GPU averages the extra texels away. What makes a texture look real is a photo source, a seamless repeat, and a roughness map. Use a 1K tile and repeat it.
+- **"Realistic textures have to be 4K."** Big downloads, phones short on GPU memory, and nothing sharper on screen, because the GPU averages the extra texels away. What makes the wood look real is a photographed source, laid on without stretching, at the right gloss. Use a 1K tile and repeat it.
 - **Stretched or seamed wood on a CAD part.** Its UVs came from an automatic unwrap. Project the texture instead, or unwrap it properly in Blender (mark seams, then Unwrap).
 - **Pale, washed-out wood.** The color map was left at `NoColorSpace`, the default for a texture loaded by hand with TextureLoader. GLTFLoader marks a model's base color map sRGB itself. Set `map.colorSpace = THREE.SRGBColorSpace`.
-- **"Every texture should be marked sRGB."** Then the wood is as glossy as varnish: the roughness map was marked sRGB, so its numbers were decoded as if they were color, and every value dropped. Leave data maps at `NoColorSpace`; in Blender, set their image node to Non-Color.
+- **"Every texture should be marked sRGB."** Then the wood is too glossy: the roughness map was marked sRGB, so its numbers were decoded as if they were color, and every value dropped. Leave data maps at `NoColorSpace`; in Blender, set their image node to Non-Color.
 - **"A texture needs the mesh's UVs."** The band ignores its own; the shader works out where to read from the surface's position and facing.
-- **"The color map is what makes it look real."** Without the roughness map, the grain is a print on a uniform sheen. The variation in shine sells it.
 - **The same knot every few millimeters.** The tile repeats too often, so a standout feature becomes a pattern. Lower the scale so each tile covers more, or pick a tile without a standout feature.
-- **A smeared mix at 45°, or a visible seam.** Blend too low, or too high. Somewhere between 4 and 8 usually hides the handover.
+- **Streaks instead of a repeat.** A texture's wrap defaults to `ClampToEdgeWrapping`, so past one tile it stretches the edge pixels. Set `wrapS` and `wrapT` to `RepeatWrapping`.
+- **A smeared mix at 45°, or a visible seam.** Blend too low, or too high. iJewel's 6 is a good start.
 - **Grain sliding across a turning part.** The projection is in the world. Project measured from the object itself.
 - **Changed a color space, and nothing happened.** Set `texture.needsUpdate = true`, and `material.needsUpdate = true` after adding or removing a map.
 

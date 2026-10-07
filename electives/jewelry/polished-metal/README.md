@@ -46,7 +46,7 @@ The room goes up to 84 times white paper, and a screen tops out at white. **Tone
 
 ACES Filmic, the playground's curve, rolls highlights off gradually, so bright bands keep their shape, and it pushes dim values down, so dark bands stay deep. That contrast is most of the polished look, and the likeliest reason lights and darks look wrong. Every curve shifts color a little too: under ACES, rose gold reflecting the typical gray comes out near `#eaccac`, paler than its own hex, and under Neutral near `#f3b083`, almost the hex. The tone mapping page compares the curves in general.
 
-The playground adds contrast 1.1 after that. three.js's renderer has no contrast or saturation setting, so matching it takes a post-processing pass, and the file doesn't say how iJewel computes it.
+The playground also sets contrast 1.1. three.js's renderer has no contrast or saturation setting, so matching it takes a post-processing pass, and the file doesn't say how iJewel computes it.
 
 Switch the curves and drag **exposure**. Watch the dark bands and the three gray cards, lit at 0.05, 1.28, and 84.
 

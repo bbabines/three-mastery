@@ -42,7 +42,7 @@ function loadWood(harness: Harness) {
   return Promise.all([woodBand(), loadWoodTextures(), environment(harness.renderer, 'metal')]);
 }
 
-// The stage for a wood scene: the band standing on its edge, seen from in front and a little above.
+// The stage for a wood scene: the band standing on its edge, at the height of the camera target.
 function standBand(harness: Harness, geometry: THREE.BufferGeometry, material: THREE.Material) {
   const band = new THREE.Mesh(geometry, material);
   band.position.y = 1.2;
@@ -81,8 +81,8 @@ function uvSpread(geometry: THREE.BufferGeometry) {
 export const band: SceneSetup = (harness) => {
   const { camera, controls, container } = harness;
   jewelryStage(harness);
-  camera.position.set(2.3, 1.9, 2.3);
-  controls.target.set(0, 1.1, 0);
+  camera.position.set(2.6, 2.1, 2.6);
+  controls.target.set(0, 1.25, 0);
   const readout = overlay(container, 'readout');
   const bar = overlay(container, 'controls');
 
@@ -144,8 +144,8 @@ export const band: SceneSetup = (harness) => {
 export const colorSpaces: SceneSetup = (harness) => {
   const { camera, controls, container } = harness;
   jewelryStage(harness);
-  camera.position.set(2.3, 1.9, 2.3);
-  controls.target.set(0, 1.1, 0);
+  camera.position.set(2.6, 2.1, 2.6);
+  controls.target.set(0, 1.25, 0);
   const readout = overlay(container, 'readout');
   const bar = overlay(container, 'controls');
 
@@ -188,56 +188,56 @@ export const colorSpaces: SceneSetup = (harness) => {
         select: () =>
           set(THREE.SRGBColorSpace, THREE.SRGBColorSpace, [
             'roughnessMap.colorSpace = THREE.SRGBColorSpace; roughnessMap.needsUpdate = true;',
-            'decoded as if it were color: roughness 0.05 to 0.14, glossy like wet varnish',
+            'decoded as if it were color: roughness 0.05 to 0.14, so too glossy everywhere',
           ]),
       },
     ]);
   });
 };
 
-// Why it works: the roughness map on and off, on a slowly turning band, plus your own image.
-const FLAT_ROUGHNESS = 0.18; // the roughness map's middle value times 0.297, so only the variation goes
+// Why it works: the roughness map on and off, close up, plus your own image.
+const FLAT_ROUGHNESS = 0.18; // the roughness map's middle value times 0.297: only the variation goes
 
 export const grain: SceneSetup = (harness) => {
-  const { camera, controls, container, onFrame } = harness;
+  const { camera, controls, container } = harness;
   jewelryStage(harness);
-  camera.position.set(1.5, 1.5, 1.5);
-  controls.target.set(0, 1, 0);
+  camera.position.set(1.8, 1.7, 1.8);
+  controls.target.set(0, 1.1, 0);
   const readout = overlay(container, 'readout');
   const bar = overlay(container, 'controls');
 
   whenLoaded(container, readout, loadWood(harness), ([geometry, textures, env]) => {
     harness.scene.environment = env;
     const material = wood(textures);
-    const mesh = standBand(harness, geometry, material);
-    onFrame((delta) => {
-      mesh.rotation.y += delta * 0.25;
-    });
+    standBand(harness, geometry, material);
 
     let maps = textures;
-    let mapOn = true;
+    let roughness: number | null = null; // null: the map is on
     let source = 'the wood';
     const apply = () => {
       material.map = maps.map;
       // Adding or removing a map changes which shader three.js builds, so it needs needsUpdate.
-      material.roughnessMap = mapOn ? maps.roughnessMap : null;
-      material.roughness = mapOn ? WOOD.roughness : FLAT_ROUGHNESS;
+      material.roughnessMap = roughness === null ? maps.roughnessMap : null;
+      material.roughness = roughness ?? WOOD.roughness;
       material.needsUpdate = true;
       readout.innerHTML = (
-        mapOn
+        roughness === null
           ? [
               `material.roughnessMap = roughnessMap; // ${source}`,
-              'darker grain is glossier, so reflections break along the grain',
+              maps === textures ? 'roughness 0.297 × the gray: the dark grain is a little glossier' : 'roughness 0.297 × its green channel: darker spots are glossier',
             ]
           : [
-              `material.roughnessMap = null; material.roughness = ${FLAT_ROUGHNESS}; material.needsUpdate = true;`,
-              'one gloss everywhere: the same average, but the grain looks printed on',
+              `material.roughnessMap = null; material.roughness = ${roughness}; material.needsUpdate = true;`,
+              roughness === WOOD.roughness
+                ? 'the map deleted: every spot at 0.297, so the whole band is duller'
+                : 'one gloss everywhere, at the map\'s average: only inside highlights does it change',
             ]
       ).join('<br>');
     };
     choiceButtons(buttonGroup(bar), [
-      { html: 'roughness map on', select: () => ((mapOn = true), apply()) },
-      { html: 'off', select: () => ((mapOn = false), apply()) },
+      { html: 'roughness map on', select: () => ((roughness = null), apply()) },
+      { html: 'off, 0.297', select: () => ((roughness = WOOD.roughness), apply()) },
+      { html: 'off, 0.18', select: () => ((roughness = FLAT_ROUGHNESS), apply()) },
     ]);
 
     // Your own seamless image: one download, two Textures. The color one is marked sRGB; the other
