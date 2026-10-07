@@ -561,7 +561,7 @@ Brad added this on Oct 7, 2026. His Shopify jewelry viewer looked off, and AI fi
 
 - **Language:** GLSL on WebGLRenderer, so it carries over to the Shopify app.
 - **Format:** no four-loop pass, and tiers don't apply. Each unit is one page in four parts: **Evidence** (what the reference does, with the actual values from its files), **Why it works** (plain words and live A/B scenes that switch one thing off), **The code** (the finished code a developer types to diagnose or build it, shown and run on the page; there's no coding exercise, Brad's call on Oct 7, 2026), and **How it goes wrong** (the common mistake, what it looks like, and the fix).
-- **Assets:** the reference files live in `assets/reference/ijewel/`, which git ignores. They're for study only, never committed or shipped (`electives/jewelry/README.md`).
+- **Assets:** the reference files live in `assets/reference/ijewel/`, committed so they travel between machines, for study only and never shipped (`electives/jewelry/README.md`).
 
 | Unit | What it takes apart | Misconceptions to expose |
 | --- | --- | --- |

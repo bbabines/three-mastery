@@ -24,12 +24,22 @@ export function loadSpring() {
   return spring;
 }
 
+export type EnvironmentName = keyof typeof ENVIRONMENTS;
+
 const exrs = new Map<string, Promise<THREE.DataTexture>>();
-// One of iJewel's two environments, prefiltered for this renderer, ready for scene.environment.
-export async function environment(renderer: THREE.WebGLRenderer, which: keyof typeof ENVIRONMENTS) {
+// One of iJewel's two environments as the panorama itself (half-float, values far above 1), for a
+// background or for a shader that samples it directly, like the gem shader. Loaded once per page.
+export async function environmentImage(which: EnvironmentName) {
   if (!exrs.has(which)) exrs.set(which, new EXRLoader().loadAsync(ENVIRONMENTS[which]));
   const equirect = await exrs.get(which)!;
   equirect.mapping = THREE.EquirectangularReflectionMapping;
+  return equirect;
+}
+
+// One of iJewel's two environments, prefiltered for this renderer, ready for scene.environment or a
+// material's envMap.
+export async function environment(renderer: THREE.WebGLRenderer, which: EnvironmentName) {
+  const equirect = await environmentImage(which);
   const pmrem = new THREE.PMREMGenerator(renderer);
   const texture = pmrem.fromEquirectangular(equirect).texture;
   pmrem.dispose();
@@ -47,13 +57,24 @@ export function isGem(mesh: THREE.Mesh) {
 // shows exactly what its normal points at.
 export const mirrorStandIn = () => new THREE.MeshStandardMaterial({ color: 0xffffff, metalness: 1, roughness: 0 });
 
-// Jewelry scenes are lit only by the environment: no grid, axes, or sky light, and tone mapping
-// on, since the environments hold values far brighter than 1.
+// iJewel's five polished metal presets (assets/reference/ijewel/materials/metals), as stored: the
+// color is sRGB hex, the way the .pmat files hold it.
+export const METALS = {
+  'rose gold': { color: 0xf2af83, metalness: 1, roughness: 0 },
+  'yellow gold': { color: 0xfec07a, metalness: 1, roughness: 0 },
+  'white gold': { color: 0xc2c2c3, metalness: 1, roughness: 0 },
+  platinum: { color: 0xb6b6b6, metalness: 0.88, roughness: 0 },
+  silver: { color: 0xfcfcfc, metalness: 0.88, roughness: 0.065 },
+};
+
+// Jewelry scenes are lit only by the environment: no grid, axes, or sky light. Tone mapping is the
+// playground's (ACES Filmic, exposure 1), since the environments hold values far brighter than 1.
 export function jewelryStage(harness: Harness) {
   const { scene, renderer } = harness;
   hideFloorHelpers(scene);
   const sky = scene.children.find((child) => child instanceof THREE.HemisphereLight);
   if (sky) sky.visible = false;
-  renderer.toneMapping = THREE.NeutralToneMapping;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1;
   scene.background = new THREE.Color(0x202228);
 }
