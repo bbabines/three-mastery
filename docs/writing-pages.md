@@ -324,6 +324,34 @@ Scenes load iJewel's files through `shared.ts` and show `MISSING_REFERENCE` when
 
 **Wording:** the two `.exr` files are "the metal file" (a studio) and "the gem file" (a room), together "lighting files"; "environment" keeps Domain 11's meaning. A mirror material standing in for the gem shader is "the stand-in". Triplanar mapping is "three projectors" (from the side, above, and the front), and texel density is "texture pixels per centimeter of the part" (px/cm, as game artists quote it), compared against the screen's own pixels per centimeter; Spring's units are read as centimeters. The capstone's switchable pieces are "shortcuts" (the common way people skip a piece). Where a reference number doesn't carry over to three.js, the page says it was picked by eye.
 
+## Elective pages (Tactile materials)
+
+The Tactile materials elective teaches lighting and materials together on real scanned materials. Brad approved its outline on Oct 7, 2026; unit 1, `electives/tactile/before-you-light/`, is the sample. It uses WebGL and GLSL and mounts on `createHarness`, like the jewelry elective.
+
+**Files**
+
+```
+electives/tactile/<unit>/      README.md and scenes.ts
+electives/tactile/bench.ts     the shared bench: samples, lights, HDRIs, and controls
+electives/tactile/metal/rings.ts   the ring bench: four untextured metals, for pages about light alone
+electives/tactile/catalog.ts   the materials and HDRIs, with real sizes and what the checks found
+electives/tactile/tools/       fetch-assets.mjs (downloads) and vet.ts (the checks)
+concepts/tactile/<unit>.md     the card, without `tier`
+```
+
+**Frontmatter**: `id: tactile.<unit>.page`, `elective: tactile`, `kind: page`, `concepts: [tactile.<unit>]`.
+
+**The page** has the Loop 1 opening block, then:
+
+- **Why it works:** plain words and the bench, one scene per idea, each with only the controls that idea needs (`materialButtons`, `keyControls`, `mapToggles`, ...). Every scene has the material picker, so each idea is tried on several materials. Readouts show the code line for the current setting and what it does.
+- **The code:** a `###` per job, the exact lines with a comment on each.
+- **What's off?:** one or two scenes that start broken in a few ways, built with `faultChecklist`. The panel counts what's still off without naming it, and "Show the answer" lists each cause and the line that fixes it. The readout describes only the symptom, the way someone would report it.
+- **How it goes wrong:** symptom, cause, and fix. The page ends with `<div data-mark-done></div>`.
+
+No coding exercises, as in the jewelry elective. Scenes load each material at its files' own resolution, since the big scans need their 4K to look sharp on the bench; a lesson about resolution passes a smaller `maxTextureSize`. A 4K map takes 85 MB of GPU memory, so give a page's scenes small-tile materials (fabric, leather) by default and let the picker load the big ones.
+
+**Wording:** "the bench" is the shared scene; "the swatch" and "the roll" are its samples; "the key light" is the movable directional light; "the packed map" is Poly Haven's `arm` file; "raking" means a light 15–30° above the surface. A material's tile size is its "real size".
+
 ## Before you call it done
 
 1. Check every claim against three.js r186. Don't state three.js behavior from memory.

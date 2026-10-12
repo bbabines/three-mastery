@@ -345,6 +345,24 @@ export const DOMAINS: Domain[] = [
       { slug: 'capstone', name: 'The whole piece in your own code' },
     ],
   },
+  {
+    n: 18,
+    slug: 'tactile',
+    name: 'Tactile materials',
+    elective: true,
+    note: 'Maps decide what it is, light decides whether it feels touchable, and scale decides whether it\'s believable. Each unit is lit by hand on a bench of real scanned materials, and ends with scenes that look off for you to fix.',
+    concepts: [
+      { slug: 'before-you-light', name: 'Before you light' },
+      { slug: 'metal', name: 'Metal: all light, no maps' },
+      { slug: 'reading-light', name: 'Reading the light' },
+      { slug: 'key-light', name: 'The key light' },
+      { slug: 'grounding', name: 'Shadows and grounding' },
+      { slug: 'maps', name: 'The maps, and checking a download' },
+      { slug: 'scale', name: 'Scale and distance' },
+      { slug: 'finishes', name: 'Finishes: sheen, clearcoat, and limits' },
+      { slug: 'whats-off', name: "What's off? Diagnose and fix" },
+    ],
+  },
 ];
 
 export const CORE_DOMAINS = DOMAINS.filter((domain) => !domain.elective);
@@ -360,7 +378,7 @@ export interface Track {
 export const TRACKS: Track[] = [
   { slug: 'all', name: 'Everything', domains: DOMAINS.map((domain) => domain.slug) },
   { slug: 'rogue', name: 'Rogue', domains: ['math', 'transforms', 'rotation', 'camera', 'geometry', 'scene-graph', 'assets', 'queries', 'interaction'] },
-  { slug: 'tech-art', name: 'Tech art', domains: ['geometry', 'gpu', 'materials', 'shaders', 'vfx', 'jewelry'] },
+  { slug: 'tech-art', name: 'Tech art', domains: ['geometry', 'gpu', 'materials', 'shaders', 'vfx', 'jewelry', 'tactile'] },
 ];
 
 // The core domains a track takes whole. Checkpoint questions and placement checks each cover a whole
