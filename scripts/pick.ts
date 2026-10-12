@@ -39,6 +39,7 @@ import {
 import { appendLog, readLog, type DoneEntry, type StartEntry } from './lib/log';
 import { loadCards, loadCheckpoints, loadDrills, loadElectives, loadPlacements, ROOT, type Drill } from './lib/repo';
 import { runVitest } from './lib/vitest';
+import { electivePrerequisitesMet, scheduledElectives } from './lib/electives';
 
 interface Item {
   kind: 'drill' | 'placement' | 'checkpoint' | 'elective';
@@ -61,31 +62,20 @@ const coreDomains = new Set(CORE_DOMAINS.map((domain) => domain.slug));
 const cards = new Map(allCards.filter((card) => coreDomains.has(card.domain)).map((card) => [card.id, card]));
 const prerequisites = new Map(allCards.map((card) => [card.id, card.prerequisites ?? []]));
 
-// The VFX elective in its plan's order: the concept pages, then each effect built guided and then
-// from memory. After all six from-memory builds are done, maintenance also rotates those six.
-const vfx = DOMAINS.find((domain) => domain.slug === 'vfx');
-const electiveDirs = new Map(loadElectives().map((item) => [item.id, item.dir]));
-const vfxPlan = [
-  ...(vfx?.concepts ?? []).map((concept) => ({ id: `vfx.${concept.slug}.page`, kind: 'page' as const, concepts: [`vfx.${concept.slug}`] })),
-  ...(vfx?.effects ?? []).flatMap((effect) =>
-    (['guided', 'from-memory'] as const).map((kind) => ({
-      id: `vfx.effects.${effect.slug}.${kind}`,
-      kind,
-      concepts: effect.concepts.map((concept) => `vfx.${concept}`),
-    })),
-  ),
-];
-const vfxItems: Item[] = vfxPlan.flatMap((planned, order) => {
-  const dir = electiveDirs.get(planned.id);
-  return dir ? [{ kind: 'elective', id: planned.id, dir, loop: 0, domain: 'vfx', concepts: planned.concepts, electiveKind: planned.kind, order }] : [];
-});
+// Opted-in electives follow the inventory's plan. VFX keeps its guided/from-memory pairs;
+// Product Look Development is shown-code visual practice with individual literacy prerequisites.
+const electiveItems: Item[] = scheduledElectives(DOMAINS, loadElectives()).map(planned => ({
+  kind:'elective', id:planned.id, dir:planned.dir, loop:0, domain:planned.elective,
+  concepts:planned.concepts, electiveKind:planned.kind, order:planned.order,
+}));
+const vfxItems = electiveItems.filter(item => item.domain === 'vfx');
 const vfxEffects = vfxItems.filter((item) => item.electiveKind === 'from-memory');
 
 const items: Item[] = [
   ...drills.map((drill): Item => ({ kind: 'drill', ...drill, drill })),
   ...loadPlacements().map((placement): Item => ({ kind: 'placement', ...placement })),
   ...loadCheckpoints().map((checkpoint): Item => ({ kind: 'checkpoint', ...checkpoint })),
-  ...vfxItems,
+  ...electiveItems,
 ];
 const itemsById = new Map(items.map((item) => [item.id, item]));
 
@@ -198,16 +188,18 @@ function loopCandidates(loop: number): Item[] {
 function electiveReady(item: Item) {
   const concepts = item.concepts ?? [];
   if (item.electiveKind === 'page') {
-    return (prerequisites.get(concepts[0]) ?? []).filter((id) => id.startsWith('vfx.')).every((id) => passedIds.has(`${id}.page`));
+    return electivePrerequisitesMet(item.domain ?? '', concepts, prerequisites, id => passedIds.has(id), id => conceptCovered(id, 1));
   }
   if (item.electiveKind === 'guided') return concepts.every((id) => passedIds.has(`${id}.page`));
   return passedIds.has(item.id.replace(/from-memory$/, 'guided'));
 }
 
-// The elective opens after the track's Loop 2, as the inventory plans it.
+// Each scheduled elective names its own entry rule in the inventory.
 function electiveCandidates(loop: number | 'maintenance') {
-  if (loop !== 'maintenance' && loop <= 2) return [];
-  return vfxItems.filter((item) => inTrack(item) && !passedIds.has(item.id) && electiveReady(item));
+  return electiveItems.filter(item => {
+    const after = DOMAINS.find(domain => domain.slug === item.domain)?.afterLoop ?? Infinity;
+    return (loop === 'maintenance' || loop > after) && inTrack(item) && !passedIds.has(item.id) && electiveReady(item);
+  });
 }
 
 // Once another track is finished, its drills outside this track come back for review when none
@@ -228,7 +220,7 @@ function trackSuggestions(): { items: Item[]; note?: string } {
     if (fresh.length > 0) return { items: fresh.sort((a, b) => itemOrder(a) - itemOrder(b)) };
     const electiveDone = vfxEffects.every((item) => passedIds.has(item.id));
     const pool = items.filter(
-      (item) => inTrack(item) && (item.kind === 'drill' || (electiveDone && item.kind === 'elective' && item.electiveKind === 'from-memory')),
+      (item) => inTrack(item) && (item.kind === 'drill' || (electiveDone && item.kind === 'elective' && item.electiveKind === 'from-memory') || (item.id === 'product.capstone.page' && passedIds.has(item.id))),
     );
     return { items: pool.sort(byMaintenance) };
   }
@@ -269,7 +261,7 @@ function describe(item: Item) {
   const label = item.drill
     ? `${item.drill.mode}, ${item.drill.context.split('/')[1]}`
     : item.kind === 'elective'
-      ? `VFX ${item.electiveKind === 'page' ? 'page' : item.electiveKind === 'guided' ? 'guided build' : 'from memory'}`
+      ? `${DOMAINS.find(domain => domain.slug === item.domain)?.name ?? item.domain} ${item.electiveKind === 'page' ? 'page' : item.electiveKind === 'guided' ? 'guided build' : 'from memory'}`
       : item.kind;
   return `${item.id}  (${label})\n    ${item.dir}/README.md`;
 }
@@ -319,7 +311,7 @@ function start(id: string | undefined) {
   console.log(`Working on ${item.id}.\n`);
   console.log(`  Open:  http://localhost:5173/harness/?drill=${item.dir}  (needs npm run dev)`);
   if (item.kind === 'elective' && item.electiveKind === 'page') {
-    console.log('\nThe page logs it when your exercise matches the reference.');
+    console.log(item.domain === 'vfx' ? '\nThe page logs it when your exercise matches the reference.' : '\nComplete the visual exercises, save the evidence, then use the page\'s Mark done button or: npm run pick -- done --pass');
   } else if (item.kind === 'elective') {
     console.log('\nMatch the reference by eye. The page can log it, or finish with: npm run pick -- done --pass');
   } else if (item.kind !== 'drill' && !existsSync(path.join(ROOT, item.dir, 'check.test.ts'))) {

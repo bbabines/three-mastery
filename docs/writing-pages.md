@@ -324,6 +324,16 @@ Scenes load iJewel's files through `shared.ts` and show `MISSING_REFERENCE` when
 
 **Wording:** the two `.exr` files are "the metal file" (a studio) and "the gem file" (a room), together "lighting files"; "environment" keeps Domain 11's meaning. A mirror material standing in for the gem shader is "the stand-in". Triplanar mapping is "three projectors" (from the side, above, and the front), and texel density is "texture pixels per centimeter of the part" (px/cm, as game artists quote it), compared against the screen's own pixels per centimeter; Spring's units are read as centimeters. The capstone's switchable pieces are "shortcuts" (the common way people skip a piece). Where a reference number doesn't carry over to three.js, the page says it was picked by eye.
 
+## Elective pages (Product Look Development)
+
+Domain 18 uses the confirmed WebGi classic watch as its featured study asset. Follow `electives/product/README.md` for reference provenance, measured configuration, native transfer limits, and verification. Each of the ten domains plus the capstone is one complete page with a concept card and at least two meaningful watch-based live experiments.
+
+Frontmatter: `id: product.<unit>.page`, `elective: product`, `kind: page`, `concepts: [product.<unit>]`. Cards omit `tier`. Scene modules import the typed `ProductLab` contract from `electives/product/lab.ts`; the shared stage owns asset loading, environment resources, evidence export, and teardown. Units own their comparison state and dispose additional resources. Use controls and shown runnable code, not blank-file typing. No timed or prediction exercises.
+
+Pages open with a one-sentence definition and varied uses, then Evidence, Why it works, The code, Exercises with observable acceptance, and How it goes wrong. End with a transfer/reflection question and `<div data-mark-done></div>`. Evidence distinguishes measured source values from authored teaching data. Do not present artistic reference settings, synthetic maps, or native approximations as physically correct source reconstruction. Show the captured original as the quality target where useful.
+
+Every comparison names the variables held fixed. Export PNG/JSON evidence; orbit and finish exercises require multiple views and moving inspection. Artistic acceptance remains a visual checklist. Check configuration/scheduling mechanically and mount every control state in the browser while intercepting progress writes. `coverage` still measures only the core loops.
+
 ## Before you call it done
 
 1. Check every claim against three.js r186. Don't state three.js behavior from memory.

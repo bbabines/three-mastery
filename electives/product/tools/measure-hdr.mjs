@@ -1,0 +1,12 @@
+import {readFile,writeFile} from 'node:fs/promises';
+import * as THREE from 'three';
+import {EXRLoader} from 'three/addons/loaders/EXRLoader.js';
+const file='assets/reference/classic-watch/studio.exr';
+const bytes=await readFile(file);
+const result=new EXRLoader().setDataType(THREE.FloatType).parse(bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength));
+const luminance=[];
+for(let i=0;i<result.data.length;i+=4) luminance.push(0.2126*result.data[i]+0.7152*result.data[i+1]+0.0722*result.data[i+2]);
+luminance.sort((a,b)=>a-b);
+const facts={file,width:result.width,height:result.height,pixels:luminance.length,median:luminance[Math.floor(luminance.length*.5)],p99:luminance[Math.floor(luminance.length*.99)],max:luminance.at(-1),fractionAboveOne:luminance.filter(x=>x>1).length/luminance.length,note:'Linear RGB luminance in the EXR; 1 is a numeric radiance reference, not a calibrated white-paper measurement.'};
+await writeFile('assets/reference/classic-watch/hdr-measurements.json',JSON.stringify(facts,null,2)+'\n');
+console.log(JSON.stringify(facts));

@@ -105,6 +105,9 @@ function progressApi(): Plugin {
 }
 
 export default defineConfig({
+  // Verification reports and downloaded audit scratch files are not lesson sources. Watching
+  // these on Windows can race a binary write and terminate Vite with EBUSY.
+  server: {watch: {ignored: ['**/.pick/**', '**/.vitest/**']}},
   resolve: {
     alias: { '@harness': path.join(ROOT, 'harness') },
   },

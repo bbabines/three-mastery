@@ -20,6 +20,7 @@ export interface Domain {
   slug: string;
   name: string;
   elective?: boolean;
+  afterLoop?: number; // scheduled electives: 0 opens after their individual literacy prerequisites
   note?: string; // for an elective: when it runs and how, shown under its heading in the sidebar
   concepts: Concept[];
   effects?: Effect[]; // for an elective with effect builds, in the inventory's order
@@ -288,6 +289,7 @@ export const DOMAINS: Domain[] = [
     slug: 'vfx',
     name: 'Procedural & VFX',
     elective: true,
+    afterLoop: 2,
     note: 'In TSL, after Loop 2: a page and a coding exercise per concept, then six effects built into a scene, guided and then from memory.',
     concepts: [
       { slug: 'sdf', name: 'Signed distance fields' },
@@ -345,6 +347,27 @@ export const DOMAINS: Domain[] = [
       { slug: 'capstone', name: 'The whole piece in your own code' },
     ],
   },
+  {
+    n: 18,
+    slug: 'product',
+    name: 'Product Look Development',
+    elective: true,
+    afterLoop: 0,
+    note: 'Dissect the WebGi classic watch: ten domains, visual experiments, saved comparison evidence, and a full-orbit configurator capstone. Shown code; no blank-file drills.',
+    concepts: [
+      {slug: 'reference-color', name: 'References, color, and exposure'},
+      {slug: 'geometry-fidelity', name: 'Geometry and manufacturing detail'},
+      {slug: 'tactile-materials', name: 'Tactile materials and texture scale'},
+      {slug: 'light-form', name: 'Light sources and readable form'},
+      {slug: 'reflection-design', name: 'Reflection and HDR design'},
+      {slug: 'shadows-grounding', name: 'Shadows and grounding'},
+      {slug: 'indirect-context', name: 'Indirect light and scene context'},
+      {slug: 'orbit-coverage', name: 'Lighting throughout a full orbit'},
+      {slug: 'camera-finishing', name: 'Camera and image finishing'},
+      {slug: 'delivery-validation', name: 'Browser delivery and validation'},
+      {slug: 'capstone', name: 'The complete product configurator'},
+    ],
+  },
 ];
 
 export const CORE_DOMAINS = DOMAINS.filter((domain) => !domain.elective);
@@ -360,7 +383,7 @@ export interface Track {
 export const TRACKS: Track[] = [
   { slug: 'all', name: 'Everything', domains: DOMAINS.map((domain) => domain.slug) },
   { slug: 'rogue', name: 'Rogue', domains: ['math', 'transforms', 'rotation', 'camera', 'geometry', 'scene-graph', 'assets', 'queries', 'interaction'] },
-  { slug: 'tech-art', name: 'Tech art', domains: ['geometry', 'gpu', 'materials', 'shaders', 'vfx', 'jewelry'] },
+  { slug: 'tech-art', name: 'Tech art', domains: ['geometry', 'gpu', 'materials', 'shaders', 'vfx', 'jewelry', 'product'] },
 ];
 
 // The core domains a track takes whole. Checkpoint questions and placement checks each cover a whole

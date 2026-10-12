@@ -1,0 +1,1021 @@
+{
+  "source": "https://webgi.dev/",
+  "extensionsUsed": [
+    "KHR_lights_punctual",
+    "KHR_materials_ior",
+    "KHR_materials_transmission",
+    "KHR_materials_volume",
+    "WEBGI_viewer",
+    "WEBGI_materials_bumpmap",
+    "WEBGI_materials_lightmap",
+    "WEBGI_materials_anisotropy",
+    "WEBGI_light_extras",
+    "WEBGI_object3d_extras",
+    "WEBGI_material_extras",
+    "WEBGI_materials_ssbevel",
+    "WEBGI_materials_displacementmap",
+    "KHR_draco_mesh_compression"
+  ],
+  "materials": [
+    {
+      "name": "date",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "roughness": 0.4076695442199707,
+      "metalness": 0,
+      "normal": null,
+      "extensions": {
+        "KHR_materials_ior": {
+          "ior": 1.4999999999999998
+        },
+        "WEBGI_materials_bumpmap": {
+          "bumpScale": 0.2
+        },
+        "WEBGI_materials_lightmap": {
+          "lightMapIntensity": 1
+        },
+        "WEBGI_material_extras": {
+          "fog": true,
+          "flatShading": false,
+          "blending": 1,
+          "shadowSide": null,
+          "depthFunc": 3,
+          "depthTest": true,
+          "depthWrite": true,
+          "colorWrite": true,
+          "vertexColors": false,
+          "alphaTest": 0,
+          "envMapIntensity": 1,
+          "wireframe": false,
+          "wireframeLinewidth": 1,
+          "wireframeLinecap": "round",
+          "wireframeLinejoin": "round",
+          "polygonOffset": false,
+          "polygonOffsetFactor": 0,
+          "polygonOffsetUnits": 0,
+          "dithering": false,
+          "alphaToCoverage": false,
+          "premultipliedAlpha": false,
+          "toneMapped": true,
+          "normalScale": [
+            1,
+            -1
+          ]
+        },
+        "WEBGI_materials_displacementmap": {
+          "displacementScale": 1,
+          "displacementBias": 0
+        }
+      }
+    },
+    {
+      "name": "Material",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "roughness": 0.5,
+      "metalness": 0,
+      "normal": null,
+      "extensions": {
+        "KHR_materials_ior": {
+          "ior": 1.4999999999999998
+        },
+        "WEBGI_materials_bumpmap": {
+          "bumpScale": 0.2
+        },
+        "WEBGI_materials_lightmap": {
+          "lightMapIntensity": 1
+        },
+        "WEBGI_material_extras": {
+          "fog": true,
+          "flatShading": false,
+          "blending": 1,
+          "shadowSide": null,
+          "depthFunc": 3,
+          "depthTest": true,
+          "depthWrite": false,
+          "colorWrite": true,
+          "vertexColors": false,
+          "alphaTest": 0,
+          "envMapIntensity": 1,
+          "wireframe": false,
+          "wireframeLinewidth": 1,
+          "wireframeLinecap": "round",
+          "wireframeLinejoin": "round",
+          "polygonOffset": false,
+          "polygonOffsetFactor": 0,
+          "polygonOffsetUnits": 0,
+          "dithering": false,
+          "alphaToCoverage": false,
+          "premultipliedAlpha": false,
+          "toneMapped": true,
+          "normalScale": [
+            1,
+            -1
+          ]
+        },
+        "WEBGI_materials_displacementmap": {
+          "displacementScale": 1,
+          "displacementBias": 0
+        }
+      }
+    },
+    {
+      "name": "metal_hands",
+      "baseColor": [
+        0.6415836811065674,
+        0.6920710802078247,
+        0.6634489893913269,
+        1
+      ],
+      "roughness": 0.05000000074505806,
+      "metalness": 1,
+      "normal": null,
+      "extensions": {
+        "KHR_materials_ior": {
+          "ior": 1.4999999999999998
+        },
+        "WEBGI_materials_bumpmap": {
+          "bumpScale": 1
+        },
+        "WEBGI_materials_lightmap": {
+          "lightMapIntensity": 1
+        },
+        "WEBGI_material_extras": {
+          "fog": true,
+          "flatShading": false,
+          "blending": 1,
+          "shadowSide": null,
+          "depthFunc": 3,
+          "depthTest": true,
+          "depthWrite": true,
+          "colorWrite": true,
+          "vertexColors": false,
+          "alphaTest": 0,
+          "envMapIntensity": 1,
+          "wireframe": false,
+          "wireframeLinewidth": 1,
+          "wireframeLinecap": "round",
+          "wireframeLinejoin": "round",
+          "polygonOffset": false,
+          "polygonOffsetFactor": 0,
+          "polygonOffsetUnits": 0,
+          "dithering": false,
+          "alphaToCoverage": false,
+          "premultipliedAlpha": false,
+          "toneMapped": true,
+          "normalScale": [
+            1,
+            -1
+          ]
+        },
+        "WEBGI_materials_displacementmap": {
+          "displacementScale": 1,
+          "displacementBias": 0
+        }
+      }
+    },
+    {
+      "name": "hands_middle",
+      "baseColor": [
+        0.5874162316322327,
+        0.6335238814353943,
+        0.6073850989341736,
+        1
+      ],
+      "roughness": 0.04766954481601715,
+      "metalness": 0,
+      "normal": null,
+      "extensions": {
+        "KHR_materials_ior": {
+          "ior": 1.4999999999999998
+        },
+        "WEBGI_materials_bumpmap": {
+          "bumpScale": 1
+        },
+        "WEBGI_materials_lightmap": {
+          "lightMapIntensity": 1
+        },
+        "WEBGI_material_extras": {
+          "fog": true,
+          "flatShading": false,
+          "blending": 1,
+          "shadowSide": null,
+          "depthFunc": 3,
+          "depthTest": true,
+          "depthWrite": true,
+          "colorWrite": true,
+          "vertexColors": false,
+          "alphaTest": 0,
+          "envMapIntensity": 1,
+          "wireframe": false,
+          "wireframeLinewidth": 1,
+          "wireframeLinecap": "round",
+          "wireframeLinejoin": "round",
+          "polygonOffset": false,
+          "polygonOffsetFactor": 0,
+          "polygonOffsetUnits": 0,
+          "dithering": false,
+          "alphaToCoverage": false,
+          "premultipliedAlpha": false,
+          "toneMapped": true,
+          "normalScale": [
+            1,
+            -1
+          ]
+        },
+        "WEBGI_materials_displacementmap": {
+          "displacementScale": 1,
+          "displacementBias": 0
+        }
+      }
+    },
+    {
+      "name": "metal",
+      "baseColor": [
+        0.44313725490196076,
+        0.44313725490196076,
+        0.44313725490196076,
+        1
+      ],
+      "roughness": 0.04766954481601715,
+      "metalness": 1,
+      "normal": null,
+      "extensions": {
+        "KHR_materials_ior": {
+          "ior": 1.4999999999999998
+        },
+        "WEBGI_materials_bumpmap": {
+          "bumpScale": 0.19999999999999998
+        },
+        "WEBGI_materials_lightmap": {
+          "lightMapIntensity": 1
+        },
+        "WEBGI_material_extras": {
+          "fog": false,
+          "flatShading": false,
+          "blending": 1,
+          "shadowSide": null,
+          "depthFunc": 3,
+          "depthTest": true,
+          "depthWrite": true,
+          "colorWrite": true,
+          "vertexColors": false,
+          "alphaTest": 0,
+          "envMapIntensity": 1,
+          "wireframe": false,
+          "wireframeLinewidth": 1,
+          "wireframeLinecap": "round",
+          "wireframeLinejoin": "round",
+          "polygonOffset": false,
+          "polygonOffsetFactor": 0,
+          "polygonOffsetUnits": 0,
+          "dithering": false,
+          "alphaToCoverage": false,
+          "premultipliedAlpha": false,
+          "toneMapped": true,
+          "normalScale": [
+            1,
+            1
+          ]
+        },
+        "WEBGI_materials_displacementmap": {
+          "displacementScale": 1,
+          "displacementBias": 0
+        }
+      }
+    },
+    {
+      "name": "glass",
+      "baseColor": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "roughness": 0,
+      "metalness": 0,
+      "normal": null,
+      "extensions": {
+        "KHR_materials_ior": {
+          "ior": 1.4999999999999998
+        },
+        "KHR_materials_transmission": {
+          "transmissionFactor": 1
+        },
+        "KHR_materials_volume": {
+          "attenuationDistance": 0
+        },
+        "WEBGI_materials_bumpmap": {
+          "bumpScale": 0.2
+        },
+        "WEBGI_materials_lightmap": {
+          "lightMapIntensity": 1
+        },
+        "WEBGI_material_extras": {
+          "fog": true,
+          "flatShading": false,
+          "blending": 1,
+          "shadowSide": null,
+          "depthFunc": 3,
+          "depthTest": true,
+          "depthWrite": false,
+          "colorWrite": true,
+          "vertexColors": false,
+          "alphaTest": 0,
+          "envMapIntensity": 1,
+          "wireframe": false,
+          "wireframeLinewidth": 1,
+          "wireframeLinecap": "round",
+          "wireframeLinejoin": "round",
+          "polygonOffset": false,
+          "polygonOffsetFactor": 0,
+          "polygonOffsetUnits": 0,
+          "dithering": false,
+          "alphaToCoverage": false,
+          "premultipliedAlpha": false,
+          "toneMapped": true,
+          "normalScale": [
+            1,
+            -1
+          ]
+        },
+        "WEBGI_materials_displacementmap": {
+          "displacementScale": 1,
+          "displacementBias": 0
+        }
+      }
+    },
+    {
+      "name": "metal_cover",
+      "baseColor": [
+        0.7011018919268015,
+        0.7011018919268015,
+        0.7011018919268015,
+        1
+      ],
+      "roughness": 0.28494182229042053,
+      "metalness": 0.9153674840927124,
+      "normal": null,
+      "extensions": {
+        "KHR_materials_ior": {
+          "ior": 1.4999999999999998
+        },
+        "WEBGI_materials_bumpmap": {
+          "bumpScale": 0.2
+        },
+        "WEBGI_materials_lightmap": {
+          "lightMapIntensity": 1
+        },
+        "WEBGI_materials_anisotropy": {
+          "anisotropyFactor": 0.836363673210144,
+          "anisotropyNoiseFactor": 0,
+          "anisotropyDirectionMode": "DIRECTION",
+          "anisotropyDirection": {
+            "index": 4
+          }
+        },
+        "WEBGI_material_extras": {
+          "fog": true,
+          "flatShading": false,
+          "blending": 1,
+          "shadowSide": null,
+          "depthFunc": 3,
+          "depthTest": true,
+          "depthWrite": true,
+          "colorWrite": true,
+          "vertexColors": false,
+          "alphaTest": 0,
+          "envMapIntensity": 1,
+          "wireframe": false,
+          "wireframeLinewidth": 1,
+          "wireframeLinecap": "round",
+          "wireframeLinejoin": "round",
+          "polygonOffset": false,
+          "polygonOffsetFactor": 0,
+          "polygonOffsetUnits": 0,
+          "dithering": false,
+          "alphaToCoverage": false,
+          "premultipliedAlpha": false,
+          "toneMapped": true,
+          "normalScale": [
+            1,
+            1
+          ]
+        },
+        "WEBGI_materials_ssbevel": {
+          "hasSSBevel": true,
+          "radius": 4.51165676801702
+        },
+        "WEBGI_materials_displacementmap": {
+          "displacementScale": 1,
+          "displacementBias": 0
+        }
+      }
+    },
+    {
+      "name": "clockface",
+      "baseColor": [
+        0.023153366173251366,
+        0.06662593863608139,
+        0.1412632911304446,
+        1
+      ],
+      "roughness": 0.3499999940395355,
+      "metalness": 0.699999988079071,
+      "normal": null,
+      "extensions": {
+        "KHR_materials_ior": {
+          "ior": 1.4999999999999998
+        },
+        "WEBGI_materials_bumpmap": {
+          "bumpScale": 1
+        },
+        "WEBGI_materials_lightmap": {
+          "lightMapIntensity": 1
+        },
+        "WEBGI_materials_anisotropy": {
+          "anisotropyFactor": 1.503944685754809,
+          "anisotropyNoiseFactor": 0,
+          "anisotropyDirectionMode": "ROTATION",
+          "anisotropyDirection": {
+            "index": 5
+          }
+        },
+        "WEBGI_material_extras": {
+          "fog": false,
+          "flatShading": false,
+          "blending": 1,
+          "side": 0,
+          "shadowSide": null,
+          "depthFunc": 3,
+          "depthTest": true,
+          "depthWrite": true,
+          "colorWrite": true,
+          "vertexColors": false,
+          "alphaTest": 0,
+          "envMapIntensity": 1,
+          "wireframe": false,
+          "wireframeLinewidth": 1,
+          "wireframeLinecap": "round",
+          "wireframeLinejoin": "round",
+          "polygonOffset": false,
+          "polygonOffsetFactor": 0,
+          "polygonOffsetUnits": 0,
+          "dithering": false,
+          "alphaToCoverage": false,
+          "premultipliedAlpha": false,
+          "toneMapped": true,
+          "normalScale": [
+            1,
+            1
+          ]
+        },
+        "WEBGI_materials_displacementmap": {
+          "displacementScale": 1,
+          "displacementBias": 0
+        }
+      }
+    },
+    {
+      "name": "strap",
+      "baseColor": [
+        0.00784313725490196,
+        0.03137254901960784,
+        0.06666666666666667,
+        1
+      ],
+      "roughness": 0.47318500132966934,
+      "metalness": 0.3256803474869249,
+      "normal": null,
+      "extensions": {
+        "KHR_materials_ior": {
+          "ior": 1.4999999999999998
+        },
+        "WEBGI_materials_bumpmap": {
+          "bumpScale": 1
+        },
+        "WEBGI_materials_lightmap": {
+          "lightMapIntensity": 1
+        },
+        "WEBGI_material_extras": {
+          "fog": false,
+          "flatShading": false,
+          "blending": 1,
+          "shadowSide": null,
+          "depthFunc": 3,
+          "depthTest": true,
+          "depthWrite": true,
+          "colorWrite": true,
+          "vertexColors": false,
+          "alphaTest": 0,
+          "envMapIntensity": 1,
+          "wireframe": false,
+          "wireframeLinewidth": 1,
+          "wireframeLinecap": "round",
+          "wireframeLinejoin": "round",
+          "polygonOffset": false,
+          "polygonOffsetFactor": 0,
+          "polygonOffsetUnits": 0,
+          "dithering": false,
+          "alphaToCoverage": false,
+          "premultipliedAlpha": false,
+          "toneMapped": true,
+          "normalScale": [
+            0.3,
+            -0.3
+          ],
+          "normalMap": {
+            "uuid": "2bf4bbe8-382c-4462-894f-e36e853725cf",
+            "resource": "textures"
+          }
+        },
+        "WEBGI_materials_displacementmap": {
+          "displacementScale": 1,
+          "displacementBias": 0
+        }
+      }
+    },
+    {
+      "name": "stitches",
+      "baseColor": [
+        0.46207699964472876,
+        0.46207699964472876,
+        0.46207699964472876,
+        1
+      ],
+      "roughness": 1,
+      "metalness": 0,
+      "normal": {
+        "index": 3
+      },
+      "extensions": {
+        "KHR_materials_ior": {
+          "ior": 1.4999999999999998
+        },
+        "WEBGI_materials_bumpmap": {
+          "bumpScale": 0.2
+        },
+        "WEBGI_materials_lightmap": {
+          "lightMapIntensity": 1
+        },
+        "WEBGI_material_extras": {
+          "fog": true,
+          "flatShading": false,
+          "blending": 1,
+          "shadowSide": null,
+          "depthFunc": 3,
+          "depthTest": true,
+          "depthWrite": true,
+          "colorWrite": true,
+          "vertexColors": false,
+          "alphaTest": 0,
+          "envMapIntensity": 1,
+          "wireframe": false,
+          "wireframeLinewidth": 1,
+          "wireframeLinecap": "round",
+          "wireframeLinejoin": "round",
+          "polygonOffset": false,
+          "polygonOffsetFactor": 0,
+          "polygonOffsetUnits": 0,
+          "dithering": false,
+          "alphaToCoverage": false,
+          "premultipliedAlpha": false,
+          "toneMapped": true,
+          "normalScale": [
+            1,
+            -1
+          ]
+        },
+        "WEBGI_materials_displacementmap": {
+          "displacementScale": 1,
+          "displacementBias": 0
+        }
+      }
+    }
+  ],
+  "scene": {
+    "defaultCamera": {
+      "userData": {},
+      "camControls": {
+        "type": "OrbitControls",
+        "dollyZoom": false,
+        "enableDamping": true,
+        "dampingFactor": 0.08,
+        "autoRotate": false,
+        "autoRotateSpeed": 2,
+        "enableZoom": true,
+        "zoomSpeed": 0.15,
+        "maxZoomSpeed": 0.2,
+        "enableRotate": true,
+        "rotateSpeed": 2,
+        "enablePan": true,
+        "panSpeed": 1,
+        "autoPushTarget": false,
+        "autoPullTarget": false,
+        "minDistance": 3,
+        "maxDistance": 12,
+        "minZoom": 0.01,
+        "maxZoom": 1000,
+        "minPolarAngle": 0,
+        "maxPolarAngle": 1.5707963267948966,
+        "minAzimuthAngle": -10000,
+        "maxAzimuthAngle": 10000,
+        "clampMin": {
+          "x": -10000,
+          "y": -10000,
+          "z": -10000,
+          "isVector3": true
+        },
+        "clampMax": {
+          "x": 10000,
+          "y": 10000,
+          "z": 10000,
+          "isVector3": true
+        },
+        "screenSpacePanning": true,
+        "keyPanSpeed": 7
+      },
+      "camOptions": {
+        "type": "PerspectiveCamera",
+        "aspect": "auto",
+        "focus": 10,
+        "fov": 25,
+        "zoom": 1,
+        "frustumSize": 1,
+        "top": 1,
+        "bottom": -1,
+        "left": -1,
+        "right": 1,
+        "controlsMode": "orbit",
+        "controlsEnabled": true
+      },
+      "position": {
+        "x": 2.6973446614140273,
+        "y": 1.5169017740637973,
+        "z": 9.798035459527323,
+        "isVector3": true
+      },
+      "target": {
+        "x": -0.07218152914800147,
+        "y": -0.2571995163592228,
+        "z": 0.029793290224578134,
+        "isVector3": true
+      }
+    },
+    "envMapIntensity": 0.770913942628419,
+    "fixedEnvMapDirection": true,
+    "backgroundIntensity": 1,
+    "environment": {
+      "uuid": "9b225b69-3191-4306-8c92-842900e3afaf",
+      "resource": "textures"
+    },
+    "textureSlots": {},
+    "background": null,
+    "backgroundColor": {
+      "r": 1,
+      "g": 1,
+      "b": 1,
+      "isColor": true
+    }
+  },
+  "environment": {
+    "metadata": {
+      "version": 4.6,
+      "type": "Texture",
+      "generator": "Texture.toJSON"
+    },
+    "uuid": "9b225b69-3191-4306-8c92-842900e3afaf",
+    "name": "",
+    "image": "c9c33263-eaff-4f39-befc-fa05954b18f7",
+    "mapping": 303,
+    "channel": 0,
+    "repeat": [
+      1,
+      1
+    ],
+    "offset": [
+      0,
+      0
+    ],
+    "center": [
+      0,
+      0
+    ],
+    "rotation": 3.9472152126557813,
+    "wrap": [
+      1001,
+      1001
+    ],
+    "format": 1023,
+    "internalFormat": null,
+    "type": 1016,
+    "colorSpace": "srgb-linear",
+    "encoding": 3000,
+    "minFilter": 1006,
+    "magFilter": 1006,
+    "anisotropy": 1,
+    "flipY": false,
+    "generateMipmaps": false,
+    "premultiplyAlpha": false,
+    "unpackAlignment": 1,
+    "userData": {
+      "rootPath": "https://packs.ijewel3d.com/files/env_metal_058_b_74127c4d30.exr"
+    }
+  },
+  "leatherNormal": {
+    "metadata": {
+      "version": 4.6,
+      "type": "Texture",
+      "generator": "Texture.toJSON"
+    },
+    "uuid": "2bf4bbe8-382c-4462-894f-e36e853725cf",
+    "name": "",
+    "image": "12698f28-7281-485e-8e7d-3c91f4c8b9b5",
+    "mapping": 300,
+    "channel": 0,
+    "repeat": [
+      3,
+      3
+    ],
+    "offset": [
+      0,
+      0
+    ],
+    "center": [
+      0,
+      0
+    ],
+    "rotation": 0,
+    "wrap": [
+      1000,
+      1000
+    ],
+    "format": 1023,
+    "internalFormat": null,
+    "type": 1009,
+    "colorSpace": "",
+    "encoding": 3000,
+    "minFilter": 1008,
+    "magFilter": 1006,
+    "anisotropy": 1,
+    "flipY": true,
+    "generateMipmaps": true,
+    "premultiplyAlpha": false,
+    "unpackAlignment": 4,
+    "userData": {
+      "rootPath": "https://demo.realvwr.com/media/files/2/map-normal-leather.jpg"
+    }
+  },
+  "plugins": [
+    {
+      "maxFrameCount": 32,
+      "jitter": true,
+      "type": "Progressive",
+      "passes": {
+        "progressive": {
+          "enabled": true
+        }
+      }
+    },
+    {
+      "extension": {
+        "toneMapping": 4,
+        "tonemapBackground": false,
+        "clipBackground": false,
+        "exposure": 1,
+        "saturation": 1,
+        "contrast": 1.1
+      },
+      "enabled": true,
+      "type": "Tonemap"
+    },
+    {
+      "type": "SSReflection",
+      "passes": {
+        "ssr": {
+          "intensity": 1,
+          "boost": {
+            "x": 1,
+            "y": 1,
+            "z": 1,
+            "isVector3": true
+          },
+          "objectRadius": 1,
+          "autoRadius": true,
+          "power": 1.1,
+          "tolerance": 0.5,
+          "stepCount": 16,
+          "lowQualityFrames": 0,
+          "maskFrontRays": true,
+          "maskFrontFactor": -0.2,
+          "enabled": true
+        }
+      }
+    },
+    {
+      "type": "SSAO",
+      "passes": {
+        "ssao": {
+          "bilateralPass": {
+            "smoothEnabled": true,
+            "edgeSharpness": 0.1,
+            "enabled": true
+          },
+          "parameters": {
+            "intensity": 0.25,
+            "occlusionWorldRadius": 1,
+            "bias": 0.001,
+            "falloff": 1.3,
+            "useSmallScaleAO": false,
+            "intensitySmallAO": 0.2,
+            "autoRadius": false,
+            "projScale": 1359.9786138541103,
+            "edgeSharpness": 0.3,
+            "blurEnabled": true
+          },
+          "enabled": true
+        }
+      }
+    },
+    {
+      "enabled": false,
+      "worldRadius": 100,
+      "tripodHeight": 10,
+      "originPosition": {
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "isVector3": true
+      },
+      "type": "HDRiGroundPlugin"
+    },
+    {
+      "enabled": false,
+      "type": "SSBevelPlugin",
+      "pass": {
+        "enabled": false
+      }
+    },
+    {
+      "enabled": true,
+      "type": "Bloom",
+      "pass": {
+        "threshold": 1.82,
+        "softThreshold": 0.67,
+        "intensity": 0.39,
+        "bloomIterations": 4,
+        "radius": 0.6,
+        "power": 2.34,
+        "enabled": true
+      }
+    },
+    {
+      "bakedShadows": false,
+      "groundReflection": false,
+      "physicalReflections": true,
+      "autoFrustumSize": false,
+      "shadowBaker": {
+        "randomizedLight": {
+          "object": {
+            "uuid": "baec3546-4ba3-4613-82d6-0f74accd05b1",
+            "type": "DirectionalLight",
+            "castShadow": true,
+            "layers": 32,
+            "matrix": [
+              1,
+              0,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0,
+              1
+            ],
+            "up": [
+              0,
+              1,
+              0
+            ],
+            "color": 16777215,
+            "intensity": 10,
+            "shadow": {
+              "radius": 10,
+              "mapSize": [
+                1024,
+                1024
+              ],
+              "camera": {
+                "uuid": "0f036b89-6289-43e7-8ae4-222b9e751003",
+                "type": "OrthographicCamera",
+                "layers": 1,
+                "up": [
+                  0,
+                  1,
+                  0
+                ],
+                "zoom": 1,
+                "left": -2,
+                "right": 2,
+                "top": 2,
+                "bottom": -2,
+                "near": -2,
+                "far": 41,
+                "view": {
+                  "enabled": true,
+                  "fullWidth": 1024,
+                  "fullHeight": 1024,
+                  "offsetX": -0.25,
+                  "offsetY": 0.375,
+                  "width": 1024,
+                  "height": 1024
+                }
+              }
+            }
+          },
+          "userData": {},
+          "type": "DirectionalLight2",
+          "target": [
+            0.32473752069747025,
+            -0.9332239006122425,
+            0.1537488015476269
+          ],
+          "shadowParams": {
+            "enabled": true,
+            "radius": 10,
+            "width": 1024,
+            "height": 1024,
+            "bias": 0,
+            "normalBias": 0,
+            "near": 1.5,
+            "far": 20,
+            "frustumSize": 4
+          },
+          "randomParams": {
+            "focus": 0.6400712089334843,
+            "spread": 1,
+            "distanceScale": 20,
+            "minDistanceScale": {
+              "x": 10,
+              "y": 10,
+              "z": 10,
+              "isVector3": true
+            },
+            "normalDirection": {
+              "x": 0,
+              "y": 1,
+              "z": 0,
+              "isVector3": true
+            },
+            "direction": {
+              "x": -0.00754991027012477,
+              "y": 0.9622504486493761,
+              "z": -0.00754991027012477,
+              "isVector3": true
+            }
+          }
+        },
+        "maxFrameNumber": 400,
+        "smoothShadow": false,
+        "shadowMapType": 0,
+        "groundMapMode": "map",
+        "alphaVignette": false,
+        "alphaVignetteAxis": "xy",
+        "maxBakeCount": "Infinity"
+      },
+      "material": {
+        "uuid": "8131b9dc-4b2c-4263-b2b3-a14659341c09",
+        "resource": "materials"
+      },
+      "visible": true,
+      "size": 8,
+      "yOffset": 0,
+      "renderToDepth": true,
+      "tonemapGround": false,
+      "limitCameraAboveGround": true,
+      "type": "Ground"
+    },
+    {
+      "enabled": false,
+      "noiseScale": 1.8,
+      "amplitude": 0.5,
+      "paused": false,
+      "type": "WaveGroundPlugin"
+    }
+  ]
+}

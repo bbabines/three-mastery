@@ -12,6 +12,7 @@ export interface Harness {
   camera: THREE.PerspectiveCamera;
   controls: OrbitControls;
   onFrame(callback: FrameCallback): void;
+  setRendering(enabled: boolean): void;
 }
 
 // A drill's scenes.ts exports these by name; the viewer mounts each where the README says.
@@ -53,12 +54,13 @@ export function createHarness(container: HTMLElement): Harness {
   const callbacks: FrameCallback[] = [];
   const timer = new THREE.Timer();
   timer.connect(document);
-  renderer.setAnimationLoop((time) => {
+  const frame = (time: DOMHighResTimeStamp) => {
     timer.update(time);
     for (const callback of callbacks) callback(timer.getDelta(), timer.getElapsed());
     controls.update();
     renderer.render(scene, camera);
-  });
+  };
+  renderer.setAnimationLoop(frame);
   // Browsers cap live WebGL contexts, so leaving a page has to give its context back.
   onLeave(container, () => {
     renderer.setAnimationLoop(null);
@@ -76,5 +78,9 @@ export function createHarness(container: HTMLElement): Harness {
     camera,
     controls,
     onFrame: (callback) => callbacks.push(callback),
+    setRendering: (enabled) => {
+      if (enabled) timer.reset(); // a paused preview is not a long rendering interval
+      renderer.setAnimationLoop(enabled ? frame : null);
+    },
   };
 }

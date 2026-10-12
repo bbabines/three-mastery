@@ -1,0 +1,11 @@
+{
+  "file": "assets/reference/classic-watch/studio.exr",
+  "width": 2048,
+  "height": 1024,
+  "pixels": 2097152,
+  "median": 1.2138671875,
+  "p99": 9.1176962890625,
+  "max": 90.195,
+  "fractionAboveOne": 0.8058180809020996,
+  "note": "Linear RGB luminance in the EXR; 1 is a numeric radiance reference, not a calibrated white-paper measurement."
+}

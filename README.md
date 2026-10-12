@@ -34,7 +34,7 @@ npm install
 The main screen opens the viewer on a track, and the sidebar can switch between them:
 
 - **Rogue:** math, transforms, rotation, camera, geometry, scene graph, assets, spatial queries, interaction.
-- **Tech art:** geometry, GPU, materials, shaders, and the Procedural & VFX elective, plus the foundations those pages need from other domains.
+- **Tech art:** geometry, GPU, materials, shaders, Procedural & VFX, Jewelry look-dev, and Product Look Development, plus the foundations those pages need from other domains.
 - **Everything:** the whole curriculum, including debugging and optimization.
 
 The plan is Rogue, then Tech art, then Everything. A track hides what's outside it, in the sidebar and in `pick`, and keeps its own loop. Progress is shared: a page done in one track is done in all of them, and a checkpoint only asks about the track's domains that haven't been taken yet. The active track is saved in the progress log, so it follows you between machines; `npm run pick -- track` shows or switches it.
@@ -60,6 +60,7 @@ How `pick` chooses:
 - After that, drills are ranked by how long ago you practiced their domain, then their mode, so domains interleave.
 - A drill waits until its concepts' prerequisites are covered in the current loop, unless nothing else is ready.
 - From the track's Loop 3 on, a track with the Procedural & VFX elective also suggests its pages and effect builds.
+- Product Look Development suggests its visual study pages once their individual literacy prerequisites are covered; it does not require shader fluency or completing all of Loop 2. Its completed capstone returns in maintenance.
 - A loop ends for the track once its checkpoint is taken. After Loop 4, `pick` rotates the track's drills, weighted toward stale concepts and domains that missed checkpoint parts.
 - Once a track is finished, a drill from it comes first whenever none of its drills has been done for a week.
 
@@ -95,7 +96,7 @@ drills/        <loop>/<domain>/<concept>/<mode>-<n>/
 placement/     <loop>/<domain>/: one check per domain, Loops 2–4
 checkpoints/   <loop>/: one set per loop
 cross/         cross-domain drills
-electives/     elective pages and builds (Procedural & VFX, in TSL)
+electives/     VFX builds, Jewelry look-dev, and Product Look Development
 assets/        Brad's models, loaded by harness/models.ts
 solutions/     mirrored tree, never opened during a drill
 scripts/       pick.ts, coverage.ts, verify.ts
@@ -105,7 +106,7 @@ COVERAGE.md    generated
 
 ## Build status
 
-The harness and all four core loops are built, including their checkpoints, placement checks, and cross-domain drills. Each of the 159 core concepts has a card and Loop 1 page. The Procedural & VFX elective has all 13 concept pages and six effects; the Blank-file scenes elective is planned but unbuilt. After a blind review, every Loop 1 domain except Domain 2 (kept as Brad approved it) was brought to Domain 1's size and voice. [CLAUDE.md](CLAUDE.md) has the current status and open calls; [COVERAGE.md](COVERAGE.md) tracks the core loops.
+The harness and all four core loops are built, including their checkpoints, placement checks, and cross-domain drills. Each of the 159 core concepts has a card and Loop 1 page. Procedural & VFX has all 13 concept pages and six effects; Jewelry look-dev has eight units. [Product Look Development](electives/product/README.md) has ten domains and a configurator capstone, using the WebGi classic watch, its real leather normal map, and studio HDR. The Blank-file scenes elective is planned but unbuilt. After a blind review, every Loop 1 domain except Domain 2 (kept as Brad approved it) was brought to Domain 1's size and voice. [CLAUDE.md](CLAUDE.md) has current status; [COVERAGE.md](COVERAGE.md) tracks the core loops.
 
 ## Authoring
 
