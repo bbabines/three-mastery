@@ -13,7 +13,9 @@ concepts: [product.reflection-design]
 
 ## Evidence
 
-The watch's viewer points to **`env_metal_058_b_74127c4d30.exr`**, saved here as `studio.exr`. Its stored rotation is **3.947215 radians** and scene intensity **0.770914**. The `metal` material has roughness **0.047670**; `metal_cover` is much rougher at **0.284942**. These are source settings, not arbitrary values chosen to compensate for a poor HDR.
+The watch's viewer points to **`env_metal_058_b_74127c4d30.exr`**, saved here as `studio.exr`. The live site turns it by **3.947215 radians** and lights at intensity **1** (the file saves an older **0.770914**, which the live site doesn't use); the stage does the same. The `metal` material has roughness **0.047670**; `metal_cover` is much rougher at **0.284942**. These are source settings, not arbitrary values chosen to compensate for a poor HDR.
+
+The GLB's own key light, `light_0`, stays on in these scenes. It adds one small, sharp highlight to the case that isn't part of the HDR, so switching or turning the environment doesn't move it.
 
 The jewelry investigation already established the underlying design decision: iJewel's Spring metal studio has median brightness **1.28**, dark panels, and **3** separate regions above luminance 8. Its gem environment has median **0.39** and **104** such bright regions. Those are measurements of Spring's two files; they are **not** measurements of this watch's different studio. The live readout below measures the watch file's dimensions, median, 99th percentile, and maximum directly from its local EXR pixels.
 
@@ -35,19 +37,21 @@ Three controls are distinct:
 | Panel softness | The source's boundary or gradient becomes smoother |
 | Material roughness | The material spreads reflected directions, softening all its environment detail |
 
-The first scene uses an authored panorama, not physical plane meshes. Each neutral panel adds up to **8** linear radiance above the **dark-region brightness**; overlapping panels can add together. **Panel angular half-width** is the angle from panel center to its outer edge, so the full horizontal span is twice that value. Changing count, width, or softness changes both the arrangement and total illumination; these controls do not preserve energy. PMREM filters the result for different material roughnesses. PMREM does not arrange the room or choose attractive highlights.
+The first scene uses an authored panorama, not physical plane meshes. Each neutral panel adds up to **8** linear radiance above the **dark-region brightness**; overlapping panels can add together. **Panel angular half-width** is the angle from panel center to its outer edge, so the full horizontal span is twice that value. Changing count, width, or softness changes both the arrangement and total illumination; these controls do not preserve energy. PMREM, three.js's step that pre-blurs an environment once for each roughness level, then filters the result. It doesn't arrange the room or choose attractive highlights.
+
+The rotation slider is an offset from the reference's own rotation, so 0 is the reference lighting direction.
 
 <div data-scene="studio"></div>
 
 **Exercise · Keep polish, soften the source.** Select **Authored panels**. Restore the polished case, set panel softness to zero, then feather the panels with case roughness fixed. Separately raise roughness to 0.35 with hard panels. Save both comparisons. Explain why one changes the studio's reflected shapes while the other changes the material identity. Switch to **Watch source HDR** to compare the authored result with the asset you chose.
 
-**Exercise · Repair the orbit.** Begin with one panel and a dark surrounding region. Inspect the watch from behind and from both sides. Increase panel count, change angular half-width, and turn the environment until the weakest angles retain useful case definition. Raise the dark-region brightness enough to avoid large unintended black areas, while retaining a visible boundary. Capture an orbit sheet. Separate improved placement from extra overall illumination in your explanation: adding or widening panels also adds energy. More panels can improve coverage, but too much even coverage flattens shape; no panel count is universally correct.
+**Exercise · Repair the orbit.** Begin with one panel and a dark surrounding region. Inspect the watch from behind and from both sides. Increase panel count, change angular half-width, and turn the environment until the weakest angles retain useful case definition. Raise the dark-region brightness enough to avoid large unintended black areas, while retaining a visible boundary. Capture an orbit sheet. The stage's studio follows the camera by default, as WebGi's does, so every view sees the panels in the same place; what changes around the orbit is which parts of the watch face them. (Lighting throughout a full orbit compares this with a studio fixed to the world.) Separate improved placement from extra overall illumination in your explanation: adding or widening panels also adds energy. More panels can improve coverage, but too much even coverage flattens shape; no panel count is universally correct.
 
 ### Camera, normal, and environment determine the reflected direction
 
 At a chosen surface point, the direction to the camera and the surface normal determine which direction is reflected. Moving the camera changes that direction even when the watch and HDR stay fixed. Turning the watch changes its normals. Rotating the environment changes which source sits in the selected direction.
 
-Click a watch surface and orbit. Green marks the triangle normal, blue points toward the camera, amber points toward the geometric reflected world direction. This is a **triangle mirror diagram**: the actual material uses interpolated vertex normals and possibly normal-map perturbations. It does not claim to show the exact normal-mapped shader sample. The stored HDR rotation also maps that world direction into rotated source coordinates.
+Click a watch surface and orbit. Green marks the triangle normal, blue points toward the camera, amber points toward the geometric reflected world direction. This is a **triangle mirror diagram**: the actual material uses interpolated vertex normals and possibly normal-map perturbations. It does not claim to show the exact normal-mapped shader sample. The amber arrow is a direction in the world. Which part of the studio it lands on also depends on the stored rotation and, because the stage's studio follows the camera, on where the camera is: orbiting here works like turning the watch in front of a fixed studio.
 
 <div data-scene="directions"></div>
 
@@ -58,7 +62,7 @@ Click a watch surface and orbit. Green marks the triangle normal, blue points to
 ### Rotate the environment and preserve the finish
 
 ```ts
-scene.environmentRotation.y = THREE.MathUtils.degToRad(rotation);
+scene.environmentRotation.y = referenceRotation + THREE.MathUtils.degToRad(offset);
 metal.roughness = originalRoughness; // 0.047670 from this watch
 lab.setPanels({ count, width, softness, background });
 ```
@@ -81,19 +85,19 @@ The negative view direction is the incoming ray toward the surface. `Vector3.ref
 ```ts
 const stats = measurePanorama(lab.environment.image);
 stats.median;
-stats.p99;
+stats.p99;           // 99th percentile: only 1% of pixels are brighter
 stats.max;
 stats.shareAbove(1);
 ```
 
-The runnable scene uses the shared analyzer from Jewelry. It reads half floats correctly. Median and percentages count panorama pixels; they are not a solid-angle-weighted light-energy measurement. Maximum radiance is not screen brightness after tone mapping.
+The runnable scene uses the shared analyzer from Jewelry. It reads half floats correctly. Median and percentages count panorama pixels equally, though a pixel near the top or bottom of the panorama covers less of the surroundings than one at the middle, so they aren't a measure of light energy. The brightest pixel's value isn't its brightness on screen after tone mapping either.
 
 ## How it goes wrong
 
 | Symptom | Cause | Repair |
 | --- | --- | --- |
 | Polished metal becomes satin | Roughness was increased to hide a harsh source | Restore material roughness; graduate the source |
-| Attractive front, black rear | Panels cover only the hero angle | Tune the weakest orbit views and their elevations |
+| Attractive front, black rear | With a studio fixed to the world, panels cover only the hero angle | Tune the weakest orbit views and their elevations, or let the studio follow the camera |
 | A bright plane never reflects in the case | Ordinary environment mapping does not capture scene meshes automatically | Capture panels into an environment map, or use an explicit supported reflection technique |
 | More exposure removes all definition | Bright reflected regions clip together | Recover exposure and introduce usable gradients and boundaries |
 | A white background gives black metal | Background color and lighting environment are separate | Inspect `scene.environment`, its intensity, and any material environment overrides |

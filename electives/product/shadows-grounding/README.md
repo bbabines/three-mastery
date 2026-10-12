@@ -13,9 +13,15 @@ concepts: [product.shadows-grounding]
 
 ## Evidence
 
-The watch viewer's **Ground** configuration stores a **1024 × 1024** shadow map, a randomized directional-light configuration, up to **400** frames, and `bakedShadows: false`. It also has an enabled SSAO pass with intensity **0.25**. Those configuration records identify several contributors to the original grounding; they do not prove that every stored branch is executed, and native three.js will not reproduce those proprietary passes merely by loading the GLB.
+On the live WebGi site, three things ground the watch:
 
-These labs use one ordinary directional shadow map and a real plane receiver. The watch is fitted to sit at height zero, and the plane is just below it. Glass is excluded from casting an opaque silhouette. The renderer still does not simulate physically correct transparent shadowing through the watch glass.
+- **A contact shadow.** WebGi's ground (its ContactShadowGroundPlugin) is a white, reflective floor (roughness **0.25**, metalness **0.782**, not tone mapped). It takes a depth picture of the watch from under the floor, blurs it, and darkens the floor where the watch is close.
+- **The key light's shadow.** The GLB's `light_0` casts the soft shadow behind and to the right of the watch, through an ordinary shadow map softened by PCF (radius about **1.07**).
+- **Ambient occlusion** (SSAO) at **0.25**, which darkens creases on the watch itself.
+
+The ground settings saved inside the GLB (a randomized light baked over up to 400 frames) come from an older WebGi and aren't what the live site renders. Loading the GLB into three.js brings none of these along. The shared stage rebuilds all three with native parts (`ground.ts`, the GLB's light, and the finishing chain) and shows them by default.
+
+These labs turn all three off and use one ordinary directional shadow map and a plain plane receiver, so the shadow you're adjusting is the only one. The watch is fitted to sit at height zero, and the plane is just below it. Glass is excluded from casting an opaque silhouette. The renderer still does not simulate physically correct transparent shadowing through the watch glass.
 
 ## Why it works
 
@@ -41,7 +47,7 @@ Freeze the map at the current placement, then move the watch. The shadow stays w
 
 <div data-scene="stale"></div>
 
-**Exercise · Define invalidation.** Freeze the current placement; change horizontal offset and height; capture the wrong result; refresh and capture the corrected result. Write which configurator actions must invalidate the cached shadow: geometry, transforms, light settings, and any receiver changes that affect a chosen bake. State why orbiting the camera is different. This scene freezes a native depth map; it does not imitate WebGi's progressive randomized shadow baker.
+**Exercise · Define invalidation.** Freeze the current placement; change horizontal offset and height; capture the wrong result; refresh and capture the corrected result. Write which configurator actions must invalidate the cached shadow: geometry, transforms, light settings, and any receiver changes that affect a chosen bake. State why orbiting the camera is different. This scene freezes a native depth map; it isn't a baked shadow.
 
 ## The code
 

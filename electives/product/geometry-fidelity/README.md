@@ -15,9 +15,9 @@ concepts: [product.geometry-fidelity]
 
 The watch contains separate materials for its case, cover, glass, dial, strap, and stitches. The stitches have their own mesh surfaces and normal texture. The strap's leather grain uses a different normal texture. These are different levels of detail: constructed shapes plus tiny shading variation.
 
-Its file also records custom screen-space bevel settings on the cover, but the viewer's bevel plugin is disabled. A recorded material extension therefore does not prove that an effect contributes to the reference image. Standard GLTFLoader does not implement that custom screen-space bevel operation.
+Its file also records custom screen-space bevel settings on the cover, but the viewer settings saved with it disable the bevel plugin. A recorded material extension doesn't prove that an effect contributes to the reference image. Standard GLTFLoader doesn't implement that custom bevel either.
 
-Use the live audit to inspect the actual decoded model. Compare reference shading, flat faces, wireframe, and mesh normals. Rotate the reflection to make smoothness and discontinuities easier to see.
+Use the live audit to inspect the actual decoded model. Compare reference shading, flat faces, wireframe, and mesh normals. The rotation slider turns the studio away from the reference's own rotation (0 is the reference); sweeping it makes smoothness and breaks easier to see.
 
 <div data-scene="meshAudit"></div>
 

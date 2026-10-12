@@ -7,7 +7,9 @@ export const meshAudit: SceneSetup = harness => watchLab(harness, lab => {
   const originals = new Map<THREE.Mesh, THREE.Material | THREE.Material[]>();
   const smooth = new Map<THREE.Material, THREE.Material>();
   const normal = new THREE.MeshNormalMaterial();
-  let triangles = 0, missingNormals = 0, missingTangents = 0, mode = 'reference';
+  // The stage applies the reference's stored HDR rotation; the slider is an offset from it.
+  const referenceRotation = harness.scene.environmentRotation.y;
+  let triangles = 0, missingNormals = 0, missingTangents = 0, mode = 'reference', rotation = 0;
   lab.model.traverse(object => {
     if (!(object instanceof THREE.Mesh)) return;
     meshes.push(object); originals.set(object, object.material);
@@ -19,7 +21,7 @@ export const meshAudit: SceneSetup = harness => watchLab(harness, lab => {
       if (!smooth.has(material)) smooth.set(material, material.clone());
     }
   });
-  const report = () => lab.setReadout(`${mode} · ${meshes.length} meshes / ${Math.round(triangles).toLocaleString()} triangles\nmissing normals ${missingNormals} · tangent attributes absent ${missingTangents}\nnormal view shows mesh orientation, not the leather normal map`);
+  const report = () => lab.setReadout(`${mode} · ${meshes.length} meshes / ${Math.round(triangles).toLocaleString()} triangles\nmissing normals ${missingNormals} · tangent attributes absent ${missingTangents}\nnormal view shows mesh orientation, not the leather normal map\nreflection rotation ${rotation}° offset from reference (scene value ${harness.scene.environmentRotation.y.toFixed(3)} rad)`);
   const apply = (next: string) => {
     mode = next;
     smooth.forEach(material => {
@@ -38,10 +40,10 @@ export const meshAudit: SceneSetup = harness => watchLab(harness, lab => {
     reference: () => apply('reference'), flat: () => apply('flat'),
     wireframe: () => apply('wireframe'), 'mesh normals': () => apply('mesh normals'),
   });
-  lab.addSlider('reflection rotation', -180, 180, 5, 0, value => {
-    harness.scene.environmentRotation.y = THREE.MathUtils.degToRad(value);
+  lab.addSlider('reflection rotation offset from reference (degrees)', -180, 180, 5, rotation, value => {
+    rotation = value; harness.scene.environmentRotation.y = referenceRotation + THREE.MathUtils.degToRad(value); report();
   });
-  lab.registerEvidence(() => ({ mode, meshes: meshes.length, triangles, missingNormals, missingTangents }));
+  lab.registerEvidence(() => ({ mode, meshes: meshes.length, triangles, missingNormals, missingTangents, rotationOffsetFromReferenceDegrees: rotation, referenceRotationRadians: referenceRotation, environmentRotationY: harness.scene.environmentRotation.y }));
   lab.onLeave(() => { originals.forEach((material, mesh) => { mesh.material = material; }); smooth.forEach(material => material.dispose()); normal.dispose(); });
   report();
 });
@@ -65,8 +67,10 @@ export const edgesAndStitches: SceneSetup = harness => watchLab(harness, lab => 
   lab.model.traverse(object => {
     if (object instanceof THREE.Mesh && (Array.isArray(object.material) ? object.material : [object.material]).some(m => m.name === 'stitches')) stitches.push(object);
   });
+  // The stage applies the reference's stored HDR rotation; the slider is an offset from it.
+  const referenceRotation = harness.scene.environmentRotation.y;
   let stitchVisible = true, grainVisible = true, rotation = 0;
-  const report = () => lab.setReadout(`left sharp / right modeled bevel · identical material\nstitches ${stitchVisible ? 'visible' : 'hidden'} (${stitches.length} meshes) · leather grain ${grainVisible ? 'on' : 'off'}\nnormal texture changes shading; compare silhouettes while orbiting`);
+  const report = () => lab.setReadout(`left sharp / right modeled bevel · identical material\nstitches ${stitchVisible ? 'visible' : 'hidden'} (${stitches.length} meshes) · leather grain ${grainVisible ? 'on' : 'off'}\nreflection rotation ${rotation}° offset from reference (scene value ${harness.scene.environmentRotation.y.toFixed(3)} rad)\nnormal texture changes shading; compare silhouettes while orbiting`);
   lab.addSelect('modeled stitching', {
     visible: () => { stitchVisible = true; stitches.forEach(mesh => { mesh.visible = true; }); report(); },
     hidden: () => { stitchVisible = false; stitches.forEach(mesh => { mesh.visible = false; }); report(); },
@@ -75,10 +79,10 @@ export const edgesAndStitches: SceneSetup = harness => watchLab(harness, lab => 
     on: () => { grainVisible = true; lab.strap.normalMap = lab.normalTexture; lab.strap.needsUpdate = true; report(); },
     off: () => { grainVisible = false; lab.strap.normalMap = null; lab.strap.needsUpdate = true; report(); },
   });
-  lab.addSlider('reflection rotation', -180, 180, 5, 0, value => {
-    rotation = value; harness.scene.environmentRotation.y = THREE.MathUtils.degToRad(value); report();
+  lab.addSlider('reflection rotation offset from reference (degrees)', -180, 180, 5, rotation, value => {
+    rotation = value; harness.scene.environmentRotation.y = referenceRotation + THREE.MathUtils.degToRad(value); report();
   });
-  lab.registerEvidence(() => ({ stitchVisible, grainVisible, rotation, bevelStudySize: 0.05, physicalDimensionClaim: false }));
+  lab.registerEvidence(() => ({ stitchVisible, grainVisible, rotationOffsetFromReferenceDegrees: rotation, referenceRotationRadians: referenceRotation, environmentRotationY: harness.scene.environmentRotation.y, bevelStudySize: 0.05, physicalDimensionClaim: false }));
   lab.onLeave(() => { harness.scene.remove(sharp, bevel); sharpGeometry.dispose(); bevelGeometry.dispose(); material.dispose(); });
   report();
 });

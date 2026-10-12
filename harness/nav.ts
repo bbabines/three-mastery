@@ -9,6 +9,7 @@ import {
   LOOP_PLAN,
   LOOPS,
   MODE_LABELS,
+  electivesOnly as onlyElectives,
   plannedDrillCount,
   TRACKS,
   type Concept,
@@ -246,9 +247,19 @@ export function renderNav(container: HTMLElement, drills: NavDrill[], selected: 
   }
   container.append(tools);
 
+  // A track of electives only (Look dev) takes no domain whole, so it has no loops of its own. Its
+  // electives come first, then the Loop 1 pages they rely on, in one closed group.
+  const electivesOnly = onlyElectives(view.track);
+  const electives = () => {
+    for (const elective of DOMAINS.filter((domain) => domain.elective && wholeDomain(domain.slug))) container.append(electiveGroup(elective));
+  };
+  if (electivesOnly) electives();
+
   for (const loop of LOOPS) {
+    if (electivesOnly && loop.n > 1) continue;
     const loopId = `loop-${loop.n}`;
-    const loopGroup = group(loopId, 'loop', `<span>Loop ${loop.n} · ${loop.name}</span>`, isOpen(loopId, loop.n === 1));
+    const heading = electivesOnly ? 'Foundations · the Loop 1 pages these use' : `Loop ${loop.n} · ${loop.name}`;
+    const loopGroup = group(loopId, 'loop', `<span>${heading}</span>`, isOpen(loopId, !electivesOnly && loop.n === 1));
 
     if (LOOP_PLAN[loop.n]) {
       for (const domain of CORE_DOMAINS) {
@@ -258,7 +269,8 @@ export function renderNav(container: HTMLElement, drills: NavDrill[], selected: 
       const checkpoint = drills.find((drill) => drill.loop === loop.n && drill.check === 'checkpoint');
       const entry = checkpoint ? link(checkpoint, `Loop ${loop.n} checkpoint`, selected) : upcoming(`Loop ${loop.n} checkpoint`);
       entry.classList.add('checkpoint');
-      loopGroup.append(entry);
+      // A checkpoint covers whole domains, and an electives-only track has none.
+      if (!electivesOnly) loopGroup.append(entry);
     } else {
       const placement = group(
         `${loopId}/placement`, 'domain',
@@ -310,7 +322,7 @@ export function renderNav(container: HTMLElement, drills: NavDrill[], selected: 
     container.append(loopGroup);
   }
 
-  for (const elective of DOMAINS.filter((domain) => domain.elective && wholeDomain(domain.slug))) container.append(electiveGroup(elective));
+  if (!electivesOnly) electives();
 
   // The current page's loop and domain are the open ones, as if you'd just opened them.
   for (const id of currentGroups) {
@@ -345,6 +357,11 @@ export function renderPace(container: HTMLElement, finished: Map<string, string>
     const date = end.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
     return `${left} ${left === 1 ? 'day' : 'days'} · ${date}`;
   };
+  // A track of electives only has no Loop 1 of its own to pace.
+  if (onlyElectives(view.track)) {
+    container.replaceChildren();
+    return;
+  }
   const parts = CORE_DOMAINS.map((domain) => shownPart(domain, view));
   // The current domain is the first in teaching order with Loop 1 pages left.
   const current = parts.find((part) => doneCount(`1.${part.slug}.`) < plannedDrillCount(part, 1));

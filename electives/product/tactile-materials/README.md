@@ -17,7 +17,7 @@ The watch's strap records roughness `0.4732`, metalness `0.3257`, normal scale `
 
 The nonzero strap metalness is an artistic reference setting. Ordinary leather is dielectric: use metalness `0` when building a physically based leather material. Compare both rather than adopting the reference value as a universal leather rule.
 
-Isolate the restored normal map, then compare lighting with the material locked. The roughness variation switch adds clearly labeled synthetic study data; it is not a map extracted from the watch.
+Isolate the restored normal map, then compare lighting with the material locked. The illumination switch changes only the studio; the reference's key light stays on in every option. The roughness variation switch adds clearly labeled synthetic study data; it is not a map extracted from the watch.
 
 <div data-scene="leatherLab"></div>
 
@@ -37,7 +37,7 @@ At distant views, small features occupy less than a screen pixel. Filtering then
 
 **Sheen** adds the soft grazing response used for fabric fibers. **Anisotropy** stretches highlights along a surface direction, useful for brushed metal. **Clearcoat** adds a separate reflective layer, useful for a coating. Each needs evidence from the real finish; adding every layer does not make a surface more realistic.
 
-The cover's custom anisotropy value is `0.8364`. Its direction texture uses WebGi settings that are not automatically translated into three.js's anisotropy encoding. The following scene demonstrates a UV-aligned three.js adaptation with adjustable direction. The strap sheen and coating are comparison studies, not effects claimed to exist in the source leather. The rubber study changes surface response while retaining leather grain and strap geometry; it is not a complete rubber asset.
+The file records anisotropy on the cover (`0.8364`) and the dial, with a direction texture in WebGi's own encoding. The live site has WebGi's anisotropy plugin off, so the reference image shows none of it, and the stage leaves it off too. The brushed cover below is a three.js finish study with adjustable direction, not part of the reference look. The strap sheen and coating are comparison studies too, not effects claimed to exist in the source leather. The rubber study changes surface response while retaining leather grain and strap geometry; it is not a complete rubber asset.
 
 <div data-scene="finishLayers"></div>
 

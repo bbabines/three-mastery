@@ -60,6 +60,17 @@ async function warmHarnessDependencies() {
   throw new Error(`Vite dependencies did not become ready: ${lastProblem}`);
 }
 
+// Playwright's bundled Chromium (software GL), or system Chrome when it isn't downloaded.
+// PRODUCT_HEADED=1 opens a visible window: headless Chrome can stall animation frames.
+async function launchBrowser() {
+  const headless = process.env.PRODUCT_HEADED !== '1';
+  try {return await chromium.launch({headless, args: ['--use-gl=angle','--use-angle=swiftshader']});}
+  catch (error) {
+    if (!/Executable doesn't exist|install/i.test(error.message)) throw error;
+    console.log(`Bundled Chromium missing; using system Chrome (${headless ? 'headless' : 'headed'}).`);
+    return chromium.launch({channel: 'chrome', headless});
+  }
+}
 function closeVector(actual, expected, message) {
   assert.equal(actual.length, expected.length, message);
   actual.forEach((value, index) => assert.ok(Number.isFinite(value) && Math.abs(value - expected[index]) < 1e-8, `${message}: component ${index}, ${value}/${expected[index]}`));
@@ -162,7 +173,7 @@ try {
   }
   if (!available) throw new Error(`Dev server did not start: ${base}`);
   await warmHarnessDependencies();
-  browser = await chromium.launch({headless: true, args: ['--use-gl=angle','--use-angle=swiftshader']});
+  browser = await launchBrowser();
 
   await runCase('paused-reflection', async page => {
     await page.goto(`${base}/__product-state-fixture?mode=reflection`);

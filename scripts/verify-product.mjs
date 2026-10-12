@@ -13,6 +13,17 @@ let browser;
 const failures=[];
 const report=[];
 let browserWrites=0;
+// Playwright's bundled Chromium (software GL), or system Chrome when it isn't downloaded.
+// PRODUCT_HEADED=1 opens a visible window: headless Chrome can stall animation frames.
+async function launchBrowser() {
+  const headless=process.env.PRODUCT_HEADED!=='1';
+  try {return await chromium.launch({headless,args:['--use-gl=angle','--use-angle=swiftshader']});}
+  catch(error) {
+    if(!/Executable doesn't exist|install/i.test(error.message))throw error;
+    console.log(`Bundled Chromium missing; using system Chrome (${headless?'headless':'headed'}).`);
+    return chromium.launch({channel:'chrome',headless});
+  }
+}
 async function waitForServer() {
   for(let attempt=0;attempt<120;attempt++) {
     try {if((await fetch(base)).ok) return;} catch {}
@@ -23,7 +34,7 @@ async function waitForServer() {
 try {
   if(!process.argv[2]) server=spawn(process.execPath,['node_modules/vite/bin/vite.js','--host','127.0.0.1','--port','5196','--strictPort'],{stdio:'ignore'});
   await waitForServer();
-  browser=await chromium.launch({headless:true,args:['--use-gl=angle','--use-angle=swiftshader']});
+  browser=await launchBrowser();
   for(const slug of selected) {
     const page=await browser.newPage({viewport:{width:1180,height:900},acceptDownloads:true});
     const errors=[];
@@ -36,7 +47,7 @@ try {
     await page.route('**/api/track',route=>route.request().method()==='POST'?(browserWrites++,route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({at:new Date().toISOString()})})):route.continue());
     await page.route('**/api/progress',route=>route.request().method()==='POST'?(browserWrites++,route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({at:new Date().toISOString()})})):route.continue());
     try {
-      await page.goto(`${base}/harness/?drill=electives/product/${slug}&track=tech-art`,{waitUntil:'domcontentloaded'});
+      await page.goto(`${base}/harness/?drill=electives/product/${slug}&track=look-dev`,{waitUntil:'domcontentloaded'});
       await page.locator('article h1').waitFor({timeout:60000});
       const source=await readFile(`electives/product/${slug}/README.md`,'utf8');
       const expected=(source.match(/data-scene=/g)??[]).length;

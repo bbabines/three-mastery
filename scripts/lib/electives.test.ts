@@ -1,10 +1,10 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {DOMAINS, TRACKS, trackConcepts} from './domains';
+import {DOMAINS, electivesOnly, TRACKS, trackConcepts} from './domains';
 import {electivePrerequisitesMet, scheduledElectives} from './electives';
 import {loadCards, loadElectives} from './repo';
 
-test('the full product path is built and discoverable in Tech art, not Rogue',()=>{
+test('the full product path is built and discoverable in Look dev, not Rogue or Tech art',()=>{
   const built = loadElectives();
   const plan = scheduledElectives(DOMAINS,built);
   const product = plan.filter(item=>item.elective==='product');
@@ -12,7 +12,9 @@ test('the full product path is built and discoverable in Tech art, not Rogue',()
   assert.equal(product[0].id,'product.reference-color.page');
   assert.equal(product.at(-1)?.id,'product.capstone.page');
   assert.ok(product.every(item=>item.afterLoop===0));
-  assert.ok(TRACKS.find(track=>track.slug==='tech-art')!.domains.includes('product'));
+  assert.ok(TRACKS.find(track=>track.slug==='look-dev')!.domains.includes('product'));
+  assert.ok(TRACKS.find(track=>track.slug==='all')!.domains.includes('product'));
+  assert.ok(!TRACKS.find(track=>track.slug==='tech-art')!.domains.includes('product'));
   assert.ok(!TRACKS.find(track=>track.slug==='rogue')!.domains.includes('product'));
   assert.ok(!plan.some(item=>item.elective==='jewelry'),'preserve its existing manual study access');
 });
@@ -37,9 +39,23 @@ test('product prerequisites distinguish prior elective practice from foundationa
   assert.equal(ready(true,true),true);
 });
 
-test('Tech art follows the product cards into required camera/assets foundations',()=>{
+test('Look dev holds only electives and has no loops of its own',()=>{
+  const lookDev=TRACKS.find(track=>track.slug==='look-dev')!;
+  assert.ok(electivesOnly(lookDev));
+  assert.ok(!TRACKS.filter(track=>track!==lookDev).some(electivesOnly));
+  assert.deepEqual(lookDev.domains.filter(slug=>!DOMAINS.find(domain=>domain.slug===slug)?.elective),[]);
+});
+
+test('the effects elective schedules only its built pages, in order',()=>{
+  const effects=scheduledElectives(DOMAINS,loadElectives()).filter(item=>item.elective==='effects');
+  assert.ok(effects.some(item=>item.id==='effects.bounced-light.page'));
+  assert.ok(effects.every(item=>item.afterLoop===0 && item.kind==='page'));
+  assert.deepEqual(effects.map(item=>item.order),[...effects.map(item=>item.order)].sort((a,b)=>a-b));
+});
+
+test('Look dev follows the product cards into required camera/assets foundations',()=>{
   const prerequisites=new Map(loadCards().map(card=>[card.id,card.prerequisites]));
-  const concepts=trackConcepts(TRACKS.find(track=>track.slug==='tech-art')!,prerequisites);
+  const concepts=trackConcepts(TRACKS.find(track=>track.slug==='look-dev')!,prerequisites);
   assert.ok(concepts.has('product.capstone'));
   assert.ok(concepts.has('camera.projection-matrix'));
   const known=new Set(loadCards().map(card=>card.id));

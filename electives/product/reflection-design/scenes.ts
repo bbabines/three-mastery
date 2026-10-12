@@ -7,10 +7,13 @@ export const studio: SceneSetup = (harness) => watchLab(harness, (lab) => {
   const stats = measurePanorama(lab.environment.image as unknown as PanoramaPixels);
   const metal = lab.materials.get('metal')!;
   const originalRoughness = metal.roughness;
+  // The stage applies the reference's stored HDR rotation. Keep it, and treat the slider as an
+  // offset from it, so 0 is the reference lighting direction rather than an unrotated HDR.
+  const referenceRotation = harness.scene.environmentRotation.y;
   let mode = 'reference', softness = 0.65, width = 0.8, background = 0.15, count = 4, rotation = 0;
   const panels = () => lab.setPanels({ count, width, softness, background });
-  const read = () => lab.setReadout(`${mode}; metal roughness ${metal.roughness.toFixed(3)}; room rotation ${rotation}°\nSource EXR ${stats.width} × ${stats.height}: median ${stats.median.toFixed(3)}, p99 ${stats.p99.toFixed(2)}, max ${stats.max.toFixed(2)}\nSource pixels > 1: ${(100 * stats.shareAbove(1)).toFixed(1)}%; these are pixel counts, not solid-angle-weighted energy\nPanels: ${count}, half-width ${width.toFixed(2)} radians, softness ${softness.toFixed(2)}, dark region ${background.toFixed(2)}`);
-  const update = () => { if (mode === 'authored panels') panels(); harness.scene.environmentRotation.y = THREE.MathUtils.degToRad(rotation); read(); };
+  const read = () => lab.setReadout(`${mode}; metal roughness ${metal.roughness.toFixed(3)}; environment rotation ${rotation}° offset from reference (scene value ${harness.scene.environmentRotation.y.toFixed(3)} rad, reference ${referenceRotation.toFixed(3)} rad)\nSource EXR ${stats.width} × ${stats.height}: median ${stats.median.toFixed(3)}, p99 ${stats.p99.toFixed(2)}, max ${stats.max.toFixed(2)}\nSource pixels > 1: ${(100 * stats.shareAbove(1)).toFixed(1)}%; these are pixel counts, not solid-angle-weighted energy\nPanels: ${count}, half-width ${width.toFixed(2)} radians, softness ${softness.toFixed(2)}, dark region ${background.toFixed(2)}`);
+  const update = () => { if (mode === 'authored panels') panels(); harness.scene.environmentRotation.y = referenceRotation + THREE.MathUtils.degToRad(rotation); read(); };
   lab.addSelect('Environment', {
     'Watch source HDR': () => { mode = 'reference'; lab.setEnvironment('reference'); update(); },
     'Uniform studio': () => { mode = 'uniform'; lab.setEnvironment('uniform'); update(); },
@@ -22,10 +25,10 @@ export const studio: SceneSetup = (harness) => watchLab(harness, (lab) => {
   lab.addSlider('Dark-region brightness', 0.05, 0.8, 0.05, background, (v) => { background = v; update(); });
   lab.addSlider('Panel count', 1, 8, 1, count, (v) => { count = v; update(); });
   lab.addSlider('Metal roughness', 0.02, 0.6, 0.01, originalRoughness, (v) => { metal.roughness = v; read(); });
-  lab.addSlider('Environment rotation (degrees)', -180, 180, 5, rotation, (v) => { rotation = v; update(); });
+  lab.addSlider('Environment rotation offset from reference (degrees)', -180, 180, 5, rotation, (v) => { rotation = v; update(); });
   lab.addButton('Restore polished case', () => { metal.roughness = originalRoughness; read(); });
   lab.addButton('Capture full orbit sheet', () => lab.captureOrbit());
-  lab.registerEvidence(() => ({ mode, count, angularHalfWidthRadians: width, softness, background, rotation, caseRoughness: metal.roughness, sourceStats: { median: stats.median, p99: stats.p99, max: stats.max } }));
+  lab.registerEvidence(() => ({ mode, count, angularHalfWidthRadians: width, softness, background, rotationOffsetFromReferenceDegrees: rotation, referenceRotationRadians: referenceRotation, environmentRotationY: harness.scene.environmentRotation.y, caseRoughness: metal.roughness, sourceStats: { median: stats.median, p99: stats.p99, max: stats.max } }));
   read();
 });
 

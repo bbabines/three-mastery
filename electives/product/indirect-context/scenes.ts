@@ -21,6 +21,9 @@ function field(kind: 'ao' | 'light') {
 
 export const contributions: SceneSetup = (harness) => watchLab(harness, (lab) => {
   const { scene } = harness;
+  // Every contribution is switched by hand: no reference key light or ground, and no screen-space
+  // AO from the finishing chain (it would darken direct light too). The studio stays put in the world.
+  lab.setReferenceLook({ light: false, ground: false, finishing: false, studioFollowsCamera: false });
   lab.setEnvironment('uniform');
   const direct = new THREE.DirectionalLight(0xffffff, 2);
   direct.position.set(-4, 3, 3);
@@ -55,6 +58,9 @@ export const contributions: SceneSetup = (harness) => watchLab(harness, (lab) =>
 
 export const context: SceneSetup = (harness) => watchLab(harness, (lab) => {
   const { scene } = harness;
+  // A room with its own sources: every bright region must trace to one of them, so the reference
+  // key light, ground, and finishing chain are off and the studio stays put in the world.
+  lab.setReferenceLook({ light: false, ground: false, finishing: false, studioFollowsCamera: false });
   scene.environmentIntensity = 0.35;
   const window = new THREE.RectAreaLight(0xe4efff, 5, 3, 4);
   window.position.set(-4, 3, 1); window.lookAt(0, 1.2, 0);

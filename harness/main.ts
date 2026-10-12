@@ -33,6 +33,7 @@ interface DrillMeta {
   elective?: string; // the elective domain's slug, like "vfx"
   kind?: 'page' | 'guided' | 'from-memory';
   renderer?: 'webgpu'; // scenes mount on the TSL harness (tsl.ts)
+  timing?: 'gpu'; // the TSL harness asks the GPU how long each frame took (Photoreal effects)
 }
 
 interface Drill {
@@ -405,7 +406,7 @@ async function mountElective(drill: Drill, content: HTMLElement, recordDone: (at
         continue;
       }
       placeholder.className = 'scene';
-      const harness = await createTslHarness(placeholder);
+      const harness = await createTslHarness(placeholder, { trackTimestamp: drill.meta.timing === 'gpu' });
       backend = harness.backend;
       setup(harness);
     }

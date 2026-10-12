@@ -386,12 +386,34 @@ export const DOMAINS: Domain[] = [
       {slug: 'capstone', name: 'The complete product configurator'},
     ],
   },
+  {
+    n: 20,
+    slug: 'effects',
+    name: 'Photoreal effects',
+    elective: true,
+    afterLoop: 0,
+    note: 'One effect per page on the watch, in WebGPU: what it adds, what it costs on your own hardware, and when to turn it on.',
+    concepts: [
+      { slug: 'progressive', name: 'Progressive smoothing' },
+      { slug: 'ambient-occlusion', name: 'Ambient occlusion' },
+      { slug: 'bounced-light', name: 'Bounced light' },
+      { slug: 'reflections', name: 'Screen-space reflections' },
+      { slug: 'contact-shadows', name: 'Contact shadows' },
+      { slug: 'motion-smoothing', name: 'Smoothing while moving' },
+      { slug: 'ground-shadow', name: 'Baked soft ground shadow' },
+      { slug: 'hdri-ground', name: 'Projected HDRI ground' },
+      { slug: 'anisotropy', name: 'Brushed metal' },
+      { slug: 'transmission', name: 'Glass' },
+      { slug: 'budget', name: 'Choosing effects for a frame budget' },
+    ],
+  },
 ];
 
 export const CORE_DOMAINS = DOMAINS.filter((domain) => !domain.elective);
 
 // A track narrows the plan to whole domains, worked through in order: Rogue, then Tech art, then
 // Everything. Debugging and Optimization are only in Everything; they draw on every other domain.
+// Look dev holds only electives, so it has no loops; it can be taken alongside the others.
 export interface Track {
   slug: string;
   name: string;
@@ -401,13 +423,17 @@ export interface Track {
 export const TRACKS: Track[] = [
   { slug: 'all', name: 'Everything', domains: DOMAINS.map((domain) => domain.slug) },
   { slug: 'rogue', name: 'Rogue', domains: ['math', 'transforms', 'rotation', 'camera', 'geometry', 'scene-graph', 'assets', 'queries', 'interaction'] },
-  { slug: 'tech-art', name: 'Tech art', domains: ['geometry', 'gpu', 'materials', 'shaders', 'vfx', 'jewelry', 'tactile', 'product'] },
+  { slug: 'tech-art', name: 'Tech art', domains: ['geometry', 'gpu', 'materials', 'shaders', 'vfx'] },
+  { slug: 'look-dev', name: 'Look dev', domains: ['tactile', 'jewelry', 'product', 'effects'] },
 ];
 
 // The core domains a track takes whole. Checkpoint questions and placement checks each cover a whole
 // domain, so a domain the track only borrows foundations from has neither.
 export const trackCoreDomains = (track: Track) =>
   CORE_DOMAINS.filter((domain) => track.domains.includes(domain.slug)).map((domain) => domain.slug);
+
+// A track of electives only (Look dev) has no loops, checkpoints, or review rotation of its own.
+export const electivesOnly = (track: Track) => trackCoreDomains(track).length === 0;
 
 // The log lines tracks are worked out from. Lines from two machines merge in any order, so the
 // latest line is the one with the latest `at`, not the last one in the file.

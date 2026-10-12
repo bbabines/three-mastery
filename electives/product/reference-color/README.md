@@ -13,15 +13,15 @@ concepts: [product.reference-color]
 
 ## Evidence
 
-The classic watch combines a model, studio lighting file, external leather normal texture, and viewer settings. Its metal base color is `(0.443, 0.443, 0.443)` in linear light, metalness `1`, roughness `0.0477`. That color converts to approximately `#b2b2b2` for an sRGB picker. The viewer records exposure `1`, tone mapping `4`, contrast `1.1`, and saturation `1`.
+The classic watch combines a model, studio lighting file, external leather normal texture, and viewer settings. Its metal base color is `(0.443, 0.443, 0.443)` in linear light, metalness `1`, roughness `0.0477`. That color converts to approximately `#b2b2b2` for an sRGB picker. The live WebGi site renders with exposure `1`, tone mapping `4`, contrast `1.1`, and saturation `1`.
 
-The study uses ACES Filmic for that recorded tone mapping number. WebGi's contrast and finishing pipeline are separate operations; loading its model into three.js does not reproduce them. This is a controlled reconstruction, not a claim of identical pixels.
+Tone mapping `4` is ACES Filmic in three.js. Contrast is a separate step WebGi applies after the curve, and loading the model into three.js doesn't bring it along. The shared stage adds its own finishing steps (ambient occlusion, a 32-frame average, bloom, contrast `1.1`) to come close to WebGi's look. It's a close native rebuild, not identical pixels.
 
 ![Original WebGi watch: the metal and leather quality target](/assets/reference/classic-watch/reference-webgi.png)
 
-Keep this captured original viewer image as the quality target. The live study explicitly adapts its assets to three.js; unsupported WebGi effects and a different finishing pipeline mean the study is not a pixel-for-pixel replacement.
+This capture of the live site, after its 32 frames settle, is the quality target.
 
-Compare the curves with exposure fixed. Then adjust exposure while watching the dial lettering and bezel. With **None**, `toneMappingExposure` is ignored: moving that slider does not brighten the render. The three display patches have linear inputs `0.18`, `1`, and `8`; they bypass illumination, so they isolate the display transform. They are not photographed gray cards.
+The first scene turns the stage's finishing steps off, so only the tone-mapping curve stands between a patch and the screen. Compare the curves with exposure fixed. Then adjust exposure while watching the dial lettering and bezel. With **None**, `toneMappingExposure` is ignored: moving that slider does not brighten the render. The three display patches have linear inputs `0.18`, `1`, and `8`; they bypass illumination, so they isolate the display transform. They are not photographed gray cards.
 
 <div data-scene="calibration"></div>
 

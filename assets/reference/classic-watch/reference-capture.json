@@ -1,9 +1,162 @@
 {
   "source": "https://webgi.dev/",
-  "capturedAt": "2026-10-12T03:43:34.117Z",
+  "capturedAt": "2026-10-12T13:45:28.229Z",
+  "browser": "Chrome via Playwright (headed)",
+  "gpu": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Pro, Unspecified Version)",
   "viewport": {
     "width": 1440,
     "height": 1050
+  },
+  "note": "Light mode, interaction prompt off, watch hands at the GLB rest pose, showcase effects pinned (SSAA, TAA, SSR, SSAO, bloom on; SSGI, DOF off), captured with getScreenshotDataUrl once progressive accumulation converged. Camera and bounds are in WebGi world units (≈ the GLB units).",
+  "views": {
+    "default": {
+      "file": "reference-webgi.png",
+      "camera": {
+        "position": [
+          3.076081520807091,
+          1.7528459187851408,
+          11.204388456307267
+        ],
+        "target": [
+          1.8302026560945706e-13,
+          -0.16348043160759998,
+          -0.21793909865748642
+        ],
+        "fov": 25
+      },
+      "canvas": {
+        "css": [
+          657,
+          966
+        ],
+        "buffer": [
+          657,
+          966
+        ]
+      },
+      "modelBox": {
+        "min": [
+          -0.8391195622080538,
+          -1.6401018186252732,
+          -1.546327078207621
+        ],
+        "max": [
+          0.8391195622084199,
+          1.3131409554100733,
+          1.1104488808926483
+        ]
+      },
+      "frames": 32,
+      "enabledAtCapture": {
+        "SSAAPlugin": true,
+        "TemporalAAPlugin": true,
+        "ProgressivePlugin": true,
+        "SSAOPlugin": true,
+        "SSReflectionPlugin": true,
+        "SSGIPlugin": false,
+        "BloomPlugin": true,
+        "DepthOfFieldPlugin": false
+      }
+    },
+    "front": {
+      "file": "reference-webgi-front.png",
+      "camera": {
+        "position": [
+          1.8302026560945706e-13,
+          1.752845918785141,
+          11.611340012748958
+        ],
+        "target": [
+          1.8302026560945706e-13,
+          -0.16348043160759995,
+          -0.2179390986574864
+        ],
+        "fov": 25
+      },
+      "canvas": {
+        "css": [
+          657,
+          966
+        ],
+        "buffer": [
+          657,
+          966
+        ]
+      },
+      "modelBox": {
+        "min": [
+          -0.8391195622080538,
+          -1.6401018186252732,
+          -1.546327078207621
+        ],
+        "max": [
+          0.8391195622084199,
+          1.3131409554100733,
+          1.1104488808926483
+        ]
+      },
+      "frames": 32,
+      "enabledAtCapture": {
+        "SSAAPlugin": true,
+        "TemporalAAPlugin": true,
+        "ProgressivePlugin": true,
+        "SSAOPlugin": true,
+        "SSReflectionPlugin": true,
+        "SSGIPlugin": false,
+        "BloomPlugin": true,
+        "DepthOfFieldPlugin": false
+      }
+    }
+  },
+  "settings": {
+    "environmentIntensity": 1,
+    "environmentRotation": [
+      0,
+      3.9472152126557813,
+      0,
+      "XYZ"
+    ],
+    "background": "ffffff",
+    "lights": [
+      {
+        "name": "light_0",
+        "intensity": 20,
+        "castShadow": true,
+        "visible": true,
+        "shadowRadius": 1.0721160456482883
+      }
+    ],
+    "ground": {
+      "size": 20,
+      "color": "ffffff",
+      "roughness": 0.25,
+      "metalness": 0.7820321917322556,
+      "contactShadows": true,
+      "shadowHeight": 5,
+      "blurAmount": 1
+    },
+    "tonemap": {
+      "toneMapping": 4,
+      "exposure": 1,
+      "contrast": 1.1,
+      "saturation": 1
+    },
+    "enabled": {
+      "SSAAPlugin": true,
+      "TemporalAAPlugin": true,
+      "ProgressivePlugin": true,
+      "SSAOPlugin": true,
+      "SSReflectionPlugin": true,
+      "SSGIPlugin": false,
+      "BloomPlugin": true,
+      "DepthOfFieldPlugin": false,
+      "ContactShadowGroundPlugin": true,
+      "WatchHandsPlugin": false,
+      "InteractionPromptPlugin": false
+    },
+    "renderScale": 1,
+    "maxHDRIntensity": 8,
+    "three": "163"
   },
   "assets": [
     {

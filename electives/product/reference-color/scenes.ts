@@ -4,6 +4,9 @@ import { watchLab } from '../lab';
 
 export const calibration: SceneSetup = harness => watchLab(harness, lab => {
   const { renderer, scene } = harness;
+  // Only the tone-mapping curve and output conversion may stand between a patch and the screen:
+  // the finishing chain's contrast, AO, and bloom (the 8 patch would glow) are off.
+  lab.setReferenceLook({ finishing: false });
   const patches: THREE.Mesh[] = [];
   // Display patches bypass illumination but still pass through tone mapping and output conversion.
   [0.18, 1, 8].forEach((linear, i) => {

@@ -8,6 +8,8 @@ RectAreaLightUniformsLib.init();
 
 export const shape: SceneSetup = (harness) => watchLab(harness, (lab) => {
   const { scene } = harness;
+  // One area key and one fill only: no reference key light, ground, or finishing chain.
+  lab.setReferenceLook({ light: false, ground: false, finishing: false });
   lab.setEnvironment('uniform');
   scene.environmentIntensity = 0.06;
   const target = new THREE.Vector3(0, 1.2, 0);
@@ -42,6 +44,8 @@ export const shape: SceneSetup = (harness) => watchLab(harness, (lab) => {
 
 export const falloff: SceneSetup = (harness) => watchLab(harness, (lab) => {
   const { scene } = harness;
+  // The readout's multiplier is before material and tone mapping; nothing else may add to it.
+  lab.setReferenceLook({ light: false, ground: false, finishing: false });
   lab.setEnvironment('uniform');
   scene.environmentIntensity = 0.03;
   const point = new THREE.PointLight(0xffffff, 80, 0, 2);

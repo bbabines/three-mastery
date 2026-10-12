@@ -4,6 +4,9 @@ import { watchLab, type ProductLab } from '../lab';
 
 function shadowRig(lab: ProductLab) {
   const { scene, renderer } = lab.harness;
+  // This rig is the only shadow: no reference key light or ground (with its contact shadow), and
+  // no finishing chain, whose ambient occlusion would read as extra contact shadow.
+  lab.setReferenceLook({ light: false, ground: false, finishing: false });
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFShadowMap;
   lab.model.traverse((object) => { if (object instanceof THREE.Mesh) { object.castShadow = object.material instanceof THREE.MeshStandardMaterial && object.material.name !== 'glass'; object.receiveShadow = true; } });

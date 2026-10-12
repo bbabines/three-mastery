@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import { watchLab } from '../lab';
 
 export const configurator: SceneSetup = (harness) => watchLab(harness, (lab) => {
-  const { renderer, scene } = harness;
+  const { renderer } = harness;
   const caseMaterials = ['metal', 'metal_cover'].map(name => lab.materials.get(name)).filter((m): m is THREE.MeshStandardMaterial => !!m);
   const sourceCase = caseMaterials.map(material => ({ material, color: material.color.clone(), roughness: material.roughness, metalness: material.metalness }));
   const sourceStrap = { color: lab.strap.color.clone(), metalness: lab.strap.metalness, roughness: lab.strap.roughness };
@@ -14,30 +14,13 @@ export const configurator: SceneSetup = (harness) => watchLab(harness, (lab) => 
   let width = 0.45;
   let softness = 0.7;
   let background = 0.12;
-  let shadowEnabled = true;
+  let grounded = true;
   let lighting = 'authored panels';
-  const floorGeometry = new THREE.PlaneGeometry(8, 8);
-  const floorMaterial = new THREE.ShadowMaterial({ color: 0x171a20, opacity: 0.18 });
-  const floor = new THREE.Mesh(floorGeometry, floorMaterial);
-  floor.rotation.x = -Math.PI / 2; floor.position.y = 0.015; floor.receiveShadow = true;
-  const light = new THREE.DirectionalLight(0xffffff, 0.55);
-  light.position.set(4, 8, 5); light.target.position.set(0, 1, 0); light.castShadow = true;
-  light.shadow.mapSize.set(1024, 1024);
-  light.shadow.camera.left = light.shadow.camera.bottom = -3;
-  light.shadow.camera.right = light.shadow.camera.top = 3;
-  light.shadow.camera.near = 0.1; light.shadow.camera.far = 20;
-  light.shadow.bias = -0.00015; light.shadow.normalBias = 0.015;
-  scene.add(floor, light, light.target);
-  renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFShadowMap;
-  // Ordinary shadow maps do not model transmission through the crystal.
-  lab.model.traverse(object => {
-    if (!(object instanceof THREE.Mesh)) return;
-    const materials = Array.isArray(object.material) ? object.material : [object.material];
-    if (materials.some(material => material.name === 'glass')) object.castShadow = false;
-  });
-  lab.onLeave(() => light.shadow.dispose());
+  // Grounding is the stage's reference ground (contact shadow, key-light shadow, floor reflection)
+  // under the reference key light. The crystal casts no shadow, as in the source file.
+  const light = lab.referenceLight;
   function panels() { lighting = 'authored panels'; lightingSelect.value = lighting; lab.setPanels({ count, width, softness, background }); }
-  function report() { lab.setReadout(`${leather} · ${interpretation}\n${finish} · ${lighting} · panels ${count} / width ${width.toFixed(2)}\nGround shadow ${shadowEnabled ? 'on' : 'off'} · softness ${softness.toFixed(2)} · export every finish.`); }
+  function report() { lab.setReadout(`${leather} · ${interpretation}\n${finish} · ${lighting} · panels ${count} / width ${width.toFixed(2)}\nReference ground ${grounded ? 'on' : 'off'} · softness ${softness.toFixed(2)} · export every finish.`); }
   lab.addSelect('leather color', {
     'source navy': () => { leather = 'source navy'; lab.strap.color.copy(sourceStrap.color); report(); },
     chestnut: () => { leather = 'chestnut'; lab.strap.color.setHex(0x693b25); report(); },
@@ -57,11 +40,12 @@ export const configurator: SceneSetup = (harness) => watchLab(harness, (lab) => 
   lab.addSlider('panel width', 0.1, 0.9, 0.05, width, (v) => { width = v; panels(); report(); });
   lab.addSlider('panel softness', 0, 1, 0.1, softness, (v) => { softness = v; panels(); report(); });
   lab.addSlider('studio background', 0.02, 0.5, 0.02, background, (v) => { background = v; panels(); report(); });
-  lab.addSelect('grounding', { 'restrained proxy': () => { shadowEnabled = true; floor.visible = light.castShadow = true; light.shadow.needsUpdate = true; report(); }, off: () => { shadowEnabled = false; floor.visible = light.castShadow = false; report(); } });
+  lab.addSelect('grounding', { 'reference ground': () => { grounded = true; lab.setReferenceLook({ ground: true }); report(); }, off: () => { grounded = false; lab.setReferenceLook({ ground: false }); report(); } });
+  lab.addSelect('reference camera', { 'source default view': () => lab.setView('default'), 'source front view': () => lab.setView('front') });
   lab.addSelect('quality', { 'DPR 1.5': () => renderer.setPixelRatio(1.5), 'DPR 1': () => renderer.setPixelRatio(1), 'DPR 2': () => renderer.setPixelRatio(2) });
   renderer.setPixelRatio(1.5);
   lab.addButton('capture configuration orbit', () => lab.captureOrbit());
-  lab.registerEvidence(() => ({ leather, interpretation, finish, lighting, panels: { count, width, softness, background }, shadow: { enabled: shadowEnabled, method: 'single directional shadow-map proxy, not WebGi ground reconstruction', opacity: floorMaterial.opacity, mapSize: light.shadow.mapSize.toArray(), lightIntensity: light.intensity }, delivery: { phoneTestPerformed: false, note: 'Record target-device evidence separately.' } }));
+  lab.registerEvidence(() => ({ leather, interpretation, finish, lighting, panels: { count, width, softness, background }, grounding: { enabled: grounded, method: 'stage reference ground: blurred under-floor depth as aoMap, key-light PCF shadow, planar floor reflection', keyLight: { name: light.name, intensity: light.intensity, shadowMapSize: light.shadow.mapSize.toArray(), shadowRadius: light.shadow.radius } }, delivery: { phoneTestPerformed: false, note: 'Record target-device evidence separately.' } }));
   panels(); report();
 });
 

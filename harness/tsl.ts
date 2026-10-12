@@ -19,6 +19,9 @@ export interface TslHarness {
   controls: OrbitControls;
   backend: Backend; // what the renderer ended up running on
   onFrame(callback: FrameCallback): void;
+  // Draws each frame with `draw` instead of rendering the scene, for a page with its own
+  // RenderPipeline. null goes back to rendering the scene.
+  drawWith(draw: (() => void) | null): void;
 }
 
 // A TSL page's scenes.ts exports these by name; the viewer mounts each where the README says.
@@ -29,16 +32,22 @@ const forceWebGL = new URLSearchParams(location.search).get('backend') === 'webg
 
 // Creates a WebGPURenderer with the viewer's settings and waits for it to be ready. In r186,
 // render() throws until the renderer has picked its backend, so callers await this first.
-export async function createTslRenderer(options: { antialias?: boolean } = {}) {
-  const renderer = new THREE.WebGPURenderer({ antialias: options.antialias ?? true, forceWebGL });
+// `trackTimestamp` asks the GPU to time its work, read with `renderer.resolveTimestampsAsync()`;
+// it does nothing where the GPU can't (WebGPU without timestamp queries, most WebGL 2).
+export async function createTslRenderer(options: { antialias?: boolean; trackTimestamp?: boolean } = {}) {
+  const renderer = new THREE.WebGPURenderer({
+    antialias: options.antialias ?? true,
+    forceWebGL,
+    trackTimestamp: options.trackTimestamp ?? false,
+  });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   await renderer.init();
   const backend: Backend = (renderer.backend as { isWebGPUBackend?: boolean }).isWebGPUBackend ? 'WebGPU' : 'WebGL 2';
   return { renderer, backend };
 }
 
-export async function createTslHarness(container: HTMLElement): Promise<TslHarness> {
-  const { renderer, backend } = await createTslRenderer();
+export async function createTslHarness(container: HTMLElement, options: { trackTimestamp?: boolean } = {}): Promise<TslHarness> {
+  const { renderer, backend } = await createTslRenderer(options);
   container.appendChild(renderer.domElement);
 
   const scene = new THREE.Scene();
@@ -64,13 +73,15 @@ export async function createTslHarness(container: HTMLElement): Promise<TslHarne
   resize();
 
   const callbacks: FrameCallback[] = [];
+  let draw: (() => void) | null = null;
   const timer = new THREE.Timer();
   timer.connect(document);
   renderer.setAnimationLoop((time) => {
     timer.update(time);
     for (const callback of callbacks) callback(timer.getDelta(), timer.getElapsed());
     controls.update();
-    renderer.render(scene, camera);
+    if (draw) draw();
+    else renderer.render(scene, camera);
   });
   onLeave(container, () => {
     renderer.setAnimationLoop(null);
@@ -88,5 +99,8 @@ export async function createTslHarness(container: HTMLElement): Promise<TslHarne
     controls,
     backend,
     onFrame: (callback) => callbacks.push(callback),
+    drawWith: (next) => {
+      draw = next;
+    },
   };
 }

@@ -4,6 +4,8 @@ import { watchLab } from '../lab';
 
 export const directions: SceneSetup = (harness) => watchLab(harness, (lab) => {
   const { camera, controls, scene } = harness;
+  // A studio fixed in the world, so turning the camera, the product, or the studio differ.
+  lab.setReferenceLook({ studioFollowsCamera: false });
   const original = lab.model.quaternion.clone();
   const studioRotation = scene.environmentRotation.y;
   let mode = 'camera';
@@ -31,6 +33,9 @@ export const directions: SceneSetup = (harness) => watchLab(harness, (lab) => {
 
 export const matrix: SceneSetup = (harness) => watchLab(harness, (lab) => {
   const { camera, controls } = harness;
+  // A studio fixed in the world must hold up from every tile; one that follows the camera would
+  // show every tile the same reflections.
+  lab.setReferenceLook({ studioFollowsCamera: false });
   const metal = lab.materials.get('metal');
   const color = metal?.color.clone();
   const roughness = metal?.roughness ?? 0.048;

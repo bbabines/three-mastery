@@ -54,6 +54,18 @@
       "url": "https://demo.realvwr.com/media/files/2/map-normal-leather.jpg",
       "bytes": 669204,
       "sha256": "b0828548e70760883e4f64a1e16e1f5549a147ab11088b74bfea29918b0f191d"
+    },
+    {
+      "file": "reference-webgi.png",
+      "source": "https://webgi.dev/ default view, captured 2026-10-12T13:45:28.229Z by electives/product/tools/capture-source.mjs --headed (see reference-capture.json)",
+      "bytes": 61487,
+      "sha256": "b9f4394f81b23c5f7464e1d36e8f1db31b1aa378354e6e71892597cc67a9f2bc"
+    },
+    {
+      "file": "reference-webgi-front.png",
+      "source": "https://webgi.dev/ front view, captured 2026-10-12T13:45:28.229Z by electives/product/tools/capture-source.mjs --headed (see reference-capture.json)",
+      "bytes": 51220,
+      "sha256": "9d21f35a1d5a32caeb5f709441bf647668fad1cffbe8733818d190aeda242950"
     }
   ]
 }

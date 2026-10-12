@@ -15,7 +15,7 @@ concepts: [product.light-form]
 
 The featured watch's `strap` has roughness **0.473185**, a restored leather normal map repeated **3 × 3**, and normal scale **(0.3, −0.3)**. Its `metal` case is much smoother: roughness **0.047670**, metalness **1**. Those parts need different kinds of readability: the strap needs changes in shading across grain; the case needs useful reflections across its curves.
 
-The GLB contains a directional light with intensity **20** in its ground setup. These study scenes disable imported lights and introduce the sources shown below. This separates cause and effect; it does not reproduce WebGi's renderer or its proprietary passes. The fitted watch is three scene units across its largest dimension; these distances are teaching units, not a claim about its physical size.
+The GLB contains one directional light, `light_0`, with intensity **20**. On the live WebGi site it is the key light: it casts the soft shadow behind and to the right of the watch on the ground. The shared stage keeps it on by default. Both scenes here turn it off, along with the stage's ground and finishing steps, and set the studio to a dim, even glow, so the sources below are the only ones you're judging. The fitted watch is three scene units across its largest dimension; these distances are teaching units, not a claim about its physical size.
 
 ## Why it works
 
@@ -50,7 +50,7 @@ These are the source constructions and controls used in `scenes.ts`; the shared 
 ### Give a light a visible source size
 
 ```ts
-RectAreaLightUniformsLib.init(); // LTC textures required by WebGL area lights
+RectAreaLightUniformsLib.init(); // lookup textures WebGL area lights need, once per app
 const key = new THREE.RectAreaLight(0xffffff, 12, 2, 2);
 key.position.set(Math.sin(radians) * 4, 2.6, Math.cos(radians) * 4);
 key.lookAt(target);             // area lights face their local −Z direction

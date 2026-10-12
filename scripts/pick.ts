@@ -5,7 +5,7 @@
 //   npm run pick -- done         run its check and log the date you finished
 //                                (add --pass for a drill checked on the page or by eye)
 //   npm run pick -- status       progress in the current loop
-//   npm run pick -- track [slug] show the active track, or switch to rogue, tech-art, or all
+//   npm run pick -- track [slug] show the active track, or switch to rogue, tech-art, look-dev, or all
 //
 // Nothing is timed. The log records when each drill was finished, never how long it took.
 //
@@ -20,13 +20,15 @@
 // From the track's Loop 3 on, a track with the Procedural & VFX elective also suggests its pages
 // and effect builds. After Loop 4, maintenance rotates the track's drills, weighted toward stale
 // concepts and domains that failed checkpoint parts. Once another track is finished, a drill from
-// it comes up for review whenever none has been practiced for a week.
+// it comes up for review whenever none has been practiced for a week. Look dev holds only
+// electives: it suggests their scheduled pages in order, and has no loops or review rotation.
 import { existsSync } from 'node:fs';
 import path from 'node:path';
 import {
   checkpointPartsLeft,
   CORE_DOMAINS,
   DOMAINS,
+  electivesOnly,
   LOOPS,
   teachingOrder,
   trackConcepts,
@@ -102,7 +104,8 @@ function inTrack(item: Item, view = active) {
   return item.dir.startsWith('cross/') ? ids.every((id) => view.concepts.has(id)) : ids.some((id) => view.concepts.has(id));
 }
 
-const unfinishedTracks = () => TRACKS.filter((track) => trackLoop(track, log) !== 'maintenance');
+// Look dev never finishes in this sense: it has no loops.
+const unfinishedTracks = () => TRACKS.filter((track) => !electivesOnly(track) && trackLoop(track, log) !== 'maintenance');
 
 // ---- Loop state ----
 
@@ -205,7 +208,8 @@ function electiveCandidates(loop: number | 'maintenance') {
 // Once another track is finished, its drills outside this track come back for review when none
 // of them has been practiced for a week.
 function dueReview(): Item | undefined {
-  const finished = TRACKS.filter((track) => track !== active.track && trackLoop(track, log) === 'maintenance').map(viewOf);
+  if (electivesOnly(active.track)) return undefined;
+  const finished = TRACKS.filter((track) => track !== active.track && !electivesOnly(track) && trackLoop(track, log) === 'maintenance').map(viewOf);
   const pool = items.filter((item) => item.kind === 'drill' && !inTrack(item) && finished.some((view) => inTrack(item, view)));
   if (pool.length === 0) return undefined;
   const ids = new Set(pool.map((item) => item.id));
@@ -215,6 +219,10 @@ function dueReview(): Item | undefined {
 
 function trackSuggestions(): { items: Item[]; note?: string } {
   const loop = currentLoop();
+  if (electivesOnly(active.track)) {
+    const fresh = electiveCandidates('maintenance').sort((a, b) => itemOrder(a) - itemOrder(b));
+    return { items: fresh, note: 'Every page pick schedules in this track is done. Tactile and Jewelry pages open from the viewer.' };
+  }
   if (loop === 'maintenance') {
     const fresh = electiveCandidates(loop);
     if (fresh.length > 0) return { items: fresh.sort((a, b) => itemOrder(a) - itemOrder(b)) };
@@ -283,7 +291,8 @@ function suggest() {
   }
 
   const loop = currentLoop();
-  console.log(`${active.track.name} track · ${loop === 'maintenance' ? 'Maintenance rotation' : `Loop ${loop}: ${LOOPS[loop - 1].name}`}`);
+  const stage = electivesOnly(active.track) ? 'Electives' : loop === 'maintenance' ? 'Maintenance rotation' : `Loop ${loop}: ${LOOPS[loop - 1].name}`;
+  console.log(`${active.track.name} track · ${stage}`);
   const { items: ranked, note, review } = rankedSuggestions();
   if (ranked.length === 0) {
     console.log(note ?? 'Nothing to suggest.');
@@ -296,7 +305,7 @@ function suggest() {
     console.log(`\nAlso available:\n${ranked.slice(1, 3).map((item) => `  ${describe(item)}`).join('\n')}`);
   }
   console.log('\nStart it with: npm run pick -- start');
-  if (loop === 'maintenance') trackHint();
+  if (loop === 'maintenance' && !electivesOnly(active.track)) trackHint();
 }
 
 function start(id: string | undefined) {
@@ -386,6 +395,14 @@ function done(flag: string | undefined) {
 
 function status() {
   const loop = currentLoop();
+  if (electivesOnly(active.track)) {
+    console.log(`${active.track.name} track · electives\n`);
+    for (const domain of DOMAINS.filter((item) => active.track.domains.includes(item.slug))) {
+      const pages = domain.concepts.map((concept) => `${domain.slug}.${concept.slug}.page`);
+      console.log(`  ${domain.name.padEnd(28)} pages ${pages.filter((id) => passedIds.has(id)).length}/${pages.length}`);
+    }
+    return;
+  }
   if (loop === 'maintenance') {
     console.log(`${active.track.name} track · maintenance rotation. ${doneEntries.length} completions logged.`);
     trackHint();

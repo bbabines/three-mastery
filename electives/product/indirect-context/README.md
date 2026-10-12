@@ -13,9 +13,9 @@ concepts: [product.indirect-context]
 
 ## Evidence
 
-The watch viewer uses a studio HDR, scene environment intensity **0.770914**, an enabled SSAO pass at intensity **0.25**, and WebGi lightmap extension settings. A material's stored `lightMapIntensity: 1` alone is not evidence that it has a baked lightmap texture. The source leather normal texture supplies surface directions; it is not a record of bounced illumination.
+On the live WebGi site, the watch's indirect light comes from its studio HDR at intensity **1**, with screen-space ambient occlusion (SSAO) at **0.25** darkening creases. The GLB's materials also store WebGi lightmap settings, but a stored `lightMapIntensity: 1` alone is not evidence of a baked lightmap texture, and these extensions name none. The source leather normal texture supplies surface directions; it is not a record of bounced illumination.
 
-The labs show what native three.js actually does. The first deliberately changes the strap to **metalness 0** so diffuse contributions can be inspected on leather. Its AO and lightmap are **synthetic UV teaching fields**, not lighting baked from this watch. The light probe's coefficients are authored, not measured from a room. Each readout keeps these distinctions visible.
+The labs show what native three.js actually does. Both turn off the stage's reference key light, ground, and finishing chain (its ambient occlusion would darken direct light too), and keep the studio fixed in the world instead of following the camera. The first deliberately changes the strap to **metalness 0** so diffuse contributions can be inspected on leather. Its AO and lightmap are **synthetic UV teaching fields**, not lighting baked from this watch. The light probe's coefficients are authored, not measured from a room. Each readout keeps these distinctions visible.
 
 ## Why it works
 
@@ -58,7 +58,7 @@ probe.intensity = 1;
 scene.add(probe);
 ```
 
-Coefficient zero represents the constant component of spherical harmonics; the remaining coefficients stay zero here. These values teach the actual probe API, not a calibrated irradiance measurement. Production probes can be generated from a cube map or render target using `LightProbeGenerator`. An environment's diffuse contribution and a probe derived from the same field can double-count light if both remain fully enabled.
+A probe stores light as spherical harmonics: nine numbers (per color) describing broad brightness by direction. Coefficient zero is the part that's the same from every direction; the rest stay zero here. These values teach the actual probe API, not a calibrated irradiance measurement. Production probes can be generated from a cube map or render target using `LightProbeGenerator`. An environment's diffuse contribution and a probe derived from the same field can double-count light if both remain fully enabled.
 
 ### Keep stored fields separate
 
