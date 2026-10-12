@@ -1,0 +1,26 @@
+{
+  "source": "https://webgi.dev/",
+  "capturedAt": "2026-10-12T03:43:34.117Z",
+  "viewport": {
+    "width": 1440,
+    "height": 1050
+  },
+  "assets": [
+    {
+      "url": "https://webgi.dev/watch-2.glb",
+      "status": 200
+    },
+    {
+      "url": "https://demo.realvwr.com/media/files/2/map-normal-leather.jpg",
+      "status": 200
+    },
+    {
+      "url": "https://packs.ijewel3d.com/files/env_metal_058_b_74127c4d30.exr",
+      "status": 200
+    },
+    {
+      "url": "https://playground.ijewel3d.com/assetspro/hdrmaps/gem/env-gem-010.exr",
+      "status": 200
+    }
+  ]
+}

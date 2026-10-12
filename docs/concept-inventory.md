@@ -594,6 +594,30 @@ Brad added this on Oct 7, 2026, after working through the jewelry elective's sma
 | Finishes: sheen, clearcoat, and limits | `sheen` with `sheenColor` for velvet and suede; `clearcoat` for varnish over grain; what three.js only approximates (wax, skin) | "sheen: 1 makes velvet." "Clearcoat on everything adds realism." |
 | What's off? Diagnose and fix | Broken scenes mixing every unit's mistakes: diagnose from the symptom, then fix | "If it looks off, the texture is bad." "One fix will do." |
 
+## 19. Product Look Development (elective)
+
+Approved October 11, 2026: a complete ecommerce realism path built around the confirmed classic watch on WebGi. Keep the broad lighting domains alongside reflection design and tactile-material diagnosis. The watch, its external leather normal, studio EXR, original configuration, and captured source render are the featured evidence; see `electives/product/README.md` for measurements and transfer limits.
+
+| Unit / domain | Core idea | Misconceptions to expose | Exercises |
+| --- | --- | --- | --- |
+| References, color, and exposure | Establish a controlled comparison before changing appearance. | A picker hex equals the lit product; every map is sRGB; exposure still affects NoToneMapping. | Calibrated patches/exposure; color-map repair on the watch |
+| Geometry and manufacturing detail | Shape, normals, and bevels determine highlights and silhouette. | More texture detail fixes bad normals; a normal map changes silhouette. | Wireframe/normal inspection; beveled versus sharp parts and modeled stitching |
+| Tactile materials and texture scale | Map response, grain scale, illumination, and screen sampling work together. | Stronger normals always reveal texture; leather should inherit the source's artistic metalness; roughness is universally grayscale color. | Map isolation/lighting/scale; material layers and directional finishes |
+| Light sources and readable form | Direction, apparent source size, falloff, and fill have different jobs. | Bright fill reveals every texture; scene scale does not affect local lights. | Direction/fill contrast; source type/size/distance comparison |
+| Reflection and HDR design | Author the reflected shapes, including source gradients and dark regions. | Every studio HDR suits every product; soft source gradients equal rough material; scene cards automatically appear in IBL. | Reflection-direction inspection; panel count/half-width/softness/roughness controls |
+| Shadows and grounding | Contact and shadow coverage must remain valid when configuration changes. | Resolution fixes wrong coverage; bias is a free cure; frozen shadows follow movement. | Coverage/bias repair; explicit frozen-map invalidation |
+| Indirect light and scene context | Separate illumination from occlusion and identify each approximation's limits. | AO supplies bounce; emissive objects automatically light the room; diffuse probes supply specular reflections. | Environment-only versus AO; authored lightmap/fill/probe/context comparisons |
+| Lighting throughout a full orbit | Validate every permitted view and finish rather than one hero angle. | Camera, model, and environment rotation are interchangeable; front-view success proves coverage. | Rotation comparison; 12 × 3 orbit evidence at multiple zooms/finishes |
+| Camera and image finishing | Framing, sampling, and restraint preserve surface cues. | A longer lens leaves composition unchanged; bloom restores lost detail; pass values transfer between algorithms. | Matched framing; native bloom/sampling comparison |
+| Browser delivery and validation | Measure delivery costs without confusing proxies with GPU evidence. | File size equals runtime texture memory; frame intervals are GPU timing; desktop success proves phone quality. | DPR/cost comparisons; repeated variants and actual-device checklist |
+| Configurator capstone | Combine a consistent lighting rig, tactile detail, variants, contact, and evidence. | One screenshot proves readiness; changing all settings together identifies a cause. | Metal/leather configuration and orbit matrix; broken-stack diagnosis |
+
+**Format:** shown runnable code plus visual control exercises, at least two watch scenes per unit, acceptance checklists, PNG/settings exports, and manual Mark done. No timers, prediction exercises, or blank-file coding. Native study rendering and synthetic teaching textures are labeled; WebGi-specific features are not silently treated as standard glTF/three.js behavior. Standard physical material layers are taught as adaptations when their source encodings differ.
+
+**Entry and maintenance:** Product Look Development is in Tech art and Everything. Its picker checks each card's actual literacy prerequisites and prior product pages; it need not wait for all core Loop 2 or shader fluency. Pages remain directly accessible for study. A completed capstone can return during maintenance. This elective has no four-loop pass and does not alter the 159 core concepts or their coverage rules.
+
+**Acceptance:** code/scheduling/configuration checks and browser mounts establish functional behavior; visual checklists establish readable form, finish, texture, contact, and orbit coverage. Screenshots alone do not establish physical-device performance or exact WebGi pixel parity. Advanced custom BRDFs, fiber rendering, caustics, and path tracing are optional category-specific extensions.
+
 ## Cross-domain drills
 
 These combine concepts from several domains in one drill. Tag each with every domain it touches, and count it toward coverage in each.

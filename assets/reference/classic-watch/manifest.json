@@ -1,0 +1,59 @@
+{
+  "fetchedAt": "2026-10-12T03:30:49.801Z",
+  "files": [
+    {
+      "file": "classic-watch.glb",
+      "url": "https://asset-samples.threepipe.org/demos/classic-watch.glb",
+      "bytes": 2019400,
+      "sha256": "fe2dcb2fdd7ce16e564ae3c2732b07c69c034a5f2626ae3b365bcc08b86a84d9"
+    },
+    {
+      "file": "textures/embedded-0.png",
+      "source": "classic-watch.glb image 0",
+      "bytes": 193120,
+      "sha256": "845e52153afe01b9c5944657e577f92317eeef110c6fdc2b77ff29a839b85fbe"
+    },
+    {
+      "file": "textures/embedded-1.png",
+      "source": "classic-watch.glb image 1",
+      "bytes": 158592,
+      "sha256": "f3da7b82a4d226610da5ba1d1926d146ab9f62712b29bd4f5dc66d9c680b9242"
+    },
+    {
+      "file": "textures/embedded-2.png",
+      "source": "classic-watch.glb image 2",
+      "bytes": 189256,
+      "sha256": "03240a2f695143b36404c6576b72e0928768e8483775d9c47474cfe17259d8ee"
+    },
+    {
+      "file": "textures/embedded-3.jpg",
+      "source": "classic-watch.glb image 3",
+      "bytes": 18904,
+      "sha256": "ac5ef1a69e888a5c9c3272ed86ddde7e2f713b7df1553baf6394b5b002f748c3"
+    },
+    {
+      "file": "textures/embedded-4.jpg",
+      "source": "classic-watch.glb image 4",
+      "bytes": 295652,
+      "sha256": "4703e2f4ddecfdb259e85aa009b540429cbe793b47fc108d847835d70af66bde"
+    },
+    {
+      "file": "textures/embedded-5.png",
+      "source": "classic-watch.glb image 5",
+      "bytes": 344920,
+      "sha256": "a3308899393007e291bab4bf552adcbbbbcc3b2ab1cfd6aba47d6b4ebb2cd51e"
+    },
+    {
+      "file": "studio.exr",
+      "url": "https://packs.ijewel3d.com/files/env_metal_058_b_74127c4d30.exr",
+      "bytes": 1349206,
+      "sha256": "2d2a9ab1832a040be2aadcf15af2d5c64462d36d1982be2decff3f41b4193438"
+    },
+    {
+      "file": "textures/leather-normal.jpg",
+      "url": "https://demo.realvwr.com/media/files/2/map-normal-leather.jpg",
+      "bytes": 669204,
+      "sha256": "b0828548e70760883e4f64a1e16e1f5549a147ab11088b74bfea29918b0f191d"
+    }
+  ]
+}

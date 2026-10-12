@@ -352,6 +352,16 @@ No coding exercises, as in the jewelry elective. Scenes load each material at it
 
 **Wording:** "the bench" is the shared scene; "the swatch" and "the roll" are its samples; "the key light" is the movable directional light; "the packed map" is Poly Haven's `arm` file; "raking" means a light 15–30° above the surface. A material's tile size is its "real size".
 
+## Elective pages (Product Look Development)
+
+Domain 19 uses the confirmed WebGi classic watch as its featured study asset. Follow `electives/product/README.md` for reference provenance, measured configuration, native transfer limits, and verification. Each of the ten domains plus the capstone is one complete page with a concept card and at least two meaningful watch-based live experiments.
+
+Frontmatter: `id: product.<unit>.page`, `elective: product`, `kind: page`, `concepts: [product.<unit>]`. Cards omit `tier`. Scene modules import the typed `ProductLab` contract from `electives/product/lab.ts`; the shared stage owns asset loading, environment resources, evidence export, and teardown. Units own their comparison state and dispose additional resources. Use controls and shown runnable code, not blank-file typing. No timed or prediction exercises.
+
+Pages open with a one-sentence definition and varied uses, then Evidence, Why it works, The code, Exercises with observable acceptance, and How it goes wrong. End with a transfer/reflection question and `<div data-mark-done></div>`. Evidence distinguishes measured source values from authored teaching data. Do not present artistic reference settings, synthetic maps, or native approximations as physically correct source reconstruction. Show the captured original as the quality target where useful.
+
+Every comparison names the variables held fixed. Export PNG/JSON evidence; orbit and finish exercises require multiple views and moving inspection. Artistic acceptance remains a visual checklist. Check configuration/scheduling mechanically and mount every control state in the browser while intercepting progress writes. `coverage` still measures only the core loops.
+
 ## Before you call it done
 
 1. Check every claim against three.js r186. Don't state three.js behavior from memory.
