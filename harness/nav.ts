@@ -247,8 +247,8 @@ export function renderNav(container: HTMLElement, drills: NavDrill[], selected: 
   }
   container.append(tools);
 
-  // A track of electives only (Look dev) takes no domain whole, so it has no loops of its own. Its
-  // electives come first, then the Loop 1 pages they rely on, in one closed group.
+  // A track of electives only (Look dev) takes no domain whole and borrows no foundations, so it
+  // shows its electives and nothing else.
   const electivesOnly = onlyElectives(view.track);
   const electives = () => {
     for (const elective of DOMAINS.filter((domain) => domain.elective && wholeDomain(domain.slug))) container.append(electiveGroup(elective));
@@ -256,7 +256,7 @@ export function renderNav(container: HTMLElement, drills: NavDrill[], selected: 
   if (electivesOnly) electives();
 
   for (const loop of LOOPS) {
-    if (electivesOnly && loop.n > 1) continue;
+    if (electivesOnly) break;
     const loopId = `loop-${loop.n}`;
     const heading = electivesOnly ? 'Foundations · the Loop 1 pages these use' : `Loop ${loop.n} · ${loop.name}`;
     const loopGroup = group(loopId, 'loop', `<span>${heading}</span>`, isOpen(loopId, !electivesOnly && loop.n === 1));

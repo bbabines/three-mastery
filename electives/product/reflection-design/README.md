@@ -13,7 +13,7 @@ concepts: [product.reflection-design]
 
 ## Evidence
 
-The watch's viewer points to **`env_metal_058_b_74127c4d30.exr`**, saved here as `studio.exr`. The live site turns it by **3.947215 radians** and lights at intensity **1** (the file saves an older **0.770914**, which the live site doesn't use); the stage does the same. The `metal` material has roughness **0.047670**; `metal_cover` is much rougher at **0.284942**. These are source settings, not arbitrary values chosen to compensate for a poor HDR.
+The watch's viewer points to **`env_metal_058_b_74127c4d30.exr`**, saved here as `studio.exr`. The live site turns it by **3.947215 radians** and lights at intensity **1** (the file saves an older **0.770914**, which the live site doesn't use). The stage uses the same rotation and turns the intensity down to **0.9**, because three.js r186 lights partly metallic surfaces with more studio light than WebGi's older three.js (the main README explains). The `metal` material has roughness **0.047670**; `metal_cover` is much rougher at **0.284942**. These are source settings, not arbitrary values chosen to compensate for a poor HDR.
 
 The GLB's own key light, `light_0`, stays on in these scenes. It adds one small, sharp highlight to the case that isn't part of the HDR, so switching or turning the environment doesn't move it.
 

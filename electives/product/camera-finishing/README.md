@@ -15,7 +15,7 @@ concepts: [product.camera-finishing]
 
 The live WebGi site renders the watch with a 25° field of view and finishes every frame with: ambient occlusion (SSAO) at 0.25, screen-space reflections, bloom with threshold 1.82, ACES tone mapping at exposure 1 with contrast 1.1, and 32 jittered frames averaged into a still (SSAA, TAA, and its progressive plugin), with HDR values capped at 8. Depth of field and SSGI (screen-space bounce light) are off. These were read from the live site and recorded in `assets/reference/classic-watch/reference-capture.json`.
 
-The stage rebuilds that chain from native three.js passes in `electives/product/finishing.ts`, and every page uses it unless a lab turns it off: the white background, the scene, GTAO (three.js's ambient occlusion pass, on the product only, with the crystal left out), the 32-frame average capped at 8, `UnrealBloomPass` with threshold 1.82 and a soft start like WebGi's, glowing only from the product, and an output pass that tone maps and adds contrast 1.1. WebGi's bloom intensity (0.39 in the GLB's saved settings) isn't on the same scale as `UnrealBloomPass.strength`, so the stage's 0.06 is its own setting, not a copy. The stage has no screen-space reflections; the main README lists what still differs from WebGi.
+The stage rebuilds that chain from native three.js passes in `electives/product/finishing.ts`, and every page uses it unless a lab turns it off: GTAO (three.js's ambient occlusion pass, worked out first with the crystal left out, then applied inside the watch's materials to environment light only, as WebGi's SSAO is), the white background and the scene, the 32-frame average capped at 8, `UnrealBloomPass` with threshold 1.82 and a soft start like WebGi's, glowing only from the product, and an output pass that tone maps and adds contrast 1.1. WebGi's bloom intensity (0.39 in the GLB's saved settings) isn't on the same scale as `UnrealBloomPass.strength`, so the stage's 0.06 is its own setting, not a copy. The stage has no screen-space reflections; the main README lists what still differs from WebGi.
 
 The second lab drives that same chain but starts it bare: one frame, no offscreen MSAA, no bloom, so you can add each tool on its own. "Restrained" bloom is the stage's 0.06; "excessive" is 0.3.
 
@@ -57,26 +57,33 @@ renderer.toneMapping = THREE.NeutralToneMapping;
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 
 // The stage's chain (electives/product/finishing.ts), drawn instead of renderer.render:
-const target = new THREE.WebGLRenderTarget(1, 1, { type: THREE.HalfFloatType, samples: 4 });
+const target = new THREE.WebGLRenderTarget(1, 1, { type: THREE.HalfFloatType });
 const composer = new EffectComposer(renderer, target);
-composer.addPass(new BackdropPass());                 // white background, not tone mapped
-composer.addPass(new RenderPass(scene, camera));
-composer.addPass(new ProductAOPass(scene, camera));   // GTAO on the product only
+const backdrop = new BackdropPass();                  // white background, not tone mapped
+const ao = new ProductAOPass(scene, camera);          // GTAO, read later by the materials
+ao.intensity = 2;                                     // chosen by measuring against WebGi
+composer.addPass(backdrop);
+composer.addPass(ao);
+composer.addPass(new ProductRenderPass(scene, camera, ao, backdrop.color));
 composer.addPass(new AccumulatePass());               // 32 jittered frames, HDR clamped at 8
 const bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), 0.06, 0.6, 1.82);
 composer.addPass(bloom);                              // only light above 1.82 glows
 const output = new FinishPass();                      // OutputPass + contrast 1.1
 composer.addPass(output);
-composer.render();
+lab.finishing.draw(firstSample);                      // the stage runs the chain once a frame
+
+// Inside each lit material: the occlusion darkens environment light only, as an aoMap does.
+reflectedLight.indirectDiffuse *= productAO;
+reflectedLight.indirectSpecular *= computeSpecularOcclusion(dotNV, productAO, material.roughness);
 
 // This lab's controls change those same passes:
 lab.finishing.accumulate.maxSamples = 1;              // one frame instead of 32
-composer.renderTarget1.samples = 0;                   // no offscreen MSAA
+lab.finishing.multisample = 0;                        // no offscreen MSAA
 bloom.strength = 0.3;
 output.contrast = 1;
 ```
 
-The harness's `antialias: true` applies to its default framebuffer. Rendering the scene into a composer target requires that target's own `samples`; it does not inherit default-framebuffer MSAA. This lab exposes that distinction.
+The harness's `antialias: true` applies to its default framebuffer. Rendering the scene into a composer target requires that target's own `samples`; it does not inherit default-framebuffer MSAA. The stage gives the scene a 4-sample target only for a frame's first, unshifted sample; the 31 shifted samples of a still are drawn without it, since shifting already smooths edges. This lab exposes that distinction.
 
 ## How it goes wrong
 

@@ -53,11 +53,13 @@ test('the effects elective schedules only its built pages, in order',()=>{
   assert.deepEqual(effects.map(item=>item.order),[...effects.map(item=>item.order)].sort((a,b)=>a-b));
 });
 
-test('Look dev follows the product cards into required camera/assets foundations',()=>{
+test('Look dev shows only its electives, borrowing no core foundations',()=>{
   const prerequisites=new Map(loadCards().map(card=>[card.id,card.prerequisites]));
-  const concepts=trackConcepts(TRACKS.find(track=>track.slug==='look-dev')!,prerequisites);
+  const lookDev=TRACKS.find(track=>track.slug==='look-dev')!;
+  const concepts=trackConcepts(lookDev,prerequisites);
   assert.ok(concepts.has('product.capstone'));
-  assert.ok(concepts.has('camera.projection-matrix'));
+  assert.ok([...concepts].every(id=>lookDev.domains.includes(id.split('.')[0])),'no core concept leaks into Look dev');
+  assert.ok(trackConcepts(TRACKS.find(track=>track.slug==='all')!,prerequisites).has('camera.projection-matrix'));
   const known=new Set(loadCards().map(card=>card.id));
   for(const card of loadCards().filter(card=>card.domain==='product')) {
     for(const prerequisite of card.prerequisites) assert.ok(known.has(prerequisite),`${card.id}: unknown ${prerequisite}`);

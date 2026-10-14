@@ -70,3 +70,39 @@ Measured with `vetHdri` in `tools/vet.ts`, weighting each pixel by how much of t
 | Cool studio | `blue_photo_studio` | 0.43 | 73% | 0.77 | 747 | Daylight and blue walls: one-sided and cool |
 
 "Brightest" is relative to white paper (1.0). Considered and not used: `brown_photostudio_02`, which looked warm in its thumbnail but measured neutral (1.04).
+
+## Units 3–5: reading the light, the key light, grounding
+
+Built Oct 12, 2026. Choices worth knowing when changing these pages:
+
+- **Where each HDRI's brightest light is**, from `vetHdri`'s `key` (degrees from the panorama's middle toward its right, and above the horizon): softbox studio −24°, 17° up; hard light 60°, 17°; overcast sky −31°, 82° (nearly overhead); warm lamps 48°, 34°; cool studio 68°, 21°. `reading-light/rooms.ts` keeps them and turns each HDRI so that light comes from the front left, where the key light starts. three.js puts a panorama's middle at +x, checked on the bench: the gray ball's left side is the bright one after the turn.
+- **The reading balls move** to the front right of the samples on these pages (`ballsInFront` in `reading-light/meter.ts`). Where the bench puts them, the roll's shadow covers the gray ball whenever the key comes low from the left.
+- **Readouts measure the picture** (`reading-light/meter.ts`): they draw the frame again and read its pixels. Relief is measured with the normal map and without it (`normalScale` 0), pixel by pixel, so the color map's own pattern doesn't count; a patch's plain spread of light and dark rated the denim's weave as relief under every light.
+- **The rim light scenes stand the samples on black velvet**, an unlit ground: a DirectionalLight from behind lit the bench's gray floor as much as the samples.
+- **Grounding** draws through an EffectComposer for GTAO (`grounding/rig.ts`). GTAO at radius 0.06, thickness 0.1, scale 1.5 was picked by eye for the 8 cm roll; the default radius 0.25 shades the whole bench. Through the composer the plain background color gets tone mapped too, and Neutral turns the bench's dark gray navy, so the rig clears with the color that comes out of Neutral as the bench's gray.
+- **Acne**: three.js puts a solid's back faces in the shadow map, so the bench's samples get no acne even with both biases at 0. The acne scene sets `shadowSide = FrontSide`, as a thin sheet would be, with a 512 map and no blur so the stripes show.
+
+## Units 6–8: the maps, scale and distance, finishes
+
+Built Oct 12, 2026. Choices worth knowing when changing these pages:
+
+- **Two broken downloads are made on the page** from the leather (`maps/downloads.ts`): a DirectX normal map (green flipped, exactly how DirectX differs) and a color map with light from the upper left painted into each pebble from its own normal map, exaggerated 3×. The pages say they were made broken.
+- **The DirectX flip is subtle on this leather**: lit from above, its creases turn into bright ridges (mean change 5 of 255 at the close-up camera); lit from the side the two are identical. Those scenes start with the key straight above at 4, close up.
+- **The brown leather's broken green** shows as a different, fainter pattern than its red; it isn't blank. The inspect scene shows both channels.
+- **Scuba suede with its packed metalness** renders 13% darker and a deeper teal on the bench, not brighter.
+- **The marble scan is a floor of small tiles** with grout joints, several across its 1.5 m, so its grid repeats are obvious on the repeats floor, and a grout line crosses the 24 cm swatch elsewhere.
+- **Shimmer, measured** (`scale/`, camera moved 4 mm at standing height, mean change in far pixels): without mipmaps and with the key glinting off a leather floor, 37 levels; with the normal map faded, 4; with mipmaps on, under 0.3 either way. So mipmaps are the cure and the distance fade is a small extra. The anisotropy smear shows best on the painted steel, the crawl on the leather.
+- **A 4K concrete floor at 512 px** differs by 0.6 of 255 from standing height, at a sixty-fourth of the memory: the What's off floor uses it.
+- **Large-scale variation** is a soft value-noise pattern 2.7 m across, ±20% brightness (`scale/floor.ts`), picked by eye: stronger read as dirt on the marble.
+- **`sheen: 1` with the default black `sheenColor`** is pixel-identical to `sheen: 0` on the bench (three.js multiplies the sheen by its color).
+- **Clearcoat shows in reflections**, so its scene starts low on the right with the studio turned 270°, where the softbox reflects in the samples. The wood scan was photographed varnished; ×2.5 roughness under the coat stands in for the bare wood.
+- **The wax candle** sits in a dim room (`environmentIntensity` 0.3): in the full studio, a plain candle lit from behind still looked bright. Its back-light glow (`finishes/wax.ts`) is the same trick as three.js's `SubsurfaceScatteringShader` add-on, weighted toward the edges; its strength was picked by eye.
+
+## Unit 9: What's off? Diagnose and fix
+
+Built Oct 12, 2026. Eight broken scenes, each mixing two or three units' mistakes. Choices worth knowing when changing the page:
+
+- **Broken settings ride along.** Each scene keeps its broken values in its own state and applies them again on every change, so picking another material or texture keeps them, as real code would. That's what makes "swap the texture" fail in the plastic leather scene.
+- **The suede scene** starts under the hard light with roughness 0.5 as well as the packed metalness: at the scan's own roughness, the metalness alone only darkened the scuba suede, with nothing that read as metal. The glints show close up, so the scene's camera starts nearer than the bench's.
+- **The floor's crawl, measured** as on the scale page (camera moved 4 mm, mean change in far pixels): 5.5 levels broken, 0.2 with mipmaps on. The key sits low and nearly straight ahead (170°) so roughness 0.3 shows as a wet streak; at the scale page's 150° the gloss barely showed.
+- **The flat scene uses the leather**: on the dark denim, the fixed light looked nearly as flat as the broken one.

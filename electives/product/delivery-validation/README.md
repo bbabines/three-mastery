@@ -15,7 +15,7 @@ concepts: [product.delivery-validation]
 
 The fetched watch GLB is 2,019,400 bytes, its EXR 1,349,206 bytes, and external leather normal JPEG 669,204 bytes. These are measured downloads in `assets/reference/classic-watch/manifest.json`; they are not GPU memory totals. The GLB uses Draco compression, six embedded images, and WebGi extensions that ordinary GLTFLoader does not implement.
 
-This unit measures the stage as every other page shows it: the reference key light and its shadow, the ground's two extra renders (its contact-shadow depth picture and its floor mirror), and the finishing chain. That's a much heavier frame than the bare scene. On Brad's Mac (M4 Pro, a 657 × 966 canvas) it drew about 141 draw calls a frame instead of 43 for the earlier, plainer stage, and a moving frame took about 5 ms at DPR 1 and about 22 ms at DPR 2. Treat those as one desktop's numbers, not a budget. Whatever stack you finally ship must be measured again on the target devices.
+This unit measures the stage as every other page shows it: the reference key light and its shadow, the ground's extra renders (its floor mirror every frame, and its contact-shadow depth picture whenever the watch or ground moves), and the finishing chain. That's a much heavier frame than the bare scene. On Brad's Mac (M4 Pro, a 657 × 966 canvas) it draws about 118 draw calls a frame instead of 43 for the earlier, plainer stage. Treat those as one desktop's numbers, not a budget; `electives/product/VALIDATION.md` records the frame costs measured there. Whatever stack you finally ship must be measured again on the target devices.
 
 ## Why it works
 
@@ -97,11 +97,11 @@ By default `renderer.info` resets at the start of every `renderer.render` call, 
 ```ts
 renderer.info.autoReset = false; // set once by the stage
 renderer.info.reset();           // at the start of each frame the stage draws
-// shadow map, contact-shadow depth, floor mirror, scene, AO, accumulation, bloom, output…
+// shadow map, floor mirror, AO, scene (with the crystal's transmission), accumulation, bloom, output…
 const { calls, triangles } = renderer.info.render; // read after the last pass
 ```
 
-So the readout's draw and triangle counts cover the whole stage frame, about 141 draws for the reference look. Once the 32-frame still has settled, the stage only copies it to the screen, and the readout keeps the last full frame's counts. Counts are not GPU cost, and neither compile counts nor interval samples measure a network request.
+So the readout's draw and triangle counts cover the whole stage frame, about 118 draws for the reference look. Once the 32-frame still has settled, the stage stops drawing frames and only copies the still to the screen; the readout then says **settled still: frozen counts** and shows the last drawn frame's numbers until you move the view. Counts are not GPU cost, and neither compile counts nor interval samples measure a network request.
 
 ### Real-device release record
 

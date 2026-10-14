@@ -580,6 +580,7 @@ Brad added this on Oct 7, 2026, after working through the jewelry elective's sma
 
 - **Language:** GLSL on WebGLRenderer, like the jewelry elective.
 - **Format:** no four-loop pass, and tiers don't apply. Each unit is one page lit by hand on a shared bench: a swatch and a roll of a real scanned material, a gray ball and a chrome ball, a movable key light, and HDRI presets, with only the controls its lesson needs. Pages show and run the finished code; there's no coding exercise. Each page ends with **What's off?**: scenes that start broken, with a counter of what's still wrong and an answer to reveal. The last unit is all broken scenes, mixing everything.
+- **Status:** all nine units built (units 3–9 on Oct 12–13, 2026), reviewed by a blind agent and fixed; Brad hasn't reviewed units 3–9. What building them found against r186: solid meshes draw their back faces into the shadow map, so the samples show no acne even at zero bias, and the grounding unit teaches acne on thin or double-sided surfaces; a front key on glossy leather shows grain inside its highlight, so raking light is taught as showing grain across the whole surface; with mipmaps on, weaker normals far away are only a small extra against shimmer, and mipmaps are the cure; `PCFSoftShadowMap` still exists as a name but r186 treats it as `PCFShadowMap`.
 - **Assets:** nine photographed materials (leather, leather suede, scuba suede, velvet, denim, varnished wood, cast concrete, painted steel, marble, plus one flawed leather) and five HDRIs, all CC0 from Poly Haven and ambientCG, committed in `assets/tactile/`. Each is shown in a shape it really comes in (wood on a board and plank, concrete chipped). Each was measured before use (`electives/tactile/README.md`): baked light, normal map style, seams, and values.
 
 | Unit | What it covers | Misconceptions to expose |
@@ -614,9 +615,33 @@ Approved October 11, 2026: a complete ecommerce realism path built around the co
 
 **Format:** shown runnable code plus visual control exercises, at least two watch scenes per unit, acceptance checklists, PNG/settings exports, and manual Mark done. No timers, prediction exercises, or blank-file coding. Native study rendering and synthetic teaching textures are labeled; WebGi-specific features are not silently treated as standard glTF/three.js behavior. Standard physical material layers are taught as adaptations when their source encodings differ.
 
-**Entry and maintenance:** Product Look Development is in Tech art and Everything. Its picker checks each card's actual literacy prerequisites and prior product pages; it need not wait for all core Loop 2 or shader fluency. Pages remain directly accessible for study. A completed capstone can return during maintenance. This elective has no four-loop pass and does not alter the 159 core concepts or their coverage rules.
+**Entry and maintenance:** Product Look Development is in Look dev and Everything. Its picker checks each card's actual literacy prerequisites and prior product pages; it need not wait for all core Loop 2 or shader fluency. Pages remain directly accessible for study. In Everything, a completed capstone can return during maintenance; Look dev holds only electives and has no maintenance rotation. This elective has no four-loop pass and does not alter the 159 core concepts or their coverage rules.
 
 **Acceptance:** code/scheduling/configuration checks and browser mounts establish functional behavior; visual checklists establish readable form, finish, texture, contact, and orbit coverage. Screenshots alone do not establish physical-device performance or exact WebGi pixel parity. Advanced custom BRDFs, fiber rendering, caustics, and path tracing are optional category-specific extensions.
+
+## 20. Photoreal effects (elective)
+
+Brad added this on Oct 12, 2026, after asking whether WebGi was worth using. Its free plugin pack runs on its own fork of three.js r163 under GPL v3, and its diamond rendering is paid, so the call was to learn each of its photoreal effects on r186 instead: what it adds, what it costs, and when to turn it on. Brad picked these ten from the full list, plus a closing page on budgets. WebGi and iJewel remain the quality reference, never a dependency.
+
+- **Renderer:** WebGPURenderer with TSL post-processing (`RenderPipeline`), which falls back to WebGL 2. Brad's call on Oct 12, 2026: r186's best versions of bounced light, motion-following TRAA, and contact shadows exist only as TSL nodes. Each page also names the closest plain-WebGL route, since the Shopify viewer is WebGL.
+- **Format:** one page per effect on the classic watch, on a shared bench (`electives/effects/stage.ts`): **What it adds** (an on/off scene, plus views that isolate the effect), **What it costs** (frames timed by the clock with **time it**, back to back and then one at a time, plus passes, draws, and triangles, across quality settings and pixel ratios, on the machine in use), **When to use it** (a use-it/skip-it table, grounded in what the watch's WebGi setup turns on), **The code**, and **How it goes wrong**. Shown code, no coding exercises, Mark done, like the other look-dev electives.
+- **Overlap:** where another elective already teaches an effect (progressive smoothing in Jewelry unit 7, ground shadows in Tactile and Product, anisotropy in Product), this page doesn't re-teach it. It covers the cost and when to use it, and links back.
+- **Track:** Look dev and Everything. `pick` suggests built pages in order once their prerequisites are done.
+- **Status:** all eleven pages built (the ten after Bounced light on Oct 12–14, 2026), each row's claims checked against r186, reviewed by a blind agent and fixed; Brad hasn't reviewed them. What building them found: r186 adds screen-space reflections on top of the picture, so they only brighten; WebGi's "contact shadow" is its blurred ground shadow, not screen-space contact shadows; with the key light's shadow camera fitted to the watch, parts stop floating and contact shadows add little, so the page teaches fitting first; the HDRI with a real floor is `blue_photo_studio`; and double-sided glass washes out the dial on both renderers.
+
+| Page | What it covers | Misconceptions to expose |
+| --- | --- | --- |
+| Progressive smoothing | Tiny camera shifts averaged over still frames; starts over on any move; what it does for every noisy effect after it | "`antialias: true` smooths every edge." "Averaging costs the same every frame." |
+| Ambient occlusion | GTAO's darkening in creases; radius and strength; it only removes light | "AO is a shadow from the lights." "Stronger AO looks more real." |
+| Bounced light | SSGI: nearby surfaces lighting each other from on-screen pixels; samples, pixel ratio, TRAA; metal takes reflections, not bounce. **Built** (the sample) | "Bounced light picks up color from anything in the scene." "AO and bounced light are the same effect." "Turning it on always looks more real." "It costs nothing once the camera stops." "Polished metal picks up nearby colors from it." |
+| Screen-space reflections | Parts reflecting each other; only what's on screen; roughness and edge fade | "SSR replaces the environment map." "SSR can reflect anything in the scene." |
+| Contact shadows | Screen-space shadows where parts touch, filling what the shadow map misses | "A bigger shadow map fixes parts that look like they float." |
+| Smoothing while moving | TRAA: motion buffers, trails, no MSAA alongside it | "TAA is free anti-aliasing." "TAA and MSAA add up." |
+| Baked soft ground shadow | A soft shadow accumulated once and reused; when it has to be redone | "A live shadow always looks better than a baked one." |
+| Projected HDRI ground | `GroundedSkybox`: the photo's floor under the product; height and radius | "Any HDRI works as a floor." |
+| Brushed metal | `anisotropy` and its direction; why it needs tangents | "A brushed-looking color map makes brushed metal." |
+| Glass | `transmission`, `thickness`, `ior`; the extra scene draw; what transmission can't see through (WebGLRenderer: only solid parts; WebGPURenderer: whatever was drawn before the first glass) | "Lower opacity makes glass." "Glass shows other see-through parts behind it." |
+| Choosing effects for a frame budget | The watch with every effect, against a frame-time target: different settings moving and still, phone and desktop | "Turn everything on and lower the resolution." |
 
 ## Cross-domain drills
 

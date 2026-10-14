@@ -20,8 +20,8 @@ export interface GroundSettings {
 export interface ReferenceGround {
   mesh: THREE.Mesh<THREE.PlaneGeometry, THREE.MeshStandardMaterial>;
   settings: GroundSettings;
-  // Renders this frame's contact-shadow depth and floor reflection. `sample` picks the reflection's
-  // blur offset; 0 is unjittered.
+  // Renders this frame's floor reflection, and the contact-shadow depth when the product or ground
+  // moved since it was last drawn. `sample` picks the reflection's blur offset; 0 is unjittered.
   update(renderer: THREE.WebGLRenderer, scene: THREE.Scene, camera: THREE.PerspectiveCamera, sample: number): void;
   // In the finishing chain the floor writes alpha 0, which the output pass reads as "do not tone
   // map", as WebGi does for its ground. Drawn straight to the canvas it uses toneMapped = false.
@@ -117,6 +117,22 @@ export function createReferenceGround(scale: number): ReferenceGround {
   const clear = new THREE.Color();
   const bias = new THREE.Matrix4().set(0.5, 0, 0, 0.5, 0, 0.5, 0, 0.5, 0, 0, 0.5, 0.5, 0, 0, 0, 1);
 
+  // The contact shadow depends only on the product's shape and place and on the ground, never on
+  // the camera or the light, so it is drawn again only when one of those changed: this key lists
+  // the ground's settings and position, then every visible mesh's world matrix.
+  let contactKey: number[] = [];
+  const nextKey: number[] = [];
+  const contactChanged = (scene: THREE.Scene) => {
+    nextKey.length = 0;
+    nextKey.push(settings.size, settings.shadowHeight, settings.blur, ...mesh.matrixWorld.elements);
+    scene.traverseVisible(object => {
+      if (object instanceof THREE.Mesh && object !== mesh) nextKey.push(object.id, object.geometry.id, ...object.matrixWorld.elements);
+    });
+    if (nextKey.length === contactKey.length && nextKey.every((value, i) => value === contactKey[i])) return false;
+    contactKey = [...nextKey];
+    return true;
+  };
+
   const renderContact = (renderer: THREE.WebGLRenderer, scene: THREE.Scene) => {
     const half = settings.size / 2;
     Object.assign(contactCamera, {left: -half, right: half, top: half, bottom: -half, far: settings.shadowHeight});
@@ -187,9 +203,11 @@ export function createReferenceGround(scale: number): ReferenceGround {
       renderer.getClearColor(clear);
       const clearAlpha = renderer.getClearAlpha();
       try {
-        hide(scene, false);
-        renderContact(renderer, scene);
-        show();
+        if (contactChanged(scene)) {
+          hide(scene, false);
+          renderContact(renderer, scene);
+          show();
+        }
         hide(scene, true);
         renderMirror(renderer, scene, camera, sample);
       } finally {

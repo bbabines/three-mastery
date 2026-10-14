@@ -8,6 +8,7 @@ misconceptions:
   ao-is-bounce: '"Ambient occlusion and bounced light are the same effect."'
   always-better: '"Turning on bounced light always makes a product look more real."'
   free-when-still: '"It costs nothing once the camera stops."'
+  metal-picks-up: '"Bounced light makes polished metal pick up nearby colors."'
 contexts:
   colored-prop: A product beside a colored prop
   room: A product in a room with painted walls

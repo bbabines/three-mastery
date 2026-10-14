@@ -22,3 +22,7 @@
 {"type":"done","id":"jewelry.finishing.page","at":"2026-10-07T20:25:23.412Z","passed":true}
 {"type":"done","id":"tactile.before-you-light.page","at":"2026-10-07T20:36:21.213Z","passed":true}
 {"type":"done","id":"jewelry.gem-shader.page","at":"2026-10-07T20:41:39.641Z","passed":true}
+{"type":"track","track":"rogue","at":"2026-10-12T16:00:15.146Z"}
+{"type":"track","track":"look-dev","at":"2026-10-12T16:00:17.929Z"}
+{"type":"track","track":"tech-art","at":"2026-10-12T16:00:20.548Z"}
+{"type":"track","track":"look-dev","at":"2026-10-12T16:00:23.574Z"}

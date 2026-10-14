@@ -326,7 +326,7 @@ Scenes load iJewel's files through `shared.ts` and show `MISSING_REFERENCE` when
 
 ## Elective pages (Tactile materials)
 
-The Tactile materials elective teaches lighting and materials together on real scanned materials. Brad approved its outline on Oct 7, 2026; unit 1, `electives/tactile/before-you-light/`, is the sample. It uses WebGL and GLSL and mounts on `createHarness`, like the jewelry elective.
+The Tactile materials elective teaches lighting and materials together on real scanned materials. Brad approved its outline on Oct 7, 2026; unit 1, `electives/tactile/before-you-light/`, is the sample, and all nine units are built. It uses WebGL and GLSL and mounts on `createHarness`, like the jewelry elective. Every bench calls `releaseSharedTextures`, and each scene uses its own copy of an HDRI, so leaving a page frees its renderers.
 
 **Files**
 
@@ -361,6 +361,34 @@ Frontmatter: `id: product.<unit>.page`, `elective: product`, `kind: page`, `conc
 Pages open with a one-sentence definition and varied uses, then Evidence, Why it works, The code, Exercises with observable acceptance, and How it goes wrong. End with a transfer/reflection question and `<div data-mark-done></div>`. Evidence distinguishes measured source values from authored teaching data. Do not present artistic reference settings, synthetic maps, or native approximations as physically correct source reconstruction. Show the captured original as the quality target where useful.
 
 Every comparison names the variables held fixed. Export PNG/JSON evidence; orbit and finish exercises require multiple views and moving inspection. Artistic acceptance remains a visual checklist. Check configuration/scheduling mechanically and mount every control state in the browser while intercepting progress writes. `coverage` still measures only the core loops.
+
+## Elective pages (Photoreal effects)
+
+Domain 20 teaches one real-time effect per page on the classic watch, in WebGPU. `electives/effects/bounced-light/` was the sample; all eleven pages are built. `electives/effects/README.md` describes the bench and how timing works.
+
+**Files**
+
+```
+electives/effects/<effect>/    README.md and scenes.ts
+electives/effects/stage.ts     the bench: the watch, floor, fitted key light, card, and frame timing (timeIt, costMeter)
+concepts/effects/<effect>.md   the card, without `tier`
+```
+
+**Frontmatter**: `id: effects.<effect>.page`, `elective: effects`, `kind: page`, `concepts: [effects.<effect>]`, `renderer: webgpu`.
+
+**Timing:** a cost scene has a **time it** button: frames drawn back to back with one GPU wait (the cost), then one at a time, plus passes, draws, triangles, and pixels, which stay steady. Never show r186's GPU timestamp total; it sums overlapping passes and reads several times too high. Times on this desktop say nothing about a phone, and the pages say so.
+
+**The page** has the Loop 1 opening block, then:
+
+- **What it adds:** plain words, one analogy, and a scene that switches the effect on and off, with views that isolate it (the effect's own buffer, or a setting that makes it obvious). Say where to look.
+- **What it costs:** what the cost grows with (samples, pixels, frames), and a scene with quality presets, pixel ratio 1 and 2, and whatever the effect trades for speed. The readout shows the code for the setting and keeps each setting's measured time.
+- **When to use it:** what the watch's WebGi setup does with this effect, then a two-column use-it/skip-it table, then the cheaper effect to reach for instead, if there is one.
+- **The code:** a `###` per job, the exact lines with a comment on each.
+- **How it goes wrong:** symptom, cause, and fix. The page ends with `<div data-mark-done></div>`.
+
+No coding exercises, as in the other look-dev electives. Where another elective already teaches the effect, link to it and keep this page to cost and when to use it.
+
+**Wording:** "bounced light" for SSGI and "smoothing over frames" for TRAA, each naming the technical term once. Times are "ms a frame". A setting picked by eye is said to be.
 
 ## Before you call it done
 

@@ -34,12 +34,20 @@ export const budget: SceneSetup = (harness) => watchLab(harness, (lab) => {
   });
   lab.addButton('toggle continuous orbit', () => { rotating = !rotating; controls.autoRotate = rotating; controls.autoRotateSpeed = 0.6; samples.length = 0; });
   lab.addButton('clear interval sample', () => { samples.length = 0; });
+  // The stage resets renderer.info once per frame it draws, so the counts cover every render in
+  // that frame. A settled still isn't drawn again (it's only copied to the screen), so then the
+  // counts are the last drawn frame's, kept as they were.
+  const { accumulate } = lab.finishing;
+  const settled = () => lab.getReferenceLook().finishing && accumulate.samples >= accumulate.maxSamples;
+  const countScope = () => settled()
+    ? `settled still: frozen counts from its last drawn frame (${accumulate.maxSamples} of ${accumulate.maxSamples}); move the view to measure again`
+    : `drawn frame ${Math.max(accumulate.samples, 1)} of ${accumulate.maxSamples}: every render in it`;
   harness.onFrame((delta) => {
     if (document.visibilityState === 'visible' && delta > 0) { samples.push(delta * 1000); if (samples.length > 120) samples.shift(); }
     const size = renderer.getDrawingBufferSize(new THREE.Vector2());
-    lab.setReadout(`${preset} · buffer ${size.x} × ${size.y}\nPrevious renderer.render call: ${renderer.info.render.calls} draws / ${renderer.info.render.triangles.toLocaleString()} triangles\nIntervals n=${samples.length}: median ${quantile(samples, 0.5).toFixed(1)} ms / p95 ${quantile(samples, 0.95).toFixed(1)} ms (not GPU time)\nModel buffers ≈${formatBytes(geometryEstimate)} · maps RGBA8 equivalent ≈${formatBytes(textureEstimate)}`);
+    lab.setReadout(`${preset} · buffer ${size.x} × ${size.y}\nWhole stage frame: ${renderer.info.render.calls} draws / ${renderer.info.render.triangles.toLocaleString()} triangles (${countScope()})\nIntervals n=${samples.length}: median ${quantile(samples, 0.5).toFixed(1)} ms / p95 ${quantile(samples, 0.95).toFixed(1)} ms (not GPU time)\nModel buffers ≈${formatBytes(geometryEstimate)} · maps RGBA8 equivalent ≈${formatBytes(textureEstimate)}`);
   });
-  lab.registerEvidence(() => ({ preset, rotating, drawingBuffer: renderer.getDrawingBufferSize(new THREE.Vector2()).toArray(), previousRender: { scope: 'previous renderer.render call, not a complete multi-render composer frame', ...renderer.info.render }, resources: { ...renderer.info.memory }, modelGeometryByteEstimate: geometryEstimate, modelMapRGBA8EquivalentByteEstimate: textureEstimate, intervalSamples: samples.length, intervalMedianMs: quantile(samples, 0.5), intervalP95Ms: quantile(samples, 0.95), gpuTimingMeasured: false, note: 'Map estimate excludes EXR, PMREM, framebuffer, driver overhead, and postprocessing targets. This browser is not evidence of phone performance.' }));
+  lab.registerEvidence(() => ({ preset, rotating, drawingBuffer: renderer.getDrawingBufferSize(new THREE.Vector2()).toArray(), stageFrame: { scope: 'one whole stage frame: key-light shadow map, floor mirror, AO depth and normals, the scene with the crystal\'s transmission pass, and the finishing passes (the contact-shadow depth only when the product or ground moved)', frozen: settled(), ...renderer.info.render }, resources: { ...renderer.info.memory }, modelGeometryByteEstimate: geometryEstimate, modelMapRGBA8EquivalentByteEstimate: textureEstimate, intervalSamples: samples.length, intervalMedianMs: quantile(samples, 0.5), intervalP95Ms: quantile(samples, 0.95), gpuTimingMeasured: false, note: 'Map estimate excludes EXR, PMREM, framebuffer, driver overhead, and postprocessing targets. This browser is not evidence of phone performance.' }));
 });
 
 // A synthetic pebbled-leather set, made in code so the second finish needs no download.

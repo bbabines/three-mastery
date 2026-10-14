@@ -22,7 +22,7 @@ function field(kind: 'ao' | 'light') {
 export const contributions: SceneSetup = (harness) => watchLab(harness, (lab) => {
   const { scene } = harness;
   // Every contribution is switched by hand: no reference key light or ground, and no screen-space
-  // AO from the finishing chain (it would darken direct light too). The studio stays put in the world.
+  // AO from the finishing chain (it would stack on the synthetic aoMap). The studio stays put in the world.
   lab.setReferenceLook({ light: false, ground: false, finishing: false, studioFollowsCamera: false });
   lab.setEnvironment('uniform');
   const direct = new THREE.DirectionalLight(0xffffff, 2);

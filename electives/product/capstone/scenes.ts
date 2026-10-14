@@ -15,12 +15,14 @@ export const configurator: SceneSetup = (harness) => watchLab(harness, (lab) => 
   let softness = 0.7;
   let background = 0.12;
   let grounded = true;
-  let lighting = 'authored panels';
+  // Opens on the reference studio; moving a panel slider (or choosing authored panels) switches.
+  let lighting = 'reference';
+  let built = false; // sliders report their initial value while being added; that isn't a choice
   // Grounding is the stage's reference ground (contact shadow, key-light shadow, floor reflection)
   // under the reference key light. The crystal casts no shadow, as in the source file.
   const light = lab.referenceLight;
-  function panels() { lighting = 'authored panels'; lightingSelect.value = lighting; lab.setPanels({ count, width, softness, background }); }
-  function report() { lab.setReadout(`${leather} · ${interpretation}\n${finish} · ${lighting} · panels ${count} / width ${width.toFixed(2)}\nReference ground ${grounded ? 'on' : 'off'} · softness ${softness.toFixed(2)} · export every finish.`); }
+  function panels() { if (!built) return; lighting = 'authored panels'; lightingSelect.value = lighting; lab.setPanels({ count, width, softness, background }); }
+  function report() { lab.setReadout(`${leather} · ${interpretation}\n${finish} · ${lighting === 'authored panels' ? `authored panels ${count} / width ${width.toFixed(2)} / softness ${softness.toFixed(2)}` : `${lighting} studio (a panel slider switches to authored panels)`}\nReference ground ${grounded ? 'on' : 'off'} · export every finish.`); }
   lab.addSelect('leather color', {
     'source navy': () => { leather = 'source navy'; lab.strap.color.copy(sourceStrap.color); report(); },
     chestnut: () => { leather = 'chestnut'; lab.strap.color.setHex(0x693b25); report(); },
@@ -35,7 +37,7 @@ export const configurator: SceneSetup = (harness) => watchLab(harness, (lab) => 
     'polished silver': () => { finish = 'polished silver'; for (const material of caseMaterials) { material.color.setHex(0xb8b8b8); material.roughness = 0.08; material.metalness = 1; } report(); },
     'satin gold': () => { finish = 'satin gold'; for (const material of caseMaterials) { material.color.setHex(0xc5a462); material.roughness = 0.3; material.metalness = 1; } report(); },
   });
-  const lightingSelect = lab.addSelect('lighting', { 'authored panels': () => { panels(); report(); }, reference: () => { lighting = 'reference'; lab.setEnvironment('reference'); report(); }, 'uniform diagnostic': () => { lighting = 'uniform diagnostic'; lab.setEnvironment('uniform'); report(); } });
+  const lightingSelect = lab.addSelect('lighting', { reference: () => { lighting = 'reference'; lab.setEnvironment('reference'); report(); }, 'authored panels': () => { panels(); report(); }, 'uniform diagnostic': () => { lighting = 'uniform diagnostic'; lab.setEnvironment('uniform'); report(); } });
   lab.addSlider('panel count', 1, 8, 1, count, (v) => { count = v; panels(); report(); });
   lab.addSlider('panel width', 0.1, 0.9, 0.05, width, (v) => { width = v; panels(); report(); });
   lab.addSlider('panel softness', 0, 1, 0.1, softness, (v) => { softness = v; panels(); report(); });
@@ -46,7 +48,8 @@ export const configurator: SceneSetup = (harness) => watchLab(harness, (lab) => 
   renderer.setPixelRatio(1.5);
   lab.addButton('capture configuration orbit', () => lab.captureOrbit());
   lab.registerEvidence(() => ({ leather, interpretation, finish, lighting, panels: { count, width, softness, background }, grounding: { enabled: grounded, method: 'stage reference ground: blurred under-floor depth as aoMap, key-light PCF shadow, planar floor reflection', keyLight: { name: light.name, intensity: light.intensity, shadowMapSize: light.shadow.mapSize.toArray(), shadowRadius: light.shadow.radius } }, delivery: { phoneTestPerformed: false, note: 'Record target-device evidence separately.' } }));
-  panels(); report();
+  built = true;
+  report();
 });
 
 export const diagnosis: SceneSetup = (harness) => watchLab(harness, (lab) => {

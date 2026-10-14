@@ -14,7 +14,14 @@ import { createReferenceGround } from './ground';
 export const REFERENCE = '/assets/reference/classic-watch';
 const DEFAULT_PANELS: PanelSettings = {count: 4, width: 0.65, softness: 0.7, background: 0.12};
 const ORBIT_SAMPLES = 2; // contact-sheet tiles are scaled down 3×, which antialiases them too
-const SHADOW_JITTER = [[0, 0], [-0.5, 0], [-0.375, -0.25], [-0.1875, -0.125], [-0.125, -0.375], [0.0625, -0.0625], [0.125, -0.3125], [0.375, -0.4375], [0.3125, -0.1875], [0.25, 0.0625], [0.4375, 0.25], [0.1875, 0.3125], [0, 0.4375], [-0.0625, 0.1875], [-0.25, 0.375], [-0.4375, 0.5], [-0.3125, 0.125]];
+// The studio's brightness factor against WebGi's live intensity 1. Likely cause (README): three
+// r163, under WebGi, cuts a partly metallic surface's diffuse environment light by its whole
+// reflectance, where r186 cuts it only by the non-metal part's, and r163 uses an older formula for
+// how much environment a surface reflects. Rebuilding both r163 formulas in the stage's shaders
+// moved the dial, case, and floor shadow toward WebGi but left the floor shadow too dark, so a
+// single factor measured against both captures is used instead (VALIDATION.md).
+const ENVIRONMENT_CALIBRATION = 0.9;
+const SHADOW_JITTER =[[0, 0], [-0.5, 0], [-0.375, -0.25], [-0.1875, -0.125], [-0.125, -0.375], [0.0625, -0.0625], [0.125, -0.3125], [0.375, -0.4375], [0.3125, -0.1875], [0.25, 0.0625], [0.4375, 0.25], [0.1875, 0.3125], [0, 0.4375], [-0.0625, 0.1875], [-0.25, 0.375], [-0.4375, 0.5], [-0.3125, 0.125]];
 
 function download(blob: Blob, filename: string) {
   const url = URL.createObjectURL(blob);
@@ -30,6 +37,21 @@ function halton(index: number, base: number) {
   let result = 0, fraction = 1 / base;
   for (let i = index; i > 0; i = Math.floor(i / base), fraction /= base) result += fraction * (i % base);
   return result;
+}
+
+// r186 reads what's behind a transmissive surface with a smoothing (bicubic) filter, at a blurrier
+// mip level than the material asks for (it floors roughness at 0.0525 first), so even a perfectly
+// smooth crystal blurs the hands under it. WebGi's crystal shows them crisp. While the material's
+// own roughness is 0, this reads the sharp image directly; any rougher value keeps r186's filter.
+const SHARP_TRANSMISSION = 'vec4 getTransmissionSample( const in vec2 fragCoord, const in float roughness, const in float ior ) {';
+function sharpenTransmission(material: THREE.MeshStandardMaterial) {
+  if (!THREE.ShaderChunk.transmission_pars_fragment.includes(SHARP_TRANSMISSION)) throw new Error('r186 transmission chunk changed: sharpenTransmission needs updating.');
+  material.onBeforeCompile = shader => {
+    shader.fragmentShader = shader.fragmentShader.replace('#include <transmission_pars_fragment>', THREE.ShaderChunk.transmission_pars_fragment.replace(SHARP_TRANSMISSION,
+      // `roughness` inside the function is the floored value; the uniform (declared earlier) is the material's own.
+      `float sourceRoughness() { return roughness; }\n${SHARP_TRANSMISSION}\n\t\tif ( sourceRoughness() == 0.0 ) return textureLod( transmissionSamplerMap, fragCoord.xy, 0.0 );`));
+  };
+  material.customProgramCacheKey = () => 'product-sharp-transmission-v1';
 }
 
 // Every mounted experiment owns its assets and GPU resources, including late async arrivals.
@@ -137,7 +159,7 @@ export function watchLab(harness: Harness, ready: (lab: ProductLab) => void): vo
     // r186 draws a double-sided transmissive crystal's back faces into its own transmission,
     // which washes the dial to a hazy grey-blue. Front faces alone keep real transmission.
     const glass = materials.get('glass');
-    if (glass) { glass.side = THREE.FrontSide; glass.needsUpdate = true; }
+    if (glass) { glass.side = THREE.FrontSide; sharpenTransmission(glass); glass.needsUpdate = true; }
 
     // WebGi world → stage. WebGi keeps the GLB's own coordinates (its saved box matches the GLB's
     // x extent exactly; its y and z are looser, unrotated-node boxes), so fitModel's own transform
@@ -172,6 +194,7 @@ export function watchLab(harness: Harness, ready: (lab: ProductLab) => void): vo
     const finishing = createFinishing(renderer, world, camera);
     own(finishing);
     finishing.ao.gtao.updateGtaoMaterial({radius: scale});
+    finishing.ao.exclude.add(ground.mesh.material); // WebGi's ground takes no SSAO
     const look: ReferenceLookParts = {light: true, ground: true, finishing: true, studioFollowsCamera: true};
 
     environment.mapping = THREE.EquirectangularReflectionMapping;
@@ -256,7 +279,7 @@ export function watchLab(harness: Harness, ready: (lab: ProductLab) => void): vo
         try {
           withStudio(() => {
             if (ground.mesh.visible) ground.update(renderer, world, camera, sample);
-            finishing.composer.render();
+            finishing.draw(sample === 0);
           });
         } finally {
           renderer.shadowMap.autoUpdate = autoUpdate;
@@ -356,9 +379,10 @@ export function watchLab(harness: Harness, ready: (lab: ProductLab) => void): vo
       environmentMode = mode;
     };
     // The live WebGi viewer renders at environment intensity 1 (audit.json's 0.771 is the GLB's
-    // older saved setting).
-    world.environmentIntensity = 1;
-    world.environmentRotation.y = 3.9472152126557813;
+    // older saved setting). The stage uses it × ENVIRONMENT_CALIBRATION; see lab.ts.
+    const environmentCalibration = {source: capture.settings.environmentIntensity, factor: ENVIRONMENT_CALIBRATION, calibrated: capture.settings.environmentIntensity * ENVIRONMENT_CALIBRATION};
+    world.environmentIntensity = environmentCalibration.calibrated;
+    world.environmentRotation.fromArray(capture.settings.environmentRotation as [number, number, number, THREE.EulerOrder]);
     setEnvironment('reference');
     const setReferenceLook = (parts: Partial<ReferenceLookParts>) => {
       Object.assign(look, parts);
@@ -380,7 +404,7 @@ export function watchLab(harness: Harness, ready: (lab: ProductLab) => void): vo
     const evidenceReaders: (() => Record<string, unknown>)[] = [];
     const snapshot = () => ({
       reference: 'classic-watch.glb; local assets, no original file mutation',
-      environment: {mode:environmentMode, panels:panelSettings, intensity:world.environmentIntensity, rotation:world.environmentRotation.toArray()},
+      environment: {mode:environmentMode, panels:panelSettings, intensity:world.environmentIntensity, calibration:environmentCalibration, rotation:world.environmentRotation.toArray()},
       camera: {position:camera.position.toArray(), target:controls.target.toArray(), fov:camera.fov, aspect:camera.aspect,
         view: view && view.position.distanceTo(camera.position) < 1e-6 && view.target.distanceTo(controls.target) < 1e-6 ? `source ${view.name}` : 'custom'},
       exposure:renderer.toneMappingExposure, toneMapping:renderer.toneMapping,
@@ -391,8 +415,8 @@ export function watchLab(harness: Harness, ready: (lab: ProductLab) => void): vo
         light: {visible: light.visible, intensity: light.intensity, castShadow: light.castShadow, shadow: {mapSize: light.shadow.mapSize.toArray(), radius: light.shadow.radius, bias: light.shadow.bias, normalBias: light.shadow.normalBias, frustumHalfWidth: frustum}},
         ground: {visible: ground.mesh.visible, ...ground.settings, roughness: ground.mesh.material.roughness, metalness: ground.mesh.material.metalness, method: 'blurred under-floor depth as aoMap + key-light shadow map + planar mirror'},
         finishing: {
-          enabled: look.finishing, msaaSamples: finishing.composer.renderTarget1.samples,
-          ao: {enabled: finishing.ao.enabled, blendIntensity: finishing.ao.blendIntensity},
+          enabled: look.finishing, msaaSamples: {firstSample: finishing.multisample, jitteredSamples: 0},
+          ao: {enabled: finishing.ao.enabled, intensity: finishing.ao.intensity, applies: 'environment (indirect) light only, inside the product materials'},
           accumulation: {samples: finishing.accumulate.samples, still: finishing.accumulate.maxSamples, clampMax: finishing.accumulate.clampMax},
           bloom: {enabled: finishing.bloom.enabled, strength: finishing.bloom.strength, radius: finishing.bloom.radius, threshold: finishing.bloom.threshold},
           contrast: finishing.output.contrast, saturation: finishing.output.saturation,
@@ -422,6 +446,8 @@ export function watchLab(harness: Harness, ready: (lab: ProductLab) => void): vo
       referenceLight: light, ground: ground.mesh, groundSettings: ground.settings, finishing,
       setReferenceLook, getReferenceLook: () => ({...look}), setView,
       setEnvironment, setPanels, setReadout: text => {readout.textContent = text;}, addButton,
+      environmentCalibration,
+      useCalibratedEnvironment: calibrated => { world.environmentIntensity = calibrated ? environmentCalibration.calibrated : environmentCalibration.source; invalidate(); },
       addSlider(label, min, max, step, initial, action) {
         const wrapper = document.createElement('label');
         const caption = document.createElement('span');

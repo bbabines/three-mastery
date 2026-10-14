@@ -187,11 +187,12 @@ function loopCandidates(loop: number): Item[] {
 }
 
 // An elective page waits for the elective pages it builds on; a guided effect waits for its
-// concepts' pages, and a from-memory effect for its guided build.
+// concepts' pages, and a from-memory effect for its guided build. Look dev borrows no core pages,
+// so there a page never waits on one.
 function electiveReady(item: Item) {
   const concepts = item.concepts ?? [];
   if (item.electiveKind === 'page') {
-    return electivePrerequisitesMet(item.domain ?? '', concepts, prerequisites, id => passedIds.has(id), id => conceptCovered(id, 1));
+    return electivePrerequisitesMet(item.domain ?? '', concepts, prerequisites, id => passedIds.has(id), id => electivesOnly(active.track) || conceptCovered(id, 1));
   }
   if (item.electiveKind === 'guided') return concepts.every((id) => passedIds.has(`${id}.page`));
   return passedIds.has(item.id.replace(/from-memory$/, 'guided'));

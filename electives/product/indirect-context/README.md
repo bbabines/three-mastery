@@ -15,7 +15,7 @@ concepts: [product.indirect-context]
 
 On the live WebGi site, the watch's indirect light comes from its studio HDR at intensity **1**, with screen-space ambient occlusion (SSAO) at **0.25** darkening creases. The GLB's materials also store WebGi lightmap settings, but a stored `lightMapIntensity: 1` alone is not evidence of a baked lightmap texture, and these extensions name none. The source leather normal texture supplies surface directions; it is not a record of bounced illumination.
 
-The labs show what native three.js actually does. Both turn off the stage's reference key light, ground, and finishing chain (its ambient occlusion would darken direct light too), and keep the studio fixed in the world instead of following the camera. The first deliberately changes the strap to **metalness 0** so diffuse contributions can be inspected on leather. Its AO and lightmap are **synthetic UV teaching fields**, not lighting baked from this watch. The light probe's coefficients are authored, not measured from a room. Each readout keeps these distinctions visible.
+The labs show what native three.js actually does. Both turn off the stage's reference key light, ground, and finishing chain (its screen-space ambient occlusion would stack on top of the lab's own AO), and keep the studio fixed in the world instead of following the camera. The first deliberately changes the strap to **metalness 0** so diffuse contributions can be inspected on leather. Its AO and lightmap are **synthetic UV teaching fields**, not lighting baked from this watch. The light probe's coefficients are authored, not measured from a room. Each readout keeps these distinctions visible.
 
 ## Why it works
 

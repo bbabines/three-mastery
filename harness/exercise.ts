@@ -12,7 +12,7 @@ import * as THREE from 'three/webgpu';
 import { COLORS, fitModel, label, overlay, pointerToNdc, slider } from './lesson';
 import { loadModel, MODELS } from './models';
 import { onLeave } from './teardown';
-import { createTslHarness, createTslRenderer, type Backend } from './tsl';
+import { createTslHarness, createTslRenderer, disposeTslRenderer, type Backend } from './tsl';
 
 const message = (error: unknown) => (error instanceof Error ? error.message : String(error));
 
@@ -204,7 +204,7 @@ export async function mountMaskExercise<Drill>(
   onLeave(container, () => {
     renderer.setAnimationLoop(null);
     observer.disconnect();
-    renderer.dispose();
+    disposeTslRenderer(renderer);
   });
   return backend;
 }

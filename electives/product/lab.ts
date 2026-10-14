@@ -13,18 +13,27 @@ export interface WatchAudit {
 export type ReferenceView = 'default' | 'front';
 export interface ReferenceCapture {
   views: Record<ReferenceView, {file: string; camera: {position: number[]; target: number[]; fov: number}; modelBox: {min: number[]; max: number[]}}>;
+  settings: {environmentIntensity: number; environmentRotation: [number, number, number, string]};
+}
+// The studio's brightness: WebGi's live value and the stage's calibrated one. r186 lights a partly
+// metallic surface with more environment light than WebGi's three r163 does (README, "Original
+// versus native"), so the stage turns the studio down to match the captures.
+export interface EnvironmentCalibration {
+  source: number; // the live site's environmentIntensity (reference-capture.json)
+  factor: number; // measured against both captures
+  calibrated: number; // source × factor: what the stage uses by default
 }
 // The three parts of the reference look that experiments switch off to isolate one variable.
 export interface ReferenceLookParts {
   light: boolean; // the GLB's own key light (light_0, intensity 20) and its shadow
   ground: boolean; // white reflective floor: contact shadow, key-light shadow, planar reflection
-  finishing: boolean; // AO → 32-frame accumulation (HDR clamped at 8) → bloom → tone map + contrast 1.1
+  finishing: boolean; // AO on environment light → 32-frame accumulation (HDR clamped at 8) → bloom → tone map + contrast 1.1
   // WebGi's fixedEnvMapDirection: the studio turns with the camera, so orbiting never changes the
   // reflections. scene.environmentRotation is then measured from the camera, not the world.
   studioFollowsCamera: boolean;
 }
 
-// Every experiment gets the stage in its reference look: studio EXR at intensity 1, light_0,
+// Every experiment gets the stage in its reference look: studio EXR (calibrated intensity), light_0,
 // the ground, white background, finishing on, and the camera at the WebGi capture's default view.
 export interface ProductLab {
   harness: Harness; // harness.scene is the scene the stage draws
@@ -48,6 +57,9 @@ export interface ProductLab {
   setView(view: ReferenceView): void; // the WebGi capture's cameras, in stage units
   setEnvironment(mode: EnvironmentMode): void;
   setPanels(settings: PanelSettings): void;
+  environmentCalibration: EnvironmentCalibration;
+  // true (the default): scene.environmentIntensity = calibrated; false: the source value.
+  useCalibratedEnvironment(calibrated: boolean): void;
   setReadout(text: string): void;
   // Controls added here restart the still's accumulation (and redraw a paused preview).
   addButton(label: string, action: () => void): HTMLButtonElement;

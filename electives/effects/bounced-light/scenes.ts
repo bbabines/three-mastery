@@ -4,7 +4,7 @@ import { ssgi } from 'three/addons/tsl/display/SSGINode.js';
 import { traa } from 'three/addons/tsl/display/TRAANode.js';
 import { add, diffuseColor, mrt, normalView, output, packNormalToRGB, pass, sample, unpackRGBToNormal, vec4, velocity } from 'three/tsl';
 import * as THREE from 'three/webgpu';
-import { effectsStage, formatGpuTime, type EffectsStage } from '../stage';
+import { costMeter, effectsStage, type EffectsStage } from '../stage';
 
 type View = 'off' | 'ao' | 'on' | 'bounce';
 
@@ -12,7 +12,8 @@ type View = 'off' | 'ao' | 'on' | 'bounce';
 // normals, and motion, then bounced light, then smoothing over frames (TRAA).
 function bouncedLight(stage: EffectsStage) {
   const { scene, camera, renderer } = stage.harness;
-  const scenePass = stage.own(pass(scene, camera));
+  // No MSAA: TRAA smooths the edges itself, and it can't copy a multisampled depth buffer.
+  const scenePass = stage.own(pass(scene, camera, { samples: 0 }));
   scenePass.setMRT(mrt({ output, diffuseColor, normal: packNormalToRGB(normalView), velocity }));
   const color = scenePass.getTextureNode('output');
   const surface = scenePass.getTextureNode('diffuseColor');
@@ -25,9 +26,11 @@ function bouncedLight(stage: EffectsStage) {
   const normal = sample((uv) => unpackRGBToNormal(normalNode.sample(uv)));
 
   const gi = stage.own(ssgi(color, depth, normal, camera));
-  // The watch is about 3 units across, so the reach and strength are set for that size.
-  gi.radius.value = 2;
-  gi.giIntensity.value = 6;
+  // Reach in world units rather than a share of the screen width (the default), sized for a
+  // watch about 3 units across. The strength is picked by eye.
+  gi.useScreenSpaceSampling.value = false;
+  gi.radius.value = 3;
+  gi.giIntensity.value = 12;
   gi.thickness.value = 0.3;
   const ao = gi.getAONode();
   const bounce = gi.getGINode();
@@ -42,6 +45,12 @@ function bouncedLight(stage: EffectsStage) {
   const pipeline = stage.own(new THREE.RenderPipeline(renderer));
 
   // Each view gets its own TRAA, so only the passes a view uses are drawn and timed.
+  // A new pixel ratio needs new ones: r186's TRAA keeps its history at the old size.
+  const resize = (ratio: number) => {
+    for (const node of smoothed.values()) node.dispose();
+    smoothed.clear();
+    renderer.setPixelRatio(ratio);
+  };
   const show = (view: View, temporal = true) => {
     gi.useTemporalFiltering = temporal;
     let node = smoothed.get(view);
@@ -51,10 +60,9 @@ function bouncedLight(stage: EffectsStage) {
     }
     pipeline.outputNode = temporal ? node! : views[view];
     pipeline.needsUpdate = true;
-    stage.resetTiming();
   };
   stage.draw(() => pipeline.render());
-  return { gi, show };
+  return { gi, show, resize };
 }
 
 const CODE: Record<View, string> = {
@@ -72,6 +80,12 @@ export const adds: TslSceneSetup = (harness) => {
       view = next;
       show(next);
     };
+    const studio = stage.harness.scene.environmentIntensity;
+    const room = buttonGroup(stage.ui, 'room');
+    choiceButtons(room, [
+      { html: 'bright studio', select: () => (stage.harness.scene.environmentIntensity = studio) },
+      { html: 'dim room', select: () => (stage.harness.scene.environmentIntensity = 0.12) },
+    ]);
     const card = buttonGroup(stage.ui, 'card');
     choiceButtons(card, [
       { html: 'orange', select: () => stage.setCard('orange') },
@@ -86,7 +100,7 @@ export const adds: TslSceneSetup = (harness) => {
       { html: 'just the bounce', select: pick('bounce') },
     ]);
     stage.harness.onFrame(() => {
-      stage.readout.textContent = `${CODE[view]}\n${formatGpuTime(stage)}`;
+      stage.readout.textContent = CODE[view];
     });
   });
 };
@@ -101,17 +115,16 @@ const PRESETS = {
 export const costs: TslSceneSetup = (harness) => {
   effectsStage(harness, (stage) => {
     stage.setCard('orange');
-    const { gi, show } = bouncedLight(stage);
+    const { gi, show, resize } = bouncedLight(stage);
     let on = true;
     let temporal = true;
     let preset: keyof typeof PRESETS = 'medium';
     let ratio = 1;
-    const measured = new Map<string, number>();
     const label = () => (on ? `${preset}${temporal ? '' : ', raw'}` : 'off');
     const apply = () => {
       gi.sliceCount.value = PRESETS[preset].slices;
       gi.stepCount.value = PRESETS[preset].steps;
-      stage.harness.renderer.setPixelRatio(ratio);
+      if (stage.harness.renderer.getPixelRatio() !== ratio) resize(ratio);
       show(on ? 'on' : 'off', temporal);
     };
 
@@ -129,9 +142,10 @@ export const costs: TslSceneSetup = (harness) => {
     ]);
     const pixels = buttonGroup(stage.ui, 'pixel ratio');
     choiceButtons(pixels, [
-      { html: '1', select: () => ((ratio = 1), measured.clear(), apply()) },
-      { html: '2', select: () => ((ratio = 2), measured.clear(), apply()) },
+      { html: '1', select: () => ((ratio = 1), apply()) },
+      { html: '2', select: () => ((ratio = 2), apply()) },
     ]);
+    const meter = costMeter(stage, pixels, label);
     const motion = buttonGroup(stage.ui, '');
     choiceButtons(motion, [
       { html: 'still', select: () => (stage.harness.controls.autoRotate = false) },
@@ -139,15 +153,11 @@ export const costs: TslSceneSetup = (harness) => {
     ]);
 
     stage.harness.onFrame(() => {
-      const ms = stage.gpuTime();
-      if (ms !== undefined) measured.set(label(), ms);
       const samples = on ? PRESETS[preset].slices * PRESETS[preset].steps * 2 : 0;
-      const list = [...measured].map(([name, time]) => `${name} ${time.toFixed(2)}`).join(' · ');
       stage.readout.textContent = [
         on ? `gi.sliceCount = ${PRESETS[preset].slices}; gi.stepCount = ${PRESETS[preset].steps}  (${samples} samples a pixel)` : 'bounced light off',
-        formatGpuTime(stage),
-        list && `measured at pixel ratio ${ratio}, ms: ${list}`,
-      ].filter(Boolean).join('\n');
+        ...meter.lines(),
+      ].join('\n');
     });
   });
 };

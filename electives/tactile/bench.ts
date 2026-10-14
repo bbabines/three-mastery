@@ -73,10 +73,12 @@ export async function loadMaps(entry: MaterialEntry, renderer: THREE.WebGLRender
   return maps;
 }
 
+// Decoded HDRIs, shared by every scene on the page, as pixels only: no scene draws with these. A
+// renderer that draws a texture leaves a listener on it that holds the renderer, so a texture
+// shared between scenes would keep every scene's renderer (and its WebGL context) alive after the
+// page is left. Each scene draws with its own copy instead (loadHdri).
 const hdrs = new Map<string, Promise<THREE.DataTexture>>();
-// An HDRI as the panorama itself, shared by every scene on the page: a .hdr from assets/tactile, or
-// the .exr a catalog entry names.
-export function loadHdri(id: string) {
+function decodeHdri(id: string) {
   if (!hdrs.has(id)) {
     const url = hdriEntry(id).file ?? `/assets/tactile/hdr/${id}_2k.hdr`;
     const loader = url.endsWith('.exr') ? new EXRLoader() : new HDRLoader();
@@ -91,9 +93,32 @@ export function loadHdri(id: string) {
   return hdrs.get(id)!;
 }
 
+// A scene's own copy of an HDRI panorama (a .hdr from assets/tactile, or the .exr a catalog entry
+// names), for its environment or background. The copy shares the decoded pixels, so it costs no
+// download or memory until it's drawn, and it's disposed when the page is left.
+const sceneHdris = new WeakMap<HTMLElement, Map<string, Promise<THREE.Texture>>>();
+export function loadHdri(harness: Harness, id: string) {
+  const { container } = harness;
+  let copies = sceneHdris.get(container);
+  if (!copies) {
+    const made = new Map<string, Promise<THREE.Texture>>();
+    copies = made;
+    sceneHdris.set(container, made);
+    onLeave(container, () => {
+      for (const copy of made.values()) void copy.then((texture) => texture.dispose());
+    });
+  }
+  if (!copies.has(id)) copies.set(id, decodeHdri(id).then((shared) => shared.clone()));
+  return copies.get(id)!;
+}
+
 // Switches a scene's HDRI. Each HDRI is prefiltered (PMREM) once per scene and kept, so switching
 // back is instant. Returns false if another HDRI was picked while this one loaded. When the scene's
 // background is an HDRI, it follows.
+//
+// GPU memory: a prefiltered HDRI takes 24 MB. Building one also uploads the panorama (16 MB) and a
+// working copy the generator keeps (24 MB); both are freed straight after, unless the background
+// shows the panorama.
 export function environmentSwitcher(harness: Harness) {
   const { scene, renderer, container } = harness;
   const pmrem = new THREE.PMREMGenerator(renderer);
@@ -112,15 +137,41 @@ export function environmentSwitcher(harness: Harness) {
       return true;
     }
     if (!prefiltered.has(id)) {
-      const panorama = await loadHdri(id);
+      const panorama = await loadHdri(harness, id);
       if (disposed) return false;
       prefiltered.set(id, pmrem.fromEquirectangular(panorama).texture);
+      pmrem.dispose(); // its working copy; it makes another when the next HDRI needs one
+      if (scene.background !== panorama) panorama.dispose(); // uploaded again if a background shows it
     }
     if (current !== id) return false;
     scene.environment = prefiltered.get(id)!;
-    if (scene.background && !(scene.background instanceof THREE.Color)) scene.background = await loadHdri(id);
+    if (scene.background && !(scene.background instanceof THREE.Color)) scene.background = await loadHdri(harness, id);
     return true;
   };
+}
+
+// three.js keeps a few lookup textures that every renderer shares: the one every Standard and
+// Physical material reads (its DFG lookup table) and RectAreaLight's. Like the HDRIs above, each
+// renderer that draws one leaves a listener on it that holds the renderer, and they live as long
+// as the page's code does. Disposing them when the page is left makes every renderer drop its
+// listener; the next scene that needs one uploads it again.
+export function releaseSharedTextures(harness: Harness) {
+  const { renderer, scene, container } = harness;
+  let lut: THREE.Texture | undefined;
+  // The renderer forgets its materials when the page is left, so find the table while it runs.
+  harness.onFrame(() => {
+    if (lut) return;
+    scene.traverse((object) => {
+      if (lut || !(object instanceof THREE.Mesh) || !(object.material instanceof THREE.MeshStandardMaterial)) return;
+      const drawn = renderer.properties.get(object.material) as { uniforms?: { dfgLUT?: { value: THREE.Texture | null } } };
+      lut = drawn.uniforms?.dfgLUT?.value ?? undefined;
+    });
+  });
+  onLeave(container, () => {
+    lut?.dispose();
+    const lib = THREE.UniformsLib as unknown as Record<string, unknown>; // RectAreaLightUniformsLib.init() puts them here
+    for (const name of ['LTC_FLOAT_1', 'LTC_FLOAT_2', 'LTC_HALF_1', 'LTC_HALF_2']) (lib[name] as THREE.Texture | undefined)?.dispose();
+  });
 }
 
 export const MISSING_ASSETS =
@@ -223,7 +274,7 @@ function rollGeometry(radius: number, length: number) {
 // The bench
 
 export interface BenchOptions {
-  material?: string;
+  material?: string | null; // null: load no maps, for a scene that replaces the samples
   hdri?: string | null;
   key?: { around: number; above: number; intensity?: number }; // degrees; see setKey
   balls?: boolean; // the gray and chrome balls
@@ -274,6 +325,7 @@ const CLAY_COLOR = 0x767676; // sRGB 118: 18% reflectance in linear light, a pho
 export function createBench(harness: Harness, options: BenchOptions = {}): Bench {
   const { scene, renderer, camera, controls, container } = harness;
   if (options.height) container.style.height = `${options.height}px`;
+  releaseSharedTextures(harness);
   hideFloorHelpers(scene);
   const fill = scene.children.find((child) => child instanceof THREE.HemisphereLight) as THREE.HemisphereLight;
   fill.visible = false;
@@ -354,7 +406,7 @@ export function createBench(harness: Harness, options: BenchOptions = {}): Bench
 
   // The key light, aimed at the swatch's middle. Shadows: a camera fitted tightly around the
   // samples (the default covers 10 m, wasting the shadow map), a 2048 map, normalBias to stop
-  // speckled self-shadowing ("acne"), and radius for a softer edge (r186 removed PCFSoftShadowMap).
+  // speckled self-shadowing ("acne"), and radius for a softer edge (r186 treats PCFSoftShadowMap as PCFShadowMap).
   const key = new THREE.DirectionalLight(0xffffff, options.key?.intensity ?? 2.5);
   key.target.position.copy(swatch.position);
   key.castShadow = true;
@@ -479,7 +531,8 @@ export function whenBenchReady(bench: Bench, readout: HTMLElement, options: Benc
     left = true;
   });
   readout.textContent = 'Loading…';
-  Promise.all([bench.setMaterial(options.material ?? 'leather_red_02'), bench.setHdri(options.hdri === undefined ? 'studio_small_09' : options.hdri)]).then(
+  const material = options.material === null ? Promise.resolve() : bench.setMaterial(options.material ?? 'leather_red_02');
+  Promise.all([material, bench.setHdri(options.hdri === undefined ? 'studio_small_09' : options.hdri)]).then(
     () => {
       if (!left) ready();
     },
@@ -572,7 +625,7 @@ export function backgroundButtons(stage: Stage, parent: HTMLElement) {
     {
       label: 'the HDRI',
       select: () => {
-        if (stage.hdriId) void loadHdri(stage.hdriId).then((panorama) => ((scene.background = panorama), stage.refresh()));
+        if (stage.hdriId) void loadHdri(stage.harness, stage.hdriId).then((panorama) => ((scene.background = panorama), stage.refresh()));
       },
     },
   ]);

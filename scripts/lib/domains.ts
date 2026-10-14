@@ -476,17 +476,20 @@ export function trackLoop(track: Track, entries: TrackLogEntry[]): number | 'mai
 }
 
 // Every concept id a track shows: its domains' concepts, plus the foundations they need from other
-// domains, followed through each card's prerequisites (concept id → that card's list).
+// domains, followed through each card's prerequisites (concept id → that card's list). Look dev
+// (electives only) shows just its electives: Brad's call on Oct 12, 2026, so it borrows no core pages.
 export function trackConcepts(track: Track, prerequisites: Map<string, string[]>) {
   const concepts = new Set(
     DOMAINS.filter((domain) => track.domains.includes(domain.slug)).flatMap((domain) =>
       domain.concepts.map((concept) => `${domain.slug}.${concept.slug}`),
     ),
   );
+  const skipsCore = electivesOnly(track);
   const queue = [...concepts];
   for (const id of queue) {
     for (const needed of prerequisites.get(id) ?? []) {
       if (concepts.has(needed)) continue;
+      if (skipsCore && CORE_DOMAINS.some((domain) => needed.startsWith(`${domain.slug}.`))) continue;
       concepts.add(needed);
       queue.push(needed);
     }

@@ -7,7 +7,7 @@ import type { Harness } from '@harness/scene';
 import { onLeave } from '@harness/teardown';
 import * as THREE from 'three';
 import { RectAreaLightUniformsLib } from 'three/addons/lights/RectAreaLightUniformsLib.js';
-import { environmentSwitcher, MISSING_ASSETS, type KeyStage } from '../bench';
+import { environmentSwitcher, MISSING_ASSETS, releaseSharedTextures, type KeyStage } from '../bench';
 import { RING_METALS, RING_ROUGHNESS } from '../catalog';
 
 // A plain comfort-fit band, US size 7: 17.3 mm inside, 5 mm wide, 1.8 mm thick, domed outside and
@@ -49,6 +49,7 @@ let areaLightsReady = false;
 export function createRingBench(harness: Harness, height = 400): RingBench {
   const { scene, renderer, camera, controls, container } = harness;
   container.style.height = `${height}px`;
+  releaseSharedTextures(harness);
   hideFloorHelpers(scene);
   const sky = scene.children.find((child) => child instanceof THREE.HemisphereLight);
   if (sky) sky.visible = false;

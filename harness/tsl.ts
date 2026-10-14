@@ -4,6 +4,7 @@
 // OrbitControls, and helpers built on `three` like harness/models.ts and harness/lesson.ts, work
 // with it too.
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { toneMappingExposure } from 'three/tsl';
 import * as THREE from 'three/webgpu';
 import { onLeave } from './teardown';
 
@@ -30,24 +31,79 @@ export type TslSceneSetup = (harness: TslHarness) => void;
 // `?backend=webgl` in the page's URL forces the WebGL 2 fallback, to check a page on both.
 const forceWebGL = new URLSearchParams(location.search).get('backend') === 'webgl';
 
+// r186's renderer puts a 'dispose' listener on every texture and render target it uploads, and
+// renderer.dispose() leaves them there. Most of those go away with their page, but some live for
+// the whole visit, like the small lighting table every standard material reads (DFG_LUT, made once
+// by three.js), and each listener kept its renderer, and through it the page's scene and models,
+// in memory: about 45 MB a page. So each renderer notes what it uploads, and disposeTslRenderer
+// takes its listeners off whatever is still around.
+interface UploadMap {
+  updateTexture(...args: unknown[]): unknown;
+  updateRenderTarget(...args: unknown[]): unknown;
+  has(item: object): boolean;
+  get(item: object): { onDispose?: () => void };
+}
+const uploads = new WeakMap<THREE.WebGPURenderer, Set<THREE.EventDispatcher<{ dispose: object }>>>();
+const uploadMap = (renderer: THREE.WebGPURenderer) => (renderer as unknown as { _textures: UploadMap })._textures;
+
+function trackUploads(renderer: THREE.WebGPURenderer) {
+  const map = uploadMap(renderer);
+  const seen = new Set<THREE.EventDispatcher<{ dispose: object }>>();
+  uploads.set(renderer, seen);
+  const note = (item: unknown) => {
+    seen.add(item as THREE.EventDispatcher<{ dispose: object }>);
+    // Forget what's already been disposed, so a long visit doesn't pile them up.
+    if (seen.size % 512 === 0) for (const old of seen) if (!map.has(old)) seen.delete(old);
+  };
+  const { updateTexture, updateRenderTarget } = map;
+  map.updateTexture = function (this: UploadMap, ...args) {
+    note(args[0]);
+    return updateTexture.apply(this, args);
+  };
+  map.updateRenderTarget = function (this: UploadMap, ...args) {
+    note(args[0]);
+    return updateRenderTarget.apply(this, args);
+  };
+}
+
+// Disposes a renderer made by createTslRenderer and lets go of everything it held.
+export function disposeTslRenderer(renderer: THREE.WebGPURenderer) {
+  // The renderer's own picture for post-processing has a listener of the renderer's on its
+  // texture, and three.js keeps the last render target it drew to in a few module variables
+  // (PMREMGenerator's _oldTarget, the shadow pass's saved state). Disposing that texture now runs
+  // and removes the listener, so such a leftover doesn't keep this renderer.
+  const frameTargets = (renderer as unknown as { _frameBufferTargets?: Map<unknown, THREE.RenderTarget> })._frameBufferTargets;
+  for (const target of frameTargets?.values() ?? []) for (const texture of target.textures) texture.dispose();
+  const map = uploadMap(renderer);
+  for (const item of uploads.get(renderer) ?? []) {
+    if (!map.has(item)) continue;
+    const { onDispose } = map.get(item);
+    if (onDispose) item.removeEventListener('dispose', onDispose);
+  }
+  uploads.delete(renderer);
+  // Tone mapping's exposure is one node for every renderer, and it remembers the last one it read.
+  const exposure = toneMappingExposure as unknown as { reference: unknown };
+  if (exposure.reference === renderer) exposure.reference = null;
+  // Some of three's add-ons keep their last material in a module variable, and through it the last
+  // renderer. Taking the canvas out of the page means such a renderer can't also hold on to the
+  // left page, and through its buttons every other renderer on it.
+  renderer.domElement.remove();
+  renderer.dispose();
+}
+
 // Creates a WebGPURenderer with the viewer's settings and waits for it to be ready. In r186,
 // render() throws until the renderer has picked its backend, so callers await this first.
-// `trackTimestamp` asks the GPU to time its work, read with `renderer.resolveTimestampsAsync()`;
-// it does nothing where the GPU can't (WebGPU without timestamp queries, most WebGL 2).
-export async function createTslRenderer(options: { antialias?: boolean; trackTimestamp?: boolean } = {}) {
-  const renderer = new THREE.WebGPURenderer({
-    antialias: options.antialias ?? true,
-    forceWebGL,
-    trackTimestamp: options.trackTimestamp ?? false,
-  });
+export async function createTslRenderer(options: { antialias?: boolean } = {}) {
+  const renderer = new THREE.WebGPURenderer({ antialias: options.antialias ?? true, forceWebGL });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   await renderer.init();
+  trackUploads(renderer);
   const backend: Backend = (renderer.backend as { isWebGPUBackend?: boolean }).isWebGPUBackend ? 'WebGPU' : 'WebGL 2';
   return { renderer, backend };
 }
 
-export async function createTslHarness(container: HTMLElement, options: { trackTimestamp?: boolean } = {}): Promise<TslHarness> {
-  const { renderer, backend } = await createTslRenderer(options);
+export async function createTslHarness(container: HTMLElement): Promise<TslHarness> {
+  const { renderer, backend } = await createTslRenderer();
   container.appendChild(renderer.domElement);
 
   const scene = new THREE.Scene();
@@ -88,7 +144,7 @@ export async function createTslHarness(container: HTMLElement, options: { trackT
     observer.disconnect();
     controls.dispose();
     timer.dispose();
-    renderer.dispose();
+    disposeTslRenderer(renderer);
   });
 
   return {
